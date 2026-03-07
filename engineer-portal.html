@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0d14">
+<title>DeepFlow Engineer</title>
+<style>
+:root {
+  --bg: #0a0d14;
+  --s1: #0f1320;
+  --s2: #151b2c;
+  --s3: #1c2438;
+  --s4: #222d42;
+  --border: #263047;
+  --border2: #2e3d5a;
+  --txt: #e2eaf8;
+  --txt2: #8a9bbf;
+  --txt3: #4e6080;
+  --acc: #4f8fff;
+  --acc2: #3575f0;
+  --green: #22c55e;
+  --red: #f04444;
+  --yellow: #f5a623;
+  --orange: #f97316;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --teal: #14b8a6;
+  --r: 14px;
+  --r2: 10px;
+  --r3: 8px;
+  --sh: 0 8px 32px rgba(0,0,0,.5);
+  --sh2: 0 2px 12px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
+
+/* ═══════════════ LOGIN ═══════════════ */
+#login-screen{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,143,255,.2) 0%,transparent 70%),var(--bg);
+}
+.login-bolt{font-size:52px;margin-bottom:6px;filter:drop-shadow(0 0 20px rgba(79,143,255,.5))}
+.login-brand{font-size:32px;font-weight:900;letter-spacing:-1.5px;background:linear-gradient(135deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-role{color:var(--txt3);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:40px;margin-top:4px}
+.login-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:100%;max-width:340px;box-shadow:var(--sh)}
+.fi{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--txt);padding:14px 16px;font-size:16px;margin-bottom:12px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus{border-color:var(--acc)}
+.btn-login{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:16px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.btn-login:active{transform:scale(.98);background:var(--acc2)}
+.login-err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none;background:rgba(240,68,68,.1);border:1px solid rgba(240,68,68,.2);border-radius:8px;padding:10px}
+.login-hint{font-size:11px;color:var(--txt3);text-align:center;margin-top:14px}
+
+/* ═══════════════ APP SHELL ═══════════════ */
+#app{display:none;min-height:100vh;padding-bottom:72px}
+
+/* Topbar */
+.topbar{
+  background:rgba(10,13,20,.95);border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-name{font-weight:700;font-size:16px;letter-spacing:-.3px}
+.topbar-date{color:var(--txt3);font-size:11px;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-logo{font-size:20px;font-weight:900;color:var(--acc);letter-spacing:-1px}
+.btn-icon{background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--txt2);padding:8px 11px;font-size:13px;cursor:pointer;transition:all .15s}
+.btn-icon:active{background:var(--s3)}
+
+/* Location pill */
+#loc-pill,#loc-off-pill{display:none;align-items:center;gap:4px;border-radius:20px;padding:5px 10px;cursor:pointer;transition:all .2s}
+#loc-pill{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35)}
+#loc-off-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.loc-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:locpulse 2s infinite}
+@keyframes locpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+
+/* Tabs */
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;gap:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;padding:12px 6px 10px;text-align:center;font-size:10px;font-weight:700;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;min-width:70px;transition:all .2s;letter-spacing:.3px;text-transform:uppercase}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-icon{font-size:17px;display:block;margin-bottom:3px}
+.tab-badge{display:inline-block;background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:1px 5px;margin-left:3px;vertical-align:top;margin-top:-2px}
+
+/* Pages */
+.page{display:none;padding:0 0 20px}
+.page.active{display:block}
+.page-scroll{padding:16px}
+
+/* ═══════════════ JOB CARDS ═══════════════ */
+.job-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:10px;cursor:pointer;transition:all .18s;
+  position:relative;overflow:hidden;
+}
+.job-card:active{transform:scale(.99);border-color:var(--border2)}
+.job-card-stripe{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.job-card.s-pending .job-card-stripe{background:var(--yellow)}
+.job-card.s-progress .job-card-stripe{background:var(--acc)}
+.job-card.s-completed .job-card-stripe{background:var(--green)}
+.job-card.s-emergency .job-card-stripe{background:var(--red);width:4px}
+.job-card.s-noaccess .job-card-stripe{background:var(--red)}
+.job-card.s-emergency{border-color:rgba(240,68,68,.3);background:rgba(240,68,68,.04)}
+
+.job-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.job-num{font-size:11px;font-weight:700;color:var(--acc);font-family:monospace;letter-spacing:.5px}
+.job-addr{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:8px;padding-right:8px}
+.job-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.job-chip{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:600;letter-spacing:.2px}
+.chip-time{background:rgba(79,143,255,.12);color:var(--acc);border:1px solid rgba(79,143,255,.2)}
+.chip-trade{background:rgba(255,255,255,.06);color:var(--txt2);border:1px solid var(--border)}
+.chip-cert{background:rgba(20,184,166,.1);color:var(--teal);border:1px solid rgba(20,184,166,.2)}
+.chip-emergency{background:rgba(240,68,68,.15);color:var(--red);border:1px solid rgba(240,68,68,.25)}
+.chip-done{background:rgba(34,197,94,.12);color:var(--green)}
+
+.status-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.sb-pending{background:rgba(245,166,35,.12);color:var(--yellow)}
+.sb-progress{background:rgba(79,143,255,.12);color:var(--acc)}
+.sb-completed{background:rgba(34,197,94,.12);color:var(--green)}
+.sb-emergency{background:rgba(240,68,68,.12);color:var(--red)}
+.sb-noaccess{background:rgba(240,68,68,.1);color:#f97316}
+
+.done-tick{position:absolute;top:0;right:0;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 var(--r) 0 8px;letter-spacing:.5px}
+
+/* Section headers */
+.sec-hd{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;padding:16px 16px 8px;display:flex;align-items:center;gap:6px}
+.sec-hd-line{flex:1;height:1px;background:var(--border)}
+
+/* Empty state */
+.empty{text-align:center;padding:60px 24px;color:var(--txt3)}
+.empty-icon{font-size:52px;margin-bottom:12px;opacity:.7}
+.empty-title{font-size:17px;font-weight:700;color:var(--txt2);margin-bottom:6px}
+.empty-sub{font-size:13px;line-height:1.5}
+
+/* ═══════════════ DASHBOARD ═══════════════ */
+.dash-hero{
+  background:linear-gradient(135deg,var(--s2) 0%,var(--s3) 100%);
+  border-bottom:1px solid var(--border);padding:20px 16px 24px;
+  position:relative;overflow:hidden
+}
+.dash-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(79,143,255,.12) 0%,transparent 70%)}
+.dash-greeting{font-size:13px;color:var(--txt3);margin-bottom:4px}
+.dash-hero-name{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.dash-hero-sub{font-size:12px;color:var(--txt2);margin-top:3px}
+
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 8px}
+.kpi-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:relative;overflow:hidden}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r2) var(--r2) 0 0;background:var(--kc,var(--acc))}
+.kpi-val{font-size:26px;font-weight:900;letter-spacing:-1px;color:var(--txt);line-height:1}
+.kpi-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px;margin-top:5px;font-weight:700}
+.kpi-change{font-size:10px;margin-top:4px;font-weight:600}
+.kpi-up{color:var(--green)}
+.kpi-dn{color:var(--red)}
+
+.dash-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 12px;overflow:hidden}
+.dash-sec-hd{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dash-sec-title{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px}
+.dash-sec-body{padding:14px 16px}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-row:last-child{margin-bottom:0}
+.bar-label{font-size:12px;font-weight:600;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--acc),var(--teal));transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-count{font-size:11px;color:var(--txt3);width:30px;text-align:right;flex-shrink:0;font-weight:700}
+
+.cert-pill{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;margin:3px}
+.cert-pill-n{color:var(--acc);font-weight:800;font-size:13px}
+
+.recent-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.recent-row:last-child{border-bottom:none}
+.recent-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px}
+.recent-addr{font-size:13px;font-weight:600;line-height:1.3}
+.recent-meta{font-size:11px;color:var(--txt3);margin-top:2px}
+.recent-hrs{font-size:12px;color:var(--acc);font-weight:700;white-space:nowrap;margin-left:auto;flex-shrink:0}
+
+/* Week calendar strip */
+.week-strip{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none}
+.week-strip::-webkit-scrollbar{display:none}
+.week-day{display:flex;flex-direction:column;align-items:center;min-width:44px;cursor:pointer}
+.week-day-name{font-size:9px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.week-day-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--txt2);background:var(--s2);border:1px solid var(--border);transition:all .2s}
+.week-day.today .week-day-num{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:0 0 12px rgba(79,143,255,.4)}
+.week-day.has-jobs .week-day-num::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--green)}
+.week-day.has-jobs .week-day-num{position:relative}
+.week-jobs-count{font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600}
+
+/* ═══════════════ JOB DETAIL MODAL ═══════════════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;overflow-y:auto}
+.overlay.open{display:block}
+.modal{background:var(--s1);border-radius:var(--r) var(--r) 0 0;min-height:65vh;margin-top:50px;padding-bottom:40px}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-jobnum{font-size:11px;font-weight:700;color:var(--acc);font-family:monospace;letter-spacing:.5px}
+.modal-addr{font-size:18px;font-weight:700;margin-top:3px;line-height:1.2}
+.modal-close{background:var(--s3);border:1px solid var(--border);color:var(--txt2);width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* Detail sections */
+.d-section{margin:0 16px 12px}
+.d-section-hd{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.d-block{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.d-row{display:flex;padding:12px 14px;border-bottom:1px solid var(--border);gap:10px;align-items:flex-start}
+.d-row:last-child{border-bottom:none}
+.d-lbl{font-size:11px;color:var(--txt3);min-width:90px;flex-shrink:0;padding-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.d-val{font-size:13px;color:var(--txt);flex:1;line-height:1.4}
+.d-val a{color:var(--acc);text-decoration:none}
+
+/* Status buttons */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 12px}
+.s-btn{padding:13px 8px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--s2);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .18s;letter-spacing:.3px}
+.s-btn:active{transform:scale(.97)}
+.s-btn.active{background:rgba(79,143,255,.1);border-color:var(--acc);color:var(--acc)}
+.s-btn.s-green{border-color:rgba(34,197,94,.4);color:var(--green);background:rgba(34,197,94,.07)}
+.s-btn.s-green.active{background:rgba(34,197,94,.15);border-color:var(--green)}
+.s-btn.s-yellow{border-color:rgba(245,166,35,.4);color:var(--yellow);background:rgba(245,166,35,.07)}
+.s-btn.s-red{border-color:rgba(240,68,68,.35);color:var(--red);background:rgba(240,68,68,.06)}
+
+/* Contact action buttons */
+.cta-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.cta{flex:1;min-width:80px;padding:10px 8px;border-radius:var(--r3);border:1px solid var(--border);background:var(--s3);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .15s}
+.cta:active{transform:scale(.97)}
+.cta-call{border-color:rgba(34,197,94,.4);color:var(--green);background:rgba(34,197,94,.07)}
+.cta-wa{border-color:rgba(37,211,102,.4);color:#25d366;background:rgba(37,211,102,.07)}
+.cta-map{border-color:rgba(79,143,255,.3);color:var(--acc);background:rgba(79,143,255,.06)}
+.cta-email{border-color:rgba(168,85,247,.3);color:var(--purple);background:rgba(168,85,247,.06)}
+
+/* Notes / Upload */
+.notes-box{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--txt);padding:14px;font-size:14px;resize:none;min-height:90px;outline:none;font-family:inherit;transition:border-color .2s}
+.notes-box:focus{border-color:var(--acc)}
+
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s2);margin-bottom:10px}
+.upload-zone:active{border-color:var(--acc);background:rgba(79,143,255,.05)}
+.upload-zone-icon{font-size:28px;margin-bottom:6px}
+.upload-zone-text{font-size:13px;color:var(--txt2);font-weight:600}
+.upload-zone-sub{font-size:11px;color:var(--txt3);margin-top:3px}
+input[type=file]{display:none}
+
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.photo-wrap{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1}
+.photo-img{width:100%;height:100%;object-fit:cover;cursor:pointer;display:block}
+.photo-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);border:none;color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.pdf-row{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r3);padding:10px 12px;margin-bottom:8px}
+.pdf-icon{font-size:24px;flex-shrink:0}
+.pdf-info{flex:1;min-width:0}
+.pdf-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdf-meta{font-size:10px;color:var(--txt3);margin-top:2px}
+.btn-open{background:var(--acc);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
+
+/* Save button */
+.save-btn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:16px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.save-btn:active{transform:scale(.98);background:var(--acc2)}
+.save-btn:disabled{opacity:.5;cursor:not-allowed}
+.save-btn.green{background:var(--green)}
+
+/* ═══════════════ OVERTIME / REQUESTS ═══════════════ */
+.req-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.req-card-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.req-title{font-size:14px;font-weight:700}
+.req-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;text-transform:uppercase;letter-spacing:.4px}
+.rb-pending{background:rgba(245,166,35,.12);color:var(--yellow)}
+.rb-approved{background:rgba(34,197,94,.12);color:var(--green)}
+.rb-rejected{background:rgba(240,68,68,.12);color:var(--red)}
+.req-meta{font-size:12px;color:var(--txt2);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.req-note{font-size:12px;color:var(--txt3);font-style:italic;background:var(--s2);border-radius:6px;padding:8px 10px;margin-top:6px}
+
+/* Request form */
+.req-form{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin:0 0 16px}
+.req-form-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.fi-sm{width:100%;background:var(--s3);border:1.5px solid var(--border);border-radius:var(--r3);color:var(--txt);padding:10px 12px;font-size:14px;margin-bottom:10px;outline:none;transition:border-color .2s;font-family:inherit;-webkit-appearance:none}
+.fi-sm:focus{border-color:var(--acc)}
+select.fi-sm{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ═══════════════ REPORTS ═══════════════ */
+.report-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.report-card:active{transform:scale(.99)}
+.report-card-hd{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.report-icon{font-size:24px;width:44px;height:44px;background:var(--s2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.report-title{font-size:14px;font-weight:700}
+.report-sub{font-size:12px;color:var(--txt3);margin-top:2px}
+.report-preview{background:var(--s2);border-radius:var(--r3);padding:10px 12px;font-size:12px;color:var(--txt2)}
+
+/* ═══════════════ GUIDE / HELP ═══════════════ */
+.guide-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 12px;overflow:hidden}
+.guide-hd{padding:14px 16px;background:var(--s2);border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.guide-hd-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.guide-chevron{color:var(--txt3);transition:transform .2s;font-size:14px}
+.guide-hd.open .guide-chevron{transform:rotate(180deg)}
+.guide-body{padding:14px 16px;display:none;border-top:1px solid var(--border)}
+.guide-body.open{display:block}
+.guide-step{display:flex;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.guide-step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.guide-step-num{width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.guide-step-text{font-size:13px;color:var(--txt2);line-height:1.5;flex:1}
+.guide-step-text strong{color:var(--txt)}
+.guide-tip{background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--txt2);margin-top:8px;line-height:1.5}
+.guide-tip::before{content:'💡 ';font-style:normal}
+
+/* ═══════════════ BOTTOM NAV ═══════════════ */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(16px)}
+.nav-item{flex:1;padding:10px 6px 10px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative}
+.nav-item.active{color:var(--acc)}
+.nav-icon{font-size:20px;display:block;margin-bottom:3px}
+.nav-badge{position:absolute;top:8px;right:calc(50% - 14px);background:var(--red);color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:800}
+
+/* ═══════════════ TOAST ═══════════════ */
+#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border2);border-radius:24px;padding:10px 20px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .25s;white-space:nowrap;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1}
+#toast.success{border-color:var(--green);color:var(--green)}
+#toast.error{border-color:var(--red);color:var(--red)}
+#toast.info{border-color:var(--acc);color:var(--acc)}
+
+/* Spinner */
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-center{text-align:center;padding:40px}
+
+/* Misc */
+.divider{height:1px;background:var(--border);margin:0 16px 12px}
+.pull-refresh{text-align:center;padding:10px 16px;font-size:11px;color:var(--txt3)}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-bolt">⚡</div>
+  <div class="login-brand">DeepFlow</div>
+  <div class="login-role">Engineer Portal</div>
+  <div class="login-box">
+    <input class="fi" type="text" id="login-name" placeholder="Your name" autocomplete="name" autocorrect="off">
+    <input class="fi" type="password" id="login-pin" placeholder="PIN" maxlength="6" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-hint">Contact your office if you forgot your PIN</div>
+  </div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-name" id="topbar-name">Engineer</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="topbar-right">
+      <div id="loc-pill" onclick="switchTab('dash')" title="Location live">
+        <span class="loc-dot"></span>
+        <span style="font-size:10px;font-weight:700;color:var(--green)">LIVE</span>
+      </div>
+      <div id="loc-off-pill" onclick="switchTab('dash')" title="Location off - tap to enable">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--txt3);display:inline-block"></span>
+        <span style="font-size:10px;font-weight:600;color:var(--txt3)">GPS</span>
+      </div>
+      <div class="topbar-logo">DF</div>
+      <button class="btn-icon" onclick="doLogout()">↩</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('today')" id="tab-today"><span class="tab-icon">📅</span>Today</div>
+    <div class="tab" onclick="switchTab('upcoming')" id="tab-upcoming"><span class="tab-icon">📋</span>Upcoming</div>
+    <div class="tab" onclick="switchTab('done')" id="tab-done"><span class="tab-icon">✅</span>Done</div>
+    <div class="tab" onclick="switchTab('dash')" id="tab-dash"><span class="tab-icon">📊</span>Stats</div>
+    <div class="tab" onclick="switchTab('requests')" id="tab-requests"><span class="tab-icon">📤</span>Requests</div>
+    <div class="tab" onclick="switchTab('guide')" id="tab-guide"><span class="tab-icon">📖</span>Guide</div>
+  </div>
+
+  <!-- TODAY -->
+  <div class="page active" id="page-today">
+    <div class="pull-refresh" id="refresh-today"></div>
+    <div id="jobs-today" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- UPCOMING -->
+  <div class="page" id="page-upcoming">
+    <div class="pull-refresh" id="refresh-upcoming"></div>
+    <div id="jobs-upcoming" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- DONE -->
+  <div class="page" id="page-done">
+    <div id="jobs-done" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- STATS DASHBOARD -->
+  <div class="page" id="page-dash">
+    <div id="dash-body"><div class="loading-center" style="padding-top:60px"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- REQUESTS (Overtime, Leave, etc.) -->
+  <div class="page" id="page-requests">
+    <div class="page-scroll">
+      <div style="margin-bottom:16px">
+        <button class="save-btn" onclick="openOvertimeForm()" style="background:var(--orange);margin-bottom:8px">⏱ Request Overtime Hours</button>
+        <button class="save-btn" onclick="openLeaveForm()" style="background:var(--purple)">📆 Request Time Off</button>
+      </div>
+      <div class="sec-hd">My Requests <div class="sec-hd-line"></div></div>
+      <div id="requests-list"><div class="loading-center"><div class="spin"></div></div></div>
+    </div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="page" id="page-guide">
+    <div class="page-scroll" id="guide-body"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('today')" id="nav-today"><span class="nav-icon">📅</span>Today</div>
+    <div class="nav-item" onclick="switchTab('upcoming')" id="nav-upcoming"><span class="nav-icon">📋</span>Upcoming</div>
+    <div class="nav-item" onclick="switchTab('done')" id="nav-done"><span class="nav-icon">✅</span>Done</div>
+    <div class="nav-item" onclick="switchTab('dash')" id="nav-dash"><span class="nav-icon">📊</span>Stats</div>
+    <div class="nav-item" onclick="switchTab('requests')" id="nav-requests"><span class="nav-icon">📤</span>Requests<span class="nav-badge" id="req-badge" style="display:none"></span></div>
+    <div class="nav-item" onclick="switchTab('guide')" id="nav-guide"><span class="nav-icon">📖</span>Guide</div>
+  </div>
+</div>
+
+<!-- ══════════ JOB DETAIL MODAL ══════════ -->
+<div class="overlay" id="job-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-hd">
+      <div>
+        <div class="modal-jobnum" id="modal-jobnum"></div>
+        <div class="modal-addr" id="modal-addr">Loading…</div>
+        <div id="modal-status-pill" style="margin-top:6px"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('job-modal')">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ══════════ OVERTIME FORM MODAL ══════════ -->
+<div class="overlay" id="ot-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-hd">
+      <div><div class="modal-addr">⏱ Request Overtime</div></div>
+      <button class="modal-close" onclick="closeModal('ot-modal')">✕</button>
+    </div>
+    <div style="padding:20px">
+      <div class="req-form-title">Fill in the details below</div>
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Date of Work</label>
+      <input class="fi-sm" type="date" id="ot-date">
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Extra Hours</label>
+      <div class="form-row">
+        <input class="fi-sm" type="number" id="ot-hours" placeholder="Hours" min="0.5" step="0.5">
+        <select class="fi-sm" id="ot-rate">
+          <option value="standard">Standard Rate</option>
+          <option value="overtime">Overtime Rate (1.5×)</option>
+          <option value="double">Double Time (2×)</option>
+        </select>
+      </div>
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Job / Reason</label>
+      <input class="fi-sm" type="text" id="ot-job" placeholder="Job address or reason for extra hours">
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Notes (optional)</label>
+      <textarea class="fi-sm" id="ot-notes" rows="3" placeholder="Any additional details…" style="resize:none"></textarea>
+      <button class="save-btn" style="background:var(--orange)" onclick="submitOvertimeRequest()">📤 Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LEAVE FORM MODAL ══════════ -->
+<div class="overlay" id="leave-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-hd">
+      <div><div class="modal-addr">📆 Request Time Off</div></div>
+      <button class="modal-close" onclick="closeModal('leave-modal')">✕</button>
+    </div>
+    <div style="padding:20px">
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Type</label>
+      <select class="fi-sm" id="leave-type">
+        <option>Annual Leave</option>
+        <option>Sick Leave</option>
+        <option>Personal Day</option>
+        <option>Emergency</option>
+        <option>Other</option>
+      </select>
+      <div class="form-row">
+        <div>
+          <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">From</label>
+          <input class="fi-sm" type="date" id="leave-from">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">To</label>
+          <input class="fi-sm" type="date" id="leave-to">
+        </div>
+      </div>
+      <label style="font-size:11px;color:var(--txt3);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Reason</label>
+      <textarea class="fi-sm" id="leave-notes" rows="3" placeholder="Brief reason…" style="resize:none"></textarea>
+      <button class="save-btn" style="background:var(--purple)" onclick="submitLeaveRequest()">📤 Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════════════
+const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
+
+let currentUser = null;
+let currentJob  = null;
+let currentTab  = 'today';
+let _allJobs    = [];   // cache for dash
+
+// ══════════════════════════════════════════════════════════════
+//  SUPABASE HELPERS
+// ══════════════════════════════════════════════════════════════
+async function sb(path, opts = {}) {
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
+    headers: {
+      'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || (opts.method === 'POST' ? 'return=representation' : '')
+    },
+    method: opts.method || 'GET',
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const t = await res.text();
+  const d = t ? JSON.parse(t) : null;
+  return Array.isArray(d) ? d.map(_fix) : d;
+}
+
+// DB lowercase → app camelCase
+function _fix(j) {
+  if (!j || typeof j !== 'object') return j;
+  const MAP = {
+    jobnum:'jobNum', certtypes:'certTypes', timeslot:'timeSlot',
+    landlordname:'landlordName', landlordphone:'landlordPhone', landlordemail:'landlordEmail',
+    landlordaddr:'landlordAddr', landlordwa:'landlordWA', landlordnotes:'landlordNotes',
+    agencyname:'agencyName', agencyphone:'agencyPhone', agencyemail:'agencyEmail',
+    agencynotes:'agencyNotes', agentname:'agentName', agentphone:'agentPhone', agentemail:'agentEmail'
+  };
+  const r = {};
+  for (const [k, v] of Object.entries(j)) r[MAP[k] || k] = v;
+  return r;
+}
+
+async function sbStorage(path, file) {
+  const res = await fetch(`${SB_URL}/storage/v1/object/deepflow/${path}`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' },
+    body: file
+  });
+  if (!res.ok) throw new Error('Upload failed: ' + (await res.text()).slice(0, 100));
+  return `${SB_URL}/storage/v1/object/public/deepflow/${path}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════════════
+async function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const pin  = document.getElementById('login-pin').value.trim();
+  const err  = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!name || !pin) { showErr('Please enter your name and PIN'); return; }
+  try {
+    const users = await sb(`users?name=ilike.${encodeURIComponent(name)}&pin=eq.${pin}&role=eq.engineer&active=eq.true&select=*`);
+    if (!users?.length) { showErr('❌ Wrong name or PIN. Ask your office to check.'); return; }
+    currentUser = users[0];
+    localStorage.setItem('df_eng_user', JSON.stringify(currentUser));
+    showApp();
+  } catch(e) { showErr('⚠️ Connection error — check internet'); }
+
+  function showErr(msg) {
+    err.textContent = msg;
+    err.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  if (!confirm('Sign out of DeepFlow?')) return;
+  stopLocation();
+  localStorage.removeItem('df_eng_user');
+  currentUser = null; _allJobs = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pin').value = '';
+  setLocPills(false);
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('topbar-name').textContent = currentUser.name;
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
+  loadJobs();
+  renderGuide();
+  setTimeout(startLocation, 600);
+  setTimeout(loadDash, 2000);
+  setTimeout(loadRequests, 1000);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  JOBS — LOAD & RENDER
+// ══════════════════════════════════════════════════════════════
+async function loadJobs() {
+  const today = new Date().toISOString().split('T')[0];
+  const week  = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
+  const enc   = encodeURIComponent(currentUser.name);
+
+  try {
+    const [todayJobs, upcoming, done] = await Promise.all([
+      sb(`jobs?date=eq.${today}&engineer=eq.${enc}&order=created.asc&select=*`),
+      sb(`jobs?date=gt.${today}&date=lte.${week}&engineer=eq.${enc}&status=neq.Completed&order=date.asc&select=*`),
+      sb(`jobs?engineer=eq.${enc}&status=eq.Completed&order=modified.desc&limit=60&select=*`)
+    ]);
+    renderJobs('jobs-today',    todayJobs || [],  'today');
+    renderJobs('jobs-upcoming', upcoming  || [],  'upcoming');
+    renderJobs('jobs-done',     done      || [],  'done');
+
+    document.getElementById('refresh-today').textContent =
+      `Last updated: ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+    document.getElementById('refresh-upcoming').textContent =
+      document.getElementById('refresh-today').textContent;
+
+    // Cache for dashboard
+    _allJobs = [...(todayJobs||[]), ...(upcoming||[]), ...(done||[])];
+    // Update today badge
+    const incomplete = (todayJobs||[]).filter(j => j.status !== 'Completed').length;
+    updateTabBadge('today', incomplete);
+
+  } catch(e) {
+    toast('⚠️ Could not load jobs', 'error');
+  }
+}
+
+function renderJobs(container, jobs, type) {
+  const el = document.getElementById(container);
+  if (!jobs.length) {
+    const EMPTY = {
+      today:    {icon:'🎉', title:'No jobs today',      sub:'Check back later or contact your office.'},
+      upcoming: {icon:'📅', title:'Nothing upcoming',   sub:'No jobs in the next 7 days.'},
+      done:     {icon:'✅', title:'No completed jobs',  sub:'Jobs you complete will appear here.'}
+    };
+    const m = EMPTY[type] || EMPTY.today;
+    el.innerHTML = `<div class="empty"><div class="empty-icon">${m.icon}</div><div class="empty-title">${m.title}</div><div class="empty-sub">${m.sub}</div></div>`;
+    return;
+  }
+
+  if (type === 'upcoming') {
+    const grouped = {};
+    jobs.forEach(j => { const d = j.date||'TBC'; (grouped[d]=grouped[d]||[]).push(j); });
+    el.innerHTML = Object.entries(grouped).map(([date, dayJobs]) => {
+      const label = date === 'TBC' ? 'TBC' : new Date(date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+      return `<div class="sec-hd">${label} <div class="sec-hd-line"></div></div>` + dayJobs.map(buildCard).join('');
+    }).join('');
+  } else {
+    el.innerHTML = jobs.map(buildCard).join('');
+  }
+}
+
+function buildCard(j) {
+  const sc  = statusClass(j.status, j.priority);
+  const certs = (j.certTypes||[]).map(c=>`<span class="job-chip chip-cert">${c}</span>`).join('');
+  const done  = j.status === 'Completed';
+  return `<div class="job-card ${sc}" onclick="openJob('${j.id}')">
+    <div class="job-card-stripe"></div>
+    ${done ? '<div class="done-tick">✓ Done</div>' : ''}
+    <div class="job-card-top">
+      <div class="job-num">${j.jobNum||'—'}</div>
+      ${statusBadge(j.status, j.priority)}
+    </div>
+    <div class="job-addr">${j.address||'—'}</div>
+    <div class="job-meta">
+      ${j.timeSlot ? `<span class="job-chip chip-time">🕐 ${j.timeSlot}</span>` : ''}
+      ${j.trade    ? `<span class="job-chip chip-trade">🔧 ${j.trade}</span>` : ''}
+      ${j.hours    ? `<span class="job-chip chip-trade">⏱ ${j.hours}h</span>` : ''}
+      ${certs}
+    </div>
+  </div>`;
+}
+
+function statusClass(status, priority) {
+  if (priority === 'Emergency') return 's-emergency';
+  if (status === 'Completed')   return 's-completed';
+  if (status === 'In Progress') return 's-progress';
+  if (status === 'Cannot Access') return 's-noaccess';
+  return 's-pending';
+}
+
+function statusBadge(status, priority) {
+  if (priority === 'Emergency') return '<span class="status-badge sb-emergency">🚨 Emergency</span>';
+  if (status === 'Completed')   return '<span class="status-badge sb-completed">✅ Done</span>';
+  if (status === 'In Progress') return '<span class="status-badge sb-progress">🔄 In Progress</span>';
+  if (status === 'Cannot Access') return '<span class="status-badge sb-noaccess">🚫 No Access</span>';
+  return '<span class="status-badge sb-pending">⏳ Pending</span>';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  JOB DETAIL
+// ══════════════════════════════════════════════════════════════
+async function openJob(id) {
+  const modal = document.getElementById('job-modal');
+  modal.classList.add('open');
+  document.getElementById('modal-body').innerHTML = '<div class="loading-center"><div class="spin"></div></div>';
+  document.getElementById('modal-jobnum').textContent = '';
+  document.getElementById('modal-addr').textContent = 'Loading…';
+  document.getElementById('modal-status-pill').innerHTML = '';
+
+  try {
+    const [jobs, atts] = await Promise.all([
+      sb(`jobs?id=eq.${id}&select=*`),
+      sb(`attachments?jobid=eq.${id}&order=created.asc&select=*`).catch(()=>[])
+    ]);
+    if (!jobs?.[0]) throw new Error('Job not found');
+    const j = jobs[0];
+    currentJob = j;
+    document.getElementById('modal-jobnum').textContent   = j.jobNum || '';
+    document.getElementById('modal-addr').textContent     = j.address || '';
+    document.getElementById('modal-status-pill').innerHTML = statusBadge(j.status, j.priority);
+    renderJobDetail(j, atts || []);
+  } catch(e) {
+    document.getElementById('modal-addr').textContent = 'Error loading';
+    document.getElementById('modal-body').innerHTML = `
+      <div style="padding:30px;text-align:center">
+        <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+        <div style="font-weight:700;margin-bottom:8px">Failed to load job</div>
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:16px">${e.message?.slice(0,100)||''}</div>
+        <button onclick="openJob('${id}')" style="background:var(--acc);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer">↺ Retry</button>
+      </div>`;
+  }
+}
+
+function renderJobDetail(j, atts) {
+  const photos = atts.filter(a => a.type === 'photo');
+  const pdfs   = atts.filter(a => a.type !== 'photo');
+
+  const canSeeLl     = currentUser?.seeLandlord !== false;
+  const canSeeLlPhone = currentUser?.seeLandlordPhone !== false;
+
+  const mapsUrl = j.address ? `https://maps.google.com/?q=${encodeURIComponent(j.address)}` : '';
+
+  document.getElementById('modal-body').innerHTML = `
+    <!-- ── STATUS BUTTONS ── -->
+    <div style="padding:16px 16px 4px">
+      <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Update Status</div>
+      <div class="status-grid">
+        <button class="s-btn s-yellow ${j.status==='Pending'?'active':''}" onclick="updateStatus('Pending')">⏳ Pending</button>
+        <button class="s-btn ${j.status==='In Progress'?'active':''}" onclick="updateStatus('In Progress')">🔄 In Progress</button>
+        <button class="s-btn s-green ${j.status==='Completed'?'active s-green':''}" onclick="updateStatus('Completed')">✅ Completed</button>
+        <button class="s-btn s-red ${j.status==='Cannot Access'?'active':''}" onclick="updateStatus('Cannot Access')">🚫 No Access</button>
+      </div>
+    </div>
+
+    <!-- ── JOB DETAILS ── -->
+    <div class="d-section">
+      <div class="d-section-hd">📋 Job Details</div>
+      <div class="d-block">
+        ${row('Date',     j.date ? new Date(j.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '')}
+        ${row('Time',     j.timeSlot ? `🕐 ${j.timeSlot}` : '')}
+        ${row('Trade',    j.trade)}
+        ${row('Certs',    (j.certTypes||[]).join(', '))}
+        ${row('Desc',     j.description)}
+        ${row('Hours',    j.hours ? j.hours + ' hrs' : '')}
+        ${j.priority && j.priority !== 'Normal' ? row('Priority', `<span style="color:var(--red);font-weight:700">🚨 ${j.priority}</span>`) : ''}
+      </div>
+    </div>
+
+    <!-- ── ACCESS & CONTACT ── -->
+    <div class="d-section">
+      <div class="d-section-hd">🔑 Access & Contact</div>
+      <div class="d-block">
+        ${row('Access',  j.access)}
+        ${j.contact ? `<div class="d-row">
+          <div class="d-lbl">Contact</div>
+          <div class="d-val">
+            <div>${j.contact}</div>
+            <div class="cta-row">
+              <a class="cta cta-call" href="tel:${j.contact}">📞 Call</a>
+              <a class="cta cta-wa" href="https://wa.me/${j.contact.replace(/\D/g,'')}">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>` : ''}
+        ${mapsUrl ? `<div class="d-row"><div class="d-lbl">Address</div><div class="d-val">
+          <a class="cta cta-map" href="${mapsUrl}" target="_blank" style="text-align:center;display:block">📍 Open in Google Maps</a>
+        </div></div>` : ''}
+        ${j.notes ? row('Notes', `<span style="white-space:pre-wrap">${j.notes}</span>`) : ''}
+      </div>
+    </div>
+
+    <!-- ── LANDLORD ── -->
+    ${canSeeLl && j.landlordName ? `
+    <div class="d-section">
+      <div class="d-section-hd">🏠 Landlord</div>
+      <div class="d-block">
+        ${row('Name', j.landlordName)}
+        ${canSeeLlPhone && j.landlordPhone ? `<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val">
+          <div>${j.landlordPhone}</div>
+          <div class="cta-row">
+            <a class="cta cta-call" href="tel:${j.landlordPhone}">📞 Call</a>
+            <a class="cta cta-wa" href="https://wa.me/${j.landlordPhone.replace(/\D/g,'')}">💬 WA</a>
+          </div>
+        </div></div>` : ''}
+        ${j.landlordEmail ? `<div class="d-row"><div class="d-lbl">Email</div><div class="d-val">
+          <a class="cta cta-email" href="mailto:${j.landlordEmail}" style="text-align:center">✉ ${j.landlordEmail}</a>
+        </div></div>` : ''}
+      </div>
+    </div>` : ''}
+
+    <!-- ── AGENCY ── -->
+    ${j.agencyName ? `
+    <div class="d-section">
+      <div class="d-section-hd">🏢 Agency</div>
+      <div class="d-block">
+        ${row('Agency', j.agencyName)}
+        ${row('Agent',  j.agentName)}
+        ${j.agentPhone ? `<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val">
+          <div>${j.agentPhone}</div>
+          <div class="cta-row">
+            <a class="cta cta-call" href="tel:${j.agentPhone}">📞 Call</a>
+            <a class="cta cta-wa" href="https://wa.me/${j.agentPhone.replace(/\D/g,'')}">💬 WA</a>
+          </div>
+        </div></div>` : ''}
+      </div>
+    </div>` : ''}
+
+    <!-- ── ADD NOTES ── -->
+    <div class="d-section">
+      <div class="d-section-hd">📝 Job Notes</div>
+      <textarea class="notes-box" id="job-notes" placeholder="Add notes about this job, issues found, materials used…">${j.notes || ''}</textarea>
+      <button class="save-btn" onclick="saveNotes()" style="margin-top:0">💾 Save Notes</button>
+    </div>
+
+    <!-- ── LOG HOURS ── -->
+    <div class="d-section">
+      <div class="d-section-hd">⏱ Log Hours</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="fi-sm" type="number" id="job-hours" value="${j.hours||''}" placeholder="Hours worked" min="0" step="0.5" style="flex:1;margin-bottom:0">
+        <button class="save-btn" onclick="saveHours()" style="width:auto;padding:10px 16px;font-size:13px;margin-top:0">Save</button>
+      </div>
+    </div>
+
+    <!-- ── PHOTOS ── -->
+    <div class="d-section">
+      <div class="d-section-hd">📷 Photos (${photos.length})</div>
+      ${photos.length ? `<div class="photo-grid">${photos.map(a=>`
+        <div class="photo-wrap">
+          <img src="${a.url}" class="photo-img" onclick="window.open('${a.url}','_blank')" loading="lazy">
+        </div>`).join('')}</div>` : ''}
+      <input type="file" id="photo-input" accept="image/*" capture="environment" multiple onchange="handleUpload(this,'photo')">
+      <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+        <div class="upload-zone-icon">📷</div>
+        <div class="upload-zone-text">Take Photo or Upload</div>
+        <div class="upload-zone-sub">Camera, gallery, or file</div>
+      </div>
+    </div>
+
+    <!-- ── CERTIFICATES ── -->
+    <div class="d-section">
+      <div class="d-section-hd">📄 Certificates & Documents (${pdfs.length})</div>
+      ${pdfs.map(a=>`<div class="pdf-row">
+        <div class="pdf-icon">📄</div>
+        <div class="pdf-info">
+          <div class="pdf-name">${a.name}</div>
+          <div class="pdf-meta">${a.uploaded_by_name||''} · ${fmtDate(a.created)}</div>
+        </div>
+        <a class="btn-open" href="${a.url}" target="_blank">Open</a>
+      </div>`).join('')}
+      <input type="file" id="pdf-input" accept=".pdf,application/pdf" multiple onchange="handleUpload(this,'certificate')">
+      <div class="upload-zone" onclick="document.getElementById('pdf-input').click()">
+        <div class="upload-zone-icon">📄</div>
+        <div class="upload-zone-text">Upload Certificate / Document</div>
+        <div class="upload-zone-sub">Gas Safety, EICR, EPC, etc.</div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  `;
+}
+
+function row(label, val) {
+  if (!val) return '';
+  return `<div class="d-row"><div class="d-lbl">${label}</div><div class="d-val">${val}</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STATUS / NOTES / HOURS
+// ══════════════════════════════════════════════════════════════
+async function updateStatus(status) {
+  if (!currentJob) return;
+  try {
+    await sb(`jobs?id=eq.${currentJob.id}`, { method:'PATCH', body:{ status, modified:Date.now() }, prefer:'return=minimal' });
+    currentJob.status = status;
+    document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('modal-status-pill').innerHTML = statusBadge(status, currentJob.priority);
+    toast(`✅ Status → ${status}`, 'success');
+    loadJobs();
+  } catch(e) { toast('⚠️ Failed to update', 'error'); }
+}
+
+async function saveNotes() {
+  if (!currentJob) return;
+  const notes = document.getElementById('job-notes').value.trim();
+  try {
+    await sb(`jobs?id=eq.${currentJob.id}`, { method:'PATCH', body:{ notes, modified:Date.now() }, prefer:'return=minimal' });
+    toast('✅ Notes saved', 'success');
+  } catch(e) { toast('⚠️ Failed to save', 'error'); }
+}
+
+async function saveHours() {
+  if (!currentJob) return;
+  const hours = parseFloat(document.getElementById('job-hours').value);
+  if (isNaN(hours) || hours < 0) { toast('Enter valid hours', 'error'); return; }
+  try {
+    await sb(`jobs?id=eq.${currentJob.id}`, { method:'PATCH', body:{ hours, modified:Date.now() }, prefer:'return=minimal' });
+    currentJob.hours = hours;
+    toast(`✅ Hours logged: ${hours}h`, 'success');
+    loadJobs();
+  } catch(e) { toast('⚠️ Failed to save hours', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ══════════════════════════════════════════════════════════════
+async function handleUpload(input, type) {
+  const files = Array.from(input.files);
+  if (!files.length || !currentJob) return;
+  for (const file of files) {
+    const ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `jobs/${currentJob.id}/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
+    toast(`⬆️ Uploading…`, 'info');
+    try {
+      const url = await sbStorage(path, file);
+      await sb('attachments', {
+        method:'POST', prefer:'resolution=merge-duplicates,return=minimal',
+        body: { id:`att-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+          jobid: currentJob.id, name: file.name, type, mime: file.type||'application/octet-stream',
+          storage_path: path, url, uploaded_by_name: currentUser.name, created: Date.now() }
+      });
+      toast(`✅ ${type==='photo'?'Photo':'Document'} uploaded!`, 'success');
+      openJob(currentJob.id);
+    } catch(e) { toast(`❌ ${e.message?.slice(0,60)}`, 'error'); }
+  }
+  input.value = '';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════════════
+async function loadDash() {
+  const el = document.getElementById('dash-body');
+  if (!el) return;
+
+  try {
+    const name  = currentUser.name;
+    const today = new Date().toISOString().split('T')[0];
+    const monStart = today.slice(0,7) + '-01';
+    const yearStart = today.slice(0,4) + '-01-01';
+
+    const allJobs = await sb(`jobs?engineer=eq.${encodeURIComponent(name)}&select=*&limit=5000`);
+    _allJobs = allJobs || [];
+
+    const jobs     = _allJobs;
+    const todayJ   = jobs.filter(j => j.date === today);
+    const todayDone = todayJ.filter(j => j.status === 'Completed').length;
+    const monthJ   = jobs.filter(j => (j.date||'') >= monStart);
+    const monthDone = monthJ.filter(j => j.status === 'Completed').length;
+    const yearDone  = jobs.filter(j => j.status === 'Completed' && (j.date||'') >= yearStart).length;
+    const totalDone = jobs.filter(j => j.status === 'Completed').length;
+    const totalHrs  = jobs.filter(j => j.status === 'Completed').reduce((s,j) => s+(parseFloat(j.hours)||0), 0);
+    const pending   = jobs.filter(j => j.status === 'Pending' || j.status === 'In Progress').length;
+
+    // Area breakdown
+    const areas = {};
+    jobs.forEach(j => {
+      const parts = (j.address||'').split(',');
+      const area  = (parts.length > 1 ? parts[parts.length-2] : parts[0] || 'Unknown').trim();
+      areas[area] = (areas[area]||0) + 1;
+    });
+    const topAreas = Object.entries(areas).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+    // Cert breakdown
+    const certs = {};
+    jobs.forEach(j => (j.certTypes||[]).forEach(c => { certs[c] = (certs[c]||0) + 1; }));
+    const topCerts = Object.entries(certs).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+    // Monthly trend (last 6 months)
+    const monthlyMap = {};
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(); d.setMonth(d.getMonth()-i);
+      const key = d.toISOString().slice(0,7);
+      monthlyMap[key] = 0;
+    }
+    jobs.filter(j => j.status === 'Completed').forEach(j => {
+      const m = (j.date||'').slice(0,7);
+      if (monthlyMap[m] !== undefined) monthlyMap[m]++;
+    });
+    const monthLabels = Object.keys(monthlyMap);
+    const monthVals   = Object.values(monthlyMap);
+    const maxMonthVal = Math.max(...monthVals, 1);
+
+    // Recent done
+    const recent = [...jobs].filter(j=>j.status==='Completed')
+      .sort((a,b)=>(b.modified||0)-(a.modified||0)).slice(0,5);
+
+    el.innerHTML = `
+      <div class="dash-hero">
+        <div class="dash-greeting">👷 Good ${greeting()},</div>
+        <div class="dash-hero-name">${currentUser.name}</div>
+        <div class="dash-hero-sub">${todayJ.length} job${todayJ.length!==1?'s':''} today · ${todayDone} completed</div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--kc:var(--acc)">
+          <div class="kpi-val">${todayDone}/${todayJ.length}</div>
+          <div class="kpi-lbl">Today</div>
+        </div>
+        <div class="kpi-card" style="--kc:var(--green)">
+          <div class="kpi-val">${monthDone}</div>
+          <div class="kpi-lbl">This Month</div>
+        </div>
+        <div class="kpi-card" style="--kc:var(--yellow)">
+          <div class="kpi-val">${yearDone}</div>
+          <div class="kpi-lbl">This Year</div>
+        </div>
+        <div class="kpi-card" style="--kc:var(--teal)">
+          <div class="kpi-val">${totalHrs.toFixed(0)}h</div>
+          <div class="kpi-lbl">Total Hours</div>
+        </div>
+        <div class="kpi-card" style="--kc:var(--purple)">
+          <div class="kpi-val">${totalDone}</div>
+          <div class="kpi-lbl">All-Time Done</div>
+        </div>
+        <div class="kpi-card" style="--kc:var(--orange)">
+          <div class="kpi-val">${pending}</div>
+          <div class="kpi-lbl">Open Jobs</div>
+        </div>
+      </div>
+
+      <!-- 📍 Location -->
+      <div class="dash-section">
+        <div class="dash-sec-hd"><span class="dash-sec-title">📍 Location Sharing</span></div>
+        <div class="dash-sec-body">
+          <div id="loc-status-dash" style="font-size:12px;color:var(--txt3);margin-bottom:10px">Not sharing</div>
+          <button id="loc-btn" onclick="toggleLocation()" style="width:100%;padding:13px;border-radius:var(--r2);border:none;background:var(--acc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">📍 Share My Location</button>
+          <div style="font-size:11px;color:var(--txt3);text-align:center;margin-top:6px">Your office sees your live position</div>
+        </div>
+      </div>
+
+      <!-- 📅 Monthly trend -->
+      ${monthLabels.length ? `
+      <div class="dash-section">
+        <div class="dash-sec-hd"><span class="dash-sec-title">📅 Monthly Jobs (Last 6 Months)</span></div>
+        <div class="dash-sec-body">
+          ${monthLabels.map((m,i) => `
+            <div class="bar-row">
+              <div class="bar-label">${new Date(m+'-15').toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${Math.round(monthVals[i]/maxMonthVal*100)}%"></div></div>
+              <div class="bar-count">${monthVals[i]}</div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- 📍 Top Areas -->
+      ${topAreas.length ? `
+      <div class="dash-section">
+        <div class="dash-sec-hd"><span class="dash-sec-title">📍 Top Work Areas</span></div>
+        <div class="dash-sec-body">
+          ${topAreas.map(([area,n]) => `
+            <div class="bar-row">
+              <div class="bar-label">${area}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/topAreas[0][1]*100)}%;background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+              <div class="bar-count">${n}</div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- 📋 Cert Types -->
+      ${topCerts.length ? `
+      <div class="dash-section">
+        <div class="dash-sec-hd"><span class="dash-sec-title">📋 Certificates Done</span></div>
+        <div class="dash-sec-body">
+          <div style="display:flex;flex-wrap:wrap">${topCerts.map(([ct,n])=>`
+            <div class="cert-pill"><span class="cert-pill-n">${n}</span> ${ct}</div>`).join('')}
+          </div>
+        </div>
+      </div>` : ''}
+
+      <!-- ✅ Recent Completed -->
+      ${recent.length ? `
+      <div class="dash-section">
+        <div class="dash-sec-hd"><span class="dash-sec-title">✅ Recently Completed</span></div>
+        <div class="dash-sec-body">
+          ${recent.map(j=>`
+            <div class="recent-row">
+              <div class="recent-dot"></div>
+              <div style="flex:1;min-width:0">
+                <div class="recent-addr">${j.address||'—'}</div>
+                <div class="recent-meta">${j.date||''} ${j.description?'· '+j.description:''}</div>
+              </div>
+              <div class="recent-hrs">${j.hours?j.hours+'h':''}</div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <div style="height:20px"></div>
+    `;
+
+    updateLocStatus();
+  } catch(e) {
+    el.innerHTML = `<div style="padding:30px;text-align:center;color:var(--red)">⚠️ ${e.message||'Failed to load'}</div>`;
+  }
+}
+
+function greeting() {
+  const h = new Date().getHours();
+  return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  REQUESTS (Overtime / Leave)
+// ══════════════════════════════════════════════════════════════
+async function loadRequests() {
+  const el = document.getElementById('requests-list');
+  if (!el) return;
+  try {
+    const reqs = await sb(`engineer_requests?engineer_name=eq.${encodeURIComponent(currentUser.name)}&order=created.desc&limit=50`).catch(()=>[]);
+    if (!reqs?.length) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No requests yet</div><div class="empty-sub">Use the buttons above to submit overtime or leave requests.</div></div>`;
+      return;
+    }
+    const pending = reqs.filter(r=>r.status==='pending').length;
+    updateTabBadge('requests', pending);
+    el.innerHTML = reqs.map(r => {
+      const badgeCls = r.status==='approved'?'rb-approved':r.status==='rejected'?'rb-rejected':'rb-pending';
+      return `<div class="req-card">
+        <div class="req-card-hd">
+          <div>
+            <div class="req-title">${r.type === 'overtime' ? '⏱ Overtime Request' : '📆 Time Off'}</div>
+            <div class="req-meta">
+              ${r.date ? `📅 ${r.date}` : ''}
+              ${r.hours ? `⏱ ${r.hours}h` : ''}
+              ${r.leave_from && r.leave_to ? `${r.leave_from} → ${r.leave_to}` : ''}
+              ${r.rate ? `· ${r.rate}` : ''}
+            </div>
+          </div>
+          <span class="req-badge ${badgeCls}">${r.status||'pending'}</span>
+        </div>
+        ${r.job ? `<div style="font-size:12px;color:var(--txt2)">📋 ${r.job}</div>` : ''}
+        ${r.notes ? `<div class="req-note">${r.notes}</div>` : ''}
+        ${r.office_reply ? `<div class="req-note" style="background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.2);color:var(--green)">Office: ${r.office_reply}</div>` : ''}
+        <div style="font-size:10px;color:var(--txt3);margin-top:8px">${fmtDate(r.created)}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = `<div style="padding:20px;text-align:center;color:var(--txt3);font-size:13px">Unable to load requests.<br><small>${e.message}</small></div>`;
+  }
+}
+
+function openOvertimeForm() {
+  document.getElementById('ot-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ot-hours').value = '';
+  document.getElementById('ot-job').value = '';
+  document.getElementById('ot-notes').value = '';
+  document.getElementById('ot-modal').classList.add('open');
+}
+
+function openLeaveForm() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('leave-from').value = today;
+  document.getElementById('leave-to').value = today;
+  document.getElementById('leave-notes').value = '';
+  document.getElementById('leave-modal').classList.add('open');
+}
+
+async function submitOvertimeRequest() {
+  const date  = document.getElementById('ot-date').value;
+  const hours = parseFloat(document.getElementById('ot-hours').value);
+  const rate  = document.getElementById('ot-rate').value;
+  const job   = document.getElementById('ot-job').value.trim();
+  const notes = document.getElementById('ot-notes').value.trim();
+  if (!date || isNaN(hours) || hours <= 0) { toast('Please fill in date and hours', 'error'); return; }
+
+  try {
+    await sb('engineer_requests', {
+      method: 'POST',
+      body: { id:`req-${Date.now()}`, engineer_name: currentUser.name, type:'overtime', date, hours, rate, job, notes, status:'pending', created: Date.now() },
+      prefer: 'return=minimal'
+    });
+    closeModal('ot-modal');
+    toast('✅ Overtime request sent!', 'success');
+    loadRequests();
+  } catch(e) {
+    toast('❌ ' + (e.message?.slice(0,80)||'Failed to submit'), 'error');
+  }
+}
+
+async function submitLeaveRequest() {
+  const type  = document.getElementById('leave-type').value;
+  const from  = document.getElementById('leave-from').value;
+  const to    = document.getElementById('leave-to').value;
+  const notes = document.getElementById('leave-notes').value.trim();
+  if (!from || !to) { toast('Please select dates', 'error'); return; }
+
+  try {
+    await sb('engineer_requests', {
+      method: 'POST',
+      body: { id:`req-${Date.now()}`, engineer_name: currentUser.name, type:'leave', leave_type:type, leave_from:from, leave_to:to, notes, status:'pending', created: Date.now() },
+      prefer: 'return=minimal'
+    });
+    closeModal('leave-modal');
+    toast('✅ Leave request sent!', 'success');
+    loadRequests();
+  } catch(e) {
+    toast('❌ ' + (e.message?.slice(0,80)||'Failed to submit'), 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  GUIDE / HELP
+// ══════════════════════════════════════════════════════════════
+function renderGuide() {
+  const el = document.getElementById('guide-body');
+  if (!el) return;
+
+  const sections = [
+    {
+      icon:'📱', title:'How to Use This App',
+      steps:[
+        {n:1, t:'<strong>Today tab</strong> — All jobs assigned to you for today. Tap any job to open details.'},
+        {n:2, t:'<strong>Upcoming tab</strong> — Jobs in the next 7 days, grouped by date.'},
+        {n:3, t:'<strong>Done tab</strong> — Your last 60 completed jobs.'},
+        {n:4, t:'<strong>Stats tab</strong> — Your personal dashboard with performance charts.'},
+        {n:5, t:'<strong>Requests tab</strong> — Submit overtime or leave requests to the office.'},
+      ],
+      tip:'Jobs refresh automatically every 2 minutes. Pull down on the page to refresh manually.'
+    },
+    {
+      icon:'🔄', title:'Updating a Job Status',
+      steps:[
+        {n:1, t:'Tap the job card to open it.'},
+        {n:2, t:'Tap the status button that matches: <strong>Pending</strong>, <strong>In Progress</strong>, <strong>Completed</strong>, or <strong>No Access</strong>.'},
+        {n:3, t:'The status is saved instantly — your office can see it right away.'},
+        {n:4, t:'Add notes about the job in the "Job Notes" box and tap Save Notes.'},
+      ],
+      tip:'Always mark a job "In Progress" when you arrive, so the office knows you\'re on site.'
+    },
+    {
+      icon:'📷', title:'Taking and Uploading Photos',
+      steps:[
+        {n:1, t:'Open a job, scroll to the <strong>Photos</strong> section.'},
+        {n:2, t:'Tap <strong>"Take Photo or Upload"</strong> — your camera opens directly.'},
+        {n:3, t:'You can also upload from your photo gallery — select multiple at once.'},
+        {n:4, t:'Photos are saved to Supabase cloud storage and visible to the office immediately.'},
+        {n:5, t:'Tap any photo thumbnail to view it full-screen.'},
+      ],
+      tip:'Take photos before and after work, especially for installations and fault repairs.'
+    },
+    {
+      icon:'📄', title:'Uploading Certificates & Documents',
+      steps:[
+        {n:1, t:'Open a job, scroll to <strong>Certificates & Documents</strong>.'},
+        {n:2, t:'Tap <strong>"Upload Certificate / Document"</strong> and select a PDF.'},
+        {n:3, t:'The document is linked to this job and the office can download it.'},
+        {n:4, t:'Tap <strong>Open</strong> next to any document to view it.'},
+      ],
+      tip:'Always upload gas safety certificates, EICRs, and EPCs on the same day.'
+    },
+    {
+      icon:'⏱', title:'Logging Your Hours',
+      steps:[
+        {n:1, t:'Open any job, scroll to the <strong>Log Hours</strong> section.'},
+        {n:2, t:'Enter the number of hours you worked (e.g. 2.5 for 2 hours 30 mins).'},
+        {n:3, t:'Tap <strong>Save</strong> — hours are recorded against the job.'},
+        {n:4, t:'For extra hours beyond normal pay, use the <strong>Requests tab</strong> → Overtime Request.'},
+      ]
+    },
+    {
+      icon:'📍', title:'Location Sharing',
+      steps:[
+        {n:1, t:'Location sharing <strong>starts automatically</strong> when you sign in.'},
+        {n:2, t:'When asked "Allow location access?", tap <strong>Allow</strong>.'},
+        {n:3, t:'The green <strong>LIVE</strong> pill in the top bar means you\'re sharing.'},
+        {n:4, t:'Your office sees your position on a map in real time.'},
+        {n:5, t:'Tap <strong>GPS</strong> in the top bar (or go to Stats) to toggle it on/off.'},
+      ],
+      tip:'Location only updates when the app is open. It stops automatically when you log out.'
+    },
+    {
+      icon:'📤', title:'Requesting Overtime',
+      steps:[
+        {n:1, t:'Go to <strong>Requests</strong> tab and tap <strong>"Request Overtime Hours"</strong>.'},
+        {n:2, t:'Fill in the date, extra hours, rate type, and the job address.'},
+        {n:3, t:'Tap <strong>Submit</strong> — your office gets notified and can approve/reject.'},
+        {n:4, t:'You\'ll see the status update in your Requests list (Pending → Approved/Rejected).'},
+      ]
+    },
+    {
+      icon:'📆', title:'Requesting Time Off',
+      steps:[
+        {n:1, t:'Go to <strong>Requests</strong> tab and tap <strong>"Request Time Off"</strong>.'},
+        {n:2, t:'Select the type: Annual Leave, Sick, Personal, Emergency.'},
+        {n:3, t:'Choose your start and end dates, add a brief reason, and submit.'},
+        {n:4, t:'Your office reviews requests and updates the status.'},
+      ]
+    },
+    {
+      icon:'🔑', title:'PIN & Login Issues',
+      steps:[
+        {n:1, t:'Your PIN is set by your office — contact them if you forget it.'},
+        {n:2, t:'Your login is saved on this device — you won\'t need to log in every time.'},
+        {n:3, t:'If jobs aren\'t showing, check your internet connection and tap refresh.'},
+        {n:4, t:'If you see "Wrong name or PIN", make sure you\'re spelling your name exactly as registered.'},
+      ],
+      tip:'Your name and PIN are case-insensitive — "mike" and "Mike" both work.'
+    },
+  ];
+
+  el.innerHTML = sections.map((s,i) => `
+    <div class="guide-section">
+      <div class="guide-hd" onclick="toggleGuide(${i})" id="ghd-${i}">
+        <div class="guide-hd-title"><span>${s.icon}</span> ${s.title}</div>
+        <span class="guide-chevron">▾</span>
+      </div>
+      <div class="guide-body" id="gbody-${i}">
+        ${s.steps.map(st=>`<div class="guide-step"><div class="guide-step-num">${st.n}</div><div class="guide-step-text">${st.t}</div></div>`).join('')}
+        ${s.tip ? `<div class="guide-tip">${s.tip}</div>` : ''}
+      </div>
+    </div>`).join('') + '<div style="height:20px"></div>';
+}
+
+function toggleGuide(i) {
+  const hd   = document.getElementById(`ghd-${i}`);
+  const body = document.getElementById(`gbody-${i}`);
+  const open = body.classList.toggle('open');
+  hd.classList.toggle('open', open);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOCATION TRACKING
+// ══════════════════════════════════════════════════════════════
+let _locWatch = null, _locOn = false;
+
+function toggleLocation() { _locOn ? stopLocation() : startLocation(); }
+
+function startLocation() {
+  setLocPills(false); // show off while requesting
+  if (!navigator.geolocation) { toast('GPS not supported', 'error'); return; }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    _locOn = true;
+    await sendLoc(pos);
+    _locWatch = navigator.geolocation.watchPosition(sendLoc,
+      err => console.warn('GPS:', err),
+      { enableHighAccuracy:true, maximumAge:30000, timeout:15000 });
+    updateLocStatus();
+    toast('📍 Location sharing ON', 'success');
+  }, err => {
+    setLocPills(false);
+    toast('Location denied: ' + err.message, 'error');
+  }, { enableHighAccuracy:true, timeout:15000 });
+}
+
+function stopLocation() {
+  if (_locWatch !== null) { navigator.geolocation.clearWatch(_locWatch); _locWatch = null; }
+  _locOn = false;
+  updateLocStatus();
+  if (currentUser) {
+    sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,
+      { method:'PATCH', body:{ last_lat:null, last_lng:null, last_seen:null }}).catch(()=>{});
+  }
+  toast('Location sharing OFF', 'info');
+}
+
+async function sendLoc(pos) {
+  const { latitude:lat, longitude:lng, accuracy } = pos.coords;
+  try {
+    await sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,
+      { method:'PATCH', body:{ last_lat:lat, last_lng:lng, last_seen:Date.now(), last_accuracy:Math.round(accuracy||0) }});
+  } catch(e) { console.warn('Loc send failed', e); }
+}
+
+function setLocPills(on) {
+  const live = document.getElementById('loc-pill');
+  const off  = document.getElementById('loc-off-pill');
+  if (live) live.style.display  = on  ? 'flex' : 'none';
+  if (off)  off.style.display   = !on ? 'flex' : 'none';
+}
+
+function updateLocStatus() {
+  setLocPills(_locOn);
+  // Dash panel
+  const el  = document.getElementById('loc-status-dash');
+  const btn = document.getElementById('loc-btn');
+  if (el)  el.innerHTML = _locOn
+    ? '<span style="color:var(--green)">● Live — office can see your location</span>'
+    : '<span style="color:var(--txt3)">○ Not sharing</span>';
+  if (btn) { btn.textContent = _locOn ? '⏹ Stop Sharing' : '📍 Share My Location';
+             btn.style.background = _locOn ? 'var(--s4)' : 'var(--acc)'; }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  ['today','upcoming','done','dash','requests','guide'].forEach(t => {
+    document.getElementById(`tab-${t}`)?.classList.toggle('active', t === tab);
+    document.getElementById(`nav-${t}`)?.classList.toggle('active', t === tab);
+    document.getElementById(`page-${t}`)?.classList.toggle('active', t === tab);
+  });
+  if (tab === 'dash')     loadDash();
+  if (tab === 'requests') loadRequests();
+}
+
+function closeModal(id) {
+  document.getElementById(id)?.classList.remove('open');
+  if (id === 'job-modal') currentJob = null;
+}
+
+function updateTabBadge(tab, count) {
+  const b = document.getElementById(`${tab}-badge`) || document.querySelector(`#nav-${tab} .nav-badge`);
+  if (!b) return;
+  b.style.display = count > 0 ? 'inline-block' : 'none';
+  b.textContent   = count;
+}
+
+let _toastT;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `show ${type}`;
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.className = '', 3000);
+}
+
+function fmtDate(ts) {
+  if (!ts) return '';
+  return new Date(typeof ts === 'number' ? ts : Date.parse(ts))
+    .toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+(function init() {
+  // Close modals on overlay click
+  ['job-modal','ot-modal','leave-modal'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      if (e.target.id === id) closeModal(id);
+    });
+  });
+
+  // Resume session
+  try {
+    const saved = JSON.parse(localStorage.getItem('df_eng_user') || 'null');
+    if (saved?.name) { currentUser = saved; showApp(); }
+  } catch(e) { localStorage.removeItem('df_eng_user'); }
+
+  // Auto-refresh every 2 min
+  setInterval(() => { if (currentUser) loadJobs(); }, 120000);
+})();
+</script>
+</body>
+</html>
