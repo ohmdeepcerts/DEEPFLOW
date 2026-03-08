@@ -342,6 +342,18 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- MAIN APP -->
+<!-- OFFICE BROADCAST ALERT OVERLAY -->
+<div id="alert-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;flex-direction:column;padding:20px">
+  <div id="alert-box" style="background:#1a1a1a;border:2px solid #f5a623;border-radius:20px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 0 80px rgba(245,166,35,.3)">
+    <div id="alert-icon" style="font-size:48px;margin-bottom:12px">⚠️</div>
+    <div id="alert-type-label" style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f5a623;margin-bottom:8px">OFFICE ALERT</div>
+    <div id="alert-title" style="font-size:20px;font-weight:900;color:#fff;margin-bottom:12px;font-family:sans-serif">—</div>
+    <div id="alert-msg" style="font-size:14px;color:#ccc;line-height:1.6;margin-bottom:24px">—</div>
+    <div id="alert-from" style="font-size:11px;color:#888;margin-bottom:20px">From: Office</div>
+    <button onclick="dismissAlert()" style="background:#f5a623;color:#1a1a1a;border:none;border-radius:10px;padding:14px 32px;font-size:15px;font-weight:800;cursor:pointer;width:100%">✓ Understood — Dismiss</button>
+  </div>
+</div>
+
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
@@ -673,6 +685,7 @@ function showApp(){
     new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   _loadGeoCache();
   loadJobs();
+  setTimeout(checkBroadcastAlerts,5000);
   renderGuide();
   _startLocationSilent();
   fetchWeather(51.5074,-0.1278).then(()=>setTimeout(loadDash,500));
@@ -771,13 +784,13 @@ function _initPullToRefresh(){
 // ══════════════════════════════════════════════════════════════
 async function loadJobs(){
   const today=new Date().toISOString().split('T')[0];
-  const week=new Date(Date.now()+7*86400000).toISOString().split('T')[0];
+  const future=new Date(Date.now()+30*86400000).toISOString().split('T')[0]; // 30 days ahead
   const enc=encodeURIComponent(currentUser.name);
   try{
     const[todayJobs,upcoming,done]=await Promise.all([
-      sb(`jobs?date=eq.${today}&engineer=ilike.${enc}&order=created.asc&select=*`),
-      sb(`jobs?date=gt.${today}&date=lte.${week}&engineer=ilike.${enc}&status=neq.Completed&order=date.asc&select=*`),
-      sb(`jobs?engineer=ilike.${enc}&status=eq.Completed&order=modified.desc&limit=60&select=*`)
+      sb(`jobs?date=eq.${today}&engineer=eq.${enc}&order=created.asc&select=*`),
+      sb(`jobs?date=gt.${today}&date=lte.${future}&engineer=eq.${enc}&order=date.asc&select=*`),
+      sb(`jobs?engineer=eq.${enc}&status=eq.Completed&order=modified.desc&limit=60&select=*`)
     ]);
     renderJobs('jobs-today',todayJobs||[],'today');
     renderJobs('jobs-upcoming',upcoming||[],'upcoming');
@@ -902,10 +915,7 @@ function renderJobDetail(j,atts){
     <div class="status-selector">
       <div class="status-selector-label">Update Status</div>
       <div class="status-pills-row">
-        <button class="sp-btn sp-pending ${j.status==='Pending'?'active':''}" onclick="updateStatus('Pending',this)">⏳ Pending</button>
-        <button class="sp-btn sp-progress ${j.status==='In Progress'?'active':''}" onclick="updateStatus('In Progress',this)">🔄 In Progress</button>
-        <button class="sp-btn sp-completed ${j.status==='Completed'?'active':''}" onclick="updateStatus('Completed',this)">✅ Completed</button>
-        <button class="sp-btn sp-noaccess ${j.status==='Cannot Access'?'active':''}" onclick="updateStatus('Cannot Access',this)">🚫 No Access</button>
+        ${_statusButtons(j.status)}
       </div>
     </div>
 
@@ -1031,17 +1041,67 @@ function _waShareNotes(){
 // ══════════════════════════════════════════════════════════════
 //  STATUS / NOTES / HOURS
 // ══════════════════════════════════════════════════════════════
-async function updateStatus(status,btn){
-  if(!currentJob)return;
-  document.querySelectorAll('.sp-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
+// Status flow: what each status can move to
+const STATUS_FLOW={
+  'Pending':       ['In Progress','Cannot Access'],
+  'In Progress':   ['Completed','Cannot Access'],
+  'Completed':     [],           // LOCKED — no going back
+  'Cannot Access': ['In Progress'], // office can reassign but engineer can re-attempt
+  'Invoiced':      [],           // LOCKED
+  'Cancelled':     []            // LOCKED
+};
+
+function _statusButtons(currentStatus){
+  const all=[
+    {key:'Pending',      label:'⏳ Pending',    cls:'sp-pending'},
+    {key:'In Progress',  label:'🔄 In Progress', cls:'sp-progress'},
+    {key:'Completed',    label:'✅ Completed',   cls:'sp-completed'},
+    {key:'Cannot Access',label:'🚫 No Access',   cls:'sp-noaccess'},
+  ];
+  const allowed=STATUS_FLOW[currentStatus]||[];
+  return all.map(s=>{
+    const isActive=s.key===currentStatus;
+    const isLocked=!isActive&&!allowed.includes(s.key);
+    if(isLocked) return `<button class="sp-btn ${s.cls}" disabled style="opacity:.25;cursor:not-allowed;filter:grayscale(1)" title="Cannot go back to ${s.key}">${s.label}</button>`;
+    return `<button class="sp-btn ${s.cls} ${isActive?'active':''}" onclick="updateStatus('${s.key}',this)" ${isActive?'style="cursor:default"':''}>${s.label}${isActive?' ✓':''}</button>`;
+  }).join('');
+}
+
+async function updateStatus(status, btn){
+  if(!currentJob) return;
+
+  // Client-side flow check
+  const allowed=STATUS_FLOW[currentJob.status]||[];
+  if(status===currentJob.status) return; // already set
+  if(!allowed.includes(status)){
+    toast(`🔒 Cannot change from "${currentJob.status}" to "${status}"`, 'error');
+    return;
+  }
+
+  // Server-side verification: re-fetch current status before patching
   try{
+    const live=await sb(`jobs?id=eq.${currentJob.id}&select=id,status`);
+    const liveStatus=live?.[0]?.status;
+    if(liveStatus && liveStatus!==currentJob.status){
+      // Someone else changed it — refresh
+      currentJob.status=liveStatus;
+      document.getElementById('modal-status-pill').innerHTML=_spill(liveStatus,currentJob.priority);
+      const newBtns=document.querySelector('.status-pills-row');
+      if(newBtns) newBtns.innerHTML=_statusButtons(liveStatus);
+      toast(`ℹ️ Status was already updated to "${liveStatus}"`, 'warn');
+      loadJobs();
+      return;
+    }
+
     await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{status,modified:Date.now()}});
     currentJob.status=status;
-    toast(`✅ Status → ${status}`,'success');
+    document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
+    // Refresh the buttons
+    const btnRow=document.querySelector('.status-pills-row');
+    if(btnRow) btnRow.innerHTML=_statusButtons(status);
+    toast(`Status updated to ${status}`, 'success');
     loadJobs();
-  }catch(e){toast('⚠️ Status update failed','error');}
+  }catch(e){ toast('⚠️ Status update failed','error'); }
 }
 
 async function saveNotes(){
@@ -1784,6 +1844,59 @@ async function _initPush(){
   },2000);
 }
 function _setBaseline(){if(_allJobs.length){_lastJobIds=new Set(_allJobs.map(j=>j.id));}}
+// ══ BROADCAST ALERT POLLING ══
+let _lastAlertCheck=Math.floor(Date.now()/1000);
+let _shownAlerts=JSON.parse(localStorage.getItem('df_shown_alerts')||'[]');
+
+async function checkBroadcastAlerts(){
+  if(!currentUser) return;
+  try{
+    const now=Math.floor(Date.now()/1000);
+    const alerts=await sb(`engineer_alerts?status=eq.active&expires=gte.${now}&created=gt.${_lastAlertCheck-5}&order=created.desc&limit=5`);
+    _lastAlertCheck=now;
+    if(!alerts?.length) return;
+    for(const a of alerts){
+      if(_shownAlerts.includes(a.id)) continue;
+      if(a.target!=='all'&&a.target!==currentUser.name) continue;
+      showBroadcastAlert(a);
+      break; // show one at a time
+    }
+  }catch(e){} // table may not exist yet
+}
+
+function showBroadcastAlert(a){
+  const icons={info:'ℹ️',warning:'⚠️',urgent:'🚨'};
+  const colors={info:'#4f8fff',warning:'#f5a623',urgent:'#e05252'};
+  const box=document.getElementById('alert-box');
+  if(box) box.style.borderColor=colors[a.type]||'#f5a623';
+  const icon=document.getElementById('alert-icon');
+  if(icon) icon.textContent=icons[a.type]||'⚠️';
+  const typeEl=document.getElementById('alert-type-label');
+  if(typeEl){ typeEl.textContent={info:'OFFICE INFO',warning:'OFFICE WARNING',urgent:'🚨 URGENT — READ NOW'}[a.type]||'OFFICE ALERT'; typeEl.style.color=colors[a.type]; }
+  const titleEl=document.getElementById('alert-title');
+  if(titleEl) titleEl.textContent=a.title||'Alert';
+  const msgEl=document.getElementById('alert-msg');
+  if(msgEl) msgEl.textContent=a.message||'';
+  const fromEl=document.getElementById('alert-from');
+  if(fromEl) fromEl.textContent=`From: ${a.sent_by||'Office'} · ${new Date(a.created*1000).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+  const ov=document.getElementById('alert-overlay');
+  if(ov){ ov.style.display='flex'; ov.dataset.alertId=a.id; }
+  // Vibrate on mobile
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+}
+
+function dismissAlert(){
+  const ov=document.getElementById('alert-overlay');
+  if(!ov) return;
+  const id=ov.dataset.alertId;
+  if(id&&!_shownAlerts.includes(id)){
+    _shownAlerts.push(id);
+    if(_shownAlerts.length>50) _shownAlerts=_shownAlerts.slice(-50);
+    localStorage.setItem('df_shown_alerts',JSON.stringify(_shownAlerts));
+  }
+  ov.style.display='none';
+}
+
 function _checkForNewJobs(todayJobs){
   if(!_pushGranted||!todayJobs?.length)return;
   if(!_lastJobIds.size){_lastJobIds=new Set(todayJobs.map(j=>j.id));return;}
@@ -1959,7 +2072,9 @@ function _fd(ts){
     if(saved?.name&&saved?.role==='engineer'){currentUser=saved;showApp();}
   }catch(e){localStorage.removeItem('df_eng_user');}
   // Auto-refresh every 45s
-  setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden')loadJobs();},45000);
+  setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},45000);
+  // Check for alerts more frequently
+  setInterval(()=>{if(currentUser)checkBroadcastAlerts();},15000);
 })();
 </script>
 </body>
