@@ -64,15 +64,15 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 .spinning{animation:spin .7s linear infinite;display:inline-block}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(20px)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:calc(env(safe-area-inset-bottom) + 4px);backdrop-filter:blur(20px)}
 [data-theme="light"] .bottom-nav{background:rgba(255,255,255,.97)}
-.nav-item{flex:1;padding:10px 4px 10px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-item{flex:1;padding:12px 4px 8px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px}
 .nav-item.active{color:var(--acc)}
 .nav-icon{font-size:19px}
 .nav-badge{position:absolute;top:8px;right:calc(50% - 16px);background:var(--red);color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:800;line-height:1.4}
 
 /* FAB - floating action button */
-.fab{position:fixed;bottom:90px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;color:#fff;font-size:28px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(79,143,255,.5);display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
+.fab{position:fixed;bottom:96px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;color:#fff;font-size:28px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(79,143,255,.5);display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
 .fab:active{transform:scale(.93)}
 .fab.hidden{display:none}
 
@@ -84,8 +84,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 .sec-hd-line{flex:1;height:1px;background:var(--border)}
 
 /* PULL TO REFRESH */
-.ptr-indicator{text-align:center;padding:10px;font-size:12px;color:var(--txt3);font-weight:600;overflow:hidden;max-height:0;transition:max-height .3s}
-.ptr-indicator.visible{max-height:50px}
 
 /* JOB CARDS — full tinted background */
 .job-card{border-radius:var(--r);padding:14px 14px 14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;border:1px solid transparent}
@@ -124,7 +122,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 [data-theme="light"] .chip-trade{background:rgba(0,0,0,.05)}
 .chip-cert{background:rgba(20,184,166,.12);color:var(--teal);border:1px solid rgba(20,184,166,.22)}
 .chip-hours{background:rgba(245,166,35,.1);color:var(--yellow);border:1px solid rgba(245,166,35,.22)}
-.done-tick{position:absolute;top:0;right:0;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:0 var(--r) 0 8px;letter-spacing:.8px}
+
 
 /* STATUS PILLS */
 .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
@@ -354,22 +352,64 @@ select.fi-sm{cursor:pointer}
   </div>
 </div>
 
-<div id="app">
+<!-- ELECTRICAL BACKGROUND -->
+<canvas id="elec-bg" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.32"></canvas>
+
+<div id="app" style="position:relative;z-index:1">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-name" id="topbar-name">Engineer</div>
+    <div class="topbar-left" onclick="openUserMenu()" style="cursor:pointer;padding:2px 6px 2px 0">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="topbar-name" id="topbar-name">Engineer</div>
+        <span style="font-size:10px;color:var(--txt3)">▾</span>
+      </div>
       <div class="topbar-date" id="topbar-date"></div>
     </div>
     <div class="topbar-right">
-      <button class="refresh-btn" onclick="refreshAll()"><span id="refresh-icon">↺</span> Update Jobs</button>
+      <div id="office-status-pill" onclick="checkOfficeConnection()" style="display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 10px;cursor:pointer;transition:all .2s">
+        <span id="office-dot" style="width:7px;height:7px;border-radius:50%;background:#888;flex-shrink:0;transition:background .4s"></span>
+        <span id="office-label" style="font-size:10px;font-weight:700;color:var(--txt3);white-space:nowrap">Office</span>
+      </div>
       <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">🌙</button>
-      <button class="btn-icon" onclick="doLogout()" title="Sign out">↩</button>
+    </div>
+  </div>
+
+  <!-- USER MENU SHEET -->
+  <div id="user-menu-sheet" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6)" onclick="if(event.target===this)closeUserMenu()">
+    <div style="position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:20px 20px 0 0;padding:20px 20px 40px;box-shadow:0 -8px 40px rgba(0,0,0,.4)">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px"></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff" id="user-avatar-letter">J</div>
+        <div>
+          <div style="font-size:17px;font-weight:800" id="user-menu-name">Engineer</div>
+          <div style="font-size:12px;color:var(--txt3)">Electrician · DeepFlow</div>
+        </div>
+      </div>
+      <div onclick="refreshAll();closeUserMenu()" style="display:flex;align-items:center;gap:14px;padding:14px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
+        <span style="font-size:22px">↺</span>
+        <div>
+          <div style="font-size:14px;font-weight:700">Refresh Jobs</div>
+          <div style="font-size:11px;color:var(--txt3)" id="user-menu-last-refresh">Pull down or tap here to sync</div>
+        </div>
+      </div>
+      <div onclick="toggleTheme();closeUserMenu()" style="display:flex;align-items:center;gap:14px;padding:14px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
+        <span style="font-size:22px" id="user-menu-theme-icon">🌙</span>
+        <div>
+          <div style="font-size:14px;font-weight:700">Toggle Theme</div>
+          <div style="font-size:11px;color:var(--txt3)">Switch dark / light mode</div>
+        </div>
+      </div>
+      <div onclick="doLogout()" style="display:flex;align-items:center;gap:14px;padding:14px 4px;cursor:pointer;margin-top:4px">
+        <span style="font-size:22px">🚪</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--red)">Sign Out</div>
+          <div style="font-size:11px;color:var(--txt3)">Log out of your account</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- TODAY -->
   <div class="page active" id="page-today">
-    <div class="ptr-indicator" id="ptr-indicator">↓ Pull to refresh</div>
     <div style="padding:6px 14px 0;font-size:11px;color:var(--txt3)" id="refresh-ts"></div>
     <div id="jobs-today" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
   </div>
@@ -438,13 +478,12 @@ select.fi-sm{cursor:pointer}
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('today')" id="nav-today"><span class="nav-icon">📅</span>Today<span class="nav-badge" id="badge-today" style="display:none"></span></div>
+    <div class="nav-item active" onclick="switchTab('today')" id="nav-today"><span class="nav-icon">⚡</span>Today<span class="nav-badge" id="badge-today" style="display:none"></span></div>
     <div class="nav-item" onclick="switchTab('upcoming')" id="nav-upcoming"><span class="nav-icon">📋</span>Upcoming</div>
     <div class="nav-item" onclick="switchTab('done')" id="nav-done"><span class="nav-icon">✅</span>Done</div>
     <div class="nav-item" onclick="switchTab('map')" id="nav-map"><span class="nav-icon">🗺</span>Map</div>
     <div class="nav-item" onclick="switchTab('dash')" id="nav-dash"><span class="nav-icon">📊</span>Stats</div>
     <div class="nav-item" onclick="switchTab('requests')" id="nav-requests"><span class="nav-icon">📤</span>Requests<span class="nav-badge" id="badge-requests" style="display:none"></span></div>
-    <div class="nav-item" onclick="switchTab('guide')" id="nav-guide"><span class="nav-icon">📖</span>Guide</div>
   </div>
 
   <!-- FAB — Add Job (shown on today/upcoming tabs) -->
@@ -567,6 +606,170 @@ select.fi-sm{cursor:pointer}
 <div id="toast"></div>
 
 <script>
+// ══ ELECTRICAL BACKGROUND ANIMATION ══
+(function(){
+const canvas=document.getElementById("elec-bg");
+if(!canvas)return;
+const ctx=canvas.getContext("2d");
+let W,H,nodes=[],edges=[],bolts=[],currents=[],frame=0;
+const isDark=()=>document.documentElement.getAttribute("data-theme")!=="light";
+
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+  buildCircuit();
+}
+
+function buildCircuit(){
+  nodes=[];edges=[];currents=[];
+  // Grid-snapped nodes with small jitter — proper circuit feel
+  const gx=80,gy=80;
+  const cols=Math.ceil(W/gx)+1,rows=Math.ceil(H/gy)+1;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    // Sparse — only keep ~55% of grid points
+    if(Math.random()<0.45)continue;
+    nodes.push({
+      x:c*gx+(Math.random()*16-8),
+      y:r*gy+(Math.random()*16-8),
+      pulse:Math.random()*Math.PI*2,
+      pulseSpeed:0.015+Math.random()*0.02,
+      size:1+Math.random()*2,
+      bright:Math.random()
+    });
+  }
+  // Connect nearby nodes with right-angle-ish edges
+  nodes.forEach((a,i)=>{
+    nodes.slice(i+1).forEach((b,j)=>{
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<110&&Math.random()<0.5){
+        edges.push({a,b,flow:Math.random(),flowSpeed:0.003+Math.random()*0.005});
+      }
+    });
+  });
+  // Spawn some flowing current particles along edges
+  edges.forEach(e=>{
+    if(Math.random()<0.3){
+      currents.push({edge:e,t:Math.random(),speed:0.004+Math.random()*0.006,size:2+Math.random()*2});
+    }
+  });
+}
+
+function zigzag(x1,y1,x2,y2,segs){
+  const pts=[[x1,y1]];
+  for(let i=1;i<segs;i++){
+    const t=i/segs,px=x1+(x2-x1)*t,py=y1+(y2-y1)*t;
+    const ang=Math.atan2(y2-y1,x2-x1)+Math.PI/2;
+    const off=(Math.random()-.5)*22;
+    pts.push([px+Math.cos(ang)*off,py+Math.sin(ang)*off]);
+  }
+  pts.push([x2,y2]);
+  return pts;
+}
+
+function spawnBolt(){
+  if(nodes.length<2)return;
+  const a=nodes[Math.floor(Math.random()*nodes.length)];
+  const candidates=nodes.filter(n=>n!==a&&Math.hypot(n.x-a.x,n.y-a.y)<200);
+  if(!candidates.length)return;
+  const b=candidates[Math.floor(Math.random()*candidates.length)];
+  const segs=5+Math.floor(Math.random()*5);
+  bolts.push({
+    pts:zigzag(a.x,a.y,b.x,b.y,segs),
+    life:1.0,
+    decay:0.05+Math.random()*0.04,
+    width:1+Math.random()*1.5,
+    branches:Math.random()<0.4?[]:Array.from({length:Math.floor(Math.random()*3)+1},()=>{
+      const mid=Math.floor(segs/2)+Math.floor(Math.random()*2);
+      return {start:mid,pts:zigzag(0,0,0,0,3).map((_,i,arr)=>{
+        const sx=b.pts?b.pts[0]:a.x,sy=b.pts?b.pts[1]:a.y;
+        return[sx+(Math.random()-0.5)*60,sy+(Math.random()-0.5)*60];
+      })};
+    })
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const dark=isDark();
+  const ACC  = dark ? [79,143,255]  : [40,100,220];
+  const GOLD = dark ? [245,166,35]  : [200,130,10];
+  const TEAL = dark ? [34,197,150]  : [10,160,120];
+  const rgb=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  frame++;
+
+  // ── Circuit edges (static wires) ──
+  edges.forEach(e=>{
+    e.flow=(e.flow+e.flowSpeed)%1;
+    const alpha=0.06+Math.abs(Math.sin(e.flow*Math.PI))*0.08;
+    ctx.beginPath();ctx.moveTo(e.a.x,e.a.y);ctx.lineTo(e.b.x,e.b.y);
+    ctx.strokeStyle=rgb(ACC,alpha);ctx.lineWidth=1;ctx.stroke();
+  });
+
+  // ── Flowing current particles ──
+  currents.forEach(c=>{
+    c.t=(c.t+c.speed)%1;
+    const x=c.edge.a.x+(c.edge.b.x-c.edge.a.x)*c.t;
+    const y=c.edge.a.y+(c.edge.b.y-c.edge.a.y)*c.t;
+    // Core dot
+    ctx.beginPath();ctx.arc(x,y,c.size,0,Math.PI*2);
+    ctx.fillStyle=rgb(TEAL,0.7);ctx.fill();
+    // Glow
+    ctx.beginPath();ctx.arc(x,y,c.size*2.5,0,Math.PI*2);
+    ctx.fillStyle=rgb(TEAL,0.12);ctx.fill();
+  });
+
+  // ── Circuit nodes ──
+  nodes.forEach(n=>{
+    n.pulse+=n.pulseSpeed;
+    const a=0.15+Math.abs(Math.sin(n.pulse))*0.55;
+    const r=n.size*(0.8+Math.abs(Math.sin(n.pulse))*0.6);
+    // Outer glow
+    const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*4);
+    g.addColorStop(0,rgb(ACC,a*0.5));
+    g.addColorStop(1,rgb(ACC,0));
+    ctx.beginPath();ctx.arc(n.x,n.y,r*4,0,Math.PI*2);
+    ctx.fillStyle=g;ctx.fill();
+    // Core
+    ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);
+    ctx.fillStyle=rgb(ACC,a*0.9);ctx.fill();
+  });
+
+  // ── Lightning bolts ──
+  bolts=bolts.filter(b=>b.life>0);
+  bolts.forEach(b=>{
+    b.life-=b.decay;
+    if(b.life<=0)return;
+    const a=Math.pow(b.life,0.7);
+    // Draw main bolt
+    [1].forEach(()=>{
+      ctx.beginPath();
+      ctx.moveTo(b.pts[0][0],b.pts[0][1]);
+      b.pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+      // Glow layer
+      ctx.strokeStyle=rgb(GOLD,a*0.25);
+      ctx.lineWidth=b.width*5;ctx.shadowBlur=0;ctx.stroke();
+      // Core
+      ctx.strokeStyle=rgb(GOLD,a*0.95);
+      ctx.lineWidth=b.width;
+      ctx.shadowColor=rgb(GOLD,0.9);ctx.shadowBlur=12;
+      ctx.stroke();
+      ctx.shadowBlur=0;
+    });
+  });
+
+  // Spawn bolts
+  if(frame%60===0&&Math.random()<0.8)spawnBolt();
+  if(frame%180===0&&Math.random()<0.5)spawnBolt(); // double-strike
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener("resize",resize);
+resize();
+draw();
+})();
+
+
 'use strict';
 // ══════════════════════════════════════════════════════════════
 //  CONFIG
@@ -668,6 +871,43 @@ async function doLogin(){
   finally{btn.textContent='Sign In →';btn.disabled=false;}
 }
 function _loginErr(m){const e=document.getElementById('login-err');e.textContent=m;e.style.display='block';}
+// ══ USER MENU SHEET ══
+function openUserMenu(){
+  const sheet=document.getElementById('user-menu-sheet');
+  if(!sheet)return;
+  const nameEl=document.getElementById('user-menu-name');
+  const avatarEl=document.getElementById('user-avatar-letter');
+  if(nameEl)nameEl.textContent=currentUser?.name||'Engineer';
+  if(avatarEl)avatarEl.textContent=(currentUser?.name||'E')[0].toUpperCase();
+  const refreshEl=document.getElementById('user-menu-last-refresh');
+  const ts=document.getElementById('refresh-ts');
+  if(refreshEl&&ts&&ts.textContent)refreshEl.textContent=ts.textContent;
+  const themeIcon=document.getElementById('user-menu-theme-icon');
+  if(themeIcon)themeIcon.textContent=document.documentElement.getAttribute('data-theme')==='light'?'🌑':'🌙';
+  sheet.style.display='block';
+}
+function closeUserMenu(){
+  const s=document.getElementById('user-menu-sheet');
+  if(s)s.style.display='none';
+}
+
+// ══ OFFICE CONNECTION STATUS ══
+// Green = Supabase reachable (connected to office system)
+// Red   = No internet / Supabase unreachable
+async function checkOfficeConnection(){
+  const dot=document.getElementById('office-dot');
+  const lbl=document.getElementById('office-label');
+  try{
+    // Lightweight ping — just fetch 1 row, we only care if it succeeds
+    await sb('users?limit=1&select=id');
+    if(dot){dot.style.background='#22c55e';dot.style.boxShadow='0 0 8px rgba(34,197,94,.6)';}
+    if(lbl){lbl.style.color='#22c55e';lbl.textContent='Connected';}
+  }catch(e){
+    if(dot){dot.style.background='#e05252';dot.style.boxShadow='0 0 8px rgba(224,82,82,.5)';}
+    if(lbl){lbl.style.color='#e05252';lbl.textContent='No Connection';}
+  }
+}
+
 function doLogout(){
   if(!confirm('Sign out of DeepFlow?'))return;
   _stopLocation();
@@ -681,6 +921,7 @@ function showApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('topbar-name').textContent=currentUser.name;
+  setTimeout(checkOfficeConnection,1500);
   document.getElementById('topbar-date').textContent=
     new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   _loadGeoCache();
@@ -725,7 +966,7 @@ function _initPullToRefresh(){
   // Attach to the scrollable container, not the whole page,
   // so the listener is closer to where the gesture happens.
   const el=document.getElementById('page-today');
-  const ind=document.getElementById('ptr-indicator');
+  const ind=null;//removed
 
   el.addEventListener('touchstart',e=>{
     // Only arm if the page is truly at the top
@@ -756,10 +997,10 @@ function _initPullToRefresh(){
     if(dy > 8){
       pulling=true;
       if(dy > threshold){
-        ind.textContent='⬆ Release to refresh';
+        ind.textContent='↑  release to refresh';
         ind.classList.add('visible');
       } else {
-        ind.textContent='↓ Pull to refresh';
+        ind.textContent='↓  swipe down to refresh';
         ind.classList.add('visible');
       }
     }
@@ -769,7 +1010,7 @@ function _initPullToRefresh(){
     if(pulling){
       const dy = e.changedTouches[0].clientY - startY;
       if(dy > threshold){
-        ind.textContent='⟳ Refreshing…';
+        ind.textContent='⚡ refreshed';
         refreshAll().then(()=>{ ind.classList.remove('visible'); });
       } else {
         ind.classList.remove('visible');
@@ -825,12 +1066,47 @@ function renderJobs(cid,jobs,type){
   }else{el.innerHTML=jobs.map(_buildCard).join('');}
 }
 
+// Cert types: loaded from main app localStorage (df_setting_certTypes)
+// Falls back to main app defaults if not on same device
+const _DEFAULT_CERT_TYPES=[
+  {id:'ct1',name:'Gas Safety'},
+  {id:'ct2',name:'Electrical (EICR)'},
+  {id:'ct3',name:'Fire Alarm'},
+  {id:'ct4',name:'Emergency Lighting'},
+  {id:'ct5',name:'PAT Testing'},
+  {id:'ct6',name:'EPC'},
+  {id:'ct7',name:'Legionella'},
+];
+function _loadCertTypes(){
+  try{
+    const raw=localStorage.getItem('df_setting_certTypes');
+    if(raw){const arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length)return arr;}
+  }catch(e){}
+  return _DEFAULT_CERT_TYPES;
+}
+let _CERT_TYPES=_loadCertTypes();
+// Build lookup: id → short label, e.g. ct2 → "EICR", "Gas Safety" → "Gas Safety"
+function _buildCertMap(){
+  const map={};
+  _CERT_TYPES.forEach(ct=>{
+    // id lookup
+    map[ct.id]=ct.name;
+    // also index by lowercased name for robustness
+    map[ct.name.toLowerCase()]=ct.name;
+  });
+  return map;
+}
+let _CERT_MAP=_buildCertMap();
+function _certLabel(c){
+  if(!c)return'';
+  return _CERT_MAP[c]||_CERT_MAP[c.toLowerCase()]||c;
+}
 function _buildCard(j){
   const sc=_sc(j.status,j.priority);
-  const certs=(j.certTypes||[]).map(c=>`<span class="job-chip chip-cert">${c}</span>`).join('');
+  const certs=(j.certTypes||[]).map(c=>`<span class="job-chip chip-cert">${_certLabel(c)}</span>`).join('');
   return`<div class="job-card ${sc}" onclick="openJob('${j.id}')">
     <div class="job-card-stripe"></div>
-    ${j.status==='Completed'?'<div class="done-tick">✓ DONE</div>':''}
+    
     <div class="job-card-top">
       <div style="min-width:0;flex:1">
         <div class="job-num">${j.jobNum||'—'}</div>
@@ -933,7 +1209,7 @@ function renderJobDetail(j,atts){
         ${_dr('Date',j.date?new Date(j.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'')}
         ${_dr('Time',j.timeSlot?`🕐 ${j.timeSlot}`:'')}
         ${_dr('Trade',j.trade)}
-        ${_dr('Certs',(j.certTypes||[]).join(', '))}
+        ${_dr('Certs',(j.certTypes||[]).map(_certLabel).join(', '))}
         ${_dr('Ref',j.jobNum)}
         ${_dr('Details',j.description)}
         ${_dr('Hours',j.hours?j.hours+' hrs':'')}
@@ -2075,6 +2351,7 @@ function _fd(ts){
   setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},45000);
   // Check for alerts more frequently
   setInterval(()=>{if(currentUser)checkBroadcastAlerts();},15000);
+  setInterval(()=>{if(currentUser)checkOfficeConnection();},120000);
 })();
 </script>
 </body>
