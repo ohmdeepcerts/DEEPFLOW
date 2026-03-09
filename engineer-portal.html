@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +9,7 @@
 <meta name="theme-color" content="#0a0d14">
 <title>DeepFlow Engineer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0a0d14;--s1:#0f1320;--s2:#151b2c;--s3:#1c2438;--s4:#222d42;
@@ -33,46 +34,46 @@
 body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:100vh;overscroll-behavior:none;transition:background .3s,color .3s}
 
 /* LOGIN */
-#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,143,255,.25) 0%,transparent 70%),var(--bg);transition:background .3s}
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,143,255,.25) 0%,transparent 70%),var(–bg);transition:background .3s}
 .login-bolt{font-size:56px;margin-bottom:6px;filter:drop-shadow(0 0 24px rgba(79,143,255,.6))}
-.login-brand{font-size:34px;font-weight:900;letter-spacing:-1.5px;background:linear-gradient(135deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-[data-theme="light"] .login-brand{background:linear-gradient(135deg,#1a1f2e 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login-role{color:var(--txt3);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;margin-top:6px;font-weight:600}
-.login-box{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:30px;width:100%;max-width:340px;box-shadow:var(--sh)}
-.fi{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--txt);padding:14px 16px;font-size:16px;margin-bottom:12px;outline:none;transition:border-color .2s;-webkit-appearance:none;font-family:var(--font)}
-.fi:focus{border-color:var(--acc)}
-.btn-login{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:16px;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.btn-login:active{transform:scale(.98);background:var(--acc2)}
-.login-err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none;background:rgba(240,68,68,.1);border:1px solid rgba(240,68,68,.2);border-radius:8px;padding:10px}
-.login-hint{font-size:11px;color:var(--txt3);text-align:center;margin-top:14px}
+.login-brand{font-size:34px;font-weight:900;letter-spacing:-1.5px;background:linear-gradient(135deg,#fff 30%,var(–acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+[data-theme=“light”] .login-brand{background:linear-gradient(135deg,#1a1f2e 30%,var(–acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-role{color:var(–txt3);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;margin-top:6px;font-weight:600}
+.login-box{background:var(–s1);border:1px solid var(–border);border-radius:20px;padding:30px;width:100%;max-width:340px;box-shadow:var(–sh)}
+.fi{width:100%;background:var(–s2);border:1.5px solid var(–border);border-radius:var(–r2);color:var(–txt);padding:14px 16px;font-size:16px;margin-bottom:12px;outline:none;transition:border-color .2s;-webkit-appearance:none;font-family:var(–font)}
+.fi:focus{border-color:var(–acc)}
+.btn-login{width:100%;background:var(–acc);color:#fff;border:none;border-radius:var(–r2);padding:16px;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s;font-family:var(–font)}
+.btn-login:active{transform:scale(.98);background:var(–acc2)}
+.login-err{color:var(–red);font-size:13px;text-align:center;margin-top:10px;display:none;background:rgba(240,68,68,.1);border:1px solid rgba(240,68,68,.2);border-radius:8px;padding:10px}
+.login-hint{font-size:11px;color:var(–txt3);text-align:center;margin-top:14px}
 
 /* APP SHELL */
 #app{display:none;min-height:100vh;padding-bottom:80px}
 
 /* TOPBAR */
-.topbar{background:rgba(10,13,20,.95);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-[data-theme="light"] .topbar{background:rgba(248,249,252,.95)}
+.topbar{background:rgba(10,13,20,.95);border-bottom:1px solid var(–border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+[data-theme=“light”] .topbar{background:rgba(248,249,252,.95)}
 .topbar-left{display:flex;flex-direction:column}
 .topbar-name{font-weight:800;font-size:16px;letter-spacing:-.4px}
-.topbar-date{color:var(--txt3);font-size:11px;margin-top:1px;font-weight:500}
+.topbar-date{color:var(–txt3);font-size:11px;margin-top:1px;font-weight:500}
 .topbar-right{display:flex;align-items:center;gap:6px}
-.btn-icon{background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--txt2);padding:8px 11px;font-size:14px;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.btn-icon:active{background:var(--s3);transform:scale(.96)}
-.refresh-btn{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--acc);cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;font-family:var(--font);white-space:nowrap}
+.btn-icon{background:var(–s2);border:1px solid var(–border);border-radius:8px;color:var(–txt2);padding:8px 11px;font-size:14px;cursor:pointer;transition:all .15s;font-family:var(–font)}
+.btn-icon:active{background:var(–s3);transform:scale(.96)}
+.refresh-btn{background:var(–s2);border:1px solid var(–border);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;color:var(–acc);cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;font-family:var(–font);white-space:nowrap}
 .refresh-btn:active{transform:scale(.96)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin .7s linear infinite;display:inline-block}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:calc(env(safe-area-inset-bottom) + 4px);backdrop-filter:blur(20px)}
-[data-theme="light"] .bottom-nav{background:rgba(255,255,255,.97)}
-.nav-item{flex:1;padding:12px 4px 8px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px}
-.nav-item.active{color:var(--acc)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(–border);display:flex;z-index:100;padding-bottom:calc(env(safe-area-inset-bottom) + 4px);backdrop-filter:blur(20px)}
+[data-theme=“light”] .bottom-nav{background:rgba(255,255,255,.97)}
+.nav-item{flex:1;padding:12px 4px 8px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(–txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-item.active{color:var(–acc)}
 .nav-icon{font-size:19px}
-.nav-badge{position:absolute;top:8px;right:calc(50% - 16px);background:var(--red);color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:800;line-height:1.4}
+.nav-badge{position:absolute;top:8px;right:calc(50% - 16px);background:var(–red);color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:800;line-height:1.4}
 
 /* FAB - floating action button */
-.fab{position:fixed;bottom:96px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;color:#fff;font-size:28px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(79,143,255,.5);display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
+.fab{position:fixed;bottom:96px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(–acc),var(–acc2));border:none;color:#fff;font-size:28px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(79,143,255,.5);display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
 .fab:active{transform:scale(.93)}
 .fab.hidden{display:none}
 
@@ -80,252 +81,304 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 .page{display:none;padding-bottom:10px}
 .page.active{display:block}
 .page-scroll{padding:12px 14px}
-.sec-hd{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1.4px;padding:14px 14px 8px;display:flex;align-items:center;gap:8px}
-.sec-hd-line{flex:1;height:1px;background:var(--border)}
+.sec-hd{font-size:10px;font-weight:800;color:var(–txt3);text-transform:uppercase;letter-spacing:1.4px;padding:14px 14px 8px;display:flex;align-items:center;gap:8px}
+.sec-hd-line{flex:1;height:1px;background:var(–border)}
 
 /* PULL TO REFRESH */
 
 /* JOB CARDS — full tinted background */
-.job-card{border-radius:var(--r);padding:14px 14px 14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;border:1px solid transparent}
+.job-card{border-radius:var(–r);padding:14px 14px 14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;border:1px solid transparent}
 .job-card:active{transform:scale(.99)}
 /* Pending — amber tint */
 .job-card.s-pending{background:rgba(245,166,35,.10);border-color:rgba(245,166,35,.22)}
-[data-theme="light"] .job-card.s-pending{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3)}
+[data-theme=“light”] .job-card.s-pending{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3)}
 /* In Progress — blue tint */
-.job-card.s-progress{background:rgba(79,143,255,.10);border-color:rgba(79,143,255,.25)}
-[data-theme="light"] .job-card.s-progress{background:rgba(79,143,255,.08);border-color:rgba(79,143,255,.3)}
+/* ── Live pulse on In Progress jobs ── */
+@keyframes livePulse{
+0%{box-shadow:0 0 0 0 rgba(79,143,255,.5);border-color:rgba(79,143,255,.4)}
+70%{box-shadow:0 0 0 8px rgba(79,143,255,0);border-color:rgba(79,143,255,.7)}
+100%{box-shadow:0 0 0 0 rgba(79,143,255,0);border-color:rgba(79,143,255,.4)}
+}
+.job-card.s-progress{background:rgba(79,143,255,.10);border-color:rgba(79,143,255,.4);animation:livePulse 2.2s ease-in-out infinite}
+[data-theme=“light”] .job-card.s-progress{background:rgba(79,143,255,.08);border-color:rgba(79,143,255,.3)}
 /* Completed — green tint */
 .job-card.s-completed{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.18)}
-[data-theme="light"] .job-card.s-completed{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.25)}
+[data-theme=“light”] .job-card.s-completed{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.25)}
 /* Emergency — red tint */
-.job-card.s-emergency{background:rgba(240,68,68,.12);border-color:rgba(240,68,68,.30)}
-[data-theme="light"] .job-card.s-emergency{background:rgba(240,68,68,.08);border-color:rgba(240,68,68,.35)}
+.job-card.s-emergency{background:rgba(240,68,68,.10);border-color:rgba(240,68,68,.40);position:relative;overflow:hidden}
+.job-card.s-emergency::before{content:””;position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#f5a623,#f5a623 8px,#1a1a1a 8px,#1a1a1a 16px);z-index:1}
+[data-theme=“light”] .job-card.s-emergency{background:rgba(240,68,68,.08);border-color:rgba(240,68,68,.35)}
 /* No Access — orange tint */
 .job-card.s-noaccess{background:rgba(249,115,22,.10);border-color:rgba(249,115,22,.22)}
-[data-theme="light"] .job-card.s-noaccess{background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.28)}
+[data-theme=“light”] .job-card.s-noaccess{background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.28)}
 
 /* Left accent stripe */
 .job-card-stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
-.job-card.s-pending .job-card-stripe{background:var(--yellow)}
-.job-card.s-progress .job-card-stripe{background:var(--acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
-.job-card.s-completed .job-card-stripe{background:var(--green)}
-.job-card.s-emergency .job-card-stripe{background:var(--red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
-.job-card.s-noaccess .job-card-stripe{background:var(--orange)}
+.job-card.s-pending .job-card-stripe{background:var(–yellow)}
+.job-card.s-progress .job-card-stripe{background:var(–acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
+.job-card.s-completed .job-card-stripe{background:var(–green)}
+.job-card.s-emergency .job-card-stripe{background:var(–red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
+.job-card.s-noaccess .job-card-stripe{background:var(–orange)}
 
 .job-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
-.job-num{font-size:11px;font-weight:700;color:var(--acc);font-family:var(--mono);letter-spacing:.5px}
+.job-num{font-size:11px;font-weight:700;color:var(–acc);font-family:var(–mono);letter-spacing:.5px}
 .job-addr{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:8px;padding-right:4px;flex:1}
 .job-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .job-chip{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:600;letter-spacing:.2px}
-.chip-time{background:rgba(79,143,255,.15);color:var(--acc);border:1px solid rgba(79,143,255,.25)}
-.chip-trade{background:rgba(255,255,255,.08);color:var(--txt2);border:1px solid var(--border)}
-[data-theme="light"] .chip-trade{background:rgba(0,0,0,.05)}
-.chip-cert{background:rgba(20,184,166,.12);color:var(--teal);border:1px solid rgba(20,184,166,.22)}
-.chip-hours{background:rgba(245,166,35,.1);color:var(--yellow);border:1px solid rgba(245,166,35,.22)}
-
+.chip-time{background:rgba(79,143,255,.15);color:var(–acc);border:1px solid rgba(79,143,255,.25)}
+.chip-trade{background:rgba(255,255,255,.08);color:var(–txt2);border:1px solid var(–border)}
+[data-theme=“light”] .chip-trade{background:rgba(0,0,0,.05)}
+.chip-cert{background:rgba(20,184,166,.12);color:var(–teal);border:1px solid rgba(20,184,166,.22)}
+.chip-hours{background:rgba(245,166,35,.1);color:var(–yellow);border:1px solid rgba(245,166,35,.22)}
 
 /* STATUS PILLS */
 .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
-.sp-pending{background:rgba(245,166,35,.14);color:var(--yellow);border:1px solid rgba(245,166,35,.25)}
-.sp-progress{background:rgba(79,143,255,.14);color:var(--acc);border:1px solid rgba(79,143,255,.25)}
-.sp-completed{background:rgba(34,197,94,.14);color:var(--green);border:1px solid rgba(34,197,94,.25)}
-.sp-emergency{background:rgba(240,68,68,.14);color:var(--red);border:1px solid rgba(240,68,68,.25)}
-.sp-noaccess{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.22)}
+.sp-pending{background:rgba(245,166,35,.14);color:var(–yellow);border:1px solid rgba(245,166,35,.25)}
+.sp-progress{background:rgba(79,143,255,.14);color:var(–acc);border:1px solid rgba(79,143,255,.25)}
+.sp-completed{background:rgba(34,197,94,.14);color:var(–green);border:1px solid rgba(34,197,94,.25)}
+.sp-emergency{background:rgba(240,68,68,.14);color:var(–red);border:1px solid rgba(240,68,68,.25)}
+.sp-noaccess{background:rgba(249,115,22,.12);color:var(–orange);border:1px solid rgba(249,115,22,.22)}
 
 /* EMPTY STATE */
-.empty{text-align:center;padding:60px 24px;color:var(--txt3)}
+.empty{text-align:center;padding:60px 24px;color:var(–txt3)}
 .empty-icon{font-size:52px;margin-bottom:12px;opacity:.7}
-.empty-title{font-size:17px;font-weight:800;color:var(--txt2);margin-bottom:6px}
+.empty-title{font-size:17px;font-weight:800;color:var(–txt2);margin-bottom:6px}
 .empty-sub{font-size:13px;line-height:1.5}
 
 /* DASHBOARD */
-.dash-hero{background:linear-gradient(135deg,var(--s2) 0%,var(--s3) 100%);border-bottom:1px solid var(--border);padding:20px 16px 24px;position:relative;overflow:hidden}
-.dash-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(79,143,255,.15) 0%,transparent 70%)}
-.dash-greeting{font-size:13px;color:var(--txt3);margin-bottom:4px;font-weight:600}
+.dash-hero{background:linear-gradient(135deg,var(–s2) 0%,var(–s3) 100%);border-bottom:1px solid var(–border);padding:20px 16px 24px;position:relative;overflow:hidden}
+.dash-hero::before{content:’’;position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(79,143,255,.15) 0%,transparent 70%)}
+.dash-greeting{font-size:13px;color:var(–txt3);margin-bottom:4px;font-weight:600}
 .dash-hero-name{font-size:24px;font-weight:900;letter-spacing:-.6px}
-.dash-hero-sub{font-size:12px;color:var(--txt2);margin-top:4px}
+.dash-hero-sub{font-size:12px;color:var(–txt2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
-.kpi-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:relative;overflow:hidden}
-.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--acc))}
-.kpi-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;color:var(--txt);line-height:1;font-family:var(--mono)}
-.kpi-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-top:5px;font-weight:700}
-.dash-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin:0 14px 12px;overflow:hidden}
-.dash-sec-hd{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.dash-sec-title{font-size:11px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.9px}
+.kpi-card{background:var(–s1);border:1px solid var(–border);border-radius:var(–r2);padding:14px;position:relative;overflow:hidden}
+.kpi-card::after{content:’’;position:absolute;top:0;left:0;right:0;height:3px;background:var(–kc,var(–acc))}
+.kpi-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;color:var(–txt);line-height:1;font-family:var(–mono)}
+.kpi-lbl{font-size:10px;color:var(–txt3);text-transform:uppercase;letter-spacing:.8px;margin-top:5px;font-weight:700}
+.dash-section{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);margin:0 14px 12px;overflow:hidden}
+.dash-sec-hd{padding:12px 16px;background:var(–s2);border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.dash-sec-title{font-size:11px;font-weight:800;color:var(–txt3);text-transform:uppercase;letter-spacing:.9px}
 .dash-sec-body{padding:14px 16px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .bar-row:last-child{margin-bottom:0}
 .bar-label{font-size:12px;font-weight:600;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-track{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bar-track{flex:1;height:6px;background:var(–s3);border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.bar-count{font-size:11px;color:var(--txt3);width:28px;text-align:right;flex-shrink:0;font-weight:700;font-family:var(--mono)}
-.cert-pill{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;margin:3px}
-.cert-pill-n{color:var(--acc);font-weight:800;font-size:13px;font-family:var(--mono)}
-.recent-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.bar-count{font-size:11px;color:var(–txt3);width:28px;text-align:right;flex-shrink:0;font-weight:700;font-family:var(–mono)}
+.cert-pill{display:inline-flex;align-items:center;gap:5px;background:var(–s2);border:1px solid var(–border);border-radius:20px;padding:5px 12px;font-size:12px;margin:3px}
+.cert-pill-n{color:var(–acc);font-weight:800;font-size:13px;font-family:var(–mono)}
+.recent-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(–border)}
 .recent-row:last-child{border-bottom:none}
-.recent-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px}
+.recent-dot{width:8px;height:8px;border-radius:50%;background:var(–green);flex-shrink:0;margin-top:4px}
 .recent-addr{font-size:13px;font-weight:600;line-height:1.3}
-.recent-meta{font-size:11px;color:var(--txt3);margin-top:2px}
-.recent-hrs{font-size:12px;color:var(--acc);font-weight:700;white-space:nowrap;margin-left:auto;flex-shrink:0;font-family:var(--mono)}
+.recent-meta{font-size:11px;color:var(–txt3);margin-top:2px}
+.recent-hrs{font-size:12px;color:var(–acc);font-weight:700;white-space:nowrap;margin-left:auto;flex-shrink:0;font-family:var(–mono)}
 
 /* JOB DETAIL MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .overlay.open{display:block}
-.modal{background:var(--s1);border-radius:20px 20px 0 0;min-height:70vh;margin-top:40px;padding-bottom:40px}
-.modal-handle{width:44px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 0}
-.modal-hd{padding:16px 18px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
-.modal-jobnum{font-size:11px;font-weight:700;color:var(--acc);font-family:var(--mono);letter-spacing:.5px;margin-bottom:3px}
+.modal{background:var(–s1);border-radius:20px 20px 0 0;min-height:70vh;margin-top:40px;padding-bottom:40px}
+.modal-handle{width:44px;height:4px;background:var(–border2);border-radius:2px;margin:14px auto 0}
+.modal-hd{padding:16px 18px 14px;border-bottom:1px solid var(–border);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-jobnum{font-size:11px;font-weight:700;color:var(–acc);font-family:var(–mono);letter-spacing:.5px;margin-bottom:3px}
 .modal-addr{font-size:18px;font-weight:800;line-height:1.25;padding-right:8px}
-.modal-close{background:var(--s3);border:1px solid var(--border);color:var(--txt2);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .15s}
+.modal-close{background:var(–s3);border:1px solid var(–border);color:var(–txt2);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .15s}
 .modal-close:active{transform:scale(.93)}
 .status-selector{padding:14px 16px 6px}
-.status-selector-label{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.status-selector-label{font-size:10px;font-weight:800;color:var(–txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
 .status-pills-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
 .status-pills-row::-webkit-scrollbar{display:none}
-.sp-btn{flex-shrink:0;padding:9px 14px;border-radius:24px;border:2px solid var(--border);background:var(--s2);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.3px;font-family:var(--font);white-space:nowrap}
+.sp-btn{flex-shrink:0;padding:9px 14px;border-radius:24px;border:2px solid var(–border);background:var(–s2);color:var(–txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.3px;font-family:var(–font);white-space:nowrap}
 .sp-btn:active{transform:scale(.95)}
-.sp-btn.active.sp-pending{background:rgba(245,166,35,.15);border-color:var(--yellow);color:var(--yellow)}
-.sp-btn.active.sp-progress{background:rgba(79,143,255,.15);border-color:var(--acc);color:var(--acc)}
-.sp-btn.active.sp-completed{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green)}
-.sp-btn.active.sp-noaccess{background:rgba(249,115,22,.15);border-color:var(--orange);color:var(--orange)}
-.sp-btn.active.sp-emergency{background:rgba(240,68,68,.15);border-color:var(--red);color:var(--red)}
+.sp-btn.active.sp-pending{background:rgba(245,166,35,.15);border-color:var(–yellow);color:var(–yellow)}
+.sp-btn.active.sp-progress{background:rgba(79,143,255,.15);border-color:var(–acc);color:var(–acc)}
+.sp-btn.active.sp-completed{background:rgba(34,197,94,.15);border-color:var(–green);color:var(–green)}
+.sp-btn.active.sp-noaccess{background:rgba(249,115,22,.15);border-color:var(–orange);color:var(–orange)}
+.sp-btn.active.sp-emergency{background:rgba(240,68,68,.15);border-color:var(–red);color:var(–red)}
 .d-section{margin:0 14px 12px}
-.d-section-hd{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.d-block{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
-.d-row{display:flex;padding:11px 13px;border-bottom:1px solid var(--border);gap:10px;align-items:flex-start}
+.d-section-hd{font-size:10px;font-weight:800;color:var(–txt3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.d-block{background:var(–s2);border:1px solid var(–border);border-radius:var(–r2);overflow:hidden}
+.d-row{display:flex;padding:11px 13px;border-bottom:1px solid var(–border);gap:10px;align-items:flex-start}
 .d-row:last-child{border-bottom:none}
-.d-lbl{font-size:10px;color:var(--txt3);min-width:80px;flex-shrink:0;padding-top:2px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-.d-val{font-size:13px;color:var(--txt);flex:1;line-height:1.45;font-weight:500}
-.d-val a{color:var(--acc);text-decoration:none}
+.d-lbl{font-size:10px;color:var(–txt3);min-width:80px;flex-shrink:0;padding-top:2px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.d-val{font-size:13px;color:var(–txt);flex:1;line-height:1.45;font-weight:500}
+.d-val a{color:var(–acc);text-decoration:none}
 .cta-row{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
-.cta{flex:1;min-width:76px;padding:9px 7px;border-radius:var(--r3);border:1px solid var(--border);background:var(--s3);color:var(--txt2);font-size:11px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .15s;font-family:var(--font)}
+.cta{flex:1;min-width:76px;padding:9px 7px;border-radius:var(–r3);border:1px solid var(–border);background:var(–s3);color:var(–txt2);font-size:11px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .15s;font-family:var(–font)}
 .cta:active{transform:scale(.96)}
-.cta-call{border-color:rgba(34,197,94,.4);color:var(--green);background:rgba(34,197,94,.07)}
+.cta-call{border-color:rgba(34,197,94,.4);color:var(–green);background:rgba(34,197,94,.07)}
 .cta-wa{border-color:rgba(37,211,102,.4);color:#25d366;background:rgba(37,211,102,.07)}
-.cta-map{border-color:rgba(79,143,255,.3);color:var(--acc);background:rgba(79,143,255,.06)}
-.cta-waze{border-color:rgba(20,184,166,.3);color:var(--teal);background:rgba(20,184,166,.06)}
-.cta-email{border-color:rgba(168,85,247,.3);color:var(--purple);background:rgba(168,85,247,.06)}
+.cta-map{border-color:rgba(79,143,255,.3);color:var(–acc);background:rgba(79,143,255,.06)}
+.cta-waze{border-color:rgba(20,184,166,.3);color:var(–teal);background:rgba(20,184,166,.06)}
+.cta-email{border-color:rgba(168,85,247,.3);color:var(–purple);background:rgba(168,85,247,.06)}
 .cta-wa-job{border-color:rgba(37,211,102,.4);color:#25d366;background:rgba(37,211,102,.07);display:flex;align-items:center;justify-content:center;gap:5px}
 
 /* NOTES */
-.notes-box{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--txt);padding:13px;font-size:14px;resize:none;min-height:88px;outline:none;font-family:var(--font);transition:border-color .2s;line-height:1.5}
-.notes-box:focus{border-color:var(--acc)}
+.notes-box{width:100%;background:var(–s2);border:1.5px solid var(–border);border-radius:var(–r2);color:var(–txt);padding:13px;font-size:14px;resize:none;min-height:88px;outline:none;font-family:var(–font);transition:border-color .2s;line-height:1.5}
+.notes-box:focus{border-color:var(–acc)}
 .notes-toolbar{display:flex;gap:7px;margin-bottom:8px}
-.notes-tool-btn{background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--txt2);padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;flex-shrink:0}
-.notes-tool-btn:active{background:var(--s3)}
+.notes-tool-btn{background:var(–s2);border:1px solid var(–border);border-radius:8px;color:var(–txt2);padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(–font);transition:all .15s;flex-shrink:0}
+.notes-tool-btn:active{background:var(–s3)}
 
 /* QUICK NOTES PICKER */
 .qn-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;display:none;align-items:flex-end}
 .qn-overlay.open{display:flex}
-.qn-sheet{background:var(--s1);border-radius:20px 20px 0 0;padding:0 0 24px;width:100%;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.qn-hd{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:1}
+.qn-sheet{background:var(–s1);border-radius:20px 20px 0 0;padding:0 0 24px;width:100%;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.qn-hd{padding:16px 18px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(–s1);z-index:1}
 .qn-hd-title{font-size:16px;font-weight:800}
 .qn-tabs{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;scrollbar-width:none}
 .qn-tabs::-webkit-scrollbar{display:none}
-.qn-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--s2);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.qn-tab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.qn-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(–border);background:var(–s2);color:var(–txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(–font)}
+.qn-tab.active{background:var(–acc);border-color:var(–acc);color:#fff}
 .qn-list{padding:0 14px}
 .qn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;margin-bottom:5px;cursor:pointer;transition:background .15s;border:1px solid transparent}
 .qn-item:active,.qn-item.selected{background:rgba(79,143,255,.1);border-color:rgba(79,143,255,.2)}
-.qn-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
-.qn-item.selected .qn-check{background:var(--acc);border-color:var(--acc);color:#fff}
-.qn-text{font-size:13px;font-weight:500;color:var(--txt);flex:1;line-height:1.4}
-.qn-footer{padding:14px 14px 0;display:flex;gap:8px;position:sticky;bottom:0;background:var(--s1);border-top:1px solid var(--border);margin-top:10px}
+.qn-check{width:20px;height:20px;border-radius:6px;border:2px solid var(–border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.qn-item.selected .qn-check{background:var(–acc);border-color:var(–acc);color:#fff}
+.qn-text{font-size:13px;font-weight:500;color:var(–txt);flex:1;line-height:1.4}
+.qn-footer{padding:14px 14px 0;display:flex;gap:8px;position:sticky;bottom:0;background:var(–s1);border-top:1px solid var(–border);margin-top:10px}
 
 /* UPLOAD */
-.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s2);margin-bottom:8px}
-.upload-zone:active{border-color:var(--acc);background:rgba(79,143,255,.05)}
+.upload-zone{border:2px dashed var(–border2);border-radius:var(–r);padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(–s2);margin-bottom:8px}
+.upload-zone:active{border-color:var(–acc);background:rgba(79,143,255,.05)}
 .upload-zone-icon{font-size:26px;margin-bottom:6px}
-.upload-zone-text{font-size:13px;color:var(--txt2);font-weight:700}
-.upload-zone-sub{font-size:11px;color:var(--txt3);margin-top:3px}
+.upload-zone-text{font-size:13px;color:var(–txt2);font-weight:700}
+.upload-zone-sub{font-size:11px;color:var(–txt3);margin-top:3px}
 input[type=file]{display:none}
 .upload-quality-row{display:flex;gap:8px;margin-bottom:8px}
-.quality-btn{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--s2);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;text-align:center}
-.quality-btn.active{border-color:var(--acc);color:var(--acc);background:rgba(79,143,255,.1)}
+.quality-btn{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(–border);background:var(–s2);color:var(–txt2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(–font);transition:all .15s;text-align:center}
+.quality-btn.active{border-color:var(–acc);color:var(–acc);background:rgba(79,143,255,.1)}
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
 .photo-wrap{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1}
 .photo-img{width:100%;height:100%;object-fit:cover;cursor:pointer;display:block}
-.pdf-row{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r3);padding:10px 12px;margin-bottom:8px}
+.pdf-row{display:flex;align-items:center;gap:10px;background:var(–s2);border:1px solid var(–border);border-radius:var(–r3);padding:10px 12px;margin-bottom:8px}
 .pdf-icon{font-size:24px;flex-shrink:0}
 .pdf-info{flex:1;min-width:0}
 .pdf-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pdf-meta{font-size:10px;color:var(--txt3);margin-top:2px}
-.btn-open{background:var(--acc);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
-.stamp-notice{background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.5}
+.pdf-meta{font-size:10px;color:var(–txt3);margin-top:2px}
+.btn-open{background:var(–acc);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
+.stamp-notice{background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:8px 12px;font-size:11px;color:var(–txt2);margin-bottom:10px;line-height:1.5}
 
 /* SAVE BUTTON */
-.save-btn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:15px;font-size:15px;font-weight:800;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font)}
-.save-btn:active{transform:scale(.98);background:var(--acc2)}
-.save-btn.green{background:var(--green)}
-.save-btn.orange{background:var(--orange)}
-.save-btn.purple{background:var(--purple)}
+.save-btn{width:100%;background:var(–acc);color:#fff;border:none;border-radius:var(–r2);padding:15px;font-size:15px;font-weight:800;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(–font)}
+.save-btn:active{transform:scale(.98);background:var(–acc2)}
+.save-btn.green{background:var(–green)}
+.save-btn.orange{background:var(–orange)}
+.save-btn.purple{background:var(–purple)}
 
 /* MAP */
-.map-toolbar{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.map-toolbar{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(–s1);border-bottom:1px solid var(–border);overflow-x:auto;scrollbar-width:none}
 .map-toolbar::-webkit-scrollbar{display:none}
-.map-tool-btn{flex-shrink:0;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--s2);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--font)}
-.map-tool-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.map-tool-btn{flex-shrink:0;padding:8px 14px;border-radius:20px;border:1.5px solid var(–border);background:var(–s2);color:var(–txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(–font)}
+.map-tool-btn.active{background:var(–acc);border-color:var(–acc);color:#fff}
 .map-tool-btn:active{transform:scale(.95)}
-.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;background:var(--s2);border-top:1px solid var(--border)}
-.map-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txt2);font-weight:600}
+.map-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;background:var(–s2);border-top:1px solid var(–border)}
+.map-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(–txt2);font-weight:600}
 .map-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
 /* REQUESTS */
-.req-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.req-card{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);padding:14px;margin-bottom:10px}
 .req-card-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .req-title{font-size:14px;font-weight:800}
 .req-badge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
-.rb-pending{background:rgba(245,166,35,.12);color:var(--yellow)}
-.rb-approved{background:rgba(34,197,94,.12);color:var(--green)}
-.rb-rejected{background:rgba(240,68,68,.12);color:var(--red)}
-.req-meta{font-size:12px;color:var(--txt2);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;font-weight:500}
-.req-note{font-size:12px;color:var(--txt3);font-style:italic;background:var(--s2);border-radius:6px;padding:8px 10px;margin-top:6px}
+.rb-pending{background:rgba(245,166,35,.12);color:var(–yellow)}
+.rb-approved{background:rgba(34,197,94,.12);color:var(–green)}
+.rb-rejected{background:rgba(240,68,68,.12);color:var(–red)}
+.req-meta{font-size:12px;color:var(–txt2);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;font-weight:500}
+.req-note{font-size:12px;color:var(–txt3);font-style:italic;background:var(–s2);border-radius:6px;padding:8px 10px;margin-top:6px}
 
 /* FORMS */
-.fi-sm{width:100%;background:var(--s3);border:1.5px solid var(--border);border-radius:var(--r3);color:var(--txt);padding:10px 12px;font-size:14px;margin-bottom:10px;outline:none;transition:border-color .2s;font-family:var(--font);-webkit-appearance:none}
-.fi-sm:focus{border-color:var(--acc)}
+.fi-sm{width:100%;background:var(–s3);border:1.5px solid var(–border);border-radius:var(–r3);color:var(–txt);padding:10px 12px;font-size:14px;margin-bottom:10px;outline:none;transition:border-color .2s;font-family:var(–font);-webkit-appearance:none}
+.fi-sm:focus{border-color:var(–acc)}
 select.fi-sm{cursor:pointer}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.form-label{font-size:10px;color:var(--txt3);font-weight:800;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+.form-label{font-size:10px;color:var(–txt3);font-weight:800;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
 
 /* GUIDE */
-.guide-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin:0 14px 10px;overflow:hidden}
-.guide-hd{padding:14px 16px;background:var(--s2);border-bottom:1px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
-.guide-hd:active{background:var(--s3)}
-.guide-hd.open{border-bottom-color:var(--border)}
+.guide-section{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);margin:0 14px 10px;overflow:hidden}
+.guide-hd{padding:14px 16px;background:var(–s2);border-bottom:1px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
+.guide-hd:active{background:var(–s3)}
+.guide-hd.open{border-bottom-color:var(–border)}
 .guide-hd-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
-.guide-chevron{color:var(--txt3);transition:transform .25s;font-size:12px}
+.guide-chevron{color:var(–txt3);transition:transform .25s;font-size:12px}
 .guide-hd.open .guide-chevron{transform:rotate(180deg)}
 .guide-body{padding:14px 16px;display:none}
 .guide-body.open{display:block}
-.guide-step{display:flex;gap:10px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+.guide-step{display:flex;gap:10px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(–border)}
 .guide-step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-.guide-step-num{width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.guide-step-text{font-size:13px;color:var(--txt2);line-height:1.5;flex:1}
-.guide-step-text strong{color:var(--txt)}
-.guide-tip{background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--txt2);margin-top:8px;line-height:1.5}
-.api-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin:0 14px 10px}
+.guide-step-num{width:24px;height:24px;border-radius:50%;background:var(–acc);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.guide-step-text{font-size:13px;color:var(–txt2);line-height:1.5;flex:1}
+.guide-step-text strong{color:var(–txt)}
+.guide-tip{background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(–txt2);margin-top:8px;line-height:1.5}
+.api-card{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);padding:14px;margin:0 14px 10px}
 .api-card-hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .api-icon{font-size:22px}
 .api-title{font-size:14px;font-weight:800}
 .api-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px}
-.api-active{background:rgba(34,197,94,.12);color:var(--green)}
-.api-soon{background:rgba(245,166,35,.12);color:var(--yellow)}
-.api-desc{font-size:12px;color:var(--txt2);line-height:1.5}
+.api-active{background:rgba(34,197,94,.12);color:var(–green)}
+.api-soon{background:rgba(245,166,35,.12);color:var(–yellow)}
+.api-desc{font-size:12px;color:var(–txt2);line-height:1.5}
 
 /* TOAST & SPINNER */
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border2);border-radius:24px;padding:10px 20px;font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:opacity .25s;white-space:nowrap;pointer-events:none;max-width:90vw;font-family:var(--font)}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(–s3);border:1px solid var(–border2);border-radius:24px;padding:10px 20px;font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:opacity .25s;white-space:nowrap;pointer-events:none;max-width:90vw;font-family:var(–font)}
 #toast.show{opacity:1}
-#toast.success{border-color:var(--green);color:var(--green)}
-#toast.error{border-color:var(--red);color:var(--red)}
-#toast.info{border-color:var(--acc);color:var(--acc)}
-.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
+#toast.success{border-color:var(–green);color:var(–green)}
+#toast.error{border-color:var(–red);color:var(–red)}
+#toast.info{border-color:var(–acc);color:var(–acc)}
+.spin{width:34px;height:34px;border:3px solid var(–border);border-top-color:var(–acc);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
 .loading-center{text-align:center;padding:40px}
+
+/* ── MCB Toggle Switch ── */
+.mcb-switch{position:relative;display:inline-block;width:52px;height:28px;flex-shrink:0}
+.mcb-switch input{opacity:0;width:0;height:0;position:absolute}
+.mcb-slider{position:absolute;cursor:pointer;inset:0;background:#252a3a;border-radius:5px;border:1px solid #3a4255;box-shadow:inset 0 2px 6px rgba(0,0,0,.5);transition:.18s}
+.mcb-slider:before{position:absolute;content:“OFF”;height:20px;width:22px;left:3px;bottom:4px;background:#555;transition:.18s;border-radius:3px;font-size:7px;font-weight:900;color:#1a1a1a;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.5);letter-spacing:.5px}
+input:checked + .mcb-slider{background:#1a2035;border-color:rgba(245,166,35,.4)}
+input:checked + .mcb-slider:before{transform:translateX(23px);background:#f5a623;content:“ON”;color:#000;box-shadow:0 0 8px rgba(245,166,35,.5)}
+
+/* ── Tools Page ── */
+#page-tools .page-scroll{padding:14px;padding-bottom:100px}
+.tool-tab-row{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.tool-tab{padding:7px 14px;border-radius:20px;border:1px solid var(–border2);background:var(–s2);font-size:11px;font-weight:700;color:var(–txt3);cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(–font)}
+.tool-tab.active{background:var(–acc);border-color:var(–acc);color:#fff}
+.calc-card{background:var(–s1);border:1px solid var(–border2);border-radius:14px;padding:16px;margin-bottom:14px}
+.calc-title{font-size:14px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.calc-sub{font-size:11px;color:var(–txt3);margin-bottom:14px;line-height:1.4}
+.calc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(–txt3);margin-bottom:5px;margin-top:10px;display:block}
+.calc-input{width:100%;background:var(–s2);border:1px solid var(–border2);border-radius:8px;padding:10px 12px;color:var(–txt);font-size:15px;font-family:var(–font);outline:none;box-sizing:border-box}
+.calc-select{width:100%;background:var(–s2);border:1px solid var(–border2);border-radius:8px;padding:10px 12px;color:var(–txt);font-size:13px;font-family:var(–font);outline:none;box-sizing:border-box;appearance:none}
+.calc-slider{width:100%;accent-color:var(–acc);height:3px;margin:6px 0}
+.calc-display{margin-top:14px;background:#000;border:1px solid rgba(79,143,255,.2);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
+.calc-display-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#444;margin-bottom:4px}
+.calc-display-val{font-family:‘Orbitron’,monospace;font-size:32px;font-weight:900;letter-spacing:2px;line-height:1;transition:color .2s}
+.calc-display-status{font-size:11px;font-weight:800;margin-top:6px;letter-spacing:.5px}
+.calc-display.pass{border-color:rgba(34,197,94,.3)}
+.calc-display.fail{border-color:rgba(224,82,82,.3)}
+.zs-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.zs-badge{background:var(–s2);border:1px solid var(–border2);border-radius:8px;padding:8px 12px;flex:1;text-align:center}
+.zs-badge-val{font-family:‘Orbitron’,monospace;font-size:15px;font-weight:700;color:var(–acc)}
+.zs-badge-lbl{font-size:9px;color:var(–txt3);margin-top:2px;letter-spacing:.5px}
+.zs-result{padding:12px;border-radius:10px;text-align:center;font-weight:800;font-size:14px;margin-top:10px}
+.zs-pass{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e}
+.zs-fail{background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.3);color:#e05252}
+.zs-none{background:var(–s2);border:1px solid var(–border);color:var(–txt3)}
+.conduit-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:10px}
+#conduit-svg{cursor:pointer;transition:filter .2s}
+.omw-card{background:var(–s2);border:1px solid var(–border2);border-radius:10px;padding:12px;margin-bottom:10px}
+.omw-row{display:flex;gap:8px;margin-bottom:8px}
+.omw-row .calc-input{flex:1}
+.omw-btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(–font);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.omw-btn:active{transform:scale(.97)}
+.omw-btn-client{background:#25d366;color:#fff}
+.omw-btn-office{background:var(–acc);color:#fff}
 </style>
+
 </head>
 <body>
 
 <!-- LOGIN -->
+
 <div id="login-screen">
   <div class="login-bolt">⚡</div>
   <div class="login-brand">DeepFlow</div>
@@ -340,7 +393,9 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- MAIN APP -->
+
 <!-- OFFICE BROADCAST ALERT OVERLAY -->
+
 <div id="alert-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;flex-direction:column;padding:20px">
   <div id="alert-box" style="background:#1a1a1a;border:2px solid #f5a623;border-radius:20px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 0 80px rgba(245,166,35,.3)">
     <div id="alert-icon" style="font-size:48px;margin-bottom:12px">⚠️</div>
@@ -353,6 +408,7 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- ELECTRICAL BACKGROUND -->
+
 <canvas id="elec-bg" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.32"></canvas>
 
 <div id="app" style="position:relative;z-index:1">
@@ -374,6 +430,7 @@ select.fi-sm{cursor:pointer}
   </div>
 
   <!-- USER MENU SHEET -->
+
   <div id="user-menu-sheet" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6)" onclick="if(event.target===this)closeUserMenu()">
     <div style="position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:20px 20px 0 0;padding:20px 20px 40px;box-shadow:0 -8px 40px rgba(0,0,0,.4)">
       <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px"></div>
@@ -409,22 +466,26 @@ select.fi-sm{cursor:pointer}
   </div>
 
   <!-- TODAY -->
+
   <div class="page active" id="page-today">
     <div style="padding:6px 14px 0;font-size:11px;color:var(--txt3)" id="refresh-ts"></div>
     <div id="jobs-today" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
   </div>
 
   <!-- UPCOMING -->
+
   <div class="page" id="page-upcoming">
     <div id="jobs-upcoming" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
   </div>
 
   <!-- DONE -->
+
   <div class="page" id="page-done">
     <div id="jobs-done" class="page-scroll"><div class="loading-center"><div class="spin"></div></div></div>
   </div>
 
   <!-- MAP -->
+
   <div class="page" id="page-map">
     <div class="map-toolbar">
       <button class="map-tool-btn active" onclick="setMapView('today',this)">📅 Today's Jobs</button>
@@ -448,11 +509,13 @@ select.fi-sm{cursor:pointer}
   </div>
 
   <!-- STATS -->
+
   <div class="page" id="page-dash">
     <div id="dash-body"><div class="loading-center" style="padding-top:60px"><div class="spin"></div></div></div>
   </div>
 
   <!-- REQUESTS -->
+
   <div class="page" id="page-requests">
     <div class="page-scroll">
       <div style="margin-bottom:14px;display:flex;flex-direction:column;gap:8px">
@@ -464,7 +527,165 @@ select.fi-sm{cursor:pointer}
     </div>
   </div>
 
+  <!-- TOOLS PAGE -->
+
+  <div class="page" id="page-tools">
+    <div class="page-scroll">
+      <div style="padding:14px 0 4px">
+        <div style="font-size:18px;font-weight:900;margin-bottom:2px">🔧 Engineer Tools</div>
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:12px">Calculators &amp; on-site helpers</div>
+        <div class="tool-tab-row" id="tool-tabs">
+          <button class="tool-tab active" onclick="showTool('voltage-drop',this)">⚡ Voltage Drop</button>
+          <button class="tool-tab" onclick="showTool('max-zs',this)">🔌 Max Zs</button>
+          <button class="tool-tab" onclick="showTool('conduit',this)">🔵 Conduit Fill</button>
+          <button class="tool-tab" onclick="showTool('on-my-way',this)">🚗 On My Way</button>
+        </div>
+      </div>
+
+```
+  <!-- VOLTAGE DROP CALC -->
+  <div id="tool-voltage-drop">
+    <div class="calc-card">
+      <div class="calc-title">⚡ Voltage Drop Calculator</div>
+      <div class="calc-sub">Checks cable run meets the 5% limit (11.5V on 230V). Enter your values and it calculates instantly.</div>
+      <span class="calc-label">Load Current (Amps)</span>
+      <input type="number" class="calc-input" id="vd-amps" placeholder="e.g. 32" inputmode="decimal" oninput="calcVD()">
+      <span class="calc-label">Cable Length: <span id="vd-len-display">10</span>m</span>
+      <input type="range" class="calc-slider" id="vd-len-slider" min="1" max="150" value="10" oninput="document.getElementById('vd-len').value=this.value;document.getElementById('vd-len-display').textContent=this.value;calcVD()">
+      <input type="number" class="calc-input" id="vd-len" value="10" inputmode="decimal" oninput="document.getElementById('vd-len-slider').value=this.value;document.getElementById('vd-len-display').textContent=this.value;calcVD()" style="margin-top:6px">
+      <span class="calc-label">Cable Size</span>
+      <select class="calc-select" id="vd-type" onchange="calcVD()">
+        <option value="29">1.5mm² — 29 mV/A/m (lighting)</option>
+        <option value="18" selected>2.5mm² — 18 mV/A/m (sockets)</option>
+        <option value="11">4.0mm² — 11 mV/A/m</option>
+        <option value="7.3">6.0mm² — 7.3 mV/A/m</option>
+        <option value="4.4">10mm² — 4.4 mV/A/m</option>
+        <option value="2.8">16mm² — 2.8 mV/A/m</option>
+      </select>
+      <span class="calc-label">Circuit Type</span>
+      <select class="calc-select" id="vd-circuit" onchange="calcVD()">
+        <option value="11.5">Power / Sockets (5% = 11.5V max)</option>
+        <option value="6.9">Lighting (3% = 6.9V max)</option>
+      </select>
+      <div class="calc-display" id="vd-display">
+        <div class="calc-display-label">VOLTAGE DROP</div>
+        <div class="calc-display-val" id="vd-result" style="color:#4f8fff">0.00 V</div>
+        <div class="calc-display-status" id="vd-status" style="color:var(--txt3)">Enter values above</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAX ZS LOOKUP -->
+  <div id="tool-max-zs" style="display:none">
+    <div class="calc-card">
+      <div class="calc-title">🔌 Max Zs Lookup</div>
+      <div class="calc-sub">Select your breaker type and rating to instantly see the maximum permitted Zs value. Enter your measured Zs to check if it passes.</div>
+      <span class="calc-label">System Type</span>
+      <select class="calc-select" id="zs-system" onchange="calcZs()">
+        <option value="tn">TN-C-S / TN-S (0.4s disconnect)</option>
+        <option value="tt">TT System (0.2s disconnect)</option>
+      </select>
+      <span class="calc-label">Breaker Type &amp; Rating</span>
+      <select class="calc-select" id="zs-breaker" onchange="calcZs()">
+        <optgroup label="Type B">
+          <option value="B6">Type B 6A</option><option value="B10">Type B 10A</option>
+          <option value="B16">Type B 16A</option><option value="B20">Type B 20A</option>
+          <option value="B25">Type B 25A</option><option value="B32" selected>Type B 32A</option>
+          <option value="B40">Type B 40A</option><option value="B50">Type B 50A</option>
+        </optgroup>
+        <optgroup label="Type C">
+          <option value="C6">Type C 6A</option><option value="C10">Type C 10A</option>
+          <option value="C16">Type C 16A</option><option value="C20">Type C 20A</option>
+          <option value="C25">Type C 25A</option><option value="C32">Type C 32A</option>
+          <option value="C40">Type C 40A</option><option value="C50">Type C 50A</option>
+        </optgroup>
+        <optgroup label="Type D">
+          <option value="D6">Type D 6A</option><option value="D10">Type D 10A</option>
+          <option value="D16">Type D 16A</option><option value="D20">Type D 20A</option>
+          <option value="D32">Type D 32A</option>
+        </optgroup>
+      </select>
+      <div id="zs-max-display" class="zs-row" style="margin-top:12px">
+        <div class="zs-badge"><div class="zs-badge-val" id="zs-max-val">—</div><div class="zs-badge-lbl">MAX Zs (Ω)</div></div>
+        <div class="zs-badge"><div class="zs-badge-val" id="zs-ia-val">—</div><div class="zs-badge-lbl">Ia (A)</div></div>
+        <div class="zs-badge"><div class="zs-badge-val" id="zs-uf-val">—</div><div class="zs-badge-lbl">U0/Ia (Ω)</div></div>
+      </div>
+      <span class="calc-label">Your Measured Zs (Ω) — optional</span>
+      <input type="number" class="calc-input" id="zs-measured" placeholder="e.g. 0.85" inputmode="decimal" step="0.01" oninput="calcZs()">
+      <div id="zs-result" class="zs-result zs-none" style="margin-top:10px">Enter measured Zs to check</div>
+    </div>
+  </div>
+
+  <!-- CONDUIT FILL VISUALISER -->
+  <div id="tool-conduit" style="display:none">
+    <div class="calc-card">
+      <div class="calc-title">🔵 Conduit Fill Visualiser</div>
+      <div class="calc-sub">Max 45% fill rule. Tap the conduit to add wires. It turns red when you exceed the limit.</div>
+      <span class="calc-label">Conduit Size</span>
+      <select class="calc-select" id="cf-size" onchange="updateConduit()">
+        <option value="16">16mm conduit</option>
+        <option value="20" selected>20mm conduit</option>
+        <option value="25">25mm conduit</option>
+        <option value="32">32mm conduit</option>
+        <option value="40">40mm conduit</option>
+      </select>
+      <span class="calc-label">Wire Size</span>
+      <select class="calc-select" id="cf-wire" onchange="updateConduit()">
+        <option value="1.5">1.5mm² (dia ~2.9mm)</option>
+        <option value="2.5" selected>2.5mm² (dia ~3.6mm)</option>
+        <option value="4">4.0mm² (dia ~4.5mm)</option>
+        <option value="6">6.0mm² (dia ~5.6mm)</option>
+        <option value="10">10mm² (dia ~7.0mm)</option>
+      </select>
+      <div class="conduit-wrap">
+        <svg id="conduit-svg" width="160" height="160" viewBox="0 0 160 160" onclick="addWire()">
+          <circle cx="80" cy="80" r="72" fill="#1a1d2a" stroke="#3a4255" stroke-width="8"/>
+          <circle cx="80" cy="80" r="72" fill="none" stroke="#252a3a" stroke-width="16" opacity=".5"/>
+          <g id="conduit-wires"></g>
+          <text x="80" y="85" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" id="conduit-pct-txt">0%</text>
+        </svg>
+        <div style="text-align:center">
+          <div style="font-size:13px;color:var(--txt3)" id="conduit-wire-count">0 wires — tap circle to add</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:4px" id="conduit-rule">Max 45% fill rule</div>
+          <button onclick="clearConduit()" style="margin-top:8px;padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--txt3);font-size:12px;cursor:pointer;font-family:var(--font)">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ON MY WAY -->
+  <div id="tool-on-my-way" style="display:none">
+    <div class="calc-card">
+      <div class="calc-title">🚗 On My Way Messages</div>
+      <div class="calc-sub">Generates a WhatsApp message to the client and the office with your ETA. No switching apps needed.</div>
+      <span class="calc-label">Your Address / Current Location</span>
+      <input type="text" class="calc-input" id="omw-from" placeholder="e.g. SE1 7PB or current street" style="margin-bottom:8px">
+      <span class="calc-label">Job Address</span>
+      <input type="text" class="calc-input" id="omw-to" placeholder="Auto-filled from job" style="margin-bottom:8px">
+      <span class="calc-label">ETA (minutes)</span>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <input type="range" class="calc-slider" id="omw-eta-slider" min="5" max="90" value="20" style="flex:1" oninput="document.getElementById('omw-eta').value=this.value;updateOmwPreview()">
+        <input type="number" class="calc-input" id="omw-eta" value="20" inputmode="numeric" style="width:70px" oninput="document.getElementById('omw-eta-slider').value=this.value;updateOmwPreview()">
+        <span style="font-size:13px;color:var(--txt3)">min</span>
+      </div>
+      <span class="calc-label">Message Preview</span>
+      <div id="omw-preview" style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12px;line-height:1.6;color:var(--txt2);white-space:pre-wrap;margin-bottom:14px;min-height:60px"></div>
+      <button class="omw-btn omw-btn-client" onclick="sendOmwClient()" style="margin-bottom:8px">
+        💬 WhatsApp Client
+      </button>
+      <button class="omw-btn omw-btn-office" onclick="sendOmwOffice()">
+        📨 Notify Office
+      </button>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+
   <!-- GUIDE -->
+
   <div class="page" id="page-guide">
     <div id="guide-header" style="padding:16px 14px 4px">
       <div style="font-size:18px;font-weight:900;margin-bottom:4px">📖 Help &amp; Guide</div>
@@ -477,6 +698,7 @@ select.fi-sm{cursor:pointer}
   </div>
 
   <!-- BOTTOM NAV -->
+
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('today')" id="nav-today"><span class="nav-icon">⚡</span>Today<span class="nav-badge" id="badge-today" style="display:none"></span></div>
     <div class="nav-item" onclick="switchTab('upcoming')" id="nav-upcoming"><span class="nav-icon">📋</span>Upcoming</div>
@@ -484,13 +706,17 @@ select.fi-sm{cursor:pointer}
     <div class="nav-item" onclick="switchTab('map')" id="nav-map"><span class="nav-icon">🗺</span>Map</div>
     <div class="nav-item" onclick="switchTab('dash')" id="nav-dash"><span class="nav-icon">📊</span>Stats</div>
     <div class="nav-item" onclick="switchTab('requests')" id="nav-requests"><span class="nav-icon">📤</span>Requests<span class="nav-badge" id="badge-requests" style="display:none"></span></div>
+    <div class="nav-item" onclick="switchTab('tools')" id="nav-tools"><span class="nav-icon">🔧</span>Tools</div>
   </div>
 
   <!-- FAB — Add Job (shown on today/upcoming tabs) -->
-  <button class="fab" id="fab-add" onclick="openAddJobModal()" title="Report a job">+</button>
+
+<button class="fab" id="fab-add" onclick="openAddJobModal()" title="Report a job">+</button>
+
 </div>
 
 <!-- JOB DETAIL MODAL -->
+
 <div class="overlay" id="job-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -507,6 +733,7 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- ADD JOB MODAL (engineer reports a new job / site issue) -->
+
 <div class="overlay" id="addjob-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -542,6 +769,7 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- OVERTIME MODAL -->
+
 <div class="overlay" id="ot-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -568,6 +796,7 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- LEAVE MODAL -->
+
 <div class="overlay" id="leave-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -589,6 +818,7 @@ select.fi-sm{cursor:pointer}
 </div>
 
 <!-- QUICK NOTES PICKER -->
+
 <div class="qn-overlay" id="qn-overlay">
   <div class="qn-sheet">
     <div class="qn-hd">
@@ -872,6 +1102,12 @@ async function doLogin(){
 }
 function _loginErr(m){const e=document.getElementById('login-err');e.textContent=m;e.style.display='block';}
 // ══ USER MENU SHEET ══
+// Haptic feedback on save buttons
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('[onclick*="save"],[onclick*="Save"],[onclick*="update"],[onclick*="Update"]');
+  if(btn&&navigator.vibrate)navigator.vibrate(40);
+});
+
 function openUserMenu(){
   const sheet=document.getElementById('user-menu-sheet');
   if(!sheet)return;
@@ -889,6 +1125,222 @@ function openUserMenu(){
 function closeUserMenu(){
   const s=document.getElementById('user-menu-sheet');
   if(s)s.style.display='none';
+}
+
+// ═══════════════════════════════════════════════
+// TOOL TAB SWITCHER
+// ═══════════════════════════════════════════════
+function showTool(id, btn){
+  ['voltage-drop','max-zs','conduit','on-my-way'].forEach(t=>{
+    const el=document.getElementById('tool-'+t);
+    if(el)el.style.display=t===id?'block':'none';
+  });
+  document.querySelectorAll('.tool-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(id==='max-zs')calcZs();
+  if(id==='on-my-way'){updateOmwPreview();_prefillOmw();}
+  if(navigator.vibrate)navigator.vibrate(30);
+}
+
+// ═══════════════════════════════════════════════
+// VOLTAGE DROP CALCULATOR
+// ═══════════════════════════════════════════════
+function calcVD(){
+  const amps=parseFloat(document.getElementById('vd-amps')?.value)||0;
+  const len=parseFloat(document.getElementById('vd-len')?.value)||0;
+  const mv=parseFloat(document.getElementById('vd-type')?.value)||0;
+  const limit=parseFloat(document.getElementById('vd-circuit')?.value)||11.5;
+  const display=document.getElementById('vd-display');
+  const res=document.getElementById('vd-result');
+  const st=document.getElementById('vd-status');
+  if(!amps||!len||!mv){
+    if(res)res.textContent='0.00 V';
+    if(st){st.textContent='Enter values above';st.style.color='var(--txt3)';}
+    return;
+  }
+  const drop=(mv*amps*len)/1000;
+  const pct=((drop/230)*100).toFixed(1);
+  if(res)res.textContent=drop.toFixed(2)+' V';
+  if(display)display.className='calc-display '+(drop>limit?'fail':'pass');
+  if(drop>limit){
+    if(res)res.style.color='#e05252';
+    if(st){st.textContent=`⚠️ FAILED — ${pct}% drop (limit ${((limit/230)*100).toFixed(0)}%)`;st.style.color='#e05252';}
+  } else {
+    if(res)res.style.color='#22c55e';
+    if(st){st.textContent=`✅ PASSED — ${pct}% drop (limit ${((limit/230)*100).toFixed(0)}%)`;st.style.color='#22c55e';}
+  }
+  if(navigator.vibrate&&drop>limit)navigator.vibrate([50,30,50]);
+}
+
+// ═══════════════════════════════════════════════
+// MAX ZS LOOKUP — BS 7671:2018 Table 41.2
+// ═══════════════════════════════════════════════
+const ZS_DATA={
+  tn:{
+    B6:{maxZs:7.67,Ia:36},B10:{maxZs:4.6,Ia:60},B16:{maxZs:2.87,Ia:96},B20:{maxZs:2.3,Ia:120},
+    B25:{maxZs:1.84,Ia:150},B32:{maxZs:1.44,Ia:192},B40:{maxZs:1.15,Ia:240},B50:{maxZs:0.92,Ia:300},
+    C6:{maxZs:3.84,Ia:72},C10:{maxZs:2.3,Ia:120},C16:{maxZs:1.44,Ia:192},C20:{maxZs:1.15,Ia:240},
+    C25:{maxZs:0.92,Ia:300},C32:{maxZs:0.72,Ia:384},C40:{maxZs:0.57,Ia:480},C50:{maxZs:0.46,Ia:600},
+    D6:{maxZs:1.92,Ia:144},D10:{maxZs:1.15,Ia:240},D16:{maxZs:0.72,Ia:384},D20:{maxZs:0.57,Ia:480},D32:{maxZs:0.36,Ia:768}
+  },
+  tt:{
+    B6:{maxZs:38.33,Ia:36},B10:{maxZs:23,Ia:60},B16:{maxZs:14.38,Ia:96},B20:{maxZs:11.5,Ia:120},
+    B25:{maxZs:9.2,Ia:150},B32:{maxZs:7.19,Ia:192},B40:{maxZs:5.75,Ia:240},B50:{maxZs:4.6,Ia:300},
+    C6:{maxZs:19.17,Ia:72},C10:{maxZs:11.5,Ia:120},C16:{maxZs:7.19,Ia:192},C20:{maxZs:5.75,Ia:240},
+    C25:{maxZs:4.6,Ia:300},C32:{maxZs:3.59,Ia:384},C40:{maxZs:2.88,Ia:480},C50:{maxZs:2.3,Ia:600},
+    D6:{maxZs:9.58,Ia:144},D10:{maxZs:5.75,Ia:240},D16:{maxZs:3.59,Ia:384},D20:{maxZs:2.88,Ia:480},D32:{maxZs:1.79,Ia:768}
+  }
+};
+
+function calcZs(){
+  const system=document.getElementById('zs-system')?.value||'tn';
+  const breaker=document.getElementById('zs-breaker')?.value||'B32';
+  const d=ZS_DATA[system]?.[breaker];
+  if(!d)return;
+  const uf=(230/d.Ia).toFixed(3);
+  const maxEl=document.getElementById('zs-max-val');
+  const iaEl=document.getElementById('zs-ia-val');
+  const ufEl=document.getElementById('zs-uf-val');
+  if(maxEl)maxEl.textContent=d.maxZs+' Ω';
+  if(iaEl)iaEl.textContent=d.Ia+' A';
+  if(ufEl)ufEl.textContent=uf+' Ω';
+  const measured=parseFloat(document.getElementById('zs-measured')?.value);
+  const res=document.getElementById('zs-result');
+  if(isNaN(measured)||!document.getElementById('zs-measured')?.value){
+    if(res){res.className='zs-result zs-none';res.textContent='Enter measured Zs to check';}
+    return;
+  }
+  const passes=measured<=d.maxZs;
+  if(res){
+    res.className='zs-result '+(passes?'zs-pass':'zs-fail');
+    res.textContent=passes
+      ?`✅ PASSED — ${measured}Ω ≤ ${d.maxZs}Ω max`
+      :`❌ FAILED — ${measured}Ω exceeds max ${d.maxZs}Ω by ${(measured-d.maxZs).toFixed(3)}Ω`;
+  }
+  if(navigator.vibrate)navigator.vibrate(passes?[30]:[80,40,80]);
+}
+
+// ═══════════════════════════════════════════════
+// CONDUIT FILL VISUALISER
+// ═══════════════════════════════════════════════
+const WIRE_DIAMETERS={1.5:2.9,2.5:3.6,4:4.5,6:5.6,10:7.0};
+let _conduitWires=[];
+
+function updateConduit(){_conduitWires=[];renderConduit();}
+function clearConduit(){_conduitWires=[];renderConduit();if(navigator.vibrate)navigator.vibrate(30);}
+
+function addWire(){
+  const conduitMm=parseFloat(document.getElementById('cf-size')?.value)||20;
+  const wireMm=parseFloat(document.getElementById('cf-wire')?.value)||2.5;
+  const wireDia=WIRE_DIAMETERS[wireMm]||3.6;
+  const conduitArea=Math.PI*Math.pow(conduitMm/2,2);
+  const wireArea=Math.PI*Math.pow(wireDia/2,2);
+  const currentFill=_conduitWires.length*wireArea/conduitArea;
+  if(currentFill+wireArea/conduitArea>0.55){
+    if(navigator.vibrate)navigator.vibrate([80,30,80,30,80]);
+    return;
+  }
+  _conduitWires.push({d:wireDia,mm:wireMm});
+  renderConduit();
+  if(navigator.vibrate)navigator.vibrate(20);
+}
+
+function renderConduit(){
+  const svg=document.getElementById('conduit-wires');
+  const pctTxt=document.getElementById('conduit-pct-txt');
+  const cntTxt=document.getElementById('conduit-wire-count');
+  const ruleTxt=document.getElementById('conduit-rule');
+  if(!svg)return;
+  const conduitMm=parseFloat(document.getElementById('cf-size')?.value)||20;
+  const wireMm=parseFloat(document.getElementById('cf-wire')?.value)||2.5;
+  const wireDia=WIRE_DIAMETERS[wireMm]||3.6;
+  const conduitArea=Math.PI*Math.pow(conduitMm/2,2);
+  const wireArea=Math.PI*Math.pow(wireDia/2,2);
+  const fillPct=Math.round(_conduitWires.length*wireArea/conduitArea*100);
+  const over=fillPct>45;
+  // Scale wire dots to SVG (conduit radius = 56px in SVG)
+  const svgR=56, scale=svgR/(conduitMm/2);
+  const dotR=Math.max(3,(wireDia/2)*scale);
+  // Pack dots in spiral pattern
+  const dots=_conduitWires.map((_,i)=>{
+    const cols=Math.floor(svgR*2/(dotR*2+2));
+    const col=i%cols, row=Math.floor(i/cols);
+    const x=-svgR+dotR+(dotR*2+2)*col+dotR;
+    const y=-svgR+dotR+(dotR*2+2)*row+dotR;
+    return{x:80+x,y:80+y};
+  });
+  svg.innerHTML=dots.map(d=>`<circle cx="${d.x}" cy="${d.y}" r="${dotR}" fill="${over?'#e05252':'#4f8fff'}" opacity=".85"/>`).join('');
+  // Update circle stroke
+  const outerCircle=document.querySelector('#conduit-svg circle');
+  if(outerCircle)outerCircle.setAttribute('stroke',over?'#e05252':'#3a4255');
+  if(pctTxt){pctTxt.textContent=fillPct+'%';pctTxt.setAttribute('fill',over?'#e05252':'#22c55e');}
+  if(cntTxt)cntTxt.textContent=`${_conduitWires.length} wire${_conduitWires.length!==1?'s':''} (${wireMm}mm²)`;
+  if(ruleTxt){ruleTxt.textContent=over?'⚠️ Over 45% — use bigger conduit!':fillPct>35?'Getting full (45% limit)':'Max 45% fill rule';ruleTxt.style.color=over?'#e05252':fillPct>35?'#f5a623':'var(--txt3)';}
+}
+
+// ═══════════════════════════════════════════════
+// ON MY WAY MESSAGES
+// ═══════════════════════════════════════════════
+function _getEtaTime(mins){
+  const d=new Date();d.setMinutes(d.getMinutes()+parseInt(mins||20));
+  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+function updateOmwPreview(){
+  const to=document.getElementById('omw-to')?.value||currentJob?.address||'the property';
+  const eta=document.getElementById('omw-eta')?.value||20;
+  const etaTime=_getEtaTime(eta);
+  const engineer=currentUser?.name||'Your engineer';
+  const msg=`Hi, this is ${engineer} from ${S_CO?.coName||'the office'}.
+
+I'm on my way to:
+📍 ${to}
+
+🕐 I should arrive in approximately ${eta} minutes (around ${etaTime}).
+
+Please make sure access is available. Thank you! 👷⚡`;
+  const prev=document.getElementById('omw-preview');
+  if(prev)prev.textContent=msg;
+}
+// S_CO fallback
+let S_CO={coName:''};
+try{const raw=localStorage.getItem('df_setting_coName');if(raw)S_CO.coName=JSON.parse(raw);}catch(e){}
+
+function sendOmwClient(){
+  const to=document.getElementById('omw-to')?.value||currentJob?.address||'the property';
+  const eta=document.getElementById('omw-eta')?.value||20;
+  const etaTime=_getEtaTime(eta);
+  const phone=currentJob?.contact?.replace(/\D/g,'')||currentJob?.tenantPhone?.replace(/\D/g,'')||'';
+  const msg=encodeURIComponent(`Hi, this is ${currentUser?.name||'Your engineer'} from ${S_CO.coName||'the office'}.
+
+I'm on my way to:
+📍 ${to}
+
+ETA: approx ${eta} mins (around ${etaTime}).
+
+Please ensure access is available. Thank you! 👷⚡`);
+  window.open(`https://wa.me/${phone}?text=${msg}`,'_blank');
+  if(navigator.vibrate)navigator.vibrate(40);
+}
+function sendOmwOffice(){
+  const to=document.getElementById('omw-to')?.value||currentJob?.address||'—';
+  const eta=document.getElementById('omw-eta')?.value||20;
+  const etaTime=_getEtaTime(eta);
+  const msg=encodeURIComponent(`🚗 *On My Way*
+👷 ${currentUser?.name||'Engineer'}
+📍 Heading to: ${to}
+🕐 ETA: ~${eta} mins (${etaTime})`);
+  const officeNum=(typeof OFFICE_WA_NUMBER!=='undefined'?OFFICE_WA_NUMBER:'')||'';
+  window.open(`https://wa.me/${officeNum}?text=${msg}`,'_blank');
+  if(navigator.vibrate)navigator.vibrate(40);
+}
+
+// Pre-fill On My Way with current job if open
+function _prefillOmw(){
+  if(currentJob){
+    const addr=document.getElementById('omw-to');
+    if(addr&&!addr.value)addr.value=currentJob.address||'';
+    updateOmwPreview();
+  }
 }
 
 // ══ OFFICE CONNECTION STATUS ══
@@ -1253,65 +1705,69 @@ function renderJobDetail(j,atts){
         <button class="notes-tool-btn" onclick="_waShareNotes()">💬 Share Notes</button>
       </div>
       <textarea class="notes-box" id="job-notes" placeholder="Issues found, materials used, observations…">${j.notes||''}</textarea>
-      <button class="save-btn" onclick="saveNotes()" style="margin-top:8px">💾 Save Notes</button>
-    </div>
 
-    <!-- LOG HOURS -->
-    <div class="d-section">
-      <div class="d-section-hd">⏱ Log Hours</div>
-      <div style="display:flex;gap:8px;align-items:stretch">
-        <input class="fi-sm" type="number" id="job-hours" value="${j.hours||''}" placeholder="Hours worked" min="0" step="0.5" style="flex:1;margin-bottom:0">
-        <button class="save-btn" onclick="saveHours()" style="width:auto;padding:10px 18px;font-size:13px;margin:0">Save</button>
-      </div>
-    </div>
+```
+  <button class="save-btn" onclick="saveNotes()" style="margin-top:8px">💾 Save Notes</button>
+</div>
 
-    <!-- PHOTOS -->
-    <div class="d-section">
-      <div class="d-section-hd">📷 Photos (${photos.length})<span style="font-size:10px;color:var(--acc);font-weight:600;margin-left:6px">AUTO-STAMPED</span></div>
-      ${photos.length?`<div class="photo-grid">${photos.map(a=>`<div class="photo-wrap"><img src="${a.url}" class="photo-img" onclick="window.open('${a.url}','_blank')" loading="lazy"></div>`).join('')}</div>`:''}
-      <div class="stamp-notice">📸 Photos stamped with job address &amp; capture time (from EXIF). GPS validated — if taken far from job, address omitted. No metadata = no stamp.</div>
-      <div class="upload-quality-row">
-        <button class="quality-btn ${!_uploadHD?'active':''}" onclick="setQuality(false,this)">📱 Compressed</button>
-        <button class="quality-btn ${_uploadHD?'active':''}" onclick="setQuality(true,this)">🔷 HD Original</button>
-      </div>
-      <input type="file" id="photo-input" accept="image/*" capture="environment" multiple onchange="handleUpload(this,'photo')">
-      <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
-        <div class="upload-zone-icon">📷</div>
-        <div class="upload-zone-text">Take Photo or Upload from Gallery</div>
-        <div class="upload-zone-sub">${_uploadHD?'HD quality — full resolution':'Compressed — faster upload, smaller size'}</div>
-      </div>
-    </div>
+<!-- LOG HOURS -->
+<div class="d-section">
+  <div class="d-section-hd">⏱ Log Hours</div>
+  <div style="display:flex;gap:8px;align-items:stretch">
+    <input class="fi-sm" type="number" id="job-hours" value="${j.hours||''}" placeholder="Hours worked" min="0" step="0.5" style="flex:1;margin-bottom:0">
+    <button class="save-btn" onclick="saveHours()" style="width:auto;padding:10px 18px;font-size:13px;margin:0">Save</button>
+  </div>
+</div>
 
-    <!-- DOCS -->
-    <div class="d-section">
-      <div class="d-section-hd">📄 Certificates &amp; Docs (${pdfs.length})</div>
-      ${pdfs.map(a=>`<div class="pdf-row"><div class="pdf-icon">📄</div><div class="pdf-info"><div class="pdf-name">${a.name}</div><div class="pdf-meta">${a.uploaded_by_name||''} · ${_fd(a.created)}</div></div><a class="btn-open" href="${a.url}" target="_blank">Open</a></div>`).join('')}
-      <input type="file" id="pdf-input" accept=".pdf,application/pdf" multiple onchange="handleUpload(this,'certificate')">
-      <div class="upload-zone" onclick="document.getElementById('pdf-input').click()">
-        <div class="upload-zone-icon">📄</div>
-        <div class="upload-zone-text">Upload Certificate / Document</div>
-        <div class="upload-zone-sub">Gas Safety, EICR, EPC etc.</div>
-      </div>
-    </div>
-    <div style="height:24px"></div>
-  `;
+<!-- PHOTOS -->
+<div class="d-section">
+  <div class="d-section-hd">📷 Photos (${photos.length})<span style="font-size:10px;color:var(--acc);font-weight:600;margin-left:6px">AUTO-STAMPED</span></div>
+  ${photos.length?`<div class="photo-grid">${photos.map(a=>`<div class="photo-wrap"><img src="${a.url}" class="photo-img" onclick="window.open('${a.url}','_blank')" loading="lazy"></div>`).join('')}</div>`:''}
+  <div class="stamp-notice">📸 Photos stamped with job address &amp; capture time (from EXIF). GPS validated — if taken far from job, address omitted. No metadata = no stamp.</div>
+  <div class="upload-quality-row">
+    <button class="quality-btn ${!_uploadHD?'active':''}" onclick="setQuality(false,this)">📱 Compressed</button>
+    <button class="quality-btn ${_uploadHD?'active':''}" onclick="setQuality(true,this)">🔷 HD Original</button>
+  </div>
+  <input type="file" id="photo-input" accept="image/*" capture="environment" multiple onchange="handleUpload(this,'photo')">
+  <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+    <div class="upload-zone-icon">📷</div>
+    <div class="upload-zone-text">Take Photo or Upload from Gallery</div>
+    <div class="upload-zone-sub">${_uploadHD?'HD quality — full resolution':'Compressed — faster upload, smaller size'}</div>
+  </div>
+</div>
+
+<!-- DOCS -->
+<div class="d-section">
+  <div class="d-section-hd">📄 Certificates &amp; Docs (${pdfs.length})</div>
+  ${pdfs.map(a=>`<div class="pdf-row"><div class="pdf-icon">📄</div><div class="pdf-info"><div class="pdf-name">${a.name}</div><div class="pdf-meta">${a.uploaded_by_name||''} · ${_fd(a.created)}</div></div><a class="btn-open" href="${a.url}" target="_blank">Open</a></div>`).join('')}
+  <input type="file" id="pdf-input" accept=".pdf,application/pdf" multiple onchange="handleUpload(this,'certificate')">
+  <div class="upload-zone" onclick="document.getElementById('pdf-input').click()">
+    <div class="upload-zone-icon">📄</div>
+    <div class="upload-zone-text">Upload Certificate / Document</div>
+    <div class="upload-zone-sub">Gas Safety, EICR, EPC etc.</div>
+  </div>
+</div>
+<div style="height:24px"></div>
+```
+
+`;
 }
 
-function _dr(lbl,val){if(!val)return'';return`<div class="d-row"><div class="d-lbl">${lbl}</div><div class="d-val">${val}</div></div>`;}
+function _dr(lbl,val){if(!val)return’’;return`<div class="d-row"><div class="d-lbl">${lbl}</div><div class="d-val">${val}</div></div>`;}
 
 function setQuality(hd,btn){
-  _uploadHD=hd;
-  document.querySelectorAll('.quality-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  const sub=document.querySelector('.upload-zone-sub');
-  if(sub)sub.textContent=hd?'HD quality — full resolution':'Compressed — faster upload, smaller size';
+_uploadHD=hd;
+document.querySelectorAll(’.quality-btn’).forEach(b=>b.classList.remove(‘active’));
+if(btn)btn.classList.add(‘active’);
+const sub=document.querySelector(’.upload-zone-sub’);
+if(sub)sub.textContent=hd?‘HD quality — full resolution’:‘Compressed — faster upload, smaller size’;
 }
 
 function _waShareNotes(){
-  const notes=document.getElementById('job-notes')?.value||'';
-  if(!notes.trim()){toast('No notes to share','info');return;}
-  const msg=encodeURIComponent(`*Job Notes — ${currentJob?.address||''}*\n\n${notes}`);
-  window.open(`https://wa.me/?text=${msg}`,'_blank');
+const notes=document.getElementById(‘job-notes’)?.value||’’;
+if(!notes.trim()){toast(‘No notes to share’,‘info’);return;}
+const msg=encodeURIComponent(`*Job Notes — ${currentJob?.address||''}*\n\n${notes}`);
+window.open(`https://wa.me/?text=${msg}`,’_blank’);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1319,474 +1775,473 @@ function _waShareNotes(){
 // ══════════════════════════════════════════════════════════════
 // Status flow: what each status can move to
 const STATUS_FLOW={
-  'Pending':       ['In Progress','Cannot Access'],
-  'In Progress':   ['Completed','Cannot Access'],
-  'Completed':     [],           // LOCKED — no going back
-  'Cannot Access': ['In Progress'], // office can reassign but engineer can re-attempt
-  'Invoiced':      [],           // LOCKED
-  'Cancelled':     []            // LOCKED
+‘Pending’:       [‘In Progress’,‘Cannot Access’],
+‘In Progress’:   [‘Completed’,‘Cannot Access’],
+‘Completed’:     [],           // LOCKED — no going back
+‘Cannot Access’: [‘In Progress’], // office can reassign but engineer can re-attempt
+‘Invoiced’:      [],           // LOCKED
+‘Cancelled’:     []            // LOCKED
 };
 
 function _statusButtons(currentStatus){
-  const all=[
-    {key:'Pending',      label:'⏳ Pending',    cls:'sp-pending'},
-    {key:'In Progress',  label:'🔄 In Progress', cls:'sp-progress'},
-    {key:'Completed',    label:'✅ Completed',   cls:'sp-completed'},
-    {key:'Cannot Access',label:'🚫 No Access',   cls:'sp-noaccess'},
-  ];
-  const allowed=STATUS_FLOW[currentStatus]||[];
-  return all.map(s=>{
-    const isActive=s.key===currentStatus;
-    const isLocked=!isActive&&!allowed.includes(s.key);
-    if(isLocked) return `<button class="sp-btn ${s.cls}" disabled style="opacity:.25;cursor:not-allowed;filter:grayscale(1)" title="Cannot go back to ${s.key}">${s.label}</button>`;
-    return `<button class="sp-btn ${s.cls} ${isActive?'active':''}" onclick="updateStatus('${s.key}',this)" ${isActive?'style="cursor:default"':''}>${s.label}${isActive?' ✓':''}</button>`;
-  }).join('');
+const all=[
+{key:‘Pending’,      label:‘⏳ Pending’,    cls:‘sp-pending’},
+{key:‘In Progress’,  label:‘🔄 In Progress’, cls:‘sp-progress’},
+{key:‘Completed’,    label:‘✅ Completed’,   cls:‘sp-completed’},
+{key:‘Cannot Access’,label:‘🚫 No Access’,   cls:‘sp-noaccess’},
+];
+const allowed=STATUS_FLOW[currentStatus]||[];
+return all.map(s=>{
+const isActive=s.key===currentStatus;
+const isLocked=!isActive&&!allowed.includes(s.key);
+if(isLocked) return `<button class="sp-btn ${s.cls}" disabled style="opacity:.25;cursor:not-allowed;filter:grayscale(1)" title="Cannot go back to ${s.key}">${s.label}</button>`;
+return `<button class="sp-btn ${s.cls} ${isActive?'active':''}" onclick="updateStatus('${s.key}',this)" ${isActive?'style="cursor:default"':''}>${s.label}${isActive?' ✓':''}</button>`;
+}).join(’’);
 }
 
 async function updateStatus(status, btn){
-  if(!currentJob) return;
+if(!currentJob) return;
 
-  // Client-side flow check
-  const allowed=STATUS_FLOW[currentJob.status]||[];
-  if(status===currentJob.status) return; // already set
-  if(!allowed.includes(status)){
-    toast(`🔒 Cannot change from "${currentJob.status}" to "${status}"`, 'error');
-    return;
-  }
+// Client-side flow check
+const allowed=STATUS_FLOW[currentJob.status]||[];
+if(status===currentJob.status) return; // already set
+if(!allowed.includes(status)){
+toast(`🔒 Cannot change from "${currentJob.status}" to "${status}"`, ‘error’);
+return;
+}
 
-  // Server-side verification: re-fetch current status before patching
-  try{
-    const live=await sb(`jobs?id=eq.${currentJob.id}&select=id,status`);
-    const liveStatus=live?.[0]?.status;
-    if(liveStatus && liveStatus!==currentJob.status){
-      // Someone else changed it — refresh
-      currentJob.status=liveStatus;
-      document.getElementById('modal-status-pill').innerHTML=_spill(liveStatus,currentJob.priority);
-      const newBtns=document.querySelector('.status-pills-row');
-      if(newBtns) newBtns.innerHTML=_statusButtons(liveStatus);
-      toast(`ℹ️ Status was already updated to "${liveStatus}"`, 'warn');
-      loadJobs();
-      return;
-    }
+// Server-side verification: re-fetch current status before patching
+try{
+const live=await sb(`jobs?id=eq.${currentJob.id}&select=id,status`);
+const liveStatus=live?.[0]?.status;
+if(liveStatus && liveStatus!==currentJob.status){
+// Someone else changed it — refresh
+currentJob.status=liveStatus;
+document.getElementById(‘modal-status-pill’).innerHTML=_spill(liveStatus,currentJob.priority);
+const newBtns=document.querySelector(’.status-pills-row’);
+if(newBtns) newBtns.innerHTML=_statusButtons(liveStatus);
+toast(`ℹ️ Status was already updated to "${liveStatus}"`, ‘warn’);
+loadJobs();
+return;
+}
 
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{status,modified:Date.now()}});
-    currentJob.status=status;
-    document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
-    // Refresh the buttons
-    const btnRow=document.querySelector('.status-pills-row');
-    if(btnRow) btnRow.innerHTML=_statusButtons(status);
-    toast(`Status updated to ${status}`, 'success');
-    loadJobs();
-  }catch(e){ toast('⚠️ Status update failed','error'); }
+```
+await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{status,modified:Date.now()}});
+currentJob.status=status;
+document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
+// Refresh the buttons
+const btnRow=document.querySelector('.status-pills-row');
+if(btnRow) btnRow.innerHTML=_statusButtons(status);
+toast(`Status updated to ${status}`, 'success');
+loadJobs();
+```
+
+}catch(e){ toast(‘⚠️ Status update failed’,‘error’); }
 }
 
 async function saveNotes(){
-  if(!currentJob)return;
-  const notes=document.getElementById('job-notes')?.value.trim()||'';
-  const btn=document.querySelector('[onclick="saveNotes()"]');
-  if(btn){btn.textContent='Saving…';btn.disabled=true;}
-  try{
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{notes,modified:Date.now()}});
-    currentJob.notes=notes;
-    toast('✅ Notes saved','success');
-  }catch(e){toast('⚠️ Failed to save notes','error');}
-  finally{if(btn){btn.innerHTML='💾 Save Notes';btn.disabled=false;}}
+if(!currentJob)return;
+const notes=document.getElementById(‘job-notes’)?.value.trim()||’’;
+const btn=document.querySelector(’[onclick=“saveNotes()”]’);
+if(btn){btn.textContent=‘Saving…’;btn.disabled=true;}
+try{
+await sb(`jobs?id=eq.${currentJob.id}`,{method:‘PATCH’,body:{notes,modified:Date.now()}});
+currentJob.notes=notes;
+toast(‘✅ Notes saved’,‘success’);
+}catch(e){toast(‘⚠️ Failed to save notes’,‘error’);}
+finally{if(btn){btn.innerHTML=‘💾 Save Notes’;btn.disabled=false;}}
 }
 
 async function saveHours(){
-  if(!currentJob)return;
-  const hours=parseFloat(document.getElementById('job-hours')?.value);
-  if(isNaN(hours)||hours<0){toast('Enter valid hours','error');return;}
-  try{
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{hours,modified:Date.now()}});
-    currentJob.hours=hours;
-    toast(`✅ Logged ${hours}h`,'success');
-    loadJobs();
-  }catch(e){toast('⚠️ Failed to save hours','error');}
+if(!currentJob)return;
+const hours=parseFloat(document.getElementById(‘job-hours’)?.value);
+if(isNaN(hours)||hours<0){toast(‘Enter valid hours’,‘error’);return;}
+try{
+await sb(`jobs?id=eq.${currentJob.id}`,{method:‘PATCH’,body:{hours,modified:Date.now()}});
+currentJob.hours=hours;
+toast(`✅ Logged ${hours}h`,‘success’);
+loadJobs();
+}catch(e){toast(‘⚠️ Failed to save hours’,‘error’);}
 }
 
 // ══════════════════════════════════════════════════════════════
 //  ADD JOB (FAB) — engineer reports new job, notifies office
 // ══════════════════════════════════════════════════════════════
 function openAddJobModal(){
-  document.getElementById('aj-address').value='';
-  document.getElementById('aj-desc').value='';
-  document.getElementById('aj-priority').value='Normal';
-  document.getElementById('addjob-modal').classList.add('open');
+document.getElementById(‘aj-address’).value=’’;
+document.getElementById(‘aj-desc’).value=’’;
+document.getElementById(‘aj-priority’).value=‘Normal’;
+document.getElementById(‘addjob-modal’).classList.add(‘open’);
 }
 
 async function submitAddJob(){
-  const address=document.getElementById('aj-address').value.trim();
-  const trade=document.getElementById('aj-trade').value;
-  const desc=document.getElementById('aj-desc').value.trim();
-  const priority=document.getElementById('aj-priority').value;
-  if(!address){toast('Please enter an address','error');return;}
-  const btn=document.querySelector('#addjob-modal .save-btn');
-  btn.textContent='Submitting…';btn.disabled=true;
-  try{
-    // Create job in Supabase
-    const jobId=`job-eng-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-    const today=new Date().toISOString().split('T')[0];
-    await sb('jobs',{method:'POST',body:{
-      id:jobId,jobnum:`ENG-${Date.now().toString().slice(-6)}`,
-      date:today,address,trade,description:desc,
-      priority,status:'Pending',engineer:currentUser.name,
-      notes:`Reported by engineer: ${currentUser.name}`,
-      created:Date.now(),modified:Date.now()
-    }});
-    closeModal('addjob-modal');
-    // WhatsApp notification to office
-    const waMsg=encodeURIComponent(
-      `🔔 *New Job Reported*\n👷 Engineer: ${currentUser.name}\n📍 ${address}\n🔧 ${trade}\n${priority==='Emergency'?'🚨 EMERGENCY\n':priority==='Urgent'?'⚠️ Urgent\n':''}📝 ${desc||'—'}\n\n_DeepFlow App_`
-    );
-    window.open(`https://wa.me/${OFFICE_WA_NUMBER}?text=${waMsg}`,'_blank');
-    toast('✅ Job submitted! Office notified via WhatsApp','success');
-    loadJobs();
-  }catch(e){toast('❌ Failed to submit: '+(e.message||'').slice(0,60),'error');}
-  finally{btn.textContent='📤 Submit to Office';btn.disabled=false;}
+const address=document.getElementById(‘aj-address’).value.trim();
+const trade=document.getElementById(‘aj-trade’).value;
+const desc=document.getElementById(‘aj-desc’).value.trim();
+const priority=document.getElementById(‘aj-priority’).value;
+if(!address){toast(‘Please enter an address’,‘error’);return;}
+const btn=document.querySelector(’#addjob-modal .save-btn’);
+btn.textContent=‘Submitting…’;btn.disabled=true;
+try{
+// Create job in Supabase
+const jobId=`job-eng-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+const today=new Date().toISOString().split(‘T’)[0];
+await sb(‘jobs’,{method:‘POST’,body:{
+id:jobId,jobnum:`ENG-${Date.now().toString().slice(-6)}`,
+date:today,address,trade,description:desc,
+priority,status:‘Pending’,engineer:currentUser.name,
+notes:`Reported by engineer: ${currentUser.name}`,
+created:Date.now(),modified:Date.now()
+}});
+closeModal(‘addjob-modal’);
+// WhatsApp notification to office
+const waMsg=encodeURIComponent(
+`🔔 *New Job Reported*\n👷 Engineer: ${currentUser.name}\n📍 ${address}\n🔧 ${trade}\n${priority==='Emergency'?'🚨 EMERGENCY\n':priority==='Urgent'?'⚠️ Urgent\n':''}📝 ${desc||'—'}\n\n_DeepFlow App_`
+);
+window.open(`https://wa.me/${OFFICE_WA_NUMBER}?text=${waMsg}`,’_blank’);
+toast(‘✅ Job submitted! Office notified via WhatsApp’,‘success’);
+loadJobs();
+}catch(e){toast(‘❌ Failed to submit: ‘+(e.message||’’).slice(0,60),‘error’);}
+finally{btn.textContent=‘📤 Submit to Office’;btn.disabled=false;}
 }
 
 // ══════════════════════════════════════════════════════════════
 //  QUICK NOTES PICKER
 // ══════════════════════════════════════════════════════════════
 const QN_CATEGORIES=[
-  {label:'⚡ Electrical',items:[
-    'Plastic consumer unit — requires upgrading to metal clad',
-    'No SPD (Surge Protection Device) installed',
-    'Type AC RCD — should be Type A or F',
-    'No RCD protection on circuits',
-    'Single RCD protecting all circuits',
-    'Some circuits not RCD protected',
-    'Missing cable grommets on consumer unit',
-    'Handwritten circuit labels — not acceptable',
-    'Loose socket outlet(s)',
-    'Faulty socket outlet(s)',
-    'Bathroom light fitting not IP rated',
-    'No earthing label on consumer unit',
-    'Missing arc fault detection (AFDD)',
-    'Bonding conductors undersized',
-    'No main protective bonding to gas/water',
-    'Deteriorated wiring — signs of overheating',
-    'Damaged/missing socket faceplates',
-    'No residual current device on bathroom circuit',
-    'Smoke alarm not hardwired/interconnected',
-    'Outdoor socket not RCD protected',
-    'Wiring in accessible conduit — risk of damage',
-    'Consumer unit in damp location',
-    'Double pole switch missing on shower circuit',
-    'Incorrect polarity identified',
-    'Earth continuity failure on ring circuit',
-  ]},
-  {label:'🔥 Gas',items:[
-    'Hob FSD (Flame Supervision Device) faulty',
-    'Burner not working on hob',
-    'Ignitor not working',
-    'Boiler not working — no hot water/heating',
-    'Boiler pressure low — requires topping up',
-    'Meter box damaged/broken',
-    'CO2 alarm missing — immediate action required',
-    'CO2 alarm expired — requires replacement',
-    'No gas safety record available',
-    'Flue not adequately supported',
-    'Ventilation inadequate for boiler',
-    'Gas pipe not properly supported/clipped',
-    'Smell of gas detected — investigated and safe',
-    'Boiler flue terminal too close to window/opening',
-    'Pilot light extinguishing frequently',
-    'Thermocouple faulty — pilot not holding',
-    'Boiler serviced but requires parts',
-    'Radiators not balancing — TRVs faulty',
-    'Expansion vessel requires recharging',
-    'Heat exchanger scaled — reduced efficiency',
-    'Timer/programmer faulty',
-  ]},
-  {label:'🔔 Fire Alarm',items:[
-    'Fike fire alarm panel installed',
-    'C-Tec fire alarm panel installed',
-    'Advanced fire alarm panel installed',
-    'Fire panel showing fault — investigated',
-    'Fire panel in alarm condition',
-    'Smoke detectors missing in required locations',
-    'Heat detector missing in kitchen',
-    'Detectors faulty — requires replacement',
-    'Detectors end of life — over 10 years old',
-    'Manual call point damaged/missing cover',
-    'Sounders not audible in all areas',
-    'Panel battery low/flat',
-    'Zone chart missing or out of date',
-    'Fire alarm cable not fire-rated',
-    'Detectors painted over — requires replacement',
-    'False alarm history noted — review required',
-    'Weekly test not being carried out',
-    'No log book on site',
-    'Alarm not certificated',
-    'Break glass units not tested',
-    'Emergency lighting linked to fire alarm',
-  ]},
-  {label:'🚿 Plumbing',items:[
-    'Hot water temperature below 60°C — Legionella risk',
-    'Cold water temperature above 20°C — Legionella risk',
-    'Tap dripping/leaking',
-    'Toilet cistern constantly running',
-    'No isolation valve to appliance',
-    'Water pressure low',
-    'Boiler condensate drain blocked',
-    'Radiator not heating — airlock/valve fault',
-    'Shower tray cracked — water damage risk',
-    'Mould growth around bath/shower sealant',
-    'Overflow pipe discharging externally',
-  ]},
-  {label:'🏠 General',items:[
-    'Job completed — all areas left clean and tidy',
-    'Access refused by tenant — rebooked',
-    'Landlord notified of findings',
-    'Remedial work required — quotation to follow',
-    'Revisit required for outstanding works',
-    'Parts on order — return visit needed',
-    'No access — left card through door',
-    'Emergency made safe — full repair required',
-    'Works completed to BS 7671 18th Edition',
-    'Works completed to Gas Safety (Installation and Use) Regulations',
-  ]}
+{label:‘⚡ Electrical’,items:[
+‘Plastic consumer unit — requires upgrading to metal clad’,
+‘No SPD (Surge Protection Device) installed’,
+‘Type AC RCD — should be Type A or F’,
+‘No RCD protection on circuits’,
+‘Single RCD protecting all circuits’,
+‘Some circuits not RCD protected’,
+‘Missing cable grommets on consumer unit’,
+‘Handwritten circuit labels — not acceptable’,
+‘Loose socket outlet(s)’,
+‘Faulty socket outlet(s)’,
+‘Bathroom light fitting not IP rated’,
+‘No earthing label on consumer unit’,
+‘Missing arc fault detection (AFDD)’,
+‘Bonding conductors undersized’,
+‘No main protective bonding to gas/water’,
+‘Deteriorated wiring — signs of overheating’,
+‘Damaged/missing socket faceplates’,
+‘No residual current device on bathroom circuit’,
+‘Smoke alarm not hardwired/interconnected’,
+‘Outdoor socket not RCD protected’,
+‘Wiring in accessible conduit — risk of damage’,
+‘Consumer unit in damp location’,
+‘Double pole switch missing on shower circuit’,
+‘Incorrect polarity identified’,
+‘Earth continuity failure on ring circuit’,
+]},
+{label:‘🔥 Gas’,items:[
+‘Hob FSD (Flame Supervision Device) faulty’,
+‘Burner not working on hob’,
+‘Ignitor not working’,
+‘Boiler not working — no hot water/heating’,
+‘Boiler pressure low — requires topping up’,
+‘Meter box damaged/broken’,
+‘CO2 alarm missing — immediate action required’,
+‘CO2 alarm expired — requires replacement’,
+‘No gas safety record available’,
+‘Flue not adequately supported’,
+‘Ventilation inadequate for boiler’,
+‘Gas pipe not properly supported/clipped’,
+‘Smell of gas detected — investigated and safe’,
+‘Boiler flue terminal too close to window/opening’,
+‘Pilot light extinguishing frequently’,
+‘Thermocouple faulty — pilot not holding’,
+‘Boiler serviced but requires parts’,
+‘Radiators not balancing — TRVs faulty’,
+‘Expansion vessel requires recharging’,
+‘Heat exchanger scaled — reduced efficiency’,
+‘Timer/programmer faulty’,
+]},
+{label:‘🔔 Fire Alarm’,items:[
+‘Fike fire alarm panel installed’,
+‘C-Tec fire alarm panel installed’,
+‘Advanced fire alarm panel installed’,
+‘Fire panel showing fault — investigated’,
+‘Fire panel in alarm condition’,
+‘Smoke detectors missing in required locations’,
+‘Heat detector missing in kitchen’,
+‘Detectors faulty — requires replacement’,
+‘Detectors end of life — over 10 years old’,
+‘Manual call point damaged/missing cover’,
+‘Sounders not audible in all areas’,
+‘Panel battery low/flat’,
+‘Zone chart missing or out of date’,
+‘Fire alarm cable not fire-rated’,
+‘Detectors painted over — requires replacement’,
+‘False alarm history noted — review required’,
+‘Weekly test not being carried out’,
+‘No log book on site’,
+‘Alarm not certificated’,
+‘Break glass units not tested’,
+‘Emergency lighting linked to fire alarm’,
+]},
+{label:‘🚿 Plumbing’,items:[
+‘Hot water temperature below 60°C — Legionella risk’,
+‘Cold water temperature above 20°C — Legionella risk’,
+‘Tap dripping/leaking’,
+‘Toilet cistern constantly running’,
+‘No isolation valve to appliance’,
+‘Water pressure low’,
+‘Boiler condensate drain blocked’,
+‘Radiator not heating — airlock/valve fault’,
+‘Shower tray cracked — water damage risk’,
+‘Mould growth around bath/shower sealant’,
+‘Overflow pipe discharging externally’,
+]},
+{label:‘🏠 General’,items:[
+‘Job completed — all areas left clean and tidy’,
+‘Access refused by tenant — rebooked’,
+‘Landlord notified of findings’,
+‘Remedial work required — quotation to follow’,
+‘Revisit required for outstanding works’,
+‘Parts on order — return visit needed’,
+‘No access — left card through door’,
+‘Emergency made safe — full repair required’,
+‘Works completed to BS 7671 18th Edition’,
+‘Works completed to Gas Safety (Installation and Use) Regulations’,
+]}
 ];
 
 let _qnCurrent=[];
 
 function openQN(){
-  _qnSelected=new Set();
-  _qnActiveTab=0;
-  _renderQNTabs();
-  _renderQNList(0);
-  document.getElementById('qn-overlay').classList.add('open');
+_qnSelected=new Set();
+_qnActiveTab=0;
+_renderQNTabs();
+_renderQNList(0);
+document.getElementById(‘qn-overlay’).classList.add(‘open’);
 }
 
-function closeQN(){document.getElementById('qn-overlay').classList.remove('open');}
+function closeQN(){document.getElementById(‘qn-overlay’).classList.remove(‘open’);}
 
 function _renderQNTabs(){
-  const el=document.getElementById('qn-tabs');
-  el.innerHTML=QN_CATEGORIES.map((c,i)=>
-    `<button class="qn-tab ${i===0?'active':''}" onclick="_switchQNTab(${i},this)">${c.label}</button>`
-  ).join('');
+const el=document.getElementById(‘qn-tabs’);
+el.innerHTML=QN_CATEGORIES.map((c,i)=>
+`<button class="qn-tab ${i===0?'active':''}" onclick="_switchQNTab(${i},this)">${c.label}</button>`
+).join(’’);
 }
 
 function _switchQNTab(i,btn){
-  _qnActiveTab=i;
-  document.querySelectorAll('.qn-tab').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  _renderQNList(i);
+_qnActiveTab=i;
+document.querySelectorAll(’.qn-tab’).forEach(b=>b.classList.remove(‘active’));
+if(btn)btn.classList.add(‘active’);
+_renderQNList(i);
 }
 
 function _renderQNList(catIdx){
-  const cat=QN_CATEGORIES[catIdx];
-  _qnCurrent=cat.items;
-  document.getElementById('qn-list').innerHTML=cat.items.map((item,i)=>`
-    <div class="qn-item ${_qnSelected.has(cat.label+':'+i)?'selected':''}" onclick="_toggleQN('${cat.label}',${i},this)">
-      <div class="qn-check">${_qnSelected.has(cat.label+':'+i)?'✓':''}</div>
-      <div class="qn-text">${item}</div>
-    </div>`).join('');
+const cat=QN_CATEGORIES[catIdx];
+_qnCurrent=cat.items;
+document.getElementById(‘qn-list’).innerHTML=cat.items.map((item,i)=>` <div class="qn-item ${_qnSelected.has(cat.label+':'+i)?'selected':''}" onclick="_toggleQN('${cat.label}',${i},this)"> <div class="qn-check">${_qnSelected.has(cat.label+':'+i)?'✓':''}</div> <div class="qn-text">${item}</div> </div>`).join(’’);
 }
 
 function _toggleQN(catLabel,idx,el){
-  const key=catLabel+':'+idx;
-  if(_qnSelected.has(key)){_qnSelected.delete(key);}
-  else{_qnSelected.add(key);}
-  el.classList.toggle('selected',_qnSelected.has(key));
-  el.querySelector('.qn-check').textContent=_qnSelected.has(key)?'✓':'';
+const key=catLabel+’:’+idx;
+if(_qnSelected.has(key)){_qnSelected.delete(key);}
+else{_qnSelected.add(key);}
+el.classList.toggle(‘selected’,_qnSelected.has(key));
+el.querySelector(’.qn-check’).textContent=_qnSelected.has(key)?‘✓’:’’;
 }
 
 function applyQN(){
-  if(!_qnSelected.size){toast('Select at least one item','info');return;}
-  const notesEl=document.getElementById('job-notes');
-  if(!notesEl)return;
-  const existing=notesEl.value.trim();
-  const lines=[];
-  QN_CATEGORIES.forEach(cat=>{
-    cat.items.forEach((item,i)=>{
-      if(_qnSelected.has(cat.label+':'+i))lines.push('• '+item);
-    });
-  });
-  notesEl.value=(existing?existing+'\n\n':'')+lines.join('\n');
-  closeQN();
-  toast(`✅ Added ${lines.length} issue${lines.length>1?'s':''}  to notes`,'success');
+if(!_qnSelected.size){toast(‘Select at least one item’,‘info’);return;}
+const notesEl=document.getElementById(‘job-notes’);
+if(!notesEl)return;
+const existing=notesEl.value.trim();
+const lines=[];
+QN_CATEGORIES.forEach(cat=>{
+cat.items.forEach((item,i)=>{
+if(_qnSelected.has(cat.label+’:’+i))lines.push(’• ‘+item);
+});
+});
+notesEl.value=(existing?existing+’\n\n’:’’)+lines.join(’\n’);
+closeQN();
+toast(`✅ Added ${lines.length} issue${lines.length>1?'s':''}  to notes`,‘success’);
 }
 
 // ══════════════════════════════════════════════════════════════
 //  PHOTO UPLOAD — compress / HD / EXIF stamp
 // ══════════════════════════════════════════════════════════════
 async function handleUpload(input,type){
-  const files=Array.from(input.files);
-  if(!files.length||!currentJob)return;
-  input.value='';
-  let ok=0;
-  for(let i=0;i<files.length;i++){
-    let file=files[i];
-    toast(`⬆️ ${type==='photo'?'Processing':'Uploading'} ${i+1}/${files.length}…`,'info');
-    try{
-      if(type==='photo'){
-        const exif=await _readExif(file);
-        let captureTime=null;
-        if(exif.dateTimeOriginal){
-          try{
-            const[dp,tp]=exif.dateTimeOriginal.split(' ');
-            const[y,mo,d]=dp.split(':');
-            captureTime=new Date(`${y}-${mo}-${d}T${tp}`);
-            if(isNaN(captureTime))captureTime=null;
-          }catch(e){}
-        }
-        // Compress unless HD mode
-        if(!_uploadHD){file=await _compressImage(file,1920,0.82);}
-        // Stamp only if we have EXIF capture time
-        if(captureTime){
-          let useAddr=true;
-          if(exif.gpsLat&&exif.gpsLng){
-            const jc=await geocodeAddress(currentJob.address);
-            if(jc){const dist=_hdist(exif.gpsLat,exif.gpsLng,jc.lat,jc.lng);useAddr=dist<5;}
-          }
-          file=await _stampPhoto(file,useAddr?(currentJob.address||''):'',currentUser.name,captureTime);
-        }
-      }
-      const ext=file.name.split('.').pop()?.toLowerCase()||'jpg';
-      const path=`jobs/${currentJob.id}/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
-      const url=await sbStorage(path,file);
-      await sb('attachments',{method:'POST',body:{
-        id:`att-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
-        jobid:currentJob.id,name:file.name,type,
-        mime:file.type||'application/octet-stream',
-        storage_path:path,url,uploaded_by_name:currentUser.name,created:Date.now()
-      }});
-      ok++;
-    }catch(e){toast(`❌ File ${i+1} failed: ${(e.message||'').slice(0,50)}`,'error');}
-  }
-  if(ok>0){
-    toast(`✅ ${ok} ${type==='photo'?'photo':'doc'}${ok>1?'s':''} uploaded`,'success');
-    openJob(currentJob.id);
-  }
+const files=Array.from(input.files);
+if(!files.length||!currentJob)return;
+input.value=’’;
+let ok=0;
+for(let i=0;i<files.length;i++){
+let file=files[i];
+toast(`⬆️ ${type==='photo'?'Processing':'Uploading'} ${i+1}/${files.length}…`,‘info’);
+try{
+if(type===‘photo’){
+const exif=await _readExif(file);
+let captureTime=null;
+if(exif.dateTimeOriginal){
+try{
+const[dp,tp]=exif.dateTimeOriginal.split(’ ‘);
+const[y,mo,d]=dp.split(’:’);
+captureTime=new Date(`${y}-${mo}-${d}T${tp}`);
+if(isNaN(captureTime))captureTime=null;
+}catch(e){}
+}
+// Compress unless HD mode
+if(!_uploadHD){file=await _compressImage(file,1920,0.82);}
+// Stamp only if we have EXIF capture time
+if(captureTime){
+let useAddr=true;
+if(exif.gpsLat&&exif.gpsLng){
+const jc=await geocodeAddress(currentJob.address);
+if(jc){const dist=_hdist(exif.gpsLat,exif.gpsLng,jc.lat,jc.lng);useAddr=dist<5;}
+}
+file=await _stampPhoto(file,useAddr?(currentJob.address||’’):’’,currentUser.name,captureTime);
+}
+}
+const ext=file.name.split(’.’).pop()?.toLowerCase()||‘jpg’;
+const path=`jobs/${currentJob.id}/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
+const url=await sbStorage(path,file);
+await sb(‘attachments’,{method:‘POST’,body:{
+id:`att-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+jobid:currentJob.id,name:file.name,type,
+mime:file.type||‘application/octet-stream’,
+storage_path:path,url,uploaded_by_name:currentUser.name,created:Date.now()
+}});
+ok++;
+}catch(e){toast(`❌ File ${i+1} failed: ${(e.message||'').slice(0,50)}`,‘error’);}
+}
+if(ok>0){
+toast(`✅ ${ok} ${type==='photo'?'photo':'doc'}${ok>1?'s':''} uploaded`,‘success’);
+openJob(currentJob.id);
+}
 }
 
 // Compress image to maxW/maxH at quality q
 function _compressImage(file,maxW,q){
-  return new Promise(resolve=>{
-    const img=new Image();
-    const u=URL.createObjectURL(file);
-    img.onload=()=>{
-      URL.revokeObjectURL(u);
-      let{naturalWidth:w,naturalHeight:h}=img;
-      if(w<=maxW&&h<=(maxW*h/w)){resolve(file);return;}
-      const scale=Math.min(maxW/w,maxW/h);
-      const W=Math.round(w*scale),H=Math.round(h*scale);
-      const c=document.createElement('canvas');c.width=W;c.height=H;
-      c.getContext('2d').drawImage(img,0,0,W,H);
-      c.toBlob(b=>{
-        if(!b){resolve(file);return;}
-        resolve(new File([b],file.name.replace(/\.(jpe?g|png|webp|heic)/i,'.jpg'),{type:'image/jpeg'}));
-      },'image/jpeg',q);
-    };
-    img.onerror=()=>{URL.revokeObjectURL(u);resolve(file);};
-    img.src=u;
-  });
+return new Promise(resolve=>{
+const img=new Image();
+const u=URL.createObjectURL(file);
+img.onload=()=>{
+URL.revokeObjectURL(u);
+let{naturalWidth:w,naturalHeight:h}=img;
+if(w<=maxW&&h<=(maxW*h/w)){resolve(file);return;}
+const scale=Math.min(maxW/w,maxW/h);
+const W=Math.round(w*scale),H=Math.round(h*scale);
+const c=document.createElement(‘canvas’);c.width=W;c.height=H;
+c.getContext(‘2d’).drawImage(img,0,0,W,H);
+c.toBlob(b=>{
+if(!b){resolve(file);return;}
+resolve(new File([b],file.name.replace(/.(jpe?g|png|webp|heic)/i,’.jpg’),{type:‘image/jpeg’}));
+},‘image/jpeg’,q);
+};
+img.onerror=()=>{URL.revokeObjectURL(u);resolve(file);};
+img.src=u;
+});
 }
 
 // EXIF reader
 function _readExif(file){
-  return new Promise(resolve=>{
-    const r=new FileReader();
-    r.onload=e=>{
-      try{
-        const buf=e.target.result;
-        const v=new DataView(buf);
-        if(v.getUint16(0)!==0xFFD8){resolve({});return;}
-        let off=2;
-        while(off<buf.byteLength-4){
-          const mk=v.getUint16(off);off+=2;
-          const sl=v.getUint16(off);
-          if(mk===0xFFE1){resolve(_parseExif(v,off+2));return;}
-          if((mk&0xFF00)!==0xFF00)break;
-          off+=sl;
-        }
-      }catch(e){}
-      resolve({});
-    };
-    r.onerror=()=>resolve({});
-    r.readAsArrayBuffer(file.slice(0,131072));
-  });
+return new Promise(resolve=>{
+const r=new FileReader();
+r.onload=e=>{
+try{
+const buf=e.target.result;
+const v=new DataView(buf);
+if(v.getUint16(0)!==0xFFD8){resolve({});return;}
+let off=2;
+while(off<buf.byteLength-4){
+const mk=v.getUint16(off);off+=2;
+const sl=v.getUint16(off);
+if(mk===0xFFE1){resolve(_parseExif(v,off+2));return;}
+if((mk&0xFF00)!==0xFF00)break;
+off+=sl;
+}
+}catch(e){}
+resolve({});
+};
+r.onerror=()=>resolve({});
+r.readAsArrayBuffer(file.slice(0,131072));
+});
 }
 
 function _parseExif(v,s){
-  try{
-    const big=v.getUint16(s)===0x4D4D;
-    const g16=o=>v.getUint16(s+o,!big);
-    const g32=o=>v.getUint32(s+o,!big);
-    const io=g32(4),cn=g16(io),ex={};
-    for(let i=0;i<cn&&i<100;i++){
-      const e=io+2+i*12,tag=g16(e),type=g16(e+2),val=g32(e+8);
-      if(tag===0x9003&&type===2){
-        let str='';for(let c=0;c<20&&(s+val+c)<v.byteLength;c++){const ch=v.getUint8(s+val+c);if(ch===0)break;str+=String.fromCharCode(ch);}
-        ex.dateTimeOriginal=str.trim();
-      }
-      if(tag===0x8825){
-        try{
-          const gc=g16(val);let la,lr,lna,lnr;
-          for(let g=0;g<gc&&g<20;g++){
-            const ge=val+2+g*12,gt=g16(ge),gv=g32(ge+8);
-            const rat=o=>{const n=v.getUint32(s+o,!big),d=v.getUint32(s+o+4,!big);return d?n/d:0;};
-            if(gt===1)lr=String.fromCharCode(v.getUint8(s+gv));
-            if(gt===2)la=[rat(gv),rat(gv+8),rat(gv+16)];
-            if(gt===3)lnr=String.fromCharCode(v.getUint8(s+gv));
-            if(gt===4)lna=[rat(gv),rat(gv+8),rat(gv+16)];
-          }
-          if(la&&lna){
-            let lat=la[0]+la[1]/60+la[2]/3600,lng=lna[0]+lna[1]/60+lna[2]/3600;
-            if(lr==='S')lat=-lat;if(lnr==='W')lng=-lng;
-            ex.gpsLat=lat;ex.gpsLng=lng;
-          }
-        }catch(e){}
-      }
-    }
-    return ex;
-  }catch(e){return{};}
+try{
+const big=v.getUint16(s)===0x4D4D;
+const g16=o=>v.getUint16(s+o,!big);
+const g32=o=>v.getUint32(s+o,!big);
+const io=g32(4),cn=g16(io),ex={};
+for(let i=0;i<cn&&i<100;i++){
+const e=io+2+i*12,tag=g16(e),type=g16(e+2),val=g32(e+8);
+if(tag===0x9003&&type===2){
+let str=’’;for(let c=0;c<20&&(s+val+c)<v.byteLength;c++){const ch=v.getUint8(s+val+c);if(ch===0)break;str+=String.fromCharCode(ch);}
+ex.dateTimeOriginal=str.trim();
+}
+if(tag===0x8825){
+try{
+const gc=g16(val);let la,lr,lna,lnr;
+for(let g=0;g<gc&&g<20;g++){
+const ge=val+2+g*12,gt=g16(ge),gv=g32(ge+8);
+const rat=o=>{const n=v.getUint32(s+o,!big),d=v.getUint32(s+o+4,!big);return d?n/d:0;};
+if(gt===1)lr=String.fromCharCode(v.getUint8(s+gv));
+if(gt===2)la=[rat(gv),rat(gv+8),rat(gv+16)];
+if(gt===3)lnr=String.fromCharCode(v.getUint8(s+gv));
+if(gt===4)lna=[rat(gv),rat(gv+8),rat(gv+16)];
+}
+if(la&&lna){
+let lat=la[0]+la[1]/60+la[2]/3600,lng=lna[0]+lna[1]/60+lna[2]/3600;
+if(lr===‘S’)lat=-lat;if(lnr===‘W’)lng=-lng;
+ex.gpsLat=lat;ex.gpsLng=lng;
+}
+}catch(e){}
+}
+}
+return ex;
+}catch(e){return{};}
 }
 
 // Photo stamp — single line footer, 30% bg, only on EXIF capture time
 function _stampPhoto(file,jobAddress,engineerName,captureTime){
-  return new Promise(resolve=>{
-    const img=new Image();
-    const u=URL.createObjectURL(file);
-    img.onload=()=>{
-      URL.revokeObjectURL(u);
-      const W=img.naturalWidth,H=img.naturalHeight;
-      const c=document.createElement('canvas');c.width=W;c.height=H;
-      const ctx=c.getContext('2d');ctx.drawImage(img,0,0);
-      const fSize=Math.max(14,Math.round(Math.min(W,H)/42));
-      const pad=Math.round(fSize*.7);
-      const barH=fSize+pad*2;
-      const ts=captureTime.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
-              +' '+captureTime.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      const parts=[];
-      if(jobAddress)parts.push(`📍 ${jobAddress.slice(0,45)}`);
-      parts.push(`🕐 ${ts}`);
-      parts.push(`👷 ${engineerName}`);
-      const line=parts.join('   ');
-      ctx.fillStyle='rgba(0,0,0,0.30)';
-      ctx.fillRect(0,H-barH,W,barH);
-      ctx.font=`600 ${fSize}px Arial,sans-serif`;
-      ctx.fillStyle='#ffffff';
-      ctx.textBaseline='middle';
-      ctx.textAlign='left';
-      ctx.fillText(line,pad,H-barH/2,W-pad*2);
-      c.toBlob(b=>{
-        if(!b){resolve(file);return;}
-        resolve(new File([b],file.name.replace(/\.(jpe?g|png|webp|heic|heif)$/i,'')+'_stamped.jpg',{type:'image/jpeg'}));
-      },'image/jpeg',_uploadHD?0.95:0.88);
-    };
-    img.onerror=()=>{URL.revokeObjectURL(u);resolve(file);};
-    img.src=u;
-  });
+return new Promise(resolve=>{
+const img=new Image();
+const u=URL.createObjectURL(file);
+img.onload=()=>{
+URL.revokeObjectURL(u);
+const W=img.naturalWidth,H=img.naturalHeight;
+const c=document.createElement(‘canvas’);c.width=W;c.height=H;
+const ctx=c.getContext(‘2d’);ctx.drawImage(img,0,0);
+const fSize=Math.max(14,Math.round(Math.min(W,H)/42));
+const pad=Math.round(fSize*.7);
+const barH=fSize+pad*2;
+const ts=captureTime.toLocaleDateString(‘en-GB’,{day:‘2-digit’,month:‘short’,year:‘numeric’})
++’ ‘+captureTime.toLocaleTimeString(‘en-GB’,{hour:‘2-digit’,minute:‘2-digit’});
+const parts=[];
+if(jobAddress)parts.push(`📍 ${jobAddress.slice(0,45)}`);
+parts.push(`🕐 ${ts}`);
+parts.push(`👷 ${engineerName}`);
+const line=parts.join(’   ‘);
+ctx.fillStyle=‘rgba(0,0,0,0.30)’;
+ctx.fillRect(0,H-barH,W,barH);
+ctx.font=`600 ${fSize}px Arial,sans-serif`;
+ctx.fillStyle=’#ffffff’;
+ctx.textBaseline=‘middle’;
+ctx.textAlign=‘left’;
+ctx.fillText(line,pad,H-barH/2,W-pad*2);
+c.toBlob(b=>{
+if(!b){resolve(file);return;}
+resolve(new File([b],file.name.replace(/.(jpe?g|png|webp|heic|heif)$/i,’’)+’_stamped.jpg’,{type:‘image/jpeg’}));
+},‘image/jpeg’,_uploadHD?0.95:0.88);
+};
+img.onerror=()=>{URL.revokeObjectURL(u);resolve(file);};
+img.src=u;
+});
 }
 
 function _hdist(lat1,lng1,lat2,lng2){
-  const R=6371,dL=(lat2-lat1)*Math.PI/180,dN=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dN/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+const R=6371,dL=(lat2-lat1)*Math.PI/180,dN=(lng2-lng1)*Math.PI/180;
+const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dN/2)**2;
+return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1794,176 +2249,177 @@ function _hdist(lat1,lng1,lat2,lng2){
 //  Results persisted to localStorage with 24-hour TTL so the
 //  same 20 addresses never hit the API twice in a working day.
 // ══════════════════════════════════════════════════════════════
-const GEO_LS_KEY = 'df_geocache';
+const GEO_LS_KEY = ‘df_geocache’;
 const GEO_TTL    = 24 * 60 * 60 * 1000; // 24 h in ms
 
 function _loadGeoCache(){
-  try{
-    const raw = localStorage.getItem(GEO_LS_KEY);
-    if(!raw) return;
-    const stored = JSON.parse(raw);           // { key: {lat,lng,ts} }
-    const now    = Date.now();
-    let changed  = false;
-    for(const [k,v] of Object.entries(stored)){
-      if(now - (v.ts||0) < GEO_TTL){
-        _geoCache[k] = {lat:v.lat, lng:v.lng}; // strip ts from runtime obj
-      } else {
-        changed = true; // expired — don't load, will be pruned on next save
-      }
-    }
-    if(changed) _saveGeoCache();
-  }catch(e){ localStorage.removeItem(GEO_LS_KEY); }
+try{
+const raw = localStorage.getItem(GEO_LS_KEY);
+if(!raw) return;
+const stored = JSON.parse(raw);           // { key: {lat,lng,ts} }
+const now    = Date.now();
+let changed  = false;
+for(const [k,v] of Object.entries(stored)){
+if(now - (v.ts||0) < GEO_TTL){
+_geoCache[k] = {lat:v.lat, lng:v.lng}; // strip ts from runtime obj
+} else {
+changed = true; // expired — don’t load, will be pruned on next save
+}
+}
+if(changed) _saveGeoCache();
+}catch(e){ localStorage.removeItem(GEO_LS_KEY); }
 }
 
 function _saveGeoCache(){
-  try{
-    // Merge runtime cache with any existing LS entries, keeping ts
-    const raw     = localStorage.getItem(GEO_LS_KEY);
-    const stored  = raw ? JSON.parse(raw) : {};
-    const now     = Date.now();
-    // Write new entries, preserve existing timestamps
-    for(const [k,v] of Object.entries(_geoCache)){
-      if(!stored[k] || !stored[k].ts){
-        stored[k] = {lat:v.lat, lng:v.lng, ts:now};
-      }
-    }
-    // Prune expired
-    for(const k of Object.keys(stored)){
-      if(now - (stored[k].ts||0) >= GEO_TTL) delete stored[k];
-    }
-    localStorage.setItem(GEO_LS_KEY, JSON.stringify(stored));
-  }catch(e){} // quota exceeded — silently skip
+try{
+// Merge runtime cache with any existing LS entries, keeping ts
+const raw     = localStorage.getItem(GEO_LS_KEY);
+const stored  = raw ? JSON.parse(raw) : {};
+const now     = Date.now();
+// Write new entries, preserve existing timestamps
+for(const [k,v] of Object.entries(_geoCache)){
+if(!stored[k] || !stored[k].ts){
+stored[k] = {lat:v.lat, lng:v.lng, ts:now};
+}
+}
+// Prune expired
+for(const k of Object.keys(stored)){
+if(now - (stored[k].ts||0) >= GEO_TTL) delete stored[k];
+}
+localStorage.setItem(GEO_LS_KEY, JSON.stringify(stored));
+}catch(e){} // quota exceeded — silently skip
 }
 
 async function geocodeAddress(address){
-  if(!address) return null;
-  const key = address.toLowerCase().trim();
-  if(_geoCache[key]) return _geoCache[key];  // runtime hit
+if(!address) return null;
+const key = address.toLowerCase().trim();
+if(_geoCache[key]) return _geoCache[key];  // runtime hit
 
-  const pcMatch = address.match(/\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i);
-  if(pcMatch){
-    try{
-      const pc  = pcMatch[1].replace(/\s+/g,'').toUpperCase();
-      const res = await fetch(`https://api.postcodes.io/postcodes/${pc}`);
-      const data= await res.json();
-      if(data.status===200 && data.result){
-        const coords = {lat:data.result.latitude, lng:data.result.longitude};
-        _geoCache[key] = coords;
-        _saveGeoCache();
-        return coords;
-      }
-    }catch(e){}
-  }
-  try{
-    await new Promise(r=>setTimeout(r,300));
-    const res  = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=gb`,{headers:{'User-Agent':'DeepFlow/1.0'}});
-    const data = await res.json();
-    if(data?.[0]){
-      const coords = {lat:parseFloat(data[0].lat), lng:parseFloat(data[0].lon)};
-      _geoCache[key] = coords;
-      _saveGeoCache();
-      return coords;
-    }
-  }catch(e){}
-  return null;
+const pcMatch = address.match(/\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i);
+if(pcMatch){
+try{
+const pc  = pcMatch[1].replace(/\s+/g,’’).toUpperCase();
+const res = await fetch(`https://api.postcodes.io/postcodes/${pc}`);
+const data= await res.json();
+if(data.status===200 && data.result){
+const coords = {lat:data.result.latitude, lng:data.result.longitude};
+_geoCache[key] = coords;
+_saveGeoCache();
+return coords;
+}
+}catch(e){}
+}
+try{
+await new Promise(r=>setTimeout(r,300));
+const res  = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=gb`,{headers:{‘User-Agent’:‘DeepFlow/1.0’}});
+const data = await res.json();
+if(data?.[0]){
+const coords = {lat:parseFloat(data[0].lat), lng:parseFloat(data[0].lon)};
+_geoCache[key] = coords;
+_saveGeoCache();
+return coords;
+}
+}catch(e){}
+return null;
 }
 
 // ══════════════════════════════════════════════════════════════
 //  WEATHER — Open-Meteo, no key
 // ══════════════════════════════════════════════════════════════
 async function fetchWeather(lat,lng){
-  try{
-    const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&current=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=Europe%2FLondon`);
-    const data=await res.json();
-    if(data?.current){
-      const c=data.current.weathercode;
-      _weather={temp:Math.round(data.current.temperature_2m),wind:Math.round(data.current.windspeed_10m),rain:data.current.precipitation>0,
-        icon:c===0?'☀️':c<=2?'⛅':c<=3?'☁️':c<=49?'🌫':c<=59?'🌦':c<=69?'🌧':'⛈'};
-      return _weather;
-    }
-  }catch(e){}return null;
+try{
+const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&current=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=Europe%2FLondon`);
+const data=await res.json();
+if(data?.current){
+const c=data.current.weathercode;
+_weather={temp:Math.round(data.current.temperature_2m),wind:Math.round(data.current.windspeed_10m),rain:data.current.precipitation>0,
+icon:c===0?‘☀️’:c<=2?‘⛅’:c<=3?‘☁️’:c<=49?‘🌫’:c<=59?‘🌦’:c<=69?‘🌧’:‘⛈’};
+return _weather;
+}
+}catch(e){}return null;
 }
 
 // ══════════════════════════════════════════════════════════════
 //  LAND REGISTRY — free, no key
 // ══════════════════════════════════════════════════════════════
 async function fetchLandRegistry(postcode){
-  if(!postcode)return null;
-  try{
-    const pc=postcode.replace(/\s+/g,'').toUpperCase();
-    const res=await fetch(`https://landregistry.data.gov.uk/data/ppi/address-search?postcode=${encodeURIComponent(pc)}&_view=basic&_pageSize=3&_format=json`);
-    if(!res.ok)return null;
-    const data=await res.json();
-    const items=data?.result?.items;
-    if(!items?.length)return null;
-    return{type:items[0]?.propertyType?.prefLabel?.[0]?.value||'Residential'};
-  }catch(e){return null;}
+if(!postcode)return null;
+try{
+const pc=postcode.replace(/\s+/g,’’).toUpperCase();
+const res=await fetch(`https://landregistry.data.gov.uk/data/ppi/address-search?postcode=${encodeURIComponent(pc)}&_view=basic&_pageSize=3&_format=json`);
+if(!res.ok)return null;
+const data=await res.json();
+const items=data?.result?.items;
+if(!items?.length)return null;
+return{type:items[0]?.propertyType?.prefLabel?.[0]?.value||‘Residential’};
+}catch(e){return null;}
 }
 
 // ══════════════════════════════════════════════════════════════
 //  MAP — terrain tiles (Stamen/OpenTopoMap) + OSRM route
 // ══════════════════════════════════════════════════════════════
 async function setMapView(view,btn){
-  document.querySelectorAll('.map-tool-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  const status=document.getElementById('map-status');
-  const container=document.getElementById('map-container');
-  status.textContent='Loading jobs…';
-  container.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
-  try{
-    const today=new Date().toISOString().split('T')[0];
-    const enc=encodeURIComponent(currentUser.name);
-    let jobs=view==='all'
-      ?await sb(`jobs?engineer=ilike.${enc}&select=*&limit=100&order=date.desc`)
-      :await sb(`jobs?date=eq.${today}&engineer=ilike.${enc}&select=*`);
-    jobs=jobs||[];
-    if(!jobs.length){container.innerHTML='<div class="empty"><div class="empty-icon">📍</div><div class="empty-title">No jobs to map</div></div>';status.textContent='No jobs found';return;}
-    status.textContent=`Geocoding ${jobs.length} addresses…`;
-    const geo=[];
-    for(const j of jobs){
-      const c=await geocodeAddress(j.address);
-      if(c)geo.push({...c,label:`${j.jobNum||'#'} — ${j.address}`,status:j.status,priority:j.priority});
-    }
-    if(!geo.length){container.innerHTML='<div class="empty"><div class="empty-icon">🗺</div><div class="empty-title">Could not locate addresses</div><div class="empty-sub">Ensure addresses include UK postcodes</div></div>';status.textContent='Geocoding failed';return;}
-    let route=null;
-    if(view==='route'&&geo.length>=2){status.textContent='Calculating route…';route=await _getRoute(geo);}
-    const cLat=geo.reduce((s,p)=>s+p.lat,0)/geo.length;
-    const cLng=geo.reduce((s,p)=>s+p.lng,0)/geo.length;
-    status.textContent=`${geo.length} of ${jobs.length} jobs mapped`;
-    _showMap(geo,cLat,cLng,view==='route'?12:11,route,container);
-  }catch(e){
-    container.innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">Map error</div><div class="empty-sub">${(e.message||'').slice(0,80)}</div></div>`;
-    status.textContent='Error';
-  }
+document.querySelectorAll(’.map-tool-btn’).forEach(b=>b.classList.remove(‘active’));
+if(btn)btn.classList.add(‘active’);
+const status=document.getElementById(‘map-status’);
+const container=document.getElementById(‘map-container’);
+status.textContent=‘Loading jobs…’;
+container.innerHTML=’<div class="loading-center"><div class="spin"></div></div>’;
+try{
+const today=new Date().toISOString().split(‘T’)[0];
+const enc=encodeURIComponent(currentUser.name);
+let jobs=view===‘all’
+?await sb(`jobs?engineer=ilike.${enc}&select=*&limit=100&order=date.desc`)
+:await sb(`jobs?date=eq.${today}&engineer=ilike.${enc}&select=*`);
+jobs=jobs||[];
+if(!jobs.length){container.innerHTML=’<div class="empty"><div class="empty-icon">📍</div><div class="empty-title">No jobs to map</div></div>’;status.textContent=‘No jobs found’;return;}
+status.textContent=`Geocoding ${jobs.length} addresses…`;
+const geo=[];
+for(const j of jobs){
+const c=await geocodeAddress(j.address);
+if(c)geo.push({…c,label:`${j.jobNum||'#'} — ${j.address}`,status:j.status,priority:j.priority});
+}
+if(!geo.length){container.innerHTML=’<div class="empty"><div class="empty-icon">🗺</div><div class="empty-title">Could not locate addresses</div><div class="empty-sub">Ensure addresses include UK postcodes</div></div>’;status.textContent=‘Geocoding failed’;return;}
+let route=null;
+if(view===‘route’&&geo.length>=2){status.textContent=‘Calculating route…’;route=await _getRoute(geo);}
+const cLat=geo.reduce((s,p)=>s+p.lat,0)/geo.length;
+const cLng=geo.reduce((s,p)=>s+p.lng,0)/geo.length;
+status.textContent=`${geo.length} of ${jobs.length} jobs mapped`;
+_showMap(geo,cLat,cLng,view===‘route’?12:11,route,container);
+}catch(e){
+container.innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">Map error</div><div class="empty-sub">${(e.message||'').slice(0,80)}</div></div>`;
+status.textContent=‘Error’;
+}
 }
 
 async function _getRoute(pts){
-  try{
-    const coords=pts.map(p=>`${p.lng},${p.lat}`).join(';');
-    const res=await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
-    const data=await res.json();
-    if(data?.routes?.[0]){const r=data.routes[0];return{coords:r.geometry.coordinates,duration:Math.round(r.duration/60),distance:(r.distance/1000).toFixed(1)};}
-  }catch(e){}return null;
+try{
+const coords=pts.map(p=>`${p.lng},${p.lat}`).join(’;’);
+const res=await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
+const data=await res.json();
+if(data?.routes?.[0]){const r=data.routes[0];return{coords:r.geometry.coordinates,duration:Math.round(r.duration/60),distance:(r.distance/1000).toFixed(1)};}
+}catch(e){}return null;
 }
 
 function _showMap(pts,cLat,cLng,zoom,route,container){
-  // Use OpenTopoMap for terrain tiles (free, no key, looks great)
-  // Falls back to standard OSM if unavailable
-  const tileUrl='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
-  const tileAttr='© OpenTopoMap (CC-BY-SA)';
-  const markers=pts.map((p,i)=>{
-    const col=p.priority==='Emergency'?'#f04444':p.status==='Completed'?'#22c55e':p.status==='Cannot Access'?'#f97316':'#4f8fff';
-    const lbl=(p.label||'').replace(/'/g,"\\'").replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const num=route?`<div style="background:${col};color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)">${i+1}</div>`
-      :`<div style="width:16px;height:16px;border-radius:50%;background:${col};border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`;
-    const iSize=route?[26,26]:[16,16];
-    return`L.marker([${p.lat},${p.lng}],{icon:L.divIcon({className:'',html:'${num}',iconSize:[${iSize}],iconAnchor:[${iSize.map(v=>v/2)}]})}).addTo(map).bindPopup('<b style="font-family:sans-serif">${lbl}</b>');`;
-  }).join('\n');
-  const routeFn=route?`L.polyline([${route.coords.map(c=>`[${c[1]},${c[0]}]`).join(',')}],{color:'#4f8fff',weight:5,opacity:.8,dashArray:'10,5'}).addTo(map);`:'';
-  const routeBox=route?`<div style="position:absolute;top:10px;right:10px;background:rgba(10,13,20,.9);backdrop-filter:blur(8px);border:1px solid #263047;border-radius:12px;padding:12px 16px;font-family:sans-serif;z-index:1000;pointer-events:none">
-    <div style="font-size:10px;color:#8a9bbf;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Route Estimate</div>
-    <div style="font-size:22px;font-weight:900;color:#4f8fff;font-family:monospace">${route.duration}m</div>
-    <div style="font-size:12px;color:#4e6080">${route.distance} km · ${pts.length} stops</div>
+// Use OpenTopoMap for terrain tiles (free, no key, looks great)
+// Falls back to standard OSM if unavailable
+const tileUrl=‘https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png’;
+const tileAttr=‘© OpenTopoMap (CC-BY-SA)’;
+const markers=pts.map((p,i)=>{
+const col=p.priority===‘Emergency’?’#f04444’:p.status===‘Completed’?’#22c55e’:p.status===‘Cannot Access’?’#f97316’:’#4f8fff’;
+const lbl=(p.label||’’).replace(/’/g,”\’”).replace(/</g,’<’).replace(/>/g,’>’);
+const num=route?`<div style="background:${col};color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)">${i+1}</div>`
+:`<div style="width:16px;height:16px;border-radius:50%;background:${col};border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`;
+const iSize=route?[26,26]:[16,16];
+return`L.marker([${p.lat},${p.lng}],{icon:L.divIcon({className:'',html:'${num}',iconSize:[${iSize}],iconAnchor:[${iSize.map(v=>v/2)}]})}).addTo(map).bindPopup('<b style="font-family:sans-serif">${lbl}</b>');`;
+}).join(’\n’);
+const routeFn=route?`L.polyline([${route.coords.map(c=>`[${c[1]},${c[0]}]`).join(',')}],{color:'#4f8fff',weight:5,opacity:.8,dashArray:'10,5'}).addTo(map);`:’’;
+const routeBox=route?`<div style="position:absolute;top:10px;right:10px;background:rgba(10,13,20,.9);backdrop-filter:blur(8px);border:1px solid #263047;border-radius:12px;padding:12px 16px;font-family:sans-serif;z-index:1000;pointer-events:none">
+<div style="font-size:10px;color:#8a9bbf;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Route Estimate</div>
+<div style="font-size:22px;font-weight:900;color:#4f8fff;font-family:monospace">${route.duration}m</div>
+<div style="font-size:12px;color:#4e6080">${route.distance} km · ${pts.length} stops</div>
+
   </div>`:'';
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -1990,280 +2446,246 @@ ${markers}
 //  DASHBOARD
 // ══════════════════════════════════════════════════════════════
 async function loadDash(){
-  const el=document.getElementById('dash-body');
-  if(!el)return;
-  try{
-    const enc=encodeURIComponent(currentUser.name);
-    const today=new Date().toISOString().split('T')[0];
-    const monStart=today.slice(0,7)+'-01';
-    const yrStart=today.slice(0,4)+'-01-01';
-    const jobs=await sb(`jobs?engineer=ilike.${enc}&select=*&limit=5000`);
-    _allJobs=jobs||[];
-    const todayJ=_allJobs.filter(j=>j.date===today);
-    const todayDone=todayJ.filter(j=>j.status==='Completed').length;
-    const monthDone=_allJobs.filter(j=>j.status==='Completed'&&(j.date||'')>=monStart).length;
-    const yearDone=_allJobs.filter(j=>j.status==='Completed'&&(j.date||'')>=yrStart).length;
-    const totalDone=_allJobs.filter(j=>j.status==='Completed').length;
-    const totalHrs=_allJobs.filter(j=>j.status==='Completed').reduce((s,j)=>s+(parseFloat(j.hours)||0),0);
-    const openJobs=_allJobs.filter(j=>j.status==='Pending'||j.status==='In Progress').length;
-    const areas={};
-    _allJobs.forEach(j=>{const p=(j.address||'').split(',');const a=(p.length>1?p[p.length-2]:p[0]||'Unknown').trim();areas[a]=(areas[a]||0)+1;});
-    const topAreas=Object.entries(areas).sort((a,b)=>b[1]-a[1]).slice(0,6);
-    const certs={};
-    _allJobs.forEach(j=>(j.certTypes||[]).forEach(c=>{certs[c]=(certs[c]||0)+1;}));
-    const topCerts=Object.entries(certs).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const mMap={};
-    for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);mMap[d.toISOString().slice(0,7)]=0;}
-    _allJobs.filter(j=>j.status==='Completed').forEach(j=>{const m=(j.date||'').slice(0,7);if(mMap[m]!==undefined)mMap[m]++;});
-    const mL=Object.keys(mMap),mV=Object.values(mMap),mMx=Math.max(...mV,1);
-    const recent=[..._allJobs].filter(j=>j.status==='Completed').sort((a,b)=>(b.modified||0)-(a.modified||0)).slice(0,5);
-    const wBanner=_weather?`<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border-radius:20px;padding:5px 14px;width:fit-content;margin-top:10px">
-      <span style="font-size:20px">${_weather.icon}</span>
-      <span style="font-size:13px;font-weight:700">${_weather.temp}°C</span>
-      <span style="font-size:12px;color:var(--txt3)">💨 ${_weather.wind} km/h</span>
-      ${_weather.rain?'<span style="font-size:12px;color:#60c0ff;font-weight:700">🌧 Rain</span>':''}
-    </div>`:'';
-    el.innerHTML=`
-      <div class="dash-hero">
-        <div class="dash-greeting">👷 Good ${_gr()},</div>
-        <div class="dash-hero-name">${currentUser.name}</div>
-        <div class="dash-hero-sub">${todayJ.length} job${todayJ.length!==1?'s':''} today · ${todayDone} completed</div>
-        ${wBanner}
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi-card" style="--kc:var(--acc)"><div class="kpi-val">${todayDone}/${todayJ.length}</div><div class="kpi-lbl">Today</div></div>
-        <div class="kpi-card" style="--kc:var(--green)"><div class="kpi-val">${monthDone}</div><div class="kpi-lbl">This Month</div></div>
-        <div class="kpi-card" style="--kc:var(--yellow)"><div class="kpi-val">${yearDone}</div><div class="kpi-lbl">This Year</div></div>
-        <div class="kpi-card" style="--kc:var(--teal)"><div class="kpi-val">${totalHrs.toFixed(0)}h</div><div class="kpi-lbl">Total Hours</div></div>
-        <div class="kpi-card" style="--kc:var(--purple)"><div class="kpi-val">${totalDone}</div><div class="kpi-lbl">All-Time Done</div></div>
-        <div class="kpi-card" style="--kc:var(--orange)"><div class="kpi-val">${openJobs}</div><div class="kpi-lbl">Open Jobs</div></div>
-      </div>
-      ${mL.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📅 Monthly Jobs — Last 6 Months</span></div><div class="dash-sec-body">${mL.map((m,i)=>`<div class="bar-row"><div class="bar-label">${new Date(m+'-15').toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(mV[i]/mMx*100)}%;background:linear-gradient(90deg,var(--acc),var(--teal))"></div></div><div class="bar-count">${mV[i]}</div></div>`).join('')}</div></div>`:''}
-      ${topAreas.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📍 Top Work Areas</span></div><div class="dash-sec-body">${topAreas.map(([a,n])=>`<div class="bar-row"><div class="bar-label">${a}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/topAreas[0][1]*100)}%;background:linear-gradient(90deg,var(--purple),#ec4899)"></div></div><div class="bar-count">${n}</div></div>`).join('')}</div></div>`:''}
-      ${topCerts.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📋 Certificates Done</span></div><div class="dash-sec-body"><div style="display:flex;flex-wrap:wrap">${topCerts.map(([ct,n])=>`<div class="cert-pill"><span class="cert-pill-n">${n}</span> ${ct}</div>`).join('')}</div></div></div>`:''}
-      ${recent.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">✅ Recently Completed</span></div><div class="dash-sec-body">${recent.map(j=>`<div class="recent-row"><div class="recent-dot"></div><div style="flex:1;min-width:0"><div class="recent-addr">${j.address||'—'}</div><div class="recent-meta">${j.date||''}</div></div><div class="recent-hrs">${j.hours?j.hours+'h':''}</div></div>`).join('')}</div></div>`:''}
-      <div style="height:20px"></div>`;
-  }catch(e){el.innerHTML=`<div style="padding:30px;text-align:center;color:var(--red)">⚠️ ${e.message||'Failed to load'}</div>`;}
+const el=document.getElementById(‘dash-body’);
+if(!el)return;
+try{
+const enc=encodeURIComponent(currentUser.name);
+const today=new Date().toISOString().split(‘T’)[0];
+const monStart=today.slice(0,7)+’-01’;
+const yrStart=today.slice(0,4)+’-01-01’;
+const jobs=await sb(`jobs?engineer=ilike.${enc}&select=*&limit=5000`);
+_allJobs=jobs||[];
+const todayJ=_allJobs.filter(j=>j.date===today);
+const todayDone=todayJ.filter(j=>j.status===‘Completed’).length;
+const monthDone=_allJobs.filter(j=>j.status===‘Completed’&&(j.date||’’)>=monStart).length;
+const yearDone=_allJobs.filter(j=>j.status===‘Completed’&&(j.date||’’)>=yrStart).length;
+const totalDone=_allJobs.filter(j=>j.status===‘Completed’).length;
+const totalHrs=_allJobs.filter(j=>j.status===‘Completed’).reduce((s,j)=>s+(parseFloat(j.hours)||0),0);
+const openJobs=_allJobs.filter(j=>j.status===‘Pending’||j.status===‘In Progress’).length;
+const areas={};
+_allJobs.forEach(j=>{const p=(j.address||’’).split(’,’);const a=(p.length>1?p[p.length-2]:p[0]||‘Unknown’).trim();areas[a]=(areas[a]||0)+1;});
+const topAreas=Object.entries(areas).sort((a,b)=>b[1]-a[1]).slice(0,6);
+const certs={};
+_allJobs.forEach(j=>(j.certTypes||[]).forEach(c=>{certs[c]=(certs[c]||0)+1;}));
+const topCerts=Object.entries(certs).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const mMap={};
+for(let i=5;i>=0;i–){const d=new Date();d.setMonth(d.getMonth()-i);mMap[d.toISOString().slice(0,7)]=0;}
+_allJobs.filter(j=>j.status===‘Completed’).forEach(j=>{const m=(j.date||’’).slice(0,7);if(mMap[m]!==undefined)mMap[m]++;});
+const mL=Object.keys(mMap),mV=Object.values(mMap),mMx=Math.max(…mV,1);
+const recent=[…_allJobs].filter(j=>j.status===‘Completed’).sort((a,b)=>(b.modified||0)-(a.modified||0)).slice(0,5);
+const wBanner=_weather?`<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border-radius:20px;padding:5px 14px;width:fit-content;margin-top:10px"> <span style="font-size:20px">${_weather.icon}</span> <span style="font-size:13px;font-weight:700">${_weather.temp}°C</span> <span style="font-size:12px;color:var(--txt3)">💨 ${_weather.wind} km/h</span> ${_weather.rain?'<span style="font-size:12px;color:#60c0ff;font-weight:700">🌧 Rain</span>':''} </div>`:’’;
+el.innerHTML=` <div class="dash-hero"> <div class="dash-greeting">👷 Good ${_gr()},</div> <div class="dash-hero-name">${currentUser.name}</div> <div class="dash-hero-sub">${todayJ.length} job${todayJ.length!==1?'s':''} today · ${todayDone} completed</div> ${wBanner} </div> <div class="kpi-grid"> <div class="kpi-card" style="--kc:var(--acc)"><div class="kpi-val">${todayDone}/${todayJ.length}</div><div class="kpi-lbl">Today</div></div> <div class="kpi-card" style="--kc:var(--green)"><div class="kpi-val">${monthDone}</div><div class="kpi-lbl">This Month</div></div> <div class="kpi-card" style="--kc:var(--yellow)"><div class="kpi-val">${yearDone}</div><div class="kpi-lbl">This Year</div></div> <div class="kpi-card" style="--kc:var(--teal)"><div class="kpi-val">${totalHrs.toFixed(0)}h</div><div class="kpi-lbl">Total Hours</div></div> <div class="kpi-card" style="--kc:var(--purple)"><div class="kpi-val">${totalDone}</div><div class="kpi-lbl">All-Time Done</div></div> <div class="kpi-card" style="--kc:var(--orange)"><div class="kpi-val">${openJobs}</div><div class="kpi-lbl">Open Jobs</div></div> </div> ${mL.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📅 Monthly Jobs — Last 6 Months</span></div><div class="dash-sec-body">${mL.map((m,i)=>`<div class="bar-row"><div class="bar-label">${new Date(m+'-15').toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(mV[i]/mMx*100)}%;background:linear-gradient(90deg,var(--acc),var(--teal))"></div></div><div class="bar-count">${mV[i]}</div></div>`).join(’’)}</div></div>`:''} ${topAreas.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📍 Top Work Areas</span></div><div class="dash-sec-body">${topAreas.map(([a,n])=>`<div class="bar-row"><div class="bar-label">${a}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/topAreas[0][1]*100)}%;background:linear-gradient(90deg,var(--purple),#ec4899)"></div></div><div class="bar-count">${n}</div></div>`).join(’’)}</div></div>`:''} ${topCerts.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">📋 Certificates Done</span></div><div class="dash-sec-body"><div style="display:flex;flex-wrap:wrap">${topCerts.map(([ct,n])=>`<div class="cert-pill"><span class="cert-pill-n">${n}</span> ${ct}</div>`).join(’’)}</div></div></div>`:''} ${recent.length?`<div class="dash-section"><div class="dash-sec-hd"><span class="dash-sec-title">✅ Recently Completed</span></div><div class="dash-sec-body">${recent.map(j=>`<div class="recent-row"><div class="recent-dot"></div><div style="flex:1;min-width:0"><div class="recent-addr">${j.address||'—'}</div><div class="recent-meta">${j.date||''}</div></div><div class="recent-hrs">${j.hours?j.hours+'h':''}</div></div>`).join(’’)}</div></div>`:''} <div style="height:20px"></div>`;
+}catch(e){el.innerHTML=`<div style="padding:30px;text-align:center;color:var(--red)">⚠️ ${e.message||'Failed to load'}</div>`;}
 }
-function _gr(){const h=new Date().getHours();return h<12?'morning':h<17?'afternoon':'evening';}
+function _gr(){const h=new Date().getHours();return h<12?‘morning’:h<17?‘afternoon’:‘evening’;}
 
 // ══════════════════════════════════════════════════════════════
 //  REQUESTS
 // ══════════════════════════════════════════════════════════════
 async function loadRequests(){
-  const el=document.getElementById('requests-list');if(!el)return;
-  try{
-    const reqs=await sb(`engineer_requests?engineer_name=eq.${encodeURIComponent(currentUser.name)}&order=created.desc&limit=50`).catch(()=>[]);
-    if(!reqs?.length){el.innerHTML='<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No requests yet</div><div class="empty-sub">Use the buttons above to submit overtime or leave requests.</div></div>';return;}
-    _setBadge('requests',reqs.filter(r=>r.status==='pending').length);
-    el.innerHTML=reqs.map(r=>`<div class="req-card">
-      <div class="req-card-hd"><div><div class="req-title">${r.type==='overtime'?'⏱ Overtime':'📆 Time Off'}</div>
-      <div class="req-meta">${r.date?`📅 ${r.date}`:''} ${r.hours?`⏱ ${r.hours}h`:''} ${r.leave_from&&r.leave_to?`${r.leave_from} → ${r.leave_to}`:''}</div></div>
-      <span class="req-badge rb-${r.status||'pending'}">${r.status||'pending'}</span></div>
-      ${r.notes?`<div class="req-note">${r.notes}</div>`:''}
-      ${r.office_reply?`<div class="req-note" style="background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.2);color:var(--green)">💬 Office: ${r.office_reply}</div>`:''}
-      <div style="font-size:10px;color:var(--txt3);margin-top:8px">${_fd(r.created)}</div>
-    </div>`).join('');
-  }catch(e){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt3)">Unable to load requests.</div>';}
+const el=document.getElementById(‘requests-list’);if(!el)return;
+try{
+const reqs=await sb(`engineer_requests?engineer_name=eq.${encodeURIComponent(currentUser.name)}&order=created.desc&limit=50`).catch(()=>[]);
+if(!reqs?.length){el.innerHTML=’<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No requests yet</div><div class="empty-sub">Use the buttons above to submit overtime or leave requests.</div></div>’;return;}
+_setBadge(‘requests’,reqs.filter(r=>r.status===‘pending’).length);
+el.innerHTML=reqs.map(r=>`<div class="req-card"> <div class="req-card-hd"><div><div class="req-title">${r.type==='overtime'?'⏱ Overtime':'📆 Time Off'}</div> <div class="req-meta">${r.date?`📅 ${r.date}`:''} ${r.hours?`⏱ ${r.hours}h`:''} ${r.leave_from&&r.leave_to?`${r.leave_from} → ${r.leave_to}`:''}</div></div> <span class="req-badge rb-${r.status||'pending'}">${r.status||'pending'}</span></div> ${r.notes?`<div class="req-note">${r.notes}</div>`:''} ${r.office_reply?`<div class="req-note" style="background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.2);color:var(--green)">💬 Office: ${r.office_reply}</div>`:''} <div style="font-size:10px;color:var(--txt3);margin-top:8px">${_fd(r.created)}</div> </div>`).join(’’);
+}catch(e){el.innerHTML=’<div style="padding:20px;text-align:center;color:var(--txt3)">Unable to load requests.</div>’;}
 }
 
 function openOvertimeForm(){
-  document.getElementById('ot-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('ot-hours').value='';
-  document.getElementById('ot-job').value='';
-  document.getElementById('ot-notes').value='';
-  document.getElementById('ot-modal').classList.add('open');
+document.getElementById(‘ot-date’).value=new Date().toISOString().split(‘T’)[0];
+document.getElementById(‘ot-hours’).value=’’;
+document.getElementById(‘ot-job’).value=’’;
+document.getElementById(‘ot-notes’).value=’’;
+document.getElementById(‘ot-modal’).classList.add(‘open’);
 }
 function openLeaveForm(){
-  const t=new Date().toISOString().split('T')[0];
-  document.getElementById('leave-from').value=t;
-  document.getElementById('leave-to').value=t;
-  document.getElementById('leave-notes').value='';
-  document.getElementById('leave-modal').classList.add('open');
+const t=new Date().toISOString().split(‘T’)[0];
+document.getElementById(‘leave-from’).value=t;
+document.getElementById(‘leave-to’).value=t;
+document.getElementById(‘leave-notes’).value=’’;
+document.getElementById(‘leave-modal’).classList.add(‘open’);
 }
 async function submitOvertimeRequest(){
-  const date=document.getElementById('ot-date').value;
-  const hours=parseFloat(document.getElementById('ot-hours').value);
-  const rate=document.getElementById('ot-rate').value;
-  const job=document.getElementById('ot-job').value.trim();
-  const notes=document.getElementById('ot-notes').value.trim();
-  if(!date||isNaN(hours)||hours<=0){toast('Please fill in date and hours','error');return;}
-  try{
-    await sb('engineer_requests',{method:'POST',body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:'overtime',date,hours,rate,job,notes,status:'pending',created:Date.now()}});
-    closeModal('ot-modal');toast('✅ Overtime request sent!','success');loadRequests();
-  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');}
+const date=document.getElementById(‘ot-date’).value;
+const hours=parseFloat(document.getElementById(‘ot-hours’).value);
+const rate=document.getElementById(‘ot-rate’).value;
+const job=document.getElementById(‘ot-job’).value.trim();
+const notes=document.getElementById(‘ot-notes’).value.trim();
+if(!date||isNaN(hours)||hours<=0){toast(‘Please fill in date and hours’,‘error’);return;}
+try{
+await sb(‘engineer_requests’,{method:‘POST’,body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:‘overtime’,date,hours,rate,job,notes,status:‘pending’,created:Date.now()}});
+closeModal(‘ot-modal’);toast(‘✅ Overtime request sent!’,‘success’);loadRequests();
+}catch(e){toast(‘❌ ‘+(e.message||’’).slice(0,80),‘error’);}
 }
 async function submitLeaveRequest(){
-  const type=document.getElementById('leave-type').value;
-  const from=document.getElementById('leave-from').value;
-  const to=document.getElementById('leave-to').value;
-  const notes=document.getElementById('leave-notes').value.trim();
-  if(!from||!to){toast('Please select dates','error');return;}
-  try{
-    await sb('engineer_requests',{method:'POST',body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:'leave',leave_type:type,leave_from:from,leave_to:to,notes,status:'pending',created:Date.now()}});
-    closeModal('leave-modal');toast('✅ Leave request sent!','success');loadRequests();
-  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');}
+const type=document.getElementById(‘leave-type’).value;
+const from=document.getElementById(‘leave-from’).value;
+const to=document.getElementById(‘leave-to’).value;
+const notes=document.getElementById(‘leave-notes’).value.trim();
+if(!from||!to){toast(‘Please select dates’,‘error’);return;}
+try{
+await sb(‘engineer_requests’,{method:‘POST’,body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:‘leave’,leave_type:type,leave_from:from,leave_to:to,notes,status:‘pending’,created:Date.now()}});
+closeModal(‘leave-modal’);toast(‘✅ Leave request sent!’,‘success’);loadRequests();
+}catch(e){toast(‘❌ ‘+(e.message||’’).slice(0,80),‘error’);}
 }
 
 // ══════════════════════════════════════════════════════════════
 //  PUSH NOTIFICATIONS
 // ══════════════════════════════════════════════════════════════
 async function _initPush(){
-  if(!('Notification' in window))return;
-  if(Notification.permission==='granted'){_pushGranted=true;_setBaseline();return;}
-  if(Notification.permission==='denied')return;
-  toast('🔔 Enable notifications for new job alerts','info');
-  setTimeout(async()=>{
-    const p=await Notification.requestPermission();
-    _pushGranted=p==='granted';
-    if(_pushGranted){toast('🔔 Notifications enabled!','success');_setBaseline();}
-  },2000);
+if(!(‘Notification’ in window))return;
+if(Notification.permission===‘granted’){_pushGranted=true;_setBaseline();return;}
+if(Notification.permission===‘denied’)return;
+toast(‘🔔 Enable notifications for new job alerts’,‘info’);
+setTimeout(async()=>{
+const p=await Notification.requestPermission();
+_pushGranted=p===‘granted’;
+if(_pushGranted){toast(‘🔔 Notifications enabled!’,‘success’);_setBaseline();}
+},2000);
 }
 function _setBaseline(){if(_allJobs.length){_lastJobIds=new Set(_allJobs.map(j=>j.id));}}
 // ══ BROADCAST ALERT POLLING ══
 let _lastAlertCheck=Math.floor(Date.now()/1000);
-let _shownAlerts=JSON.parse(localStorage.getItem('df_shown_alerts')||'[]');
+let _shownAlerts=JSON.parse(localStorage.getItem(‘df_shown_alerts’)||’[]’);
 
 async function checkBroadcastAlerts(){
-  if(!currentUser) return;
-  try{
-    const now=Math.floor(Date.now()/1000);
-    const alerts=await sb(`engineer_alerts?status=eq.active&expires=gte.${now}&created=gt.${_lastAlertCheck-5}&order=created.desc&limit=5`);
-    _lastAlertCheck=now;
-    if(!alerts?.length) return;
-    for(const a of alerts){
-      if(_shownAlerts.includes(a.id)) continue;
-      if(a.target!=='all'&&a.target!==currentUser.name) continue;
-      showBroadcastAlert(a);
-      break; // show one at a time
-    }
-  }catch(e){} // table may not exist yet
+if(!currentUser) return;
+try{
+const now=Math.floor(Date.now()/1000);
+const alerts=await sb(`engineer_alerts?status=eq.active&expires=gte.${now}&created=gt.${_lastAlertCheck-5}&order=created.desc&limit=5`);
+_lastAlertCheck=now;
+if(!alerts?.length) return;
+for(const a of alerts){
+if(_shownAlerts.includes(a.id)) continue;
+if(a.target!==‘all’&&a.target!==currentUser.name) continue;
+showBroadcastAlert(a);
+break; // show one at a time
+}
+}catch(e){} // table may not exist yet
 }
 
 function showBroadcastAlert(a){
-  const icons={info:'ℹ️',warning:'⚠️',urgent:'🚨'};
-  const colors={info:'#4f8fff',warning:'#f5a623',urgent:'#e05252'};
-  const box=document.getElementById('alert-box');
-  if(box) box.style.borderColor=colors[a.type]||'#f5a623';
-  const icon=document.getElementById('alert-icon');
-  if(icon) icon.textContent=icons[a.type]||'⚠️';
-  const typeEl=document.getElementById('alert-type-label');
-  if(typeEl){ typeEl.textContent={info:'OFFICE INFO',warning:'OFFICE WARNING',urgent:'🚨 URGENT — READ NOW'}[a.type]||'OFFICE ALERT'; typeEl.style.color=colors[a.type]; }
-  const titleEl=document.getElementById('alert-title');
-  if(titleEl) titleEl.textContent=a.title||'Alert';
-  const msgEl=document.getElementById('alert-msg');
-  if(msgEl) msgEl.textContent=a.message||'';
-  const fromEl=document.getElementById('alert-from');
-  if(fromEl) fromEl.textContent=`From: ${a.sent_by||'Office'} · ${new Date(a.created*1000).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
-  const ov=document.getElementById('alert-overlay');
-  if(ov){ ov.style.display='flex'; ov.dataset.alertId=a.id; }
-  // Vibrate on mobile
-  if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+const icons={info:‘ℹ️’,warning:‘⚠️’,urgent:‘🚨’};
+const colors={info:’#4f8fff’,warning:’#f5a623’,urgent:’#e05252’};
+const box=document.getElementById(‘alert-box’);
+if(box) box.style.borderColor=colors[a.type]||’#f5a623’;
+const icon=document.getElementById(‘alert-icon’);
+if(icon) icon.textContent=icons[a.type]||‘⚠️’;
+const typeEl=document.getElementById(‘alert-type-label’);
+if(typeEl){ typeEl.textContent={info:‘OFFICE INFO’,warning:‘OFFICE WARNING’,urgent:‘🚨 URGENT — READ NOW’}[a.type]||‘OFFICE ALERT’; typeEl.style.color=colors[a.type]; }
+const titleEl=document.getElementById(‘alert-title’);
+if(titleEl) titleEl.textContent=a.title||‘Alert’;
+const msgEl=document.getElementById(‘alert-msg’);
+if(msgEl) msgEl.textContent=a.message||’’;
+const fromEl=document.getElementById(‘alert-from’);
+if(fromEl) fromEl.textContent=`From: ${a.sent_by||'Office'} · ${new Date(a.created*1000).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+const ov=document.getElementById(‘alert-overlay’);
+if(ov){ ov.style.display=‘flex’; ov.dataset.alertId=a.id; }
+// Vibrate on mobile
+if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
 }
 
 function dismissAlert(){
-  const ov=document.getElementById('alert-overlay');
-  if(!ov) return;
-  const id=ov.dataset.alertId;
-  if(id&&!_shownAlerts.includes(id)){
-    _shownAlerts.push(id);
-    if(_shownAlerts.length>50) _shownAlerts=_shownAlerts.slice(-50);
-    localStorage.setItem('df_shown_alerts',JSON.stringify(_shownAlerts));
-  }
-  ov.style.display='none';
+const ov=document.getElementById(‘alert-overlay’);
+if(!ov) return;
+const id=ov.dataset.alertId;
+if(id&&!_shownAlerts.includes(id)){
+_shownAlerts.push(id);
+if(_shownAlerts.length>50) _shownAlerts=_shownAlerts.slice(-50);
+localStorage.setItem(‘df_shown_alerts’,JSON.stringify(_shownAlerts));
+}
+ov.style.display=‘none’;
 }
 
 function _checkForNewJobs(todayJobs){
-  if(!_pushGranted||!todayJobs?.length)return;
-  if(!_lastJobIds.size){_lastJobIds=new Set(todayJobs.map(j=>j.id));return;}
-  todayJobs.filter(j=>!_lastJobIds.has(j.id)).forEach(j=>{
-    _lastJobIds.add(j.id);
-    try{
-      const n=new Notification('📋 New Job Assigned',{
-        body:`${j.jobNum?j.jobNum+' — ':''}${j.address||'New job'}${j.timeSlot?'\n🕐 '+j.timeSlot:''}`,
-        icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%234f8fff"/><text x="32" y="44" font-size="36" text-anchor="middle">⚡</text></svg>',
-        tag:`df-${j.id}`,requireInteraction:false
-      });
-      n.onclick=()=>{window.focus();setTimeout(()=>openJob(j.id),300);n.close();};
-    }catch(e){}
-  });
+if(!_pushGranted||!todayJobs?.length)return;
+if(!_lastJobIds.size){_lastJobIds=new Set(todayJobs.map(j=>j.id));return;}
+todayJobs.filter(j=>!_lastJobIds.has(j.id)).forEach(j=>{
+_lastJobIds.add(j.id);
+try{
+const n=new Notification(‘📋 New Job Assigned’,{
+body:`${j.jobNum?j.jobNum+' — ':''}${j.address||'New job'}${j.timeSlot?'\n🕐 '+j.timeSlot:''}`,
+icon:‘data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%234f8fff"/><text x="32" y="44" font-size="36" text-anchor="middle">⚡</text></svg>’,
+tag:`df-${j.id}`,requireInteraction:false
+});
+n.onclick=()=>{window.focus();setTimeout(()=>openJob(j.id),300);n.close();};
+}catch(e){}
+});
 }
 
 // ══════════════════════════════════════════════════════════════
 //  SILENT LOCATION
 // ══════════════════════════════════════════════════════════════
 function _startLocationSilent(){
-  if(!navigator.geolocation||_locWatch!==null)return;
-  _locWatch=navigator.geolocation.watchPosition(_onGPS,()=>{},{enableHighAccuracy:true,maximumAge:30000,timeout:20000});
+if(!navigator.geolocation||_locWatch!==null)return;
+_locWatch=navigator.geolocation.watchPosition(_onGPS,()=>{},{enableHighAccuracy:true,maximumAge:30000,timeout:20000});
 }
 function _stopLocation(){
-  if(_locWatch!==null){navigator.geolocation.clearWatch(_locWatch);_locWatch=null;}
-  if(currentUser)sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,{method:'PATCH',body:{last_lat:null,last_lng:null,last_seen:null}}).catch(()=>{});
+if(_locWatch!==null){navigator.geolocation.clearWatch(_locWatch);_locWatch=null;}
+if(currentUser)sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,{method:‘PATCH’,body:{last_lat:null,last_lng:null,last_seen:null}}).catch(()=>{});
 }
 async function _onGPS(pos){
-  if(!currentUser)return;
-  const{latitude:lat,longitude:lng,accuracy}=pos.coords;
-  if(!_weather)fetchWeather(lat,lng);
-  try{await sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,{method:'PATCH',body:{last_lat:lat,last_lng:lng,last_seen:Date.now(),last_accuracy:Math.round(accuracy||0)}});}catch(e){}
+if(!currentUser)return;
+const{latitude:lat,longitude:lng,accuracy}=pos.coords;
+if(!_weather)fetchWeather(lat,lng);
+try{await sb(`users?name=ilike.${encodeURIComponent(currentUser.name)}`,{method:‘PATCH’,body:{last_lat:lat,last_lng:lng,last_seen:Date.now(),last_accuracy:Math.round(accuracy||0)}});}catch(e){}
 }
 
 // ══════════════════════════════════════════════════════════════
 //  GUIDE
 // ══════════════════════════════════════════════════════════════
 function renderGuide(){
-  const el=document.getElementById('guide-body');if(!el)return;
-  const sections=[
-    {icon:'📱',title:'How to Use This App',steps:[
-      {n:1,t:'<strong>Today</strong> — your jobs, colour-coded by status. Tap any job to open.'},
-      {n:2,t:'<strong>Upcoming</strong> — jobs in the next 7 days, grouped by date.'},
-      {n:3,t:'<strong>Done</strong> — your last 60 completed jobs.'},
-      {n:4,t:'<strong>Map</strong> — terrain map with job pins and driving route.'},
-      {n:5,t:'<strong>Stats</strong> — personal dashboard with weather forecast.'},
-      {n:6,t:'<strong>+</strong> button — report a new job or site issue to the office.'},
-    ],tip:'Pull down on the Today screen to refresh jobs. Auto-refreshes every 45 seconds.'},
-    {icon:'🎨',title:'Job Colour Codes',steps:[
-      {n:1,t:'<span style="color:#f5a623">■</span> <strong>Amber</strong> — Pending (not started)'},
-      {n:2,t:'<span style="color:#4f8fff">■</span> <strong>Blue</strong> — In Progress'},
-      {n:3,t:'<span style="color:#22c55e">■</span> <strong>Green</strong> — Completed'},
-      {n:4,t:'<span style="color:#f04444">■</span> <strong>Red</strong> — Emergency'},
-      {n:5,t:'<span style="color:#f97316">■</span> <strong>Orange</strong> — No Access'},
-    ]},
-    {icon:'📷',title:'Photos & Auto-Stamp',steps:[
-      {n:1,t:'Open job → Photos → <strong>Take Photo or Upload</strong>.'},
-      {n:2,t:'Photos with EXIF capture time are stamped: job address · capture time · your name — single footer bar.'},
-      {n:3,t:'GPS is validated — if photo was taken >5km from the job, address is omitted from stamp.'},
-      {n:4,t:'No EXIF metadata = no stamp (no guessing).'},
-      {n:5,t:'Choose <strong>Compressed</strong> for fast uploads or <strong>HD</strong> for full quality.'},
-    ],tip:'Upload later in the evening — stamp shows original capture time from your phone camera.'},
-    {icon:'⚡',title:'Quick Issue Notes',steps:[
-      {n:1,t:'Open job → Notes → tap <strong>⚡ Quick Issues</strong>.'},
-      {n:2,t:'Choose category: Electrical, Gas, Fire Alarm, Plumbing, General.'},
-      {n:3,t:'Tick all issues found on site.'},
-      {n:4,t:'Tap <strong>Add Selected Notes</strong> — lines are appended to your notes.'},
-    ],tip:'Over 80 pre-written professional issue descriptions across 5 categories.'},
-    {icon:'💬',title:'WhatsApp Integration',steps:[
-      {n:1,t:'Every phone number has a WhatsApp button — tap to open a chat instantly.'},
-      {n:2,t:'<strong>Share Job</strong> button sends job summary (address, trade, time) to any WhatsApp contact.'},
-      {n:3,t:'<strong>Share Notes</strong> sends your job notes via WhatsApp.'},
-      {n:4,t:'<strong>+ New Job</strong> sends a WhatsApp notification to the office automatically.'},
-    ]},
-    {icon:'📤',title:'Overtime & Leave',steps:[
-      {n:1,t:'Go to <strong>Requests</strong> tab.'},
-      {n:2,t:'Tap <strong>Request Overtime</strong> or <strong>Request Time Off</strong>.'},
-      {n:3,t:'Office approves/rejects — you see the update and reply here.'},
-    ]},
-    {icon:'🔔',title:'Notifications',steps:[
-      {n:1,t:'Allow notifications when prompted — you\'ll be asked once.'},
-      {n:2,t:'Get an alert when a new job is assigned to you today.'},
-      {n:3,t:'Tap the notification to open the job directly.'},
-    ]},
-  ];
-  el.innerHTML=sections.map((s,i)=>`<div class="guide-section">
-    <div class="guide-hd" onclick="toggleGuide(${i})" id="ghd-${i}"><div class="guide-hd-title"><span>${s.icon}</span> ${s.title}</div><span class="guide-chevron">▾</span></div>
-    <div class="guide-body" id="gbody-${i}">
-      ${s.steps.map(st=>`<div class="guide-step"><div class="guide-step-num">${st.n}</div><div class="guide-step-text">${st.t}</div></div>`).join('')}
-      ${s.tip?`<div class="guide-tip">${s.tip}</div>`:''}
-    </div>
+const el=document.getElementById(‘guide-body’);if(!el)return;
+const sections=[
+{icon:‘📱’,title:‘How to Use This App’,steps:[
+{n:1,t:’<strong>Today</strong> — your jobs, colour-coded by status. Tap any job to open.’},
+{n:2,t:’<strong>Upcoming</strong> — jobs in the next 7 days, grouped by date.’},
+{n:3,t:’<strong>Done</strong> — your last 60 completed jobs.’},
+{n:4,t:’<strong>Map</strong> — terrain map with job pins and driving route.’},
+{n:5,t:’<strong>Stats</strong> — personal dashboard with weather forecast.’},
+{n:6,t:’<strong>+</strong> button — report a new job or site issue to the office.’},
+],tip:‘Pull down on the Today screen to refresh jobs. Auto-refreshes every 45 seconds.’},
+{icon:‘🎨’,title:‘Job Colour Codes’,steps:[
+{n:1,t:’<span style="color:#f5a623">■</span> <strong>Amber</strong> — Pending (not started)’},
+{n:2,t:’<span style="color:#4f8fff">■</span> <strong>Blue</strong> — In Progress’},
+{n:3,t:’<span style="color:#22c55e">■</span> <strong>Green</strong> — Completed’},
+{n:4,t:’<span style="color:#f04444">■</span> <strong>Red</strong> — Emergency’},
+{n:5,t:’<span style="color:#f97316">■</span> <strong>Orange</strong> — No Access’},
+]},
+{icon:‘📷’,title:‘Photos & Auto-Stamp’,steps:[
+{n:1,t:‘Open job → Photos → <strong>Take Photo or Upload</strong>.’},
+{n:2,t:‘Photos with EXIF capture time are stamped: job address · capture time · your name — single footer bar.’},
+{n:3,t:‘GPS is validated — if photo was taken >5km from the job, address is omitted from stamp.’},
+{n:4,t:‘No EXIF metadata = no stamp (no guessing).’},
+{n:5,t:‘Choose <strong>Compressed</strong> for fast uploads or <strong>HD</strong> for full quality.’},
+],tip:‘Upload later in the evening — stamp shows original capture time from your phone camera.’},
+{icon:‘⚡’,title:‘Quick Issue Notes’,steps:[
+{n:1,t:‘Open job → Notes → tap <strong>⚡ Quick Issues</strong>.’},
+{n:2,t:‘Choose category: Electrical, Gas, Fire Alarm, Plumbing, General.’},
+{n:3,t:‘Tick all issues found on site.’},
+{n:4,t:‘Tap <strong>Add Selected Notes</strong> — lines are appended to your notes.’},
+],tip:‘Over 80 pre-written professional issue descriptions across 5 categories.’},
+{icon:‘💬’,title:‘WhatsApp Integration’,steps:[
+{n:1,t:‘Every phone number has a WhatsApp button — tap to open a chat instantly.’},
+{n:2,t:’<strong>Share Job</strong> button sends job summary (address, trade, time) to any WhatsApp contact.’},
+{n:3,t:’<strong>Share Notes</strong> sends your job notes via WhatsApp.’},
+{n:4,t:’<strong>+ New Job</strong> sends a WhatsApp notification to the office automatically.’},
+]},
+{icon:‘📤’,title:‘Overtime & Leave’,steps:[
+{n:1,t:‘Go to <strong>Requests</strong> tab.’},
+{n:2,t:‘Tap <strong>Request Overtime</strong> or <strong>Request Time Off</strong>.’},
+{n:3,t:‘Office approves/rejects — you see the update and reply here.’},
+]},
+{icon:‘🔔’,title:‘Notifications’,steps:[
+{n:1,t:‘Allow notifications when prompted — you'll be asked once.’},
+{n:2,t:‘Get an alert when a new job is assigned to you today.’},
+{n:3,t:‘Tap the notification to open the job directly.’},
+]},
+];
+el.innerHTML=sections.map((s,i)=>`<div class="guide-section"> <div class="guide-hd" onclick="toggleGuide(${i})" id="ghd-${i}"><div class="guide-hd-title"><span>${s.icon}</span> ${s.title}</div><span class="guide-chevron">▾</span></div> <div class="guide-body" id="gbody-${i}"> ${s.steps.map(st=>`<div class="guide-step"><div class="guide-step-num">${st.n}</div><div class="guide-step-text">${st.t}</div></div>`).join('')} ${s.tip?`<div class="guide-tip">${s.tip}</div>`:’’}
+</div>
+
   </div>`).join('');
   // API cards
   const apiEl=document.getElementById('guide-api-cards');if(!apiEl)return;
@@ -2286,73 +2708,74 @@ function renderGuide(){
 }
 
 function toggleGuide(i){
-  const hd=document.getElementById(`ghd-${i}`),body=document.getElementById(`gbody-${i}`);
-  const open=body.classList.toggle('open');hd.classList.toggle('open',open);
+const hd=document.getElementById(`ghd-${i}`),body=document.getElementById(`gbody-${i}`);
+const open=body.classList.toggle(‘open’);hd.classList.toggle(‘open’,open);
 }
 
 // ══════════════════════════════════════════════════════════════
 //  UI HELPERS
 // ══════════════════════════════════════════════════════════════
-const TABS=['today','upcoming','done','map','dash','requests','guide'];
-const FAB_TABS=new Set(['today','upcoming']);
+const TABS=[‘today’,‘upcoming’,‘done’,‘map’,‘dash’,‘requests’,‘guide’,‘tools’];
+const FAB_TABS=new Set([‘today’,‘upcoming’]);
 
 function switchTab(tab){
-  currentTab=tab;
-  TABS.forEach(t=>{
-    document.getElementById(`nav-${t}`)?.classList.toggle('active',t===tab);
-    document.getElementById(`page-${t}`)?.classList.toggle('active',t===tab);
-  });
-  const fab=document.getElementById('fab-add');
-  if(fab)fab.classList.toggle('hidden',!FAB_TABS.has(tab));
-  if(tab==='dash')loadDash();
-  if(tab==='requests')loadRequests();
+currentTab=tab;
+TABS.forEach(t=>{
+document.getElementById(`nav-${t}`)?.classList.toggle(‘active’,t===tab);
+document.getElementById(`page-${t}`)?.classList.toggle(‘active’,t===tab);
+});
+const fab=document.getElementById(‘fab-add’);
+if(fab)fab.classList.toggle(‘hidden’,!FAB_TABS.has(tab));
+if(tab===‘dash’)loadDash();
+if(tab===‘requests’)loadRequests();
 }
 
 function closeModal(id){
-  document.getElementById(id)?.classList.remove('open');
-  if(id==='job-modal')currentJob=null;
+document.getElementById(id)?.classList.remove(‘open’);
+if(id===‘job-modal’)currentJob=null;
 }
 
 function _setBadge(tab,count){
-  const b=document.getElementById(`badge-${tab}`);
-  if(!b)return;
-  b.style.display=count>0?'inline-block':'none';
-  b.textContent=count;
+const b=document.getElementById(`badge-${tab}`);
+if(!b)return;
+b.style.display=count>0?‘inline-block’:‘none’;
+b.textContent=count;
 }
 
 let _tt;
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.className=`show ${type}`;
-  clearTimeout(_tt);_tt=setTimeout(()=>{el.className='';},3200);
+function toast(msg,type=’’){
+const el=document.getElementById(‘toast’);
+el.textContent=msg;el.className=`show ${type}`;
+clearTimeout(_tt);_tt=setTimeout(()=>{el.className=’’;},3200);
 }
 
 function _fd(ts){
-  if(!ts)return'';
-  return new Date(typeof ts==='number'?ts:Date.parse(ts)).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+if(!ts)return’’;
+return new Date(typeof ts===‘number’?ts:Date.parse(ts)).toLocaleDateString(‘en-GB’,{day:‘numeric’,month:‘short’,year:‘numeric’});
 }
 
 // ══════════════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════════════
 (function init(){
-  _applyTheme(localStorage.getItem('df_eng_theme')||'dark');
-  // Close modals on backdrop tap
-  ['job-modal','ot-modal','leave-modal','addjob-modal'].forEach(id=>{
-    document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id)closeModal(id);});
-  });
-  document.getElementById('qn-overlay')?.addEventListener('click',e=>{if(e.target.id==='qn-overlay')closeQN();});
-  // Resume session
-  try{
-    const saved=JSON.parse(localStorage.getItem('df_eng_user')||'null');
-    if(saved?.name&&saved?.role==='engineer'){currentUser=saved;showApp();}
-  }catch(e){localStorage.removeItem('df_eng_user');}
-  // Auto-refresh every 45s
-  setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},45000);
-  // Check for alerts more frequently
-  setInterval(()=>{if(currentUser)checkBroadcastAlerts();},15000);
-  setInterval(()=>{if(currentUser)checkOfficeConnection();},120000);
+_applyTheme(localStorage.getItem(‘df_eng_theme’)||‘dark’);
+// Close modals on backdrop tap
+[‘job-modal’,‘ot-modal’,‘leave-modal’,‘addjob-modal’].forEach(id=>{
+document.getElementById(id)?.addEventListener(‘click’,e=>{if(e.target.id===id)closeModal(id);});
+});
+document.getElementById(‘qn-overlay’)?.addEventListener(‘click’,e=>{if(e.target.id===‘qn-overlay’)closeQN();});
+// Resume session
+try{
+const saved=JSON.parse(localStorage.getItem(‘df_eng_user’)||‘null’);
+if(saved?.name&&saved?.role===‘engineer’){currentUser=saved;showApp();}
+}catch(e){localStorage.removeItem(‘df_eng_user’);}
+// Auto-refresh every 45s
+setInterval(()=>{if(currentUser&&document.visibilityState!==‘hidden’){loadJobs();checkBroadcastAlerts();}},45000);
+// Check for alerts more frequently
+setInterval(()=>{if(currentUser)checkBroadcastAlerts();},15000);
+setInterval(()=>{if(currentUser)checkOfficeConnection();},120000);
 })();
 </script>
+
 </body>
 </html>
