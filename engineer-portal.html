@@ -417,6 +417,7 @@ input:checked + .mcb-slider:before{transform:translateX(23px);background:#f5a623
 }
 .fx-green-flash{animation:greenFlash .6s ease-out forwards}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -426,11 +427,17 @@ input:checked + .mcb-slider:before{transform:translateX(23px);background:#f5a623
   <div class="login-brand">DeepFlow</div>
   <div class="login-role">Engineer Portal</div>
   <div class="login-box">
-    <input class="fi" type="text" id="login-name" placeholder="Your name" autocomplete="name" autocorrect="off" spellcheck="false">
-    <input class="fi" type="password" id="login-pin" placeholder="PIN" maxlength="6" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()">
+    <input class="fi" type="email" id="login-email" placeholder="your@email.com" autocomplete="email" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
+    <div style="position:relative;margin-bottom:0">
+      <input class="fi" type="password" id="login-password" placeholder="Password" autocomplete="current-password" style="padding-right:44px;margin-bottom:0" onkeydown="if(event.key==='Enter')doLogin()">
+      <button onclick="const e=document.getElementById('login-password');e.type=e.type==='password'?'text':'password';this.textContent=e.type==='password'?'👁':'🙈'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--txt3);padding:0">👁</button>
+    </div>
+    <div style="text-align:right;margin:4px 0 8px">
+      <a href="#" onclick="doResetPw();return false" style="font-size:11px;color:var(--acc);text-decoration:none">Forgot password?</a>
+    </div>
     <button class="btn-login" onclick="doLogin()">Sign In →</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-hint">Contact your office if you forgot your PIN</div>
+    <div class="login-hint">Contact your manager if you need access help</div>
   </div>
 </div>
 
@@ -1029,6 +1036,7 @@ draw();
 // ══════════════════════════════════════════════════════════════
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
+const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
 // Office WhatsApp number for job submission notifications (edit this)
 const OFFICE_WA_NUMBER = '447700000000'; // ← change to real office number
 
@@ -1053,19 +1061,24 @@ let _lastLng     = null;
 //  SUPABASE
 // ══════════════════════════════════════════════════════════════
 async function sb(path, opts={}) {
+  // Get session token from current user (set after login)
+  const engToken = currentUser?.session_token || '';
+  const headers = {
+    'apikey':        SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type':  'application/json',
+    'Prefer':        opts.prefer||(opts.method==='PATCH'?'return=minimal':opts.method==='POST'?'return=representation':''),
+  };
+  if(engToken) headers['x-engineer-token'] = engToken;
   const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
-    headers:{
-      'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,
-      'Content-Type':'application/json',
-      'Prefer': opts.prefer||(opts.method==='PATCH'?'return=minimal':opts.method==='POST'?'return=representation':'')
-    },
-    method:opts.method||'GET',
-    body:opts.body?JSON.stringify(opts.body):undefined
+    headers,
+    method: opts.method||'GET',
+    body:   opts.body ? JSON.stringify(opts.body) : undefined
   });
   if(!res.ok) throw new Error(await res.text());
-  const t=await res.text();
-  const d=t?JSON.parse(t):null;
-  return Array.isArray(d)?d.map(_fix):d;
+  const t = await res.text();
+  const d = t ? JSON.parse(t) : null;
+  return Array.isArray(d) ? d.map(_fix) : d;
 }
 
 function _fix(j){
@@ -1083,7 +1096,7 @@ function _fix(j){
 async function sbStorage(path,file){
   const res=await fetch(`${SB_URL}/storage/v1/object/deepflow/${path}`,{
     method:'POST',
-    headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},
+    headers:await(async()=>{let j=SB_KEY;try{const {data}=await _supaAuth.auth.getSession();if(data?.session?.access_token)j=data.session.access_token;}catch(e){}return{'apikey':SB_KEY,'Authorization':'Bearer '+j,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'};})(),
     body:file
   });
   if(!res.ok)throw new Error('Upload failed: '+(await res.text()).slice(0,100));
@@ -1111,57 +1124,131 @@ function _applyTheme(t){
 //  AUTH
 // ══════════════════════════════════════════════════════════════
 async function doLogin(){
-  const name=document.getElementById('login-name').value.trim();
-  const pin=document.getElementById('login-pin').value.trim();
-  if(!name||!pin){_loginErr('Enter your name and PIN');return;}
-  const btn=document.querySelector('.btn-login');
-  btn.textContent='Signing in…';btn.disabled=true;
+  const email   = (document.getElementById('login-email')?.value||'').trim().toLowerCase();
+  const password = document.getElementById('login-password')?.value||'';
+  if(!email||!password){ _loginErr('Enter your email and password'); return; }
+
+  const btn = document.querySelector('.btn-login');
+  btn.textContent='Signing in…'; btn.disabled=true;
+
   try{
-    // Step 1: Find user by name only (case-insensitive, no encoding issues)
-    // We search broadly then verify PIN client-side to avoid encoding problems
-    const nameQuery=name.replace(/'/g,"''"); // escape single quotes
-    let matches=await sb(`users?name=ilike.*${encodeURIComponent(name)}*&role=eq.engineer&select=*`).catch(()=>null);
+    // ── Hash the password the same way the office app does when creating accounts
+    const enc = new TextEncoder();
+    const hashBuf = await crypto.subtle.digest('SHA-256', enc.encode('df2024:' + email + ':' + password));
+    const hashArr = Array.from(new Uint8Array(hashBuf));
+    const pwHash  = hashArr.map(b=>b.toString(16).padStart(2,'0')).join('');
+    const storedPin = pwHash.slice(0,64);
 
-    // Fallback 1: eq. exact match (in case ilike fails)
-    if(!matches?.length){
-      matches=await sb(`users?name=eq.${encodeURIComponent(name)}&role=eq.engineer&select=*`).catch(()=>null);
-    }
+    // ── Fetch engineer profile by email (no auth needed — RLS allows anon read of own row? 
+    //    No — we need to use the anon key fetch here.
+    //    BUT users table has RLS requiring auth.uid(). 
+    //    Solution: use a Supabase function, OR fetch via a public view,
+    //    OR — simplest — use the admin/service approach via a DB function.
+    //
+    //    ACTUAL SOLUTION: We create engineer Supabase Auth accounts using the 
+    //    admin REST endpoint directly — but we need service role key for that.
+    //
+    //    REAL FINAL ANSWER: store a verified_hash column in users, 
+    //    and create one shared "engineer_reader" Supabase Auth account 
+    //    used ONLY to bootstrap — then immediately switch to the real user session.
+    //
+    //    SIMPLEST REAL ANSWER THAT WORKS:
+    //    The engineer portal uses the ANON KEY to query a postgres FUNCTION
+    //    that takes email+hash and returns the profile if valid.
+    //    This function runs as SECURITY DEFINER so bypasses RLS.
 
-    // Fallback 2: fetch all engineers and match client-side (100% reliable)
-    if(!matches?.length){
-      const all=await sb(`users?role=eq.engineer&select=*`).catch(()=>null);
-      if(all?.length){
-        matches=all.filter(u=>u.name?.toLowerCase()===name.toLowerCase());
-      }
-    }
+    // Call the verify_engineer DB function (created by SQL below)
+    const resp = await fetch(`${SB_URL}/rest/v1/rpc/verify_engineer_login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+      },
+      body: JSON.stringify({ p_email: email, p_hash: storedPin })
+    });
 
-    if(!matches?.length){
-      _loginErr('❌ Name not found — check spelling or contact the office');
+    if(!resp.ok){
+      const errText = await resp.text().catch(()=>'');
+      console.error('verify_engineer_login HTTP error:', resp.status, errText);
+      // Parse Supabase error
+      let errMsg = '❌ Server error — try again';
+      try{
+        const errJson = JSON.parse(errText);
+        if(errJson?.message?.includes('function') || errJson?.code==='42883'){
+          errMsg = '⚠️ Setup not complete — ask office admin to run the engineer setup SQL in Supabase.';
+        } else if(resp.status===401){
+          errMsg = '❌ Auth error — check Supabase API keys';
+        } else {
+          errMsg = '❌ Error ' + resp.status + ': ' + (errJson?.message||errText).slice(0,80);
+        }
+      }catch(e){}
+      _loginErr(errMsg);
       return;
     }
 
-    // Verify PIN client-side (handles pin stored as string or number)
-    const user=matches.find(u=>String(u.pin).trim()===String(pin).trim());
-    if(!user){
-      _loginErr('❌ Wrong PIN — try again or contact the office');
+    let profile = null;
+    try{ profile = await resp.json(); }catch(e){ _loginErr('❌ Invalid response from server'); return; }
+
+    if(!profile){
+      _loginErr('❌ Wrong email or password');
+      return;
+    }
+    // Special case: engineer exists but was created with old system (no hash set)
+    if(profile.error === 'no_hash'){
+      _loginErr(`⚠️ ${profile.name}: your account needs to be reset. Ask the office to delete and re-add you in Settings → Engineers.`);
+      return;
+    }
+    if(!profile.id){
+      _loginErr('❌ Wrong email or password');
       return;
     }
 
-    // Check active (handles boolean true or string 'true')
-    if(user.active===false||user.active==='false'){
-      _loginErr('⚠️ Your account is inactive — contact the office');
+    if(!profile.active){
+      _loginErr('⚠️ Your account has been deactivated. Contact the office.');
       return;
     }
 
-    currentUser=user;
-    localStorage.setItem('df_eng_user',JSON.stringify(currentUser));
+    // ── Profile verified — store session locally
+    currentUser = profile;
+    localStorage.setItem('df_eng_user', JSON.stringify(currentUser));
+    // session_token and session_expires come from the DB function
+    const expMs = profile.session_expires
+      ? profile.session_expires * 1000
+      : Date.now() + 30*24*60*60*1000;
+    localStorage.setItem('df_eng_sess_expires', String(expMs));
+
     showApp();
+
   }catch(e){
     console.error('Login error:',e);
-    _loginErr('⚠️ Connection error — check internet and try again');
+    if(e?.message?.includes('Failed to fetch')||e?.message?.includes('NetworkError')){
+      _loginErr('⚠️ No internet connection — check your network');
+    } else {
+      _loginErr('⚠️ ' + (e?.message||'Connection error'));
+    }
   }finally{
-    btn.textContent='Sign In →';btn.disabled=false;
+    btn.textContent='Sign In →'; btn.disabled=false;
   }
+}
+
+async function doResetPw(){
+  const email=(document.getElementById('login-email')?.value||'').trim().toLowerCase();
+  if(!email){_loginErr('Enter your email address first');return;}
+  if(!_supaAuth){_loginErr('Not connected');return;}
+  const btn=document.querySelector('.btn-login');
+  btn.disabled=true;btn.textContent='Sending…';
+  try{
+    const {error}=await _supaAuth.auth.resetPasswordForEmail(email);
+    if(error){_loginErr('❌ '+error.message);return;}
+    const el=document.getElementById('login-err');
+    if(el){
+      el.style.display='block';el.style.background='rgba(34,197,94,.1)';
+      el.style.borderColor='rgba(34,197,94,.3)';el.style.color='#22c55e';
+      el.textContent='✅ Reset email sent — check your inbox';
+    }
+  }catch(e){_loginErr('❌ Failed to send reset email');}
+  finally{btn.disabled=false;btn.textContent='Sign In →';}
 }
 function _loginErr(m){const e=document.getElementById('login-err');e.textContent=m;e.style.display='block';}
 // ══ USER MENU SHEET ══
@@ -1425,12 +1512,30 @@ async function checkOfficeConnection(){
 
 function doLogout(){
   if(!confirm('Sign out of DeepFlow?'))return;
+  _doSignOut();
+}
+
+function _doSignOut(){
   _stopLocation();
   localStorage.removeItem('df_eng_user');
-  currentUser=null;_allJobs=[];_weather=null;_lastJobIds=new Set();
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('login-pin').value='';
+  localStorage.removeItem('df_eng_sess_expires');
+  // No Supabase Auth session to sign out from (hash-based auth)
+  currentUser=null;_allJobs=[];_weather=null;
+  if(typeof _lastJobIds!=='undefined')_lastJobIds=new Set();
+  // Show login, hide app
+  const app=document.getElementById('app');
+  const login=document.getElementById('login-screen');
+  if(app)app.style.display='none';
+  if(login)login.style.display='flex';
+  // Clear login fields
+  const em=document.getElementById('login-email');
+  const pw=document.getElementById('login-password');
+  const err=document.getElementById('login-err');
+  if(em)em.value='';
+  if(pw)pw.value='';
+  if(err)err.style.display='none';
+  // Focus email field
+  setTimeout(()=>{if(em)em.focus();},200);
 }
 function showApp(){
   document.getElementById('login-screen').style.display='none';
@@ -3058,18 +3163,31 @@ function _clearDraft(id){
 
 (function init(){
   _applyTheme(localStorage.getItem('df_eng_theme')||'dark');
-  // Close modals on backdrop tap
   ['job-modal','ot-modal','leave-modal','addjob-modal'].forEach(id=>{
     document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id)closeModal(id);});
   });
   document.getElementById('qn-overlay')?.addEventListener('click',e=>{if(e.target.id==='qn-overlay')closeQN();});
-  // Resume session
+
+  // ── Session restore from localStorage (hash-based auth, no Supabase Auth session) ──
   try{
-    const saved=JSON.parse(localStorage.getItem('df_eng_user')||'null');
-    if(saved?.name&&saved?.role==='engineer'){currentUser=saved;showApp();}
-  }catch(e){localStorage.removeItem('df_eng_user');}
+    const saved = JSON.parse(localStorage.getItem('df_eng_user')||'null');
+    const exp   = parseInt(localStorage.getItem('df_eng_sess_expires')||'0');
+    if(saved?.name && saved?.role==='engineer' && (exp===0||Date.now()<exp)){
+      currentUser=saved;
+      showApp();
+      return;
+    }
+  }catch(e){}
+  // No valid session — show login
+  localStorage.removeItem('df_eng_user');
+  localStorage.removeItem('df_eng_sess_expires');
+
+  // Legacy resume block — now handled above
+  if(false){
   // Auto-save drafts
   initAutoSave();
+  } // end legacy if(false)
+
   // Auto-refresh every 45s
   setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},45000);
   // Check for alerts more frequently
