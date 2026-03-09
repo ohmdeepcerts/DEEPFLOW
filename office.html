@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DeepFlow — Pro v9</title>
+<title>DeepFlow Ver 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -1173,7 +1173,7 @@ body.density-relaxed .jtable td{font-size:15px}
   <button id="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">‹</button>
   <div class="logo-wrap">
     <div class="logo-mark" id="sidebar-logo"><span id="logo-word1" style="color:var(--acc)">Deep</span><span id="logo-word2">Flow</span></div>
-    <div class="logo-ver">Pro v15 • Offline</div>
+    
   </div>
   <nav>
     <div class="ns">Workspace</div>
@@ -3731,66 +3731,57 @@ async function loadSettings(){
 async function saveSetting(k,v){
   S[k]=v;
   localStorage.setItem('df_setting_'+k,JSON.stringify(v));
-  // Also push to Supabase so other users see it
-  _pushSettingToDb(k,v).catch(()=>{});
 }
 
 async function saveAllSettings(){
-  // Save to localStorage (fast, offline)
+  // 1. Save everything to localStorage
   for(const[k,v]of Object.entries(S)) localStorage.setItem('df_setting_'+k,JSON.stringify(v));
-  // Push all to Supabase in one batch (non-blocking)
-  _pushAllSettingsToDb().catch(()=>{});
+  // 2. Save everything to Supabase as ONE row (key='__all__')
+  await _pushAllSettingsToDb();
 }
 
-// Push one setting key to Supabase app_settings table
-async function _pushSettingToDb(k,v){
-  // Skip dynamic/local-only keys
-  const skip=['users','engineers','properties'];
-  if(skip.includes(k)) return;
-  try{
-    await _sb('app_settings?key=eq.'+encodeURIComponent(k),{
-      method:'POST',
-      prefer:'resolution=merge-duplicates,return=minimal',
-      body:{key:k, value:JSON.stringify(v), updated:Math.floor(Date.now()/1000)}
-    });
-  }catch(e){ /* silent fail — localStorage is backup */ }
-}
-
-// Push all settings to Supabase
 async function _pushAllSettingsToDb(){
-  const skip=['users','engineers','properties'];
-  const rows=[];
-  const now=Math.floor(Date.now()/1000);
+  const skip=['users','engineers'];
+  const snapshot={};
   for(const[k,v]of Object.entries(S)){
-    if(skip.includes(k)) continue;
-    rows.push({key:k, value:JSON.stringify(v), updated:now});
+    if(!skip.includes(k)) snapshot[k]=v;
   }
-  // Batch upsert in chunks of 50
-  for(let i=0;i<rows.length;i+=50){
-    const chunk=rows.slice(i,i+50);
-    await _sb('app_settings',{
-      method:'POST',
-      prefer:'resolution=merge-duplicates,return=minimal',
-      body:chunk
-    }).catch(()=>{});
+  try{
+    const jwt=await _getJWT();
+    const headers={
+      'apikey':SB_KEY,
+      'Authorization':'Bearer '+jwt,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'
+    };
+    // Single POST with upsert — inserts if not exists, updates if exists
+    const res=await fetch(`${SB_URL}/rest/v1/app_settings`,{
+      method:'POST', headers,
+      body:JSON.stringify({key:'__all__',value:JSON.stringify(snapshot),updated:Math.floor(Date.now()/1000)})
+    });
+    if(!res.ok){
+      const err=await res.text();
+      console.warn('Settings save failed:',res.status,err);
+    } else {
+      console.log('✅ Settings saved to Supabase');
+    }
+  }catch(e){
+    console.warn('Settings push failed:',e.message);
   }
 }
 
-// Load all settings from Supabase into S (called on startup)
 async function _loadSettingsFromDb(){
   try{
-    const rows=await _sb('app_settings?select=key,value&order=key.asc');
+    const rows=await _sb('app_settings?key=eq.__all__&select=value');
     if(!rows||!rows.length) return false;
-    for(const row of rows){
-      if(!row.key) continue;
-      const skip=['users','engineers','properties'];
-      if(skip.includes(row.key)) continue;
-      try{
-        const parsed=JSON.parse(row.value);
-        S[row.key]=parsed;
-        localStorage.setItem('df_setting_'+row.key,row.value);
-      }catch(e){}
+    const snapshot=JSON.parse(rows[0].value);
+    const skip=['users','engineers'];
+    for(const[k,v]of Object.entries(snapshot)){
+      if(skip.includes(k)) continue;
+      S[k]=v;
+      localStorage.setItem('df_setting_'+k,JSON.stringify(v));
     }
+    console.log('✅ Settings loaded from Supabase');
     return true;
   }catch(e){
     console.warn('Settings DB load failed, using localStorage:',e.message);
@@ -4699,6 +4690,17 @@ async function doLogin(){
     if(overlay)overlay.style.display='none';
     applyUserPermissions();
     toast(`👋 Welcome, ${_appUser.name}!`,'success');
+    // NOW reload settings from Supabase — user is authenticated, RLS passes
+    // This makes every computer always get the latest settings on login
+    _loadSettingsFromDb().then(loaded=>{
+      if(loaded){
+        renderSettings();
+        applyTheme(S.theme||'light');
+        if(S.accent) setAccent(S.accent);
+        if(S.fontSize) setFontSize(S.fontSize);
+        updateLogo();
+      }
+    }).catch(()=>{});
     // Sync users list in background
     setTimeout(forceSyncUsers,1500);
 
