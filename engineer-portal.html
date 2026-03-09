@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,13,20,.97);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:calc(env(safe-area-inset-bottom) + 10px);backdrop-filter:blur(20px)}
 [data-theme="light"] .bottom-nav{background:rgba(255,255,255,.97)}
-.nav-item{flex:1;padding:14px 4px 10px;text-align:center;cursor:pointer;font-size:9px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px}
+.nav-item{flex:1;padding:16px 4px 12px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--txt3);transition:color .2s;text-transform:uppercase;letter-spacing:.3px;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:62px}
 .nav-item.active{color:var(--acc)}
 .nav-icon{font-size:19px}
 .nav-badge{position:absolute;top:8px;right:calc(50% - 16px);background:var(--red);color:#fff;border-radius:8px;font-size:8px;padding:1px 4px;font-weight:800;line-height:1.4}
@@ -737,13 +737,20 @@ input:checked + .mcb-slider:before{transform:translateX(23px);background:#f5a623
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('today')" id="nav-today"><span class="nav-icon">⚡</span>Today<span class="nav-badge" id="badge-today" style="display:none"></span></div>
-    <div class="nav-item" onclick="switchTab('upcoming')" id="nav-upcoming"><span class="nav-icon">📋</span>Upcoming</div>
-    <div class="nav-item" onclick="switchTab('done')" id="nav-done"><span class="nav-icon">✅</span>Done</div>
-    <div class="nav-item" onclick="switchTab('map')" id="nav-map"><span class="nav-icon">🗺</span>Map</div>
-    <div class="nav-item" onclick="switchTab('dash')" id="nav-dash"><span class="nav-icon">📊</span>Stats</div>
-    <div class="nav-item" onclick="switchTab('requests')" id="nav-requests"><span class="nav-icon">📤</span>Requests<span class="nav-badge" id="badge-requests" style="display:none"></span></div>
-    <div class="nav-item" onclick="switchTab('tools')" id="nav-tools"><span class="nav-icon">🔧</span>Tools</div>
+    <div class="nav-item active" onclick="switchTab('today')" id="nav-today">
+      <span class="nav-icon">⚡</span>Today
+      <span class="nav-badge" id="badge-today" style="display:none"></span>
+    </div>
+    <div class="nav-item" onclick="switchTab('upcoming')" id="nav-upcoming">
+      <span class="nav-icon">📋</span>Upcoming
+    </div>
+    <div class="nav-item" onclick="switchTab('done')" id="nav-done">
+      <span class="nav-icon">✅</span>Done
+    </div>
+    <div class="nav-item" onclick="switchTab('tools')" id="nav-tools">
+      <span class="nav-icon">⚙️</span>More
+      <span class="nav-badge" id="badge-requests" style="display:none"></span>
+    </div>
   </div>
 
   <!-- FAB — Add Job (shown on today/upcoming tabs) -->
@@ -1767,7 +1774,15 @@ async function openJob(id){
       sb(`attachments?jobid=eq.${id}&order=created.asc&select=*`).catch(()=>[])
     ]);
     if(!jobs?.[0])throw new Error('Job not found');
-    const j=jobs[0];currentJob=j;
+    const j=jobs[0];
+    // Verify this engineer is still assigned — office may have reassigned it
+    if(j.engineer && j.engineer !== currentUser.name){
+      modal.classList.remove('open');
+      toast('⚠️ This job has been reassigned. Your job list will refresh.','warn',4000);
+      setTimeout(loadJobs,500);
+      return;
+    }
+    currentJob=j;
     document.getElementById('modal-jobnum').textContent=j.jobNum||'';
     document.getElementById('modal-addr').textContent=j.address||'';
     document.getElementById('modal-status-pill').innerHTML=_spill(j.status,j.priority);
@@ -1882,7 +1897,7 @@ function renderJobDetail(j,atts){
     <div class="d-section">
       <div class="d-section-hd">📷 Photos (${photos.length})<span style="font-size:10px;color:var(--acc);font-weight:600;margin-left:6px">AUTO-STAMPED</span></div>
       ${photos.length?`<div class="photo-grid">${photos.map(a=>`<div class="photo-wrap"><img src="${a.url}" class="photo-img" onclick="window.open('${a.url}','_blank')" loading="lazy"></div>`).join('')}</div>`:''}
-      <div class="stamp-notice">📸 Photos stamped with job address &amp; capture time (from EXIF). GPS validated — if taken far from job, address omitted. No metadata = no stamp.</div>
+      <div class="stamp-notice">📸 Every photo is automatically stamped with the job address and your name.</div>
       <div class="upload-quality-row">
         <button class="quality-btn ${!_uploadHD?'active':''}" onclick="setQuality(false,this)">📱 Compressed</button>
         <button class="quality-btn ${_uploadHD?'active':''}" onclick="setQuality(true,this)">🔷 HD Original</button>
@@ -1995,67 +2010,51 @@ async function updateStatus(status, btn){
 }
 
 function playStatusAnim(status){
-  const ov=document.getElementById('fx-overlay');
   const app=document.getElementById('app');
-  if(!ov)return;
-  ov.style.display='block';
-  ov.innerHTML='';
-  ov.className='';
+  // Subtle haptic
+  const haptics={
+    'Completed':[30,20,60],
+    'In Progress':[15],
+    'Cancelled':[60],
+    'Cannot Access':[60]
+  };
+  if(navigator.vibrate) navigator.vibrate(haptics[status]||[15]);
 
-  if(status==='Completed'){
-    // Haptic: double pulse
-    if(navigator.vibrate)navigator.vibrate([80,40,180]);
-    // Full screen green flash
-    ov.classList.add('fx-green-flash');
-    // Expanding ring
-    const ring=document.createElement('div');
-    ring.className='fx-ring';
-    ov.appendChild(ring);
-    // 14 sparks
-    for(let i=0;i<14;i++){
-      const sp=document.createElement('div');
-      sp.className='fx-spark';
-      const ang=(360/14)*i;
-      sp.style.cssText=`--ang:${ang}deg;animation-delay:${20+i*12}ms;background:${i%3===0?'#86efac':'#22c55e'}`;
-      ov.appendChild(sp);
-    }
-    // Second outer ring (delayed)
-    setTimeout(()=>{
-      if(!ov.parentNode)return;
-      const r2=document.createElement('div');
-      r2.className='fx-ring';
-      r2.style.cssText='width:340px;height:340px;border-color:rgba(34,197,94,.4);animation-duration:.9s;animation-delay:0s';
-      ov.appendChild(r2);
-    },120);
+  // Professional status bar — slides in from top, fades out
+  const colors={
+    'Completed':   {bg:'#166534',border:'#22c55e',icon:'✓'},
+    'In Progress': {bg:'#1e3a5f',border:'#3b82f6',icon:'◉'},
+    'Cancelled':   {bg:'#450a0a',border:'#e05252',icon:'✕'},
+    'Cannot Access':{bg:'#450a0a',border:'#e05252',icon:'✕'},
+    'Pending':     {bg:'#1c1c1c',border:'#6b7280',icon:'○'},
+  };
+  const c=colors[status]||colors['Pending'];
 
-  } else if(status==='Cancelled'||status==='Cannot Access'){
-    // Haptic: long heavy buzz
-    if(navigator.vibrate)navigator.vibrate(420);
-    // Red flash overlay
-    ov.classList.add('fx-fuse');
-    // Screen shake
-    if(app){app.classList.add('fx-shake');setTimeout(()=>app.classList.remove('fx-shake'),350);}
-    // Red X lines
-    const line1=document.createElement('div');
-    line1.style.cssText='position:absolute;top:50%;left:50%;width:80px;height:4px;background:#e05252;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);opacity:0;transition:opacity .1s';
-    const line2=document.createElement('div');
-    line2.style.cssText='position:absolute;top:50%;left:50%;width:80px;height:4px;background:#e05252;border-radius:2px;transform:translate(-50%,-50%) rotate(-45deg);opacity:0;transition:opacity .1s';
-    ov.appendChild(line1);ov.appendChild(line2);
-    setTimeout(()=>{line1.style.opacity='1';line2.style.opacity='1';},30);
+  // Remove any existing
+  document.querySelectorAll('.status-confirm-bar').forEach(el=>el.remove());
 
-  } else if(status==='In Progress'){
-    // Haptic: quick tick
-    if(navigator.vibrate)navigator.vibrate(45);
-    // Three ripples staggered
-    [0,200,400].forEach((delay,i)=>{
-      setTimeout(()=>{
-        const s=document.createElement('div');
-        s.className='fx-surge';
-        s.style.opacity=(1-i*0.25).toString();
-        ov.appendChild(s);
-      },delay);
-    });
-  }
+  const bar=document.createElement('div');
+  bar.className='status-confirm-bar';
+  bar.style.cssText=`
+    position:fixed;top:0;left:0;right:0;z-index:9999;
+    background:${c.bg};border-bottom:2px solid ${c.border};
+    padding:14px 20px;display:flex;align-items:center;gap:12px;
+    transform:translateY(-100%);transition:transform .25s cubic-bezier(.22,1,.36,1);
+  `;
+  bar.innerHTML=`
+    <span style="width:28px;height:28px;border-radius:50%;border:2px solid ${c.border};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:${c.border};flex-shrink:0">${c.icon}</span>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px">${status}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:1px">Status updated successfully</div>
+    </div>
+    <div style="margin-left:auto;width:3px;height:36px;background:${c.border};border-radius:2px;opacity:.5"></div>
+  `;
+  document.body.appendChild(bar);
+  requestAnimationFrame(()=>{ bar.style.transform='translateY(0)'; });
+  setTimeout(()=>{
+    bar.style.transform='translateY(-100%)';
+    setTimeout(()=>bar.remove(), 300);
+  }, 2200);
 
   // Cleanup
   setTimeout(()=>{
@@ -2320,15 +2319,9 @@ async function handleUpload(input,type){
         }
         // Compress unless HD mode
         if(!_uploadHD){file=await _compressImage(file,1920,0.82);}
-        // Stamp only if we have EXIF capture time
-        if(captureTime){
-          let useAddr=true;
-          if(exif.gpsLat&&exif.gpsLng){
-            const jc=await geocodeAddress(currentJob.address);
-            if(jc){const dist=_hdist(exif.gpsLat,exif.gpsLng,jc.lat,jc.lng);useAddr=dist<5;}
-          }
-          file=await _stampPhoto(file,useAddr?(currentJob.address||''):'',currentUser.name,captureTime);
-        }
+        // Always stamp: use EXIF time if available, otherwise use current time
+        const stampTime = captureTime || new Date();
+        file=await _stampPhoto(file, currentJob.address||'', currentUser.name, stampTime);
       }
       const ext=file.name.split('.').pop()?.toLowerCase()||'jpg';
       const path=`jobs/${currentJob.id}/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
@@ -2909,16 +2902,19 @@ async function checkBroadcastAlerts(){
   if(!currentUser) return;
   try{
     const now=Math.floor(Date.now()/1000);
-    const alerts=await sb(`engineer_alerts?status=eq.active&expires=gte.${now}&created=gt.${_lastAlertCheck-5}&order=created.desc&limit=5`);
+    // On first check (_lastAlertCheck===0), fetch last 24h of alerts
+    const sinceTs = _lastAlertCheck > 0 ? _lastAlertCheck - 5 : now - 86400;
+    const alerts=await sb(`engineer_alerts?status=eq.active&expires=gte.${now}&created=gt.${sinceTs}&order=created.desc&limit=10`);
     _lastAlertCheck=now;
     if(!alerts?.length) return;
     for(const a of alerts){
       if(_shownAlerts.includes(a.id)) continue;
-      if(a.target!=='all'&&a.target!==currentUser.name) continue;
+      // target: 'all' = everyone, or specific engineer name
+      if(a.target && a.target!=='all' && a.target!==currentUser.name) continue;
       showBroadcastAlert(a);
       break; // show one at a time
     }
-  }catch(e){} // table may not exist yet
+  }catch(e){ console.warn('Alert check failed:',e.message); }
 }
 
 function showBroadcastAlert(a){
@@ -3189,7 +3185,7 @@ function _clearDraft(id){
   } // end legacy if(false)
 
   // Auto-refresh every 45s
-  setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},45000);
+  setInterval(()=>{if(currentUser&&document.visibilityState!=='hidden'){loadJobs();checkBroadcastAlerts();}},30000);
   // Check for alerts more frequently
   setInterval(()=>{if(currentUser)checkBroadcastAlerts();},15000);
   setInterval(()=>{if(currentUser)checkOfficeConnection();},120000);
