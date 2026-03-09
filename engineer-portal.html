@@ -1088,17 +1088,55 @@ function _applyTheme(t){
 async function doLogin(){
   const name=document.getElementById('login-name').value.trim();
   const pin=document.getElementById('login-pin').value.trim();
-  if(!name||!pin){_loginErr('Please enter your name and PIN');return;}
+  if(!name||!pin){_loginErr('Enter your name and PIN');return;}
   const btn=document.querySelector('.btn-login');
   btn.textContent='Signing in…';btn.disabled=true;
   try{
-    const users=await sb(`users?name=ilike.${encodeURIComponent(name)}&pin=eq.${pin}&role=eq.engineer&active=eq.true&select=*`);
-    if(!users?.length){_loginErr('❌ Wrong name or PIN — contact the office.');return;}
-    currentUser=users[0];
+    // Step 1: Find user by name only (case-insensitive, no encoding issues)
+    // We search broadly then verify PIN client-side to avoid encoding problems
+    const nameQuery=name.replace(/'/g,"''"); // escape single quotes
+    let matches=await sb(`users?name=ilike.*${encodeURIComponent(name)}*&role=eq.engineer&select=*`).catch(()=>null);
+
+    // Fallback 1: eq. exact match (in case ilike fails)
+    if(!matches?.length){
+      matches=await sb(`users?name=eq.${encodeURIComponent(name)}&role=eq.engineer&select=*`).catch(()=>null);
+    }
+
+    // Fallback 2: fetch all engineers and match client-side (100% reliable)
+    if(!matches?.length){
+      const all=await sb(`users?role=eq.engineer&select=*`).catch(()=>null);
+      if(all?.length){
+        matches=all.filter(u=>u.name?.toLowerCase()===name.toLowerCase());
+      }
+    }
+
+    if(!matches?.length){
+      _loginErr('❌ Name not found — check spelling or contact the office');
+      return;
+    }
+
+    // Verify PIN client-side (handles pin stored as string or number)
+    const user=matches.find(u=>String(u.pin).trim()===String(pin).trim());
+    if(!user){
+      _loginErr('❌ Wrong PIN — try again or contact the office');
+      return;
+    }
+
+    // Check active (handles boolean true or string 'true')
+    if(user.active===false||user.active==='false'){
+      _loginErr('⚠️ Your account is inactive — contact the office');
+      return;
+    }
+
+    currentUser=user;
     localStorage.setItem('df_eng_user',JSON.stringify(currentUser));
     showApp();
-  }catch(e){_loginErr('⚠️ Connection error — check internet');}
-  finally{btn.textContent='Sign In →';btn.disabled=false;}
+  }catch(e){
+    console.error('Login error:',e);
+    _loginErr('⚠️ Connection error — check internet and try again');
+  }finally{
+    btn.textContent='Sign In →';btn.disabled=false;
+  }
 }
 function _loginErr(m){const e=document.getElementById('login-err');e.textContent=m;e.style.display='block';}
 // ══ USER MENU SHEET ══
