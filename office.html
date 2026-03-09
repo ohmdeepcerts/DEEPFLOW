@@ -81,14 +81,14 @@ body{font-family:var(--fm);background:var(--bg);color:var(--txt);font-size:var(-
 /* ── Layout ── */
 #app{display:flex;height:100vh;overflow:hidden}
 #sidebar{width:230px;min-width:230px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20;transition:width .2s ease,min-width .2s ease}
-#sidebar.collapsed{width:44px;min-width:44px;overflow:hidden}
+#sidebar.collapsed{width:48px;min-width:48px;overflow:hidden}
 #sidebar.collapsed .logo-mark,#sidebar.collapsed .logo-ver,#sidebar.collapsed .ns,#sidebar.collapsed .nbadge,#sidebar.collapsed #sidebar-user-badge,#sidebar.collapsed .sidebar-foot{display:none!important}
 #sidebar.collapsed .ni{justify-content:center;padding:9px 0;overflow:hidden;white-space:nowrap}
 #sidebar.collapsed .ni span:not(.ico){width:0;overflow:hidden;display:inline-block}
-#sidebar.collapsed .ni .ico{margin:0;font-size:16px;flex-shrink:0}
+#sidebar.collapsed .ni .ico{margin:0;font-size:20px;flex-shrink:0}
 #sidebar.collapsed nav{overflow:hidden}
-#sidebar-toggle{position:absolute;top:50%;left:100%;transform:translateY(-50%) translateX(-50%);z-index:30;width:18px;height:36px;background:var(--s1);border:1px solid var(--border);border-left:none;border-radius:0 6px 6px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt3);font-size:11px;transition:all .15s}
-#sidebar-toggle:hover{background:var(--s2);color:var(--acc)}
+#sidebar-toggle{position:absolute;top:50%;left:100%;transform:translateY(-50%) translateX(-50%);z-index:30;width:22px;height:48px;background:var(--s2);border:1px solid var(--border2);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:13px;font-weight:700;transition:all .15s;box-shadow:2px 0 6px rgba(0,0,0,.08)}
+#sidebar-toggle:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
 #sidebar{position:relative}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
@@ -1182,9 +1182,6 @@ body.density-relaxed .jtable td{font-size:15px}
     <div class="ns">Finance</div>
     <div class="ni" data-pg="inv"><span class="ico">◎</span>Invoices <span class="nbadge yellow" id="nb-inv" style="display:none">0</span></div>
     <div class="ni" data-pg="stmt"><span class="ico">📋</span>Statements</div>
-    <div class="ni" data-pg="exp"><span class="ico">🧾</span>Expenses</div>
-    <div class="ni" data-pg="ts"><span class="ico">◷</span>Timesheets</div>
-    <div class="ni" data-pg="rep"><span class="ico">▦</span>Reports</div>
     <div class="ni" data-pg="req"><span class="ico">📬</span>Eng. Requests <span class="nbadge" id="nb-req" style="display:none;background:#e05252">0</span></div>
     <div class="ns">Records</div>
     <div class="ni" data-pg="dir" id="ni-dir"><span class="ico">◉</span>Directories <span class="nbadge green" id="nb-dir" style="display:none;font-size:9px">▸</span></div>
@@ -1389,9 +1386,12 @@ body.density-relaxed .jtable td{font-size:15px}
         <button class="btn btn-ghost btn-sm" onclick="mergeJobsInvoice()">Merge Invoice</button>
         <button class="btn btn-ghost btn-sm" onclick="clearSel()">✕ Clear</button>
       </div>
-      <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" onclick="showWaPanel()" id="btn-wa-panel">📱 Send to Engineer</button>
+        <button class="btn btn-ghost btn-sm" id="btn-unassigned" onclick="toggleUnassignedView()" title="Jobs with no date or no engineer">📋 Unbooked</button>
         <button class="btn btn-ghost btn-sm" id="btn-view-eng" onclick="setJobsView('engineer')" title="Engineer columns view">👷 By Engineer</button>
+        <button class="btn btn-ghost btn-sm" id="btn-view-list" onclick="setJobsView('list')" title="Back to list view" style="display:none">☰ List View</button>
+        <button class="btn btn-ghost btn-sm" onclick="renderJobs();toast('Jobs refreshed','success',1500)" title="Refresh jobs">↺ Refresh</button>
         <button class="btn btn-acc btn-sm" onclick="openJobModal()">+ New Job</button>
       </div>
     </div>
@@ -2280,15 +2280,21 @@ body.density-relaxed .jtable td{font-size:15px}
 
           <!-- INVITE NEW USER -->
           <div class="set-card" style="margin-bottom:16px;border:1px solid rgba(79,143,255,.25);background:rgba(79,143,255,.04)">
-            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:10px">✉️ Invite New Staff Member</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;flex-wrap:wrap">
+            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:4px">➕ Add New Staff Member</div>
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">You set their password — no emails needed. They log in immediately.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
               <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name</label>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name *</label>
                 <input type="text" class="fi" id="inv-name" placeholder="e.g. Sarah Jones" autocapitalize="words">
               </div>
               <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address</label>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address *</label>
                 <input type="email" class="fi" id="inv-email" placeholder="sarah@example.com" autocapitalize="off">
+              </div>
+              <div style="position:relative">
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Password * <span style="color:var(--txt3);font-weight:400">(tell them)</span></label>
+                <input type="password" class="fi" id="inv-password" placeholder="Min 6 characters" autocomplete="new-password" style="padding-right:38px">
+                <button onclick="const e=document.getElementById('inv-password');e.type=e.type==='password'?'text':'password'" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--txt3)">👁</button>
               </div>
               <div>
                 <label class="fl" style="font-size:11px;margin-bottom:4px">Role</label>
@@ -2300,9 +2306,8 @@ body.density-relaxed .jtable td{font-size:15px}
                 </select>
               </div>
             </div>
-            <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <button class="btn btn-acc btn-sm" onclick="inviteUser()">📨 Send Invite Email</button>
-              <div style="font-size:11px;color:var(--txt3)">They'll receive an email to set their own password. No sharing PINs.</div>
+            <div>
+              <button class="btn btn-acc btn-sm" onclick="addOfficeStaff()">👤 Create Account</button>
             </div>
             <div id="inv-status" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:12px"></div>
           </div>
@@ -2425,6 +2430,8 @@ body.density-relaxed .jtable td{font-size:15px}
           <div class="set-title">◎ Invoice Numbering & Defaults</div>
           <div class="set-card set-grid">
             <div class="fg"><label class="fl">Invoice Prefix</label><input type="text" class="fi" id="s-inv-prefix" placeholder="INV-" value="INV-"></div>
+            <div class="fg"><label class="fl">Agency Invoice Prefix <span style="font-size:10px;color:var(--txt3)">(for agent jobs)</span></label><input type="text" class="fi" id="s-agency-inv-prefix" placeholder="AGN-"></div>
+            <div class="fg"><label class="fl">Agency Starting Number</label><input type="number" class="fi" id="s-agency-inv-start" placeholder="2001" min="1"></div>
             <div class="fg"><label class="fl">Invoice Starting Number</label><input type="number" class="fi" id="s-inv-start" value="1001"></div>
             <div class="fg"><label class="fl">Invoice Due Days (after issue)</label><input type="number" class="fi" id="s-due-days" value="14" min="1"></div>
             <div class="fg"><label class="fl">Payment Terms</label><input type="text" class="fi" id="s-pay-terms" placeholder="Payment due within 14 days"></div>
@@ -2603,7 +2610,12 @@ body.density-relaxed .jtable td{font-size:15px}
           </div>
         </div>
         <div class="set-section">
-          <div class="set-title">💾 Data Management</div>
+          <div class="set-title">💾 Data & Reports</div>
+          <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="showPage('exp')">🧾 Expenses</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('ts')">◷ Timesheets</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('rep')">▦ Reports</button>
+          </div>
           <div class="set-card" style="margin-bottom:12px">
             <div style="font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:8px;color:var(--acc)">🔒 One-Click Compliance Backup</div>
             <div style="font-size:12px;color:var(--txt2);margin-bottom:12px">Export everything — jobs, invoices, expenses, certificates — in one click for compliance and audit trail.</div>
@@ -4174,17 +4186,18 @@ function openRowColMgr(e){
 }
 
 function toggleCol(colId, itemEl){
-  // Toggle in both the toolbar panel and row popup (sync checkboxes)
   if(hiddenCols.has(colId)){
     hiddenCols.delete(colId);
   } else {
     hiddenCols.add(colId);
   }
-  // Sync all checkboxes for this colId across any open panels
+  // Keep _hiddenCols array in sync (used by applyColTemplate)
+  _hiddenCols = [...hiddenCols];
+  localStorage.setItem('df_hidden_cols', JSON.stringify(_hiddenCols));
+  // Sync checkboxes
   document.querySelectorAll(`#col-mgr-panel .col-mgr-item, #row-col-popup .col-mgr-item`).forEach(item=>{
     const cb = item.querySelector('input[type=checkbox]');
     if(!cb) return;
-    // Find the onclick attr to determine which col this item controls
     const onclick = item.getAttribute('onclick')||'';
     if(onclick.includes(`'${colId}'`)){
       cb.checked = !hiddenCols.has(colId);
@@ -4192,6 +4205,7 @@ function toggleCol(colId, itemEl){
   });
   saveColPrefs();
   applyColVisibility();
+  applyColTemplate(); // also update the grid template
 }
 
 function resetCols(){
@@ -4518,7 +4532,7 @@ setInterval(()=>{
       if(countEl) countEl.textContent=n+' online';
     }catch(e){}
   })();
-},120000);
+},30000);
 
 // ════════════════════════════════════════════════════════════════
 //  DATE in topbar (replaces clock)
@@ -4974,10 +4988,25 @@ function toggleCalPane(){
 
 function setJRange(r){
   _jRange = r;
+  _jUnbookedOnly = false;
+  const btnUn = document.getElementById('btn-unassigned');
+  if(btnUn){ btnUn.classList.remove('btn-acc'); btnUn.classList.add('btn-ghost'); }
   ['all','7','30','past'].forEach(k=>{
     const b = document.getElementById('jrange-btn-'+k);
     if(b) b.classList.toggle('active', k===r);
   });
+  renderJobs();
+}
+
+let _jUnbookedOnly = false;
+function toggleUnassignedView(){
+  _jUnbookedOnly = !_jUnbookedOnly;
+  const btn = document.getElementById('btn-unassigned');
+  if(btn){
+    btn.classList.toggle('btn-acc', _jUnbookedOnly);
+    btn.classList.toggle('btn-ghost', !_jUnbookedOnly);
+    btn.textContent = _jUnbookedOnly ? '✕ Unbooked' : '📋 Unbooked';
+  }
   renderJobs();
 }
 
@@ -5069,7 +5098,12 @@ async function renderJobs(){
       jobs = jobs.filter(j=>j.date < today);
     }
   }
-  if(efVal) jobs = jobs.filter(j=>j.engineer===efVal);
+  if(_jUnbookedOnly){
+    // Unbooked = no date OR no engineer assigned
+    jobs = jobs.filter(j=>!j.date || j.date==='' || !j.engineer || j.engineer==='');
+  } else {
+    if(efVal) jobs = jobs.filter(j=>j.engineer===efVal);
+  }
   if(sfVal) jobs = jobs.filter(j=>j.status===sfVal);
   if(pfVal) jobs = jobs.filter(j=>j.priority===pfVal);
 
@@ -5154,9 +5188,7 @@ async function renderJobs(){
       html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" draggable="true">
         <div class="jsr-drag-handle" title="Drag" onclick="event.stopPropagation()">⠿</div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
-        <div class="jsr3-cell jsr3-cell-status" onclick="event.stopPropagation()">
-          <span class="jsr-chip ${statusCls}" style="font-size:9px;padding:1px 5px">${statusLabel} ${j.status}</span>
-        </div>
+
         <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
           ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
@@ -5368,8 +5400,20 @@ async function autoInvoice(j){
 
   // Find client — try referrer name first, then landlord name
   const persons=await dAll('persons');
-  const client=persons.find(p=>p.name&&(p.name===j.referrer||p.name===j.landlordName));
-  if(!client) return; // no known client, skip silently
+  let client=persons.find(p=>p.name&&(p.name===j.referrer||p.name===j.landlordName));
+  // If no existing person, create one from job data so invoice always generates
+  if(!client && (j.referrer||j.landlordName)){
+    client={
+      id:uid(),
+      name:j.referrer||j.landlordName,
+      email:j.landlordEmail||'',
+      phone:j.landlordPhone||j.contact||'',
+      address:j.address||'',
+      wa:j.landlordWA||''
+    };
+    await dPut('persons',client);
+  }
+  if(!client) return; // truly no client info at all
 
   const inv={
     id:uid(),
@@ -5395,9 +5439,9 @@ async function autoInvoice(j){
 }
 
 
-async function nextInvNum(){
+async function nextInvNum(isAgency=false){
   // Scan ALL existing invoices to guarantee uniqueness — prevents duplicate numbers
-  const prefix=S.invPrefix||'INV-';
+  const prefix=isAgency?(S.agencyInvPrefix||'AGN-'):(S.invPrefix||'INV-');
   const allInvs=await dAll('invoices');
   let maxN=S.invNextNum||S.invStart||1001;
   allInvs.forEach(inv=>{
@@ -5685,9 +5729,10 @@ async function loadJobAttachments(jobId){
     const docs=atts.filter(a=>a.type!=='photo'&&!a.mime?.startsWith('image/'));
     let html='';
     photos.forEach(a=>{
-      html+=`<div style="position:relative;border-radius:8px;overflow:hidden;background:var(--s2);aspect-ratio:1;cursor:pointer" onclick="window.open('${a.url}','_blank')" title="${a.name}">
-        <img src="${a.url}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:var(--txt3);font-size:24px&quot;>🖼️</div>'">
+      html+=`<div style="position:relative;border-radius:8px;overflow:hidden;background:var(--s2);aspect-ratio:1;cursor:pointer" title="${a.name}">
+        <img src="${a.url}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onclick="window.open('${a.url}','_blank')" onerror="this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:var(--txt3);font-size:24px&quot;>🖼️</div>'">
         <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.5);color:#fff;font-size:9px;padding:3px 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${a.uploaded_by_name||'Engineer'}</div>
+        <button onclick="event.stopPropagation();deleteAttachment('${a.id}','${a.storage_path||''}')" style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,.85);border:none;border-radius:50%;width:22px;height:22px;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0" title="Delete photo">✕</button>
       </div>`;
     });
     docs.forEach(a=>{
@@ -5704,6 +5749,24 @@ async function loadJobAttachments(jobId){
     console.error('loadJobAttachments:',err);
     grid.innerHTML='<div style="color:var(--txt3);font-size:12px">Could not load files</div>';
   }
+}
+
+async function deleteAttachment(attId, storagePath){
+  if(!confirm('Delete this photo?')) return;
+  try{
+    // Delete from storage if path exists
+    if(storagePath){
+      await fetch(`${SB_URL}/storage/v1/object/deepflow/${storagePath}`,{
+        method:'DELETE',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+(await _getJWT())}
+      }).catch(()=>{});
+    }
+    // Delete from attachments table
+    await _sb(`attachments?id=eq.${attId}`,{method:'DELETE'});
+    toast('Photo deleted','success',2000);
+    // Reload photos for current job
+    if(editJid) loadJobAttachments(editJid);
+  }catch(e){ toast('Delete failed: '+e.message,'error'); }
 }
 
 async function deleteCurrentJob(){
@@ -9253,6 +9316,8 @@ function renderSettings(){
   if(el('s-vat')) el('s-vat').value=S.vatRate||20;
   if(el('s-pay-terms')) el('s-pay-terms').value=S.payTerms||'Payment due within 14 days';
   if(el('s-inv-prefix')) el('s-inv-prefix').value=S.invPrefix||'INV-';
+  if(el('s-agency-inv-prefix')) el('s-agency-inv-prefix').value=S.agencyInvPrefix||'AGN-';
+  if(el('s-agency-inv-start')) el('s-agency-inv-start').value=S.agencyInvStart||2001;
   if(el('s-inv-start')) el('s-inv-start').value=S.invNextNum||S.invStart||1001;
   if(el('s-inv-notes')) el('s-inv-notes').value=S.invNotes||'Thank you for your business!';
   if(el('s-due-days')) el('s-due-days').value=S.dueDays||14;
@@ -9443,89 +9508,68 @@ function addEngRow(){S.engineers.push({name:'',phone:'',rate:0,otRate:0,wa:'',tr
 // SUPABASE AUTH USER MANAGEMENT (Admin Settings)
 // ═══════════════════════════════════════════════════════════════
 
-async function inviteUser(){
+async function addOfficeStaff(){
   const name  =(document.getElementById('inv-name')?.value||'').trim();
   const email =(document.getElementById('inv-email')?.value||'').trim().toLowerCase();
   const role  = document.getElementById('inv-role')?.value||'staff';
+  const pwd   =(document.getElementById('inv-password')?.value||'').trim();
   const statusEl=document.getElementById('inv-status');
 
-  if(!name||!email){_showInvStatus('Enter both name and email','error');return;}
-  if(!email.includes('@')){_showInvStatus('Enter a valid email address','error');return;}
-  if(!_supaAuth){_showInvStatus('Auth client not ready','error');return;}
+  if(!name||!email){_showInvStatus('Enter name and email','error');return;}
+  if(!email.includes('@')){_showInvStatus('Enter a valid email','error');return;}
+  if(!pwd||pwd.length<6){_showInvStatus('Password must be at least 6 characters','error');return;}
 
-  const btn=document.querySelector('[onclick="inviteUser()"]');
-  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  const btn=document.querySelector('[onclick="addOfficeStaff()"]');
+  if(btn){btn.disabled=true;btn.textContent='Creating…';}
 
   try{
-    // 1. Invite via Supabase Auth (sends email with magic link / password set)
-    const {data:authData,error:authErr}=await _supaAuth.auth.admin?.inviteUserByEmail(email,{
-      data:{name,role}
-    });
+    // Check duplicate
+    const existing=await _sb(`users?email=eq.${encodeURIComponent(email)}&select=id`).catch(()=>[]);
+    if(existing?.length){
+      _showInvStatus('⚠️ A user with this email already exists.','warn');
+      if(btn){btn.disabled=false;btn.textContent='👤 Create Account';} return;
+    }
 
-    // admin.inviteUserByEmail requires service key — use signUp with random password as fallback
-    // The correct approach for anon key is: create profile row + send invite via Supabase dashboard
-    // We'll create the profile and show instructions
-    let authId=authData?.user?.id||null;
+    // Hash password same way engineers do: sha256('df2024:email:password')
+    const enc=new TextEncoder();
+    const buf=await crypto.subtle.digest('SHA-256',enc.encode('df2024:'+email+':'+pwd));
+    const pin=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 
-    // 2. Create profile row in our users table
-    const profilePayload={
+    // Also create Supabase Auth account so they can sign in via email+password
+    let authId=null;
+    try{
+      const {data,error}=await _supaAuth.auth.signUp({email,password:pwd,options:{data:{name,role}}});
+      if(!error&&data?.user?.id) authId=data.user.id;
+    }catch(e){}
+
+    const payload={
       id: crypto.randomUUID(),
-      name,email,role,active:true,
-      pin:'0000',
+      name, email, role, active:true,
+      pin,  // 64-char hash — used if Supabase Auth fails
       can_edit:   role!=='viewer',
       can_delete: role==='admin'||role==='manager',
       can_invoice:role!=='viewer',
       can_finance:role==='admin'||role==='manager',
       see_landlord:true,see_landlord_phone:true,
       see_agent:true,see_contact:true,see_price:role!=='viewer',
-      created: Math.floor(Date.now()/1000),
+      created:Math.floor(Date.now()/1000),
     };
-    if(authId)profilePayload.auth_id=authId;
+    if(authId) payload.auth_id=authId;
 
-    // Check if email already exists
-    const existing=await _sb(`users?email=eq.${encodeURIComponent(email)}&select=id`).catch(()=>[]);
-    if(existing?.length){
-      _showInvStatus('⚠️ A user with this email already exists. Update them in the table below.','warn');
-      if(btn){btn.disabled=false;btn.textContent='📨 Send Invite Email';}
-      return;
-    }
+    await _sb('users',{method:'POST',body:payload,prefer:'return=minimal'});
 
-    await _sb('users',{method:'POST',body:profilePayload,prefer:'return=representation'});
-
-    if(!authErr){
-      _showInvStatus(`✅ ${name} invited! They'll receive an email to set their password.`,'success');
-    } else {
-      // Profile created but auth invite failed (expected with anon key) — show manual step
-      _showInvStatus(`✅ Profile created for ${name}. Now go to Supabase → Auth → Invite User to send the email invite. Or they can use "Forgot password" on the login screen.`,'info');
-    }
-
-    // Clear fields
-    if(document.getElementById('inv-name'))document.getElementById('inv-name').value='';
-    if(document.getElementById('inv-email'))document.getElementById('inv-email').value='';
-    loadAuthUsers();
-
+    _showInvStatus(`✅ ${name} added! They can log in with ${email} / the password you set.`,'success');
+    document.getElementById('inv-name').value='';
+    document.getElementById('inv-email').value='';
+    if(document.getElementById('inv-password')) document.getElementById('inv-password').value='';
+    setTimeout(loadAuthUsers,800);
   }catch(e){
-    _showInvStatus('❌ Failed: '+e.message,'error');
+    _showInvStatus('❌ Error: '+(e.message||'Failed'),'error');
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='📨 Send Invite Email';}
+    if(btn){btn.disabled=false;btn.textContent='👤 Create Account';}
   }
 }
 
-function _showInvStatus(msg,type='info'){
-  const el=document.getElementById('inv-status');
-  if(!el)return;
-  el.style.display='block';
-  const styles={
-    success:{bg:'rgba(34,197,94,.1)',border:'rgba(34,197,94,.3)',color:'#22c55e'},
-    error:  {bg:'rgba(239,68,68,.1)', border:'rgba(239,68,68,.3)', color:'#ef4444'},
-    warn:   {bg:'rgba(245,166,35,.1)',border:'rgba(245,166,35,.3)',color:'#f5a623'},
-    info:   {bg:'rgba(79,143,255,.08)',border:'rgba(79,143,255,.25)',color:'#4f8fff'},
-  };
-  const s=styles[type]||styles.info;
-  el.style.background=s.bg;el.style.border='1px solid '+s.border;el.style.color=s.color;
-  el.style.borderRadius='8px';el.style.padding='10px 12px';el.style.lineHeight='1.6';
-  el.textContent=msg;
-}
 
 async function loadAuthUsers(){
   const container=document.getElementById('auth-users-list');
@@ -10430,6 +10474,8 @@ async function saveSettings(){
   if(get('s-pay-terms')!==null) S.payTerms=get('s-pay-terms');
   if(get('s-inv-prefix')!==null) S.invPrefix=get('s-inv-prefix');
   if(getI('s-inv-start')!==null) S.invNextNum=getI('s-inv-start')||1001;
+  if(get('s-agency-inv-prefix')!==null) S.agencyInvPrefix=get('s-agency-inv-prefix')||'AGN-';
+  if(getI('s-agency-inv-start')!==null) S.agencyInvStart=getI('s-agency-inv-start')||2001;
   if(get('s-inv-notes')!==null) S.invNotes=get('s-inv-notes');
   if(getI('s-due-days')!==null) S.dueDays=getI('s-due-days')||14;
   if(get('s-bank-name')!==null) S.bankName=get('s-bank-name');
@@ -10824,23 +10870,24 @@ function updatePinDots(v){ /* no-op — old lock screen removed */ }
 let jobsView='table';
 function setJobsView(v){
   jobsView=v;
-  // scroll list layout — toggle engineer view only
   const engView=document.getElementById('eng-view');
   const listPane=document.getElementById('jobs-list-pane');
   const calPane=document.getElementById('jobs-cal-pane');
+  const btnEng=document.getElementById('btn-view-eng');
+  const btnList=document.getElementById('btn-view-list');
   if(v==='engineer'){
     if(engView) engView.style.display='flex';
     if(listPane) listPane.style.display='none';
     if(calPane) calPane.style.display='none';
-    document.getElementById('btn-view-eng').classList.add('btn-acc');
-    document.getElementById('btn-view-eng').classList.remove('btn-ghost');
+    if(btnEng){ btnEng.classList.add('btn-acc'); btnEng.classList.remove('btn-ghost'); btnEng.style.display='none'; }
+    if(btnList) btnList.style.display='';
     renderEngView();
   } else {
     if(engView) engView.style.display='none';
     if(listPane) listPane.style.display='flex';
     if(calPane && _calPaneVisible) calPane.classList.remove('cal-hidden');
-    document.getElementById('btn-view-eng').classList.remove('btn-acc');
-    document.getElementById('btn-view-eng').classList.add('btn-ghost');
+    if(btnEng){ btnEng.classList.remove('btn-acc'); btnEng.classList.add('btn-ghost'); btnEng.style.display=''; }
+    if(btnList) btnList.style.display='none';
     renderJobs();
   }
 }
@@ -11075,14 +11122,18 @@ let _colResizing=null, _colResizeStartX=0, _colResizeStartW=0;
 function initColResize(){
   const hd=document.getElementById('jobs-col-hd');
   if(!hd) return;
-  hd.querySelectorAll('.col-resize-handle').forEach(handle=>{
+  hd.querySelectorAll('[data-resize-col]').forEach(handle=>{
+    handle.onmousedown=null;
     handle.addEventListener('mousedown',e=>{
       e.preventDefault(); e.stopPropagation();
-      _colResizing=+handle.dataset.col;
+      const colIdx=parseInt(handle.dataset.resizeCol);
+      if(isNaN(colIdx)||!JOB_COLS[colIdx]) return;
+      _colResizing=colIdx;
       _colResizeStartX=e.clientX;
-      _colResizeStartW=JOB_COLS[_colResizing].w||80;
+      _colResizeStartW=JOB_COLS[colIdx].w || JOB_COLS[colIdx].min || 80;
       document.body.style.cursor='col-resize';
       document.body.style.userSelect='none';
+      handle.style.background='var(--acc)';
     });
   });
 }
@@ -11090,12 +11141,27 @@ document.addEventListener('mousemove',e=>{
   if(_colResizing===null) return;
   const dx=e.clientX-_colResizeStartX;
   const col=JOB_COLS[_colResizing];
+  if(!col) return;
   col.w=Math.max(col.min||40, _colResizeStartW+dx);
   applyColTemplate();
+  // Save widths
+  localStorage.setItem('df_col_widths', JSON.stringify(JOB_COLS.map(c=>c.w||null)));
 });
 document.addEventListener('mouseup',e=>{
-  if(_colResizing!==null){ _colResizing=null; document.body.style.cursor=''; document.body.style.userSelect=''; }
+  if(_colResizing!==null){
+    _colResizing=null;
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
+    document.querySelectorAll('[data-resize-col]').forEach(h=>h.style.background='');
+  }
 });
+// Restore saved widths
+(function(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('df_col_widths')||'null');
+    if(saved&&Array.isArray(saved)) saved.forEach((w,i)=>{ if(w&&JOB_COLS[i]) JOB_COLS[i].w=w; });
+  }catch(e){}
+})();
 
 // ════ Row drag — cross-date reorder ════
 let _slDragSrc=null;
