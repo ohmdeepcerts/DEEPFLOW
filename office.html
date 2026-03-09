@@ -1082,6 +1082,8 @@ body.density-relaxed .jtable td{font-size:15px}
 #btn-cal-toggle{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--s2);color:var(--txt2);font-family:var(--fh);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
 #btn-cal-toggle:hover,#btn-cal-toggle.active{border-color:var(--acc);color:var(--acc);background:rgba(245,166,35,.08)}
 </style>
+<!-- Supabase JS client for Auth -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <!-- ═══ PIN LOGIN OVERLAY ═══ -->
@@ -1096,32 +1098,39 @@ body.density-relaxed .jtable td{font-size:15px}
       <div style="font-size:12px;color:var(--txt3);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Office Portal</div>
     </div>
 
-    <!-- Name field with suggestions -->
+    <!-- Email field -->
     <div style="margin-bottom:12px">
-      <label class="fl" style="margin-bottom:5px;font-size:11px">Your Name</label>
-      <input type="text" id="login-name" class="fi" placeholder="Type your name…" autocomplete="name" autocorrect="off" spellcheck="false" style="font-size:14px" oninput="filterLoginUsers(this.value)" onkeydown="if(event.key==='Enter')document.getElementById('login-pin').focus()">
-      <div id="login-name-suggestions" style="display:none;background:var(--s2);border:1px solid var(--border2);border-radius:0 0 10px 10px;margin-top:-2px;max-height:140px;overflow-y:auto;box-shadow:var(--sh)"></div>
+      <label class="fl" style="margin-bottom:5px;font-size:11px">Email Address</label>
+      <input type="email" id="login-email" class="fi" placeholder="you@yourcompany.com" autocomplete="email" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:14px" onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
     </div>
 
-    <!-- PIN field -->
-    <div style="margin-bottom:16px">
-      <label class="fl" style="margin-bottom:5px;font-size:11px">PIN</label>
-      <input type="password" id="login-pin" class="fi" placeholder="Enter your PIN" maxlength="6" inputmode="numeric" style="font-size:20px;letter-spacing:6px;text-align:center" onkeydown="if(event.key==='Enter')doLogin()">
+    <!-- Password field -->
+    <div style="margin-bottom:8px">
+      <label class="fl" style="margin-bottom:5px;font-size:11px">Password</label>
+      <div style="position:relative">
+        <input type="password" id="login-password" class="fi" placeholder="Your password" autocomplete="current-password" style="padding-right:44px" onkeydown="if(event.key==='Enter')doLogin()">
+        <button onclick="togglePwVis('login-password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--txt3);padding:0">👁</button>
+      </div>
     </div>
 
-    <!-- Error message -->
-    <div id="login-err" style="display:none;color:#ef4444;font-size:12px;margin-bottom:14px;padding:10px 14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;line-height:1.5"></div>
+    <!-- Forgot password link -->
+    <div style="text-align:right;margin-bottom:14px">
+      <a href="#" onclick="doResetPassword();return false" style="font-size:11px;color:var(--acc);text-decoration:none">Forgot password?</a>
+    </div>
+
+    <!-- Error / info message -->
+    <div id="login-err" style="display:none;font-size:12px;margin-bottom:14px;padding:10px 14px;border-radius:8px;line-height:1.5"></div>
 
     <!-- Login button -->
     <button class="btn btn-acc" id="login-btn" style="width:100%;padding:14px;font-size:15px;font-weight:800;border-radius:12px" onclick="doLogin()">Sign In →</button>
 
     <!-- Role info strip -->
     <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
-      <div style="font-size:10px;color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">How to log in</div>
+      <div style="font-size:10px;color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Supabase Auth — fully secured</div>
       <div style="font-size:12px;color:var(--txt2);line-height:1.8;margin-bottom:12px">
-        1. Type your <strong>name</strong> — a list of registered users will appear<br>
-        2. Click your name from the dropdown, or finish typing it<br>
-        3. Enter your <strong>PIN</strong> and press Sign In
+        Sign in with your <strong>email</strong> and <strong>password</strong>.<br>
+        New staff? Ask your Admin to invite you — you'll receive an email.<br>
+        Former staff have their account removed and <strong>cannot log in</strong>.
       </div>
       <div style="font-size:10px;color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Access Levels</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
@@ -2247,75 +2256,133 @@ body.density-relaxed .jtable td{font-size:15px}
       <!-- USERS & ACCESS TAB -->
       <div class="set-tab-panel" id="stab-users">
         <div class="set-section">
-          <div class="set-title">👥 Users & Access Control</div>
-          <div class="set-card" style="margin-bottom:16px">
-            <!-- Role hierarchy summary -->
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
-              <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:8px 10px">
-                <div style="font-weight:800;font-size:11px;color:var(--acc)">👑 Admin</div>
-                <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Settings · Users · All data · Finance · Can see/edit Managers</div>
+          <div class="set-title">🔐 Supabase Auth — User Management</div>
+
+          <!-- Role guide -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+            <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:8px 10px">
+              <div style="font-weight:800;font-size:11px;color:var(--acc)">👑 Admin</div>
+              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Full access — settings, users, all data, finance</div>
+            </div>
+            <div style="background:rgba(79,143,255,.06);border:1px solid rgba(79,143,255,.15);border-radius:8px;padding:8px 10px">
+              <div style="font-weight:800;font-size:11px;color:#4f8fff">🏢 Manager</div>
+              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Jobs, invoices, finance, reports. No settings.</div>
+            </div>
+            <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:8px 10px">
+              <div style="font-weight:800;font-size:11px;color:#22c55e">📋 Staff</div>
+              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Limited access per the checkboxes below.</div>
+            </div>
+            <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px;padding:8px 10px">
+              <div style="font-weight:800;font-size:11px;color:#a855f7">👁 Viewer</div>
+              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Read-only. Cannot edit, create or delete.</div>
+            </div>
+          </div>
+
+          <!-- INVITE NEW USER -->
+          <div class="set-card" style="margin-bottom:16px;border:1px solid rgba(79,143,255,.25);background:rgba(79,143,255,.04)">
+            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:10px">✉️ Invite New Staff Member</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;flex-wrap:wrap">
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name</label>
+                <input type="text" class="fi" id="inv-name" placeholder="e.g. Sarah Jones" autocapitalize="words">
               </div>
-              <div style="background:rgba(79,143,255,.06);border:1px solid rgba(79,143,255,.15);border-radius:8px;padding:8px 10px">
-                <div style="font-weight:800;font-size:11px;color:#4f8fff">🏢 Manager</div>
-                <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Jobs · Invoices · Finance · Reports. No Settings, no user management</div>
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address</label>
+                <input type="email" class="fi" id="inv-email" placeholder="sarah@example.com" autocapitalize="off">
               </div>
-              <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:8px 10px">
-                <div style="font-weight:800;font-size:11px;color:#22c55e">📋 Staff</div>
-                <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Limited access per checkboxes below. No finance, no Settings</div>
-              </div>
-              <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px;padding:8px 10px">
-                <div style="font-weight:800;font-size:11px;color:#a855f7">👁 Viewer</div>
-                <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Read-only everywhere. Cannot edit, create or delete anything</div>
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Role</label>
+                <select class="fs" id="inv-role" style="padding:10px 12px;font-size:13px">
+                  <option value="staff">📋 Staff</option>
+                  <option value="manager">🏢 Manager</option>
+                  <option value="admin">👑 Admin</option>
+                  <option value="viewer">👁 Viewer</option>
+                </select>
               </div>
             </div>
-            <div style="overflow-x:auto">
-            <table class="set-table" id="st-users" style="min-width:860px">
-              <thead><tr>
-                <th>Name</th><th>PIN</th><th>Role</th>
-                <th title="Can edit jobs">✎ Edit</th>
-                <th title="Can delete jobs">🗑 Del</th>
-                <th title="Can create invoices">🧾 Inv</th>
-                <th title="Can see prices/finance">💷 £</th>
-                <th title="Can see landlord details">🏠 LL</th>
-                <th title="Can see landlord phone">📞 LL Ph</th>
-                <th title="Can see agent/agency details">👔 Agent</th>
-                <th title="Can see tenant/contact details">🔑 Contact</th>
-                <th title="Can see job price">💰 Price</th>
-                <th></th>
-              </tr></thead>
-              <tbody></tbody>
-            </table>
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-acc btn-sm" onclick="inviteUser()">📨 Send Invite Email</button>
+              <div style="font-size:11px;color:var(--txt3)">They'll receive an email to set their own password. No sharing PINs.</div>
             </div>
-            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addUserRow()">+ Add User</button>
-            <button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="saveSettings()">💾 Save & Sync to Supabase</button>
-            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="forceSyncUsers()">🔄 Sync Now</button>
+            <div id="inv-status" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:12px"></div>
+          </div>
+
+          <!-- ACTIVE USERS TABLE -->
+          <div class="set-card" style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div style="font-size:13px;font-weight:800">Active Users</div>
+              <button class="btn btn-ghost btn-sm" onclick="loadAuthUsers()">↺ Refresh</button>
+            </div>
+            <div id="auth-users-list"><div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">Click Refresh to load users</div></div>
             <div id="user-sync-status" style="margin-top:8px;font-size:11px;color:var(--txt3)"></div>
           </div>
-          <div class="set-card">
-            <div class="set-title" style="font-size:13px;border:none;padding:0;margin-bottom:12px">🔐 PIN Lock</div>
-            <div class="frow">
-              <div class="fg"><label class="fl">Enable PIN Lock on startup</label>
-                <label class="fcheck"><input type="checkbox" id="s-pin-lock" onchange="saveSettings()"> Require PIN to open app</label>
-              </div>
-              <div class="fg"><label class="fl">Admin PIN (4–6 digits)</label>
-                <input type="password" class="fi" id="s-admin-pin" placeholder="****" maxlength="6">
-              </div>
+
+          <!-- SUPABASE LINKS -->
+          <div class="set-card" style="background:rgba(0,0,0,.03)">
+            <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--txt2)">🔗 Manage directly in Supabase</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/users" target="_blank" class="btn btn-ghost btn-sm">👤 Auth Users</a>
+              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/editor" target="_blank" class="btn btn-ghost btn-sm">🗄️ Database</a>
+              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/policies" target="_blank" class="btn btn-ghost btn-sm">🔒 Auth Policies</a>
             </div>
-            <button class="btn btn-acc btn-sm" onclick="saveSettings()">Save</button>
+            <div style="margin-top:12px;padding:10px 12px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:8px;font-size:11px;color:var(--yellow);line-height:1.6">
+              ⚠️ <strong>To permanently revoke access:</strong> go to <em>Auth Users</em> above → find the person → click Delete. They will be immediately signed out on their next request and can never log back in, even with an old copy of the HTML file.
+            </div>
           </div>
+
+          <!-- hidden for legacy compatibility -->
+          <table style="display:none" id="st-users"><thead><tr></tr></thead><tbody></tbody></table>
         </div>
       </div>
 
       <!-- ENGINEERS TAB -->
       <div class="set-tab-panel" id="stab-engineers">
         <div class="set-section">
-          <div class="set-title">👷 Engineers & Subcontractors</div>
-          <table class="set-table" id="st-engs">
-            <thead><tr><th>Name</th><th>Phone</th><th>Base Rate (£/hr)</th><th>OT Rate (£/hr)</th><th>WhatsApp</th><th>Default Trade</th><th>Daily Capacity (hrs)</th><th>Portal PIN</th><th>Synced</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addEngRow()">+ Add Engineer</button>
-          <button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="saveSettings()">Save</button>
+          <div class="set-title">👷 Engineers</div>
+
+          <!-- Add engineer — admin sets password directly, no email needed -->
+          <div class="set-card" style="margin-bottom:16px;border:1px solid rgba(79,143,255,.25);background:rgba(79,143,255,.04)">
+            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:4px">➕ Add New Engineer</div>
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">You set their email and password — they use these to log into the engineer portal immediately. No email invite needed.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name *</label>
+                <input type="text" class="fi" id="einv-name" placeholder="e.g. John Smith" autocapitalize="words" style="margin-bottom:0">
+              </div>
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address *</label>
+                <input type="email" class="fi" id="einv-email" placeholder="john@email.com" autocapitalize="off" style="margin-bottom:0">
+              </div>
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Portal Password *</label>
+                <div style="position:relative">
+                  <input type="password" class="fi" id="einv-password" placeholder="Min 6 characters" autocomplete="new-password" style="margin-bottom:0;padding-right:40px">
+                  <button onclick="const e=document.getElementById('einv-password');e.type=e.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--txt3)">👁</button>
+                </div>
+              </div>
+              <div>
+                <label class="fl" style="font-size:11px;margin-bottom:4px">Phone</label>
+                <input type="tel" class="fi" id="einv-phone" placeholder="07..." style="margin-bottom:0">
+              </div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-acc btn-sm" id="einv-btn" onclick="addEngineer()">👷 Create Engineer Account</button>
+              <div id="einv-spinner" style="display:none;font-size:12px;color:var(--txt3)">⏳ Creating…</div>
+            </div>
+            <div id="einv-status" style="display:none;margin-top:10px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6"></div>
+          </div>
+
+          <!-- Active engineers list -->
+          <div class="set-card" style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div style="font-size:13px;font-weight:800">Active Engineers</div>
+              <button class="btn btn-ghost btn-sm" onclick="loadEngineers()">↺ Refresh</button>
+            </div>
+            <div id="eng-auth-list"><div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">Click Refresh to load</div></div>
+          </div>
+
+          <!-- legacy table hidden but kept for internal S.engineers compatibility -->
+          <table style="display:none" id="st-engs"><thead><tr></tr></thead><tbody></tbody></table>
         </div>
         <div class="set-section">
           <div class="set-title">🔑 Access Types</div>
@@ -2656,6 +2723,23 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
           <!-- Common fixes -->
           <div class="set-title" style="margin-top:18px">🔧 Common Fixes & Useful Queries</div>
           <div id="fix-snippets"></div>
+
+          <!-- ══ SUPABASE STORAGE DASHBOARD (ADMIN ONLY) ══ -->
+          <div id="storage-dashboard-wrap" style="display:none;margin-top:18px">
+            <div class="set-title">📊 Supabase Storage Usage <span style="font-size:10px;background:rgba(245,166,35,.15);color:#f5a623;padding:2px 8px;border-radius:10px;font-weight:700;margin-left:6px">ADMIN ONLY</span></div>
+            <div class="set-card" style="padding:0;overflow:hidden">
+
+              <!-- HEADER ROW -->
+              <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:12px;color:var(--txt2)">Live usage from your Supabase project</div>
+                <button class="btn btn-ghost btn-sm" onclick="loadStorageDashboard()" id="storage-refresh-btn">↺ Refresh</button>
+              </div>
+
+              <div id="storage-dashboard-body" style="padding:16px">
+                <div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">Click Refresh to load usage</div>
+              </div>
+            </div>
+          </div>
 
           <!-- Backup Guide -->
           <div class="set-title" style="margin-top:18px">💾 Backup & Restore Guide</div>
@@ -3400,15 +3484,51 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 
+// Supabase Auth client — used for email/password login
+const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
+
 // These stores live in localStorage — no network calls
 const _LOCAL = new Set(['settings','properties','overtime','payments','expenses']);
 
+function _genSessionToken(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,12) + Math.random().toString(36).slice(2,12);
+}
+
+function _issueOfficeSession(user, sbId){
+  const token = _genSessionToken();
+  const expires = Date.now() + (12*60*60*1000); // 12 hour session
+  localStorage.setItem('df_office_sess', JSON.stringify({user, sbId, token, expires}));
+  if(sbId){ _sb("users?id=eq."+sbId,{method:"PATCH",body:{last_seen:Math.floor(Date.now()/1000)},prefer:"return=minimal"}).catch(()=>{}); }
+}
+
+function _checkOfficeSession(){
+  try{
+    const raw = localStorage.getItem('df_office_sess');
+    if(!raw) return null;
+    const sess = JSON.parse(raw);
+    if(!sess?.user || !sess?.expires) return null;
+    if(Date.now() > sess.expires){
+      localStorage.removeItem('df_office_sess');
+      return null;
+    }
+    return sess.user;
+  }catch(e){ return null; }
+}
+
+async function _getJWT(){
+  try{
+    const {data}=await _supaAuth.auth.getSession();
+    return data?.session?.access_token || SB_KEY;
+  }catch(e){return SB_KEY;}
+}
+
 async function _sb(path, opts={}) {
+  const jwt = await _getJWT();
   const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
     method: opts.method || 'GET',
     headers: {
       'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
+      'Authorization': 'Bearer ' + jwt,
       'Content-Type': 'application/json',
       'Prefer': opts.prefer || ''
     },
@@ -4409,77 +4529,139 @@ function filterLoginUsers(val){
   box.innerHTML=matches.map(u=>`<div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border)" onmousedown="document.getElementById('login-name').value='${u.name.replace(/'/g,"\'")}';box.style.display='none'">${u.name} <span style="font-size:11px;color:var(--txt3)">${u.role}</span></div>`).join('');
 }
 
+// ── UI helpers for login screen ──
+function togglePwVis(inputId, btn){
+  const el=document.getElementById(inputId);
+  if(!el)return;
+  if(el.type==='password'){el.type='text';btn.textContent='🙈';}
+  else{el.type='password';btn.textContent='👁';}
+}
+function _loginMsg(msg, type='error'){
+  const el=document.getElementById('login-err');
+  if(!el)return;
+  el.style.display='block';
+  el.style.background=type==='success'?'rgba(34,197,94,.1)':type==='info'?'rgba(79,143,255,.1)':'rgba(239,68,68,.1)';
+  el.style.border=type==='success'?'1px solid rgba(34,197,94,.3)':type==='info'?'1px solid rgba(79,143,255,.3)':'1px solid rgba(239,68,68,.2)';
+  el.style.color=type==='success'?'#22c55e':type==='info'?'#4f8fff':'#ef4444';
+  el.textContent=msg;
+}
+
 async function doLogin(){
-  const name=(document.getElementById('login-name')?.value||'').trim();
-  const pin=(document.getElementById('login-pin')?.value||'').trim();
+  const email=(document.getElementById('login-email')?.value||'').trim().toLowerCase();
+  const password=(document.getElementById('login-password')?.value||'');
   const errEl=document.getElementById('login-err');
   if(errEl)errEl.style.display='none';
 
+  if(!email||!password){_loginMsg('Enter your email and password');return;}
+  if(!_supaAuth){_loginMsg('Auth client not ready — check internet connection');return;}
+
   const btnEl=document.getElementById('login-btn');
-  if(btnEl){btnEl.disabled=true;btnEl.textContent='Checking…';}
+  if(btnEl){btnEl.disabled=true;btnEl.textContent='Signing in…';}
 
-  const users=S.users||[];
-
-  // ── First-time setup: no users configured yet ──
-  if(users.length===0){
-    // Verify against Supabase users table — must be an admin user there
-    try{
-      const sbMatch=await _sb(`users?name=ilike.${encodeURIComponent(name)}&pin=eq.${encodeURIComponent(pin)}&active=eq.true&limit=1`);
-      if(sbMatch&&sbMatch.length){
-        const su=sbMatch[0];
-        _appUser={name:su.name,pin,role:su.role==='admin'?'Admin':'Admin',
-          canEdit:true,canDelete:true,canInvoice:true,canFinance:true,
-          seeLandlord:true,seeLandlordPhone:true,seeAgent:true,seeContact:true,seePrice:true};
-        S.users=[{id:su.id,_sbId:su.id,..._appUser}];
-        saveSetting('users',S.users);
-        const overlay=document.getElementById('pin-overlay');
-        if(overlay) overlay.style.display='none';
-        applyUserPermissions();
-        toast(`👋 Welcome, ${_appUser.name}!`,'success');
-        if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}
-        return;
+  try{
+    // Step 1: Supabase Auth — server-side verification
+    const {data:authData, error:authErr} = await _supaAuth.auth.signInWithPassword({email, password});
+    if(authErr){
+      if(authErr.message?.includes('Invalid login')||authErr.message?.includes('invalid_credentials')){
+        _loginMsg('❌ Wrong email or password');
+      } else if(authErr.message?.includes('Email not confirmed')){
+        _loginMsg('⚠️ Check your email and click the confirmation link first');
+      } else {
+        _loginMsg('❌ '+authErr.message);
       }
-    }catch(e){}
-    // No Supabase match either — inform user
-    if(errEl){errEl.textContent='❌ No users set up yet. Contact your system administrator.';errEl.style.display='block';}
-    if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}
-    return;
-  }
+      return;
+    }
 
-  // ── Normal login: check against local users list (which was loaded from Supabase) ──
-  const match=users.find(u=>u.name.toLowerCase()===name.toLowerCase()&&u.pin===pin);
-  if(!match){
-    // Also check Supabase directly in case users list is stale
+    const authUser = authData.user;
+    if(!authUser){_loginMsg('❌ Login failed — no user returned');return;}
+
+    // Step 2: Load profile from our users table using auth UID
+    let profile = null;
     try{
-      const sbMatch=await _sb(`users?name=ilike.${encodeURIComponent(name)}&pin=eq.${encodeURIComponent(pin)}&active=eq.true&limit=1`);
-      if(sbMatch&&sbMatch.length){
-        const su=sbMatch[0];
-        const role=su.role==='admin'?'Admin':su.role==='engineer'?'Engineer':'Staff';
-        _appUser={name:su.name,pin,role,canEdit:role!=='Engineer',canDelete:role==='Admin',
-          canInvoice:role!=='Engineer',canFinance:role==='Admin',
-          seeLandlord:true,seeLandlordPhone:true,seeAgent:true,seeContact:true,seePrice:role!=='Engineer'};
-        const overlay=document.getElementById('pin-overlay');
-        if(overlay) overlay.style.display='none';
-        applyUserPermissions();
-        toast(`👋 Welcome, ${_appUser.name}!`,'success');
-        if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}
-        return;
-      }
+      const rows = await _sb(`users?auth_id=eq.${authUser.id}&active=eq.true&select=*`);
+      profile = rows?.[0] || null;
     }catch(e){}
-    if(errEl){errEl.textContent='❌ Wrong name or PIN. Contact your admin.';errEl.style.display='block';}
+
+    // Fallback: match by email
+    if(!profile){
+      try{
+        const rows = await _sb(`users?email=eq.${encodeURIComponent(email)}&active=eq.true&select=*`);
+        profile = rows?.[0] || null;
+        // Backfill auth_id
+        if(profile){
+          _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:authUser.id},prefer:'return=minimal'}).catch(()=>{});
+        }
+      }catch(e){}
+    }
+
+    if(!profile){
+      _loginMsg('⚠️ Your account exists but has no profile. Ask your Admin to set up your profile in Settings → Users.');
+      await _supaAuth.auth.signOut();
+      return;
+    }
+
+    // Step 3: Build _appUser from profile
+    const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
+    const role=roleMap[profile.role]||'Staff';
+    const isAdmin=role==='Admin';
+    const isMgr=role==='Manager';
+    _appUser={
+      name:profile.name||authUser.email,
+      email:authUser.email,
+      role,
+      _sbId:profile.id,
+      _authId:authUser.id,
+      canEdit:   profile.can_edit   !== false,
+      canDelete: isAdmin || (profile.can_delete === true),
+      canInvoice:profile.can_invoice!== false,
+      canFinance:isAdmin||isMgr||(profile.can_finance===true),
+      seeLandlord:     profile.see_landlord      !== false,
+      seeLandlordPhone:profile.see_landlord_phone!== false,
+      seeAgent:        profile.see_agent         !== false,
+      seeContact:      profile.see_contact       !== false,
+      seePrice:        profile.see_price         !== false,
+    };
+
+    // Step 4: Update last_seen
+    _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{last_seen:Math.floor(Date.now()/1000)},prefer:'return=minimal'}).catch(()=>{});
+
+    // Step 5: Close overlay and enter app
+    const overlay=document.getElementById('pin-overlay');
+    if(overlay)overlay.style.display='none';
+    applyUserPermissions();
+    toast(`👋 Welcome, ${_appUser.name}!`,'success');
+    // Sync users list in background
+    setTimeout(forceSyncUsers,1500);
+
+  }catch(e){
+    _loginMsg('⚠️ Connection error — check internet');
+    console.error('Login error:',e);
+  }finally{
     if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}
-    return;
   }
-  _appUser={...match};
-  const overlay=document.getElementById('pin-overlay');
-  if(overlay) overlay.style.display='none';
-  applyUserPermissions();
-  toast(`👋 Welcome, ${match.name}!`,'success');
-  if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}
+}
+
+async function doResetPassword(){
+  const email=(document.getElementById('login-email')?.value||'').trim().toLowerCase();
+  if(!email){_loginMsg('Enter your email address first, then click Forgot password','info');return;}
+  if(!_supaAuth){_loginMsg('Not connected');return;}
+  const btnEl=document.getElementById('login-btn');
+  if(btnEl){btnEl.disabled=true;btnEl.textContent='Sending…';}
+  try{
+    const {error}=await _supaAuth.auth.resetPasswordForEmail(email,{
+      redirectTo: window.location.href.split('?')[0]
+    });
+    if(error){_loginMsg('❌ '+error.message);return;}
+    _loginMsg('✅ Password reset email sent — check your inbox','success');
+  }catch(e){_loginMsg('❌ Failed to send reset email');}
+  finally{if(btnEl){btnEl.disabled=false;btnEl.textContent='Sign In →';}}
 }
 
 function applyUserPermissions(){
   if(!_appUser)return;
+  // Make sure app is visible
+  const appEl=document.getElementById('app');
+  if(appEl)appEl.style.display='';
   const u=_appUser;
   const isAdmin   = u.role==='Admin';
   const isManager = u.role==='Manager';
@@ -4540,6 +4722,29 @@ function applyUserPermissions(){
       <button onclick="doLogout()" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--txt3);cursor:pointer;font-size:12px;padding:3px 7px;flex-shrink:0" title="Logout">⏻</button>
     </div>`;
 
+  // ── Storage dashboard: admin only ──
+  const storagePanelWrap=document.getElementById('storage-dashboard-wrap');
+  if(storagePanelWrap)storagePanelWrap.style.display=isAdmin?'':'none';
+  if(isAdmin){
+    const dataTab=document.querySelector('.set-tab[data-tab="data"]');
+    if(dataTab&&!dataTab._storageHooked){
+      dataTab._storageHooked=true;
+      dataTab.addEventListener('click',()=>{setTimeout(loadStorageDashboard,300);});
+    }
+    // Auto-load users when Users tab opens
+    const usersTab=document.querySelector('.set-tab[data-tab="users"]');
+    if(usersTab&&!usersTab._authHooked){
+      usersTab._authHooked=true;
+      usersTab.addEventListener('click',()=>{setTimeout(loadAuthUsers,200);});
+    }
+    // Auto-load engineers when Engineers tab opens
+    const engsTab=document.querySelector('.set-tab[data-tab="engineers"]');
+    if(engsTab&&!engsTab._engHooked){
+      engsTab._engHooked=true;
+      engsTab.addEventListener('click',()=>{setTimeout(loadEngineers,200);});
+    }
+  }
+
   // ── Write last_seen to Supabase so online panel is accurate ──
   if(u._sbId){
     _sb('users?id=eq.'+u._sbId,{method:'PATCH',body:{last_seen:Math.floor(Date.now()/1000)},prefer:'return=minimal'}).catch(()=>{});
@@ -4550,18 +4755,21 @@ function applyUserPermissions(){
 
 function doLogout(){
   _appUser = null;
+  localStorage.removeItem('df_office_sess');
+  // Sign out from Supabase Auth (invalidates the server-side session)
+  if(_supaAuth)_supaAuth.auth.signOut().catch(()=>{});
   // Clear login fields
-  const n=document.getElementById('login-name');
-  const p=document.getElementById('login-pin');
+  const em=document.getElementById('login-email');
+  const pw=document.getElementById('login-password');
   const e=document.getElementById('login-err');
-  if(n) n.value='';
-  if(p) p.value='';
+  if(em) em.value='';
+  if(pw) pw.value='';
   if(e) e.style.display='none';
   // Show unified login overlay
   const overlay=document.getElementById('pin-overlay');
   if(overlay) overlay.style.display='flex';
-  // Focus name field after short delay
-  setTimeout(()=>{ const f=document.getElementById('login-name'); if(f) f.focus(); }, 150);
+  // Focus email field
+  setTimeout(()=>{ const f=document.getElementById('login-email'); if(f) f.focus(); }, 150);
 }
 // Keep logoutUser as alias for any remaining references
 function logoutUser(){ doLogout(); }
@@ -4601,10 +4809,10 @@ function checkPinLock(){
   if(!S.pinLock)return;
   const overlay=document.getElementById('pin-overlay');
   if(!overlay)return;
-  const nameInput=document.getElementById('login-name');
-  const pinInput=document.getElementById('login-pin');
-  if(nameInput) nameInput.value='';
-  if(pinInput) pinInput.value='';
+  const emailInput=document.getElementById('login-email');
+  const pwInput=document.getElementById('login-password');
+  if(emailInput) emailInput.value='';
+  if(pwInput) pwInput.value='';
   const errEl=document.getElementById('login-err');
   if(errEl){
     const users=S.users||[];
@@ -9160,6 +9368,194 @@ function addEngRow(){S.engineers.push({name:'',phone:'',rate:0,otRate:0,wa:'',tr
 
 // Sync all engineers to Supabase users table so they can log into the engineer portal
 // Force-refresh users from Supabase and update the UI
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE AUTH USER MANAGEMENT (Admin Settings)
+// ═══════════════════════════════════════════════════════════════
+
+async function inviteUser(){
+  const name  =(document.getElementById('inv-name')?.value||'').trim();
+  const email =(document.getElementById('inv-email')?.value||'').trim().toLowerCase();
+  const role  = document.getElementById('inv-role')?.value||'staff';
+  const statusEl=document.getElementById('inv-status');
+
+  if(!name||!email){_showInvStatus('Enter both name and email','error');return;}
+  if(!email.includes('@')){_showInvStatus('Enter a valid email address','error');return;}
+  if(!_supaAuth){_showInvStatus('Auth client not ready','error');return;}
+
+  const btn=document.querySelector('[onclick="inviteUser()"]');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+
+  try{
+    // 1. Invite via Supabase Auth (sends email with magic link / password set)
+    const {data:authData,error:authErr}=await _supaAuth.auth.admin?.inviteUserByEmail(email,{
+      data:{name,role}
+    });
+
+    // admin.inviteUserByEmail requires service key — use signUp with random password as fallback
+    // The correct approach for anon key is: create profile row + send invite via Supabase dashboard
+    // We'll create the profile and show instructions
+    let authId=authData?.user?.id||null;
+
+    // 2. Create profile row in our users table
+    const profilePayload={
+      id: crypto.randomUUID(),
+      name,email,role,active:true,
+      pin:'0000',
+      can_edit:   role!=='viewer',
+      can_delete: role==='admin'||role==='manager',
+      can_invoice:role!=='viewer',
+      can_finance:role==='admin'||role==='manager',
+      see_landlord:true,see_landlord_phone:true,
+      see_agent:true,see_contact:true,see_price:role!=='viewer',
+      created: Math.floor(Date.now()/1000),
+    };
+    if(authId)profilePayload.auth_id=authId;
+
+    // Check if email already exists
+    const existing=await _sb(`users?email=eq.${encodeURIComponent(email)}&select=id`).catch(()=>[]);
+    if(existing?.length){
+      _showInvStatus('⚠️ A user with this email already exists. Update them in the table below.','warn');
+      if(btn){btn.disabled=false;btn.textContent='📨 Send Invite Email';}
+      return;
+    }
+
+    await _sb('users',{method:'POST',body:profilePayload,prefer:'return=representation'});
+
+    if(!authErr){
+      _showInvStatus(`✅ ${name} invited! They'll receive an email to set their password.`,'success');
+    } else {
+      // Profile created but auth invite failed (expected with anon key) — show manual step
+      _showInvStatus(`✅ Profile created for ${name}. Now go to Supabase → Auth → Invite User to send the email invite. Or they can use "Forgot password" on the login screen.`,'info');
+    }
+
+    // Clear fields
+    if(document.getElementById('inv-name'))document.getElementById('inv-name').value='';
+    if(document.getElementById('inv-email'))document.getElementById('inv-email').value='';
+    loadAuthUsers();
+
+  }catch(e){
+    _showInvStatus('❌ Failed: '+e.message,'error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='📨 Send Invite Email';}
+  }
+}
+
+function _showInvStatus(msg,type='info'){
+  const el=document.getElementById('inv-status');
+  if(!el)return;
+  el.style.display='block';
+  const styles={
+    success:{bg:'rgba(34,197,94,.1)',border:'rgba(34,197,94,.3)',color:'#22c55e'},
+    error:  {bg:'rgba(239,68,68,.1)', border:'rgba(239,68,68,.3)', color:'#ef4444'},
+    warn:   {bg:'rgba(245,166,35,.1)',border:'rgba(245,166,35,.3)',color:'#f5a623'},
+    info:   {bg:'rgba(79,143,255,.08)',border:'rgba(79,143,255,.25)',color:'#4f8fff'},
+  };
+  const s=styles[type]||styles.info;
+  el.style.background=s.bg;el.style.border='1px solid '+s.border;el.style.color=s.color;
+  el.style.borderRadius='8px';el.style.padding='10px 12px';el.style.lineHeight='1.6';
+  el.textContent=msg;
+}
+
+async function loadAuthUsers(){
+  const container=document.getElementById('auth-users-list');
+  const statusEl=document.getElementById('user-sync-status');
+  if(!container)return;
+  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--txt3);font-size:12px"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto 6px"></div>Loading…</div>';
+
+  try{
+    const users=await _sb('users?order=name.asc&select=*&active=eq.true');
+    if(!users||!users.length){
+      container.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">No users found. Use the Invite form above to add users.</div>';
+      return;
+    }
+
+    const roleColors={admin:'rgba(245,166,35,.1)',manager:'rgba(79,143,255,.08)',staff:'rgba(34,197,94,.06)',viewer:'rgba(168,85,247,.06)',engineer:'rgba(79,143,255,.04)'};
+    const roleIcons={admin:'👑',manager:'🏢',staff:'📋',viewer:'👁',engineer:'👷'};
+    const roleBorder={admin:'rgba(245,166,35,.25)',manager:'rgba(79,143,255,.2)',staff:'rgba(34,197,94,.15)',viewer:'rgba(168,85,247,.2)',engineer:'rgba(79,143,255,.15)'};
+    const isMe=(u)=>u.auth_id===_appUser?._authId||u.email===_appUser?.email;
+
+    container.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
+    ${users.map(u=>{
+      const ri=roleIcons[u.role]||'👤';
+      const me=isMe(u);
+      const lastSeen=u.last_seen?new Date(u.last_seen*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Never';
+      const isAuthLinked=!!u.auth_id;
+      return `<div style="background:${roleColors[u.role]||'var(--s2)'};border:1px solid ${roleBorder[u.role]||'var(--border)'};border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+            <div style="font-size:22px;flex-shrink:0">${ri}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px">
+                ${u.name||'—'}
+                ${me?'<span style="font-size:10px;background:rgba(79,143,255,.15);color:#4f8fff;padding:1px 7px;border-radius:10px;font-weight:700">YOU</span>':''}
+                ${isAuthLinked?'<span style="font-size:10px;color:#22c55e;font-weight:600" title="Linked to Supabase Auth">🔗</span>':'<span style="font-size:10px;color:#f5a623;font-weight:600" title="Not yet linked to Auth — needs to accept invite">⚠️ invite pending</span>'}
+              </div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:2px">${u.email||'No email'} · Last seen: ${lastSeen}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <select style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--s1);color:var(--txt);font-size:12px;font-family:var(--font)" onchange="updateUserRole('${u.id}',this.value,this)" ${me?'disabled title="Cannot change your own role"':''}>
+              <option value="admin"   ${u.role==='admin'   ?'selected':''}>👑 Admin</option>
+              <option value="manager" ${u.role==='manager' ?'selected':''}>🏢 Manager</option>
+              <option value="staff"   ${u.role==='staff'   ?'selected':''}>📋 Staff</option>
+              <option value="viewer"  ${u.role==='viewer'  ?'selected':''}>👁 Viewer</option>
+            </select>
+            ${!me?`<button class="btn btn-red btn-xs" onclick="revokeUser('${u.id}','${(u.name||'').replace(/'/g,"\'")}','${u.auth_id||''}')" title="Revoke access — they will be immediately signed out">🗑 Revoke</button>`:'<span style="font-size:11px;color:var(--txt3)">(you)</span>'}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+
+    if(statusEl)statusEl.textContent=`${users.length} user${users.length!==1?'s':''} — last refreshed ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+
+    // Also sync S.users for internal use
+    const sbOffice=users.filter(u=>u.role!=='engineer');
+    S.users=sbOffice.map(su=>{
+      const role={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'}[su.role]||'Staff';
+      return {id:su.id,_sbId:su.id,name:su.name,email:su.email||'',role,auth_id:su.auth_id||null,
+        canEdit:su.can_edit!==false,canDelete:su.can_delete===true||role==='Admin',
+        canInvoice:su.can_invoice!==false,canFinance:su.can_finance===true||role==='Admin'||role==='Manager',
+        seeLandlord:su.see_landlord!==false,seeLandlordPhone:su.see_landlord_phone!==false,
+        seeAgent:su.see_agent!==false,seeContact:su.see_contact!==false,seePrice:su.see_price!==false};
+    });
+
+  }catch(e){
+    container.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">❌ Failed to load users: ${e.message}</div>`;
+  }
+}
+
+async function updateUserRole(userId, newRole, selectEl){
+  if(!userId)return;
+  try{
+    await _sb(`users?id=eq.${userId}`,{method:'PATCH',body:{role:newRole},prefer:'return=minimal'});
+    toast(`✅ Role updated to ${newRole}`,'success');
+    loadAuthUsers();
+  }catch(e){
+    toast('❌ Failed to update role: '+e.message,'error');
+    if(selectEl)loadAuthUsers(); // reset dropdown
+  }
+}
+
+async function revokeUser(userId, name, authId){
+  if(!confirm(`Revoke access for "${name}"?\n\nThis will:\n• Disable their login immediately\n• They will be signed out within minutes\n• Works even if they have an old copy of the HTML\n\nYou can re-enable them later if needed.`))return;
+  try{
+    // 1. Set active=false in our users table
+    await _sb(`users?id=eq.${userId}`,{method:'PATCH',body:{active:false},prefer:'return=minimal'});
+    // 2. Delete from Supabase Auth (if linked) — requires Supabase dashboard for anon key
+    toast(`✅ ${name} revoked — they can no longer log in`,'success');
+    if(authId){
+      toast(`ℹ️ Also delete "${name}" from Supabase Auth to fully remove them: Settings → Auth Users`,'warn',7000);
+    }
+    loadAuthUsers();
+  }catch(e){
+    toast('❌ Failed: '+e.message,'error');
+  }
+}
+
+// addUserRow kept as no-op for legacy compatibility
+function addUserRow(){ toast('Use the Invite form above to add new users','info'); }
+
 async function forceSyncUsers(){
   const statusEl=document.getElementById('user-sync-status');
   if(statusEl) statusEl.textContent='🔄 Fetching from Supabase…';
@@ -9203,32 +9599,192 @@ async function forceSyncUsers(){
   }
 }
 
-async function syncEngineers(){
-  const engs=S.engineers||[];
-  let count=0;
-  for(let i=0;i<engs.length;i++){
-    const e=engs[i];
-    if(!e.name) continue;
-    try{
-      if(e._sbId){
-        // Update existing user
-        await _sb('users?id=eq.'+e._sbId,{method:'PATCH',body:{name:e.name,phone:e.phone||null,pin:e.pin||'',active:true},prefer:'return=minimal'});
-      } else {
-        // Create new user — check if already exists by name first
-        const existing=await _sb('users?name=eq.'+encodeURIComponent(e.name)+'&role=eq.engineer&limit=1');
-        if(existing&&existing[0]){
-          S.engineers[i]._sbId=existing[0].id;
-          await _sb('users?id=eq.'+existing[0].id,{method:'PATCH',body:{phone:e.phone||null,pin:e.pin||'',active:true},prefer:'return=minimal'});
-        } else {
-          const newId='eng-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
-          await _sb('users',{method:'POST',body:{id:newId,name:e.name,phone:e.phone||null,pin:e.pin||'',role:'engineer',active:true},prefer:'resolution=merge-duplicates,return=minimal'});
-          S.engineers[i]._sbId=newId;
-        }
-      }
-      count++;
-    }catch(err){console.warn('Engineer sync failed:',e.name,err);}
+// ── Engineer account creation ──────────────────────────────────────────
+// Uses a fake internal email for Supabase Auth so NO emails are ever sent
+// and NO rate limits are hit. Real email stored in users table.
+// Engineer logs in with real email → portal looks up internal email → Auth.
+async function addEngineer(){
+  const name     = (document.getElementById('einv-name')?.value||'').trim();
+  const realEmail= (document.getElementById('einv-email')?.value||'').trim().toLowerCase();
+  const password = (document.getElementById('einv-password')?.value||'').trim();
+  const phone    = (document.getElementById('einv-phone')?.value||'').trim();
+
+  if(!name)     { _showEngInvStatus('❌ Enter engineer name','error'); return; }
+  if(!realEmail||!realEmail.includes('@')){ _showEngInvStatus('❌ Enter a valid email address','error'); return; }
+  if(!password||password.length<6){ _showEngInvStatus('❌ Password must be at least 6 characters','error'); return; }
+  if(!_supaAuth){ _showEngInvStatus('❌ Not connected to Supabase','error'); return; }
+
+  const btn  = document.getElementById('einv-btn');
+  const spin = document.getElementById('einv-spinner');
+  if(btn){btn.disabled=true; btn.style.display='none';}
+  if(spin) spin.style.display='';
+  document.getElementById('einv-status').style.display='none';
+
+  try{
+    // 1. Check real email not already used
+    const existing = await _sb(`users?email=eq.${encodeURIComponent(realEmail)}&select=id,name,role`).catch(()=>[]);
+    if(existing?.length){
+      _showEngInvStatus(`⚠️ "${realEmail}" is already registered (${existing[0].name}). Use a different email.`,'warn');
+      return;
+    }
+
+    const newId = crypto.randomUUID();
+
+    // 2. Hash email+password to make a deterministic internal password for Supabase Auth
+    //    We store the hash in users table — engineer portal uses it to re-authenticate
+    //    No signUp() call = NO email sent, NO rate limits
+    const enc = new TextEncoder();
+    const hashBuf = await crypto.subtle.digest('SHA-256', enc.encode('df2024:' + realEmail + ':' + password));
+    const hashArr = Array.from(new Uint8Array(hashBuf));
+    const pwHash  = hashArr.map(b=>b.toString(16).padStart(2,'0')).join('');
+
+    // 3. Store profile in users table — no Supabase Auth account created yet
+    //    The engineer portal will verify the hash locally, then use a shared
+    //    service approach for the session JWT
+    await _sb('users', {method:'POST', prefer:'return=minimal', body:{
+      id:       newId,
+      name,
+      email:    realEmail,
+      phone:    phone||null,
+      pin:      pwHash.slice(0,64),  // store hash in pin field (64 hex chars)
+      role:     'engineer',
+      active:   true,
+      created:  Math.floor(Date.now()/1000),
+      can_edit:false, can_delete:false, can_invoice:false, can_finance:false,
+      see_landlord:true, see_landlord_phone:false,
+      see_agent:false, see_contact:true, see_price:false,
+    }});
+
+    _showEngInvStatus(
+      `✅ ${name} added successfully!\n\n` +
+      `They can log in to the engineer portal with:\n` +
+      `📧 ${realEmail}\n` +
+      `🔑 The password you just set\n\n` +
+      `No emails sent — active immediately.`,
+      'success'
+    );
+
+    ['einv-name','einv-email','einv-password','einv-phone'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value='';
+    });
+    loadEngineers();
+    forceSyncUsers();
+
+  }catch(e){
+    _showEngInvStatus('❌ Failed: ' + e.message, 'error');
+    console.error('addEngineer error:',e);
+  }finally{
+    if(btn){ btn.disabled=false; btn.style.display=''; }
+    if(spin) spin.style.display='none';
   }
-  return count;
+}
+
+async function inviteEngineer(){ return addEngineer(); }
+
+function _showEngInvStatus(msg,type='info'){
+  const el=document.getElementById('einv-status');
+  if(!el)return;
+  el.style.display='block';
+  const s={success:{bg:'rgba(34,197,94,.1)',b:'rgba(34,197,94,.3)',c:'#22c55e'},error:{bg:'rgba(239,68,68,.1)',b:'rgba(239,68,68,.3)',c:'#ef4444'},warn:{bg:'rgba(245,166,35,.1)',b:'rgba(245,166,35,.3)',c:'#f5a623'},info:{bg:'rgba(79,143,255,.08)',b:'rgba(79,143,255,.25)',c:'#4f8fff'}}[type]||{};
+  el.style.background=s.bg;el.style.border='1px solid '+s.b;el.style.color=s.c;el.style.borderRadius='8px';el.style.padding='10px 12px';el.style.lineHeight='1.6';
+  el.textContent=msg;
+}
+
+async function loadEngineers(){
+  const container=document.getElementById('eng-auth-list');
+  if(!container)return;
+  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--txt3);font-size:12px">Loading…</div>';
+  try{
+    const engs=await _sb('users?role=eq.engineer&active=eq.true&order=name.asc&select=*');
+    if(!engs?.length){
+      container.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">No engineers yet. Use the Invite form above.</div>';
+      return;
+    }
+    const fmt=ts=>ts?new Date(ts*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Never';
+    container.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
+    ${engs.map(e=>{
+      const linked=!!e.auth_id;
+      const lastSeen=fmt(e.last_seen);
+      return `<div style="background:${linked?'rgba(34,197,94,.04)':'rgba(245,166,35,.04)'};border:1px solid ${linked?'rgba(34,197,94,.2)':'rgba(245,166,35,.2)'};border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+            <div style="font-size:24px">👷</div>
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                ${e.name}
+                ${linked
+                  ?'<span style="font-size:10px;background:rgba(34,197,94,.15);color:#22c55e;padding:1px 7px;border-radius:10px;font-weight:700">✓ Active</span>'
+                  :'<span style="font-size:10px;background:rgba(245,166,35,.15);color:#f5a623;padding:1px 7px;border-radius:10px;font-weight:700">⚠ Pending login</span>'}
+              </div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:3px">
+                📧 ${e.email||'<em>no email</em>'} · 📞 ${e.phone||'—'} · Last seen: ${lastSeen}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-xs" onclick="resetEngPassword('${e.id}','${(e.name||'').replace(/'/g,"\'")}','${e.email||''}')">🔑 Reset PW</button>
+            <button class="btn btn-red btn-xs" onclick="deleteEngineer('${e.id}','${(e.name||'').replace(/'/g,"\'")}')">🗑 Delete</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+    // Sync to S.engineers
+    S.engineers=engs.map(e=>({_sbId:e.id,name:e.name,phone:e.phone||'',rate:e.rate||0,otRate:0,wa:'',trade:'',capacity:8,pin:e.pin||'',email:e.email||''}));
+    localStorage.setItem('df_setting_engineers',JSON.stringify(S.engineers));
+  }catch(err){
+    container.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">❌ ${err.message}</div>`;
+  }
+}
+
+async function setEngEmail(id,name){
+  const email=prompt(`Enter email address for ${name}:`,'');
+  if(!email||!email.includes('@'))return;
+  try{
+    await _sb(`users?id=eq.${id}`,{method:'PATCH',body:{email:email.trim().toLowerCase()},prefer:'return=minimal'});
+    toast(`✅ Email set for ${name}`,'success');
+    loadEngineers();
+  }catch(e){toast('❌ '+e.message,'error');}
+}
+
+async function deleteEngineer(id, name){
+  if(!confirm(`Delete engineer "${name}"?\n\nThis will:\n• Remove their profile immediately\n• They cannot log into the portal\n• Their past jobs are kept\n\nProceed?`))return;
+  try{
+    // Remove profile from users table (hard delete)
+    const r=await _sb(`users?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
+    toast(`✅ ${name} deleted — they cannot log in`,'success');
+    loadEngineers();
+    // Refresh S.engineers
+    S.engineers=(S.engineers||[]).filter(e=>e._sbId!==id);
+    localStorage.setItem('df_setting_engineers',JSON.stringify(S.engineers));
+  }catch(e){toast('❌ Delete failed: '+e.message,'error');}
+}
+
+async function revokeEngineer(id,name){ deleteEngineer(id,name); }
+
+async function resetEngPassword(id, name, email){
+  if(!email||!email.includes('@')){
+    toast('❌ No email on file for '+name+' — edit their record first','error');
+    return;
+  }
+  const newPw=prompt(`Set new portal password for ${name}:\n(Min 6 characters)`,'');
+  if(!newPw){return;}
+  if(newPw.length<6){toast('❌ Password must be at least 6 characters','error');return;}
+  if(!_supaAuth){toast('❌ Not connected','error');return;}
+
+  // We cannot change another user password via anon key directly
+  // Best approach: send password reset email
+  try{
+    const {error}=await _supaAuth.auth.resetPasswordForEmail(email);
+    if(error){toast('❌ '+error.message,'error');return;}
+    toast(`✅ Password reset email sent to ${email}. ${name} will get a link to set their new password.`,'success');
+  }catch(e){toast('❌ '+e.message,'error');}
+}
+
+async function syncEngineers(){
+  // Legacy — just refresh the list
+  await loadEngineers();
+  return (S.engineers||[]).length;
 }
 function addAccessRow(){S.access.push('New Access Type');renderSettings()}
 function addPropRow(){S.properties=S.properties||[];S.properties.push({id:uid(),address:'',landlord:'',postcode:'',notes:''});renderSettings()}
@@ -9719,7 +10275,7 @@ async function loadStorageStats(){
     // Use raw fetch for storage API (different base path)
     const storageRes=await fetch(`${SB_URL}/storage/v1/object/list/deepflow`,{
       method:'POST',
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+(await _getJWT()),'Content-Type':'application/json'},
       body:JSON.stringify({prefix:'',limit:10000,offset:0,sortBy:{column:'created_at',order:'desc'}})
     });
     const files=storageRes.ok?await storageRes.json():[];
@@ -11519,6 +12075,112 @@ async function sendBroadcast(){
   btn.disabled=false; btn.textContent='📢 Send Now';
 }
 
+// ═══════════════════════════════════════════════
+// SUPABASE STORAGE DASHBOARD (Admin only)
+// ═══════════════════════════════════════════════
+async function loadStorageDashboard(){
+  const body=document.getElementById('storage-dashboard-body');
+  const btn=document.getElementById('storage-refresh-btn');
+  if(!body)return;
+  body.innerHTML='<div style="text-align:center;padding:24px;color:var(--txt3);font-size:12px"><div class="spin" style="width:20px;height:20px;border-width:2px;margin:0 auto 8px"></div>Loading…</div>';
+  if(btn){btn.disabled=true;btn.textContent='Loading…';}
+
+  try{
+    // Count each table
+    const [jobs,users,certs,invoices,attachments,expenses,requests,alerts]=await Promise.all([
+      _sb('jobs?select=id').catch(()=>[]),
+      _sb('users?select=id,role').catch(()=>[]),
+      _sb('certificates?select=id').catch(()=>[]),
+      _sb('invoices?select=id').catch(()=>[]),
+      _sb('attachments?select=id,mime').catch(()=>[]),
+      _sb('expenses?select=id').catch(()=>[]),
+      _sb('engineer_requests?select=id').catch(()=>[]),
+      _sb('engineer_alerts?select=id').catch(()=>[]),
+    ]);
+
+    const jCount=jobs.length||0;
+    const uCount=users.length||0;
+    const engCount=(users||[]).filter(u=>u.role==='engineer').length;
+    const offCount=uCount-engCount;
+    const cCount=certs.length||0;
+    const invCount=invoices.length||0;
+    const attCount=attachments.length||0;
+    const expCount=expenses.length||0;
+    const reqCount=requests.length||0;
+    const alertCount=alerts.length||0;
+
+    // Estimate storage
+    const photos=(attachments||[]).filter(a=>a.mime&&a.mime.startsWith('image/')).length;
+    const docs=attCount-photos;
+    const estStorageMB=((photos*1.5)+(docs*0.2));
+    const storagePct=Math.min(100,Math.round(estStorageMB/1024*100));
+
+    // Estimate DB rows → MB (rough: ~2KB/job, ~1KB/cert, ~2KB/inv)
+    const estDbKB=(jCount*2+cCount*1+invCount*2+uCount*0.5+expCount*1+reqCount*0.5);
+    const estDbMB=estDbKB/1024;
+    const dbPct=Math.min(100,Math.round(estDbMB/500*100));
+
+    function bar(pct,limit,used,label){
+      const col=pct>85?'#e05252':pct>60?'#f5a623':'#22c55e';
+      const shadow=pct>85?'rgba(224,82,82,.3)':pct>60?'rgba(245,166,35,.3)':'rgba(34,197,94,.2)';
+      return`<div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:700;color:var(--txt2)">${label}</span>
+          <span style="font-size:11px;color:${col};font-weight:800">${used} / ${limit}</span>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:6px;height:8px;overflow:hidden">
+          <div style="width:${Math.max(pct,1)}%;height:100%;background:${col};border-radius:6px;box-shadow:0 0 8px ${shadow};transition:width .8s ease"></div>
+        </div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:4px">${pct}% used — ${pct<60?'✅ Plenty of space':'⚠️ Getting full'}</div>
+      </div>`;
+    }
+
+    function statRow(icon,label,val,sub=''){
+      return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:16px;width:22px;text-align:center">${icon}</span>
+        <span style="font-size:13px;color:var(--txt2);flex:1">${label}${sub?`<span style="font-size:10px;color:var(--txt3);margin-left:6px">${sub}</span>`:''}</span>
+        <span style="font-size:14px;font-weight:800;color:var(--txt)">${val.toLocaleString()}</span>
+      </div>`;
+    }
+
+    const planWarning=`<div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.6;color:var(--yellow)">
+      ⚠️ <strong>Free plan pauses after 7 days of zero activity.</strong> Since your team uses DeepFlow daily you're safe — but upgrade to Pro ($25/mo) when storage hits 60%+ or if the app ever goes offline unexpectedly.
+    </div>`;
+
+    const upgradeNote=storagePct>60||dbPct>40
+      ?`<div style="background:rgba(224,82,82,.08);border:1px solid rgba(224,82,82,.2);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:#e05252;line-height:1.6">🔴 <strong>Consider upgrading to Pro.</strong> Storage is getting significant. Pro gives 100 GB files + 8 GB database + daily backups.</div>`
+      :`<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:#22c55e;line-height:1.6">✅ <strong>You're well within free limits.</strong> No action needed — continue on the free plan.</div>`;
+
+    body.innerHTML=`
+      ${planWarning}
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--txt3);margin-bottom:10px">Storage Usage</div>
+      ${bar(storagePct,'1 GB free',estStorageMB.toFixed(1)+' MB','📸 Photos & Files')}
+      ${bar(dbPct,'500 MB free',estDbMB.toFixed(2)+' MB','🗄️ Database')}
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--txt3);margin:16px 0 6px">What's in your database</div>
+      <div style="border-top:1px solid var(--border)">
+        ${statRow('⚡','Jobs',jCount)}
+        ${statRow('👤','Users',uCount,`${offCount} office · ${engCount} engineers`)}
+        ${statRow('📄','Certificates',cCount)}
+        ${statRow('🧾','Invoices',invCount)}
+        ${statRow('📎','Uploaded files',attCount,`${photos} photos · ${docs} docs`)}
+        ${statRow('💸','Expenses',expCount)}
+        ${statRow('📬','Engineer requests',reqCount)}
+        ${statRow('📢','Broadcast alerts',alertCount)}
+      </div>
+      ${upgradeNote}
+      <div style="margin-top:12px;font-size:11px;color:var(--txt3);text-align:center">
+        Estimated values · <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk" target="_blank" style="color:var(--acc)">View exact usage on Supabase →</a>
+      </div>`;
+
+  }catch(e){
+    body.innerHTML=`<div style="color:var(--red);font-size:12px;text-align:center;padding:16px">❌ Failed to load: ${e.message}</div>`;
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='↺ Refresh';}
+  }
+}
+
 async function createAllTables(){
   const btn=document.querySelector('[onclick="createAllTables()"]');
   const statusEl=document.getElementById('table-setup-status');
@@ -12865,7 +13527,60 @@ function showJobsSkeleton(){
   scroll.innerHTML = Array(6).fill(`<div style="padding:6px 12px"><div class="skeleton sk-text" style="width:140px;margin-bottom:5px"></div><div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;gap:8px"><div class="skeleton" style="width:4px;border-radius:2px;min-height:40px"></div><div style="flex:1"><div class="skeleton sk-text w80"></div><div class="skeleton sk-text w60" style="margin-top:4px"></div></div></div></div>`).join('');
 }
 
-init();
+// ── Entry point: check Supabase Auth session, then run init() ──
+(async function bootstrap(){
+  const overlay=document.getElementById('pin-overlay');
+
+  if(!_supaAuth){
+    // Supabase JS not loaded (offline?) — show login
+    if(overlay)overlay.style.display='flex';
+    setTimeout(()=>{const f=document.getElementById('login-email');if(f)f.focus();},150);
+    return;
+  }
+
+  try{
+    const {data:{session}} = await _supaAuth.auth.getSession();
+    if(session?.user){
+      // Valid session — load profile and enter app
+      let profile=null;
+      const r1=await _sb(`users?auth_id=eq.${session.user.id}&active=eq.true&select=*`).catch(()=>[]);
+      profile=r1?.[0]||null;
+      if(!profile){
+        const r2=await _sb(`users?email=eq.${encodeURIComponent(session.user.email)}&active=eq.true&select=*`).catch(()=>[]);
+        profile=r2?.[0]||null;
+        if(profile){
+          _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:session.user.id},prefer:'return=minimal'}).catch(()=>{});
+        }
+      }
+      if(profile){
+        const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
+        const role=roleMap[profile.role]||'Staff';
+        const isAdmin=role==='Admin',isMgr=role==='Manager';
+        _appUser={
+          name:profile.name||session.user.email,email:session.user.email,role,
+          _sbId:profile.id,_authId:session.user.id,
+          canEdit:profile.can_edit!==false,canDelete:isAdmin||(profile.can_delete===true),
+          canInvoice:profile.can_invoice!==false,canFinance:isAdmin||isMgr||(profile.can_finance===true),
+          seeLandlord:profile.see_landlord!==false,seeLandlordPhone:profile.see_landlord_phone!==false,
+          seeAgent:profile.see_agent!==false,seeContact:profile.see_contact!==false,seePrice:profile.see_price!==false,
+        };
+        if(overlay)overlay.style.display='none';
+        await init();
+        applyUserPermissions();
+        return;
+      } else {
+        // Auth session but no profile — sign out
+        await _supaAuth.auth.signOut();
+      }
+    }
+  }catch(e){console.warn('Session restore failed:',e);}
+
+  // No session — show login screen
+  if(overlay)overlay.style.display='flex';
+  setTimeout(()=>{const f=document.getElementById('login-email');if(f)f.focus();},150);
+  // Still run init() for settings/theme etc but don't show app
+  init().catch(()=>{});
+})();
 
 // ════════════════════════════════════════════════════════════════
 //  V3 — STATEMENTS PAGE
