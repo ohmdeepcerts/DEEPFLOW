@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DeepFlow Ver 2</title>
+<meta name="description" content="DeepFlow — Field service job management, invoicing and certificates">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIk9FIERlZXBGbG93IiwgInNob3J0X25hbWUiOiAiRGVlcEZsb3ciLCAiZGVzY3JpcHRpb24iOiAiT2htIEVsZWN0cmljYWwgXHUyMDE0IEpvYiAmIEludm9pY2UgTWFuYWdlbWVudCIsICJzdGFydF91cmwiOiAiLi8iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiIzFhMWExYSIsICJ0aGVtZV9jb2xvciI6ICIjZjVhNjIzIiwgIm9yaWVudGF0aW9uIjogImFueSIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhPVElpSUdobGFXZG9kRDBpTVRreUlpQjJhV1YzUW05NFBTSXdJREFnTVRreUlERTVNaUkrUEhKbFkzUWdkMmxrZEdnOUlqRTVNaUlnYUdWcFoyaDBQU0l4T1RJaUlISjRQU0l6TmlJZ1ptbHNiRDBpSXpGaE1XRXhZU0l2UGp4MFpYaDBJSGc5SWprMklpQjVQU0l4TVRraUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlJR1p2Ym5RdFptRnRhV3g1UFNKQmNtbGhiQ0JDYkdGamF5eEJjbWxoYkN4ellXNXpMWE5sY21sbUlpQm1iMjUwTFhOcGVtVTlJams1SWlCbWIyNTBMWGRsYVdkb2REMGlPVEF3SWlCbWFXeHNQU0lqWlRBMU1qVXlJajdPcVR3dmRHVjRkRDQ4ZEdWNGRDQjRQU0k1TmlJZ2VUMGlNVFUzSWlCMFpYaDBMV0Z1WTJodmNqMGliV2xrWkd4bElpQm1iMjUwTFdaaGJXbHNlVDBpUVhKcFlXd3NjMkZ1Y3kxelpYSnBaaUlnWm05dWRDMXphWHBsUFNJek1pSWdabTl1ZEMxM1pXbG5hSFE5SWpjd01DSWdabWxzYkQwaUkyWTFZell5TXlJZ2JHVjBkR1Z5TFhOd1lXTnBibWM5SWpjaVBrOUZQQzkwWlhoMFBqd3ZjM1puUGc9PSIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVElpSUdobGFXZG9kRDBpTlRFeUlpQjJhV1YzUW05NFBTSXdJREFnTlRFeUlEVXhNaUkrUEhKbFkzUWdkMmxrZEdnOUlqVXhNaUlnYUdWcFoyaDBQU0kxTVRJaUlISjRQU0k1TnlJZ1ptbHNiRDBpSXpGaE1XRXhZU0l2UGp4MFpYaDBJSGc5SWpJMU5pSWdlVDBpTXpFM0lpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dnUW14aFkyc3NRWEpwWVd3c2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0l5TmpZaUlHWnZiblF0ZDJWcFoyaDBQU0k1TURBaUlHWnBiR3c5SWlObE1EVXlOVElpUHM2cFBDOTBaWGgwUGp4MFpYaDBJSGc5SWpJMU5pSWdlVDBpTkRFNUlpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dzYzJGdWN5MXpaWEpwWmlJZ1ptOXVkQzF6YVhwbFBTSTROeUlnWm05dWRDMTNaV2xuYUhROUlqY3dNQ0lnWm1sc2JEMGlJMlkxWXpZeU15SWdiR1YwZEdWeUxYTndZV05wYm1jOUlqSXdJajVQUlR3dmRHVjRkRDQ4TDNOMlp6ND0iLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhkcFpIUm9QU0l4T0RBaUlHaGxhV2RvZEQwaU1UZ3dJaUIyYVdWM1FtOTRQU0l3SURBZ01UZ3dJREU0TUNJK1BISmxZM1FnZDJsa2RHZzlJakU0TUNJZ2FHVnBaMmgwUFNJeE9EQWlJSEo0UFNJek5DSWdabWxzYkQwaUl6RmhNV0V4WVNJdlBqeDBaWGgwSUhnOUlqa3dJaUI1UFNJeE1URWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpSUdadmJuUXRabUZ0YVd4NVBTSkJjbWxoYkNCQ2JHRmpheXhCY21saGJDeHpZVzV6TFhObGNtbG1JaUJtYjI1MExYTnBlbVU5SWpreklpQm1iMjUwTFhkbGFXZG9kRDBpT1RBd0lpQm1hV3hzUFNJalpUQTFNalV5SWo3T3FUd3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJNU1DSWdlVDBpTVRRM0lpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dzYzJGdWN5MXpaWEpwWmlJZ1ptOXVkQzF6YVhwbFBTSXpNQ0lnWm05dWRDMTNaV2xuYUhROUlqY3dNQ0lnWm1sc2JEMGlJMlkxWXpZeU15SWdiR1YwZEdWeUxYTndZV05wYm1jOUlqY2lQazlGUEM5MFpYaDBQand2YzNablBnPT0iLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLCAicHVycG9zZSI6ICJhbnkifV19">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiB2aWV3Qm94PSIwIDAgMTgwIDE4MCI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNCIgZmlsbD0iIzFhMWExYSIvPjx0ZXh0IHg9IjkwIiB5PSIxMTEiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjkzIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjZTA1MjUyIj7OqTwvdGV4dD48dGV4dCB4PSI5MCIgeT0iMTQ3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzMCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2Y1YzYyMyIgbGV0dGVyLXNwYWNpbmc9IjciPk9FPC90ZXh0Pjwvc3ZnPg==">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DeepFlow">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iMTYiIHk9IjE5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2ssQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI2UwNTI1MiI+zqk8L3RleHQ+PHRleHQgeD0iMTYiIHk9IjI2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZjVjNjIzIiBsZXR0ZXItc3BhY2luZz0iMSI+T0U8L3RleHQ+PC9zdmc+">
+<title>DeepFlow — Job & Invoice Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -81,13 +89,18 @@ body{font-family:var(--fm);background:var(--bg);color:var(--txt);font-size:var(-
 /* ── Layout ── */
 #app{display:flex;height:100vh;overflow:hidden}
 #sidebar{width:230px;min-width:230px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20;transition:width .2s ease,min-width .2s ease}
-#sidebar.collapsed{width:48px;min-width:48px;overflow:hidden}
+#sidebar.collapsed{width:48px;min-width:48px}
 #sidebar.collapsed .logo-mark,#sidebar.collapsed .logo-ver,#sidebar.collapsed .ns,#sidebar.collapsed .nbadge,#sidebar.collapsed #sidebar-user-badge,#sidebar.collapsed .sidebar-foot{display:none!important}
-#sidebar.collapsed .ni{justify-content:center;padding:9px 0;overflow:hidden;white-space:nowrap}
-#sidebar.collapsed .ni span:not(.ico){width:0;overflow:hidden;display:inline-block}
-#sidebar.collapsed .ni .ico{margin:0;font-size:20px;flex-shrink:0}
 #sidebar.collapsed nav{overflow:hidden}
-#sidebar-toggle{position:absolute;top:50%;left:100%;transform:translateY(-50%) translateX(-50%);z-index:30;width:22px;height:48px;background:var(--s2);border:1px solid var(--border2);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:13px;font-weight:700;transition:all .15s;box-shadow:2px 0 6px rgba(0,0,0,.08)}
+/* font-size:0 hides raw text nodes (plain text in div) — span:not(.ico) cannot target text nodes */
+#sidebar.collapsed .ni{justify-content:center;padding:9px 0;overflow:hidden;white-space:nowrap;font-size:0}
+#sidebar.collapsed .ni span:not(.ico){display:none!important}
+#sidebar.collapsed .ni .ico{margin:0;font-size:22px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:100%;line-height:1}
+/* Collapsed logo — show a compact icon-only mark */
+#sidebar-logo-mini{display:none;padding:14px 0 12px;text-align:center;border-bottom:1px solid var(--border)}
+#sidebar.collapsed #sidebar-logo-mini{display:block}
+#sidebar.collapsed .logo-wrap{padding:0;border-bottom:none}
+#sidebar-toggle{position:absolute;top:50%;left:100%;transform:translateY(-50%) translateX(-50%);z-index:100;width:22px;height:48px;background:var(--s2);border:1px solid var(--border2);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:13px;font-weight:700;transition:all .15s;box-shadow:2px 0 6px rgba(0,0,0,.15)}
 #sidebar-toggle:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
 #sidebar{position:relative}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
@@ -274,6 +287,7 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
 .b-draft{background:rgba(176,110,240,.15);color:var(--purple)}
 .b-awaiting{background:rgba(240,192,48,.15);color:var(--yellow)}
 .b-cancelled{background:rgba(74,85,112,.3);color:var(--txt3)}
+.b-noaccess{background:rgba(249,115,22,.15);color:#f97316;border:1px solid rgba(249,115,22,.3)}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -1010,6 +1024,7 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr-stripe-done{background:#22c55e}
 .jsr-stripe-invoiced{background:#a855f7}
 .jsr-stripe-cancelled{background:#4e6080}
+.jsr-stripe-noaccess{background:#f97316}
 .jsr-stripe-emg{background:#e05252}
 .jsr-body{flex:1;display:flex;align-items:center;gap:10px;padding:10px 12px;min-width:0}
 .jsr-addr{font-family:var(--fh);font-size:13px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt)}
@@ -1044,7 +1059,7 @@ body.density-relaxed .jtable td{font-size:15px}
 /* ── 3-LINE JOB ROW ── */
 /* ── Job row: fixed-column table-like grid ─────────────────── */
 /* Layout: [drag 18px][stripe 3px][status 80px][job# 54px][address flex][desc 200px][contact 160px][time 80px][eng 110px][certs 90px][price 52px][sel 90px][actions 58px] */
-.jsr3{display:grid;grid-template-columns:18px 3px 80px 54px minmax(0,1fr) 200px 160px 80px 110px 90px 52px 90px 58px;align-items:center;background:var(--s1);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:default;transition:border-color .15s,box-shadow .15s;position:relative;min-height:0;box-sizing:border-box}
+.jsr3{display:grid;align-items:center;background:var(--s1);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:default;transition:border-color .15s,box-shadow .15s;position:relative;min-height:0;box-sizing:border-box}
 .jsr3:hover{border-color:var(--border2);box-shadow:0 1px 8px rgba(0,0,0,.07)}
 .jsr3.jsr-past{opacity:.5}
 .jsr3.jsr-emg{background:rgba(224,82,82,.04)}
@@ -1057,7 +1072,10 @@ body.density-relaxed .jtable td{font-size:15px}
 /* status stripe */
 .jsr-stripe{width:3px;height:100%;align-self:stretch}
 /* each cell */
-.jsr3-cell{padding:4px 5px;min-width:0;overflow:hidden;font-size:11px;white-space:nowrap;text-overflow:ellipsis;line-height:1.2;box-sizing:border-box}
+.jsr3-cell{padding:5px 7px;min-width:0;max-width:100%;overflow:hidden;font-size:11px;white-space:nowrap;text-overflow:ellipsis;line-height:1.3;box-sizing:border-box;display:flex;align-items:center;gap:3px}
+/* Resize handle visible stripe on right edge of header cells */
+.col-resize-handle{position:absolute;right:0;top:20%;bottom:20%;width:3px;border-radius:2px;background:var(--border2);cursor:col-resize;transition:background .15s,width .1s;z-index:3}
+.col-resize-handle:hover,.col-resize-handle.active{background:var(--acc);width:3px}
 .jsr3-cell-status{padding:4px 6px;display:flex;align-items:center}
 .jsr3-cell-addr{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--txt);padding:5px 8px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jsr3-cell-addr:hover{color:var(--acc)}
@@ -1171,6 +1189,10 @@ body.density-relaxed .jtable td{font-size:15px}
 <!-- ── Sidebar ── -->
 <div id="sidebar">
   <button id="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">‹</button>
+  <!-- Mini logo — visible only when sidebar is collapsed -->
+  <div id="sidebar-logo-mini" onclick="toggleSidebar()" title="Expand sidebar" style="cursor:pointer">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--acc);display:inline-flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:15px;font-weight:800;color:#1a1a1a;letter-spacing:-0.5px" id="sidebar-mini-mark">DF</div>
+  </div>
   <div class="logo-wrap">
     <div class="logo-mark" id="sidebar-logo"><span id="logo-word1" style="color:var(--acc)">Deep</span><span id="logo-word2">Flow</span></div>
     
@@ -1188,6 +1210,7 @@ body.density-relaxed .jtable td{font-size:15px}
     <!-- Sub-nav for directories (shown when dir is active) -->
     <div class="ni" data-pg="props"><span class="ico">🏠</span>Properties</div>
     <div class="ni" data-pg="certs"><span class="ico">◈</span>Certificates <span class="nbadge" id="nb-certs" style="display:none">0</span></div>
+    <div class="ni" data-pg="client"><span class="ico">👤</span>Client View</div>
     <div class="ns">Maps & Tracking</div>
     <div class="ni" data-pg="map"><span class="ico">🗺</span>Live Maps</div>
     <div class="ns">System</div>
@@ -1369,7 +1392,7 @@ body.density-relaxed .jtable td{font-size:15px}
       </select>
       <select class="fs" id="j-status-filter" onchange="renderJobs()" style="width:130px;padding:5px 8px">
         <option value="">All Statuses</option>
-        <option>Pending</option><option>In Progress</option><option>Completed</option><option>Invoiced</option><option>Cancelled</option>
+        <option>Pending</option><option>In Progress</option><option>Completed</option><option>Invoiced</option><option>Cancelled</option><option>Cannot Access</option>
       </select>
       <select class="fs" id="j-priority-filter" onchange="renderJobs()" style="width:120px;padding:5px 8px">
         <option value="">All Priorities</option>
@@ -1429,23 +1452,7 @@ body.density-relaxed .jtable td{font-size:15px}
       <!-- GROUPED SCROLL LIST -->
       <div id="jobs-list-pane">
         <!-- Sticky column header with resize handles -->
-        <div id="jobs-col-hd" style="display:grid;grid-template-columns:18px 3px 80px 54px minmax(140px,1fr) 200px 160px 80px 110px 90px 52px 90px 58px;padding:0 12px;position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid var(--border);margin-bottom:2px;user-select:none;box-sizing:border-box">
-          <div></div><div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Status</div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Job #<div class="col-resize-handle" data-col="1" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 8px;display:flex;align-items:center">Address<div class="col-resize-handle" data-col="2" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Description<div class="col-resize-handle" data-col="3" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Contact<div class="col-resize-handle" data-col="4" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Time<div class="col-resize-handle" data-col="5" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Engineer<div class="col-resize-handle" data-col="6" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 6px;display:flex;align-items:center">Certs<div class="col-resize-handle" data-col="7" style="position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2" onmouseenter="this.style.background='var(--acc)'" onmouseleave="this.style.background=''"></div></div>
-          <div style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 4px;display:flex;align-items:center;justify-content:flex-end">£</div>
-          <div style="font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 4px;display:flex;align-items:center">Change</div>
-          <div style="font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:5px 4px;display:flex;align-items:center;gap:4px">
-            <span>⋮⋮</span>
-            <button onclick="showColMenu(event)" title="Show/hide columns" style="background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;cursor:pointer;color:var(--txt2)" title="Columns">⊞</button>
-          </div>
-        </div>
+        <div id="jobs-col-hd" style="display:grid;padding:0 12px;position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid var(--border);margin-bottom:2px;user-select:none;box-sizing:border-box"></div>
         <div id="jobs-list-scroll"></div>
         <!-- hidden jtbody / jtbl stubs so legacy JS that touches them doesn't throw -->
         <table style="display:none"><tbody id="jtbody"></tbody></table>
@@ -1726,8 +1733,8 @@ body.density-relaxed .jtable td{font-size:15px}
           <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
             <input type="search" class="fi" id="dir-search-engineers" placeholder="Search engineers…" oninput="renderDirSection('engineers')" style="max-width:220px">
             <div style="margin-left:auto;display:flex;gap:8px">
-              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('engineers')">⚙ Manage in Settings</button>
-              <button class="btn btn-acc btn-sm" onclick="showPage('set');switchSetTab('engineers');setTimeout(addEngRow,300)">+ Add Engineer</button>
+              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('team')">⚙ Manage in Settings</button>
+              <button class="btn btn-acc btn-sm" onclick="showPage('set');switchSetTab('team');setTimeout(addEngRow,300)">+ Add Engineer</button>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px" id="dir-grid-engineers"></div>
@@ -2050,7 +2057,31 @@ body.density-relaxed .jtable td{font-size:15px}
     </div>
   </div>
 
-  <!-- SETTINGS -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TASK 26: CENTRALISED CLIENT VIEW
+       Jobs + Invoices + Certificates + Payment status for one client
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="pg-client">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--s1);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <input type="text" id="cv-search" class="fi" placeholder="Search client, landlord or agent…" oninput="cvSearch(this.value)" style="padding:8px 14px;font-size:13px">
+      </div>
+    </div>
+    <div id="cv-picker" style="padding:16px 20px;max-width:700px">
+      <div style="font-size:12px;color:var(--txt3);margin-bottom:10px">Start typing to find a landlord, agency, or person in your directory</div>
+      <div id="cv-pick-list"></div>
+    </div>
+    <div id="cv-record" style="display:none;overflow-y:auto;flex:1;padding:0 0 40px">
+      <div id="cv-hero" style="background:linear-gradient(135deg,var(--s2),var(--s3));border-bottom:1px solid var(--border);padding:20px 22px"></div>
+      <div id="cv-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:16px 20px"></div>
+      <div style="display:flex;gap:4px;padding:0 20px 0;border-bottom:1px solid var(--border);flex-wrap:wrap" id="cv-tabs"></div>
+      <div id="cv-panel-jobs" style="padding:16px 20px"></div>
+      <div id="cv-panel-invoices" style="padding:16px 20px;display:none"></div>
+      <div id="cv-panel-certs" style="padding:16px 20px;display:none"></div>
+    </div>
+  </div>
+
   <!-- MAP PAGE -->
   <div class="page" id="pg-map" style="overflow:hidden;flex-direction:column">
     <!-- Top controls bar -->
@@ -2102,8 +2133,8 @@ body.density-relaxed .jtable td{font-size:15px}
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:12px">
         <button class="set-tab active" data-tab="company" onclick="switchSetTab('company')">🏢 Company</button>
         <button class="set-tab" data-tab="appearance" onclick="switchSetTab('appearance')">🎨 Appearance</button>
-        <button class="set-tab" data-tab="users" onclick="switchSetTab('users')">👥 Users & Access</button>
-        <button class="set-tab" data-tab="engineers" onclick="switchSetTab('engineers')">👷 Engineers</button>
+        <button class="set-tab" data-tab="team" onclick="switchSetTab('team')">👥 Team</button>
+        <button class="set-tab" data-tab="team" onclick="switchSetTab('team')">👥 Team</button>
         <button class="set-tab" data-tab="trades" onclick="switchSetTab('trades')">🔧 Trades & Services</button>
         <button class="set-tab" data-tab="invoicing" onclick="switchSetTab('invoicing')">◎ Invoicing</button>
         <button class="set-tab" data-tab="whatsapp" onclick="switchSetTab('whatsapp')">📱 WhatsApp</button>
@@ -2254,146 +2285,82 @@ body.density-relaxed .jtable td{font-size:15px}
       </div>
 
       <!-- USERS & ACCESS TAB -->
-      <div class="set-tab-panel" id="stab-users">
+      <!-- TEAM TAB: single panel for ALL Supabase Auth users -->
+      <div class="set-tab-panel" id="stab-team">
         <div class="set-section">
-          <div class="set-title">🔐 Supabase Auth — User Management</div>
 
-          <!-- Role guide -->
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
-            <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:8px 10px">
-              <div style="font-weight:800;font-size:11px;color:var(--acc)">👑 Admin</div>
-              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Full access — settings, users, all data, finance</div>
+          <!-- How it works -->
+          <div style="background:rgba(79,143,255,.06);border:1px solid rgba(79,143,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:var(--txt2);line-height:1.7">
+            <strong style="color:#4f8fff">How to add anyone (staff or engineer):</strong><br>
+            1. Go to <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/users" target="_blank" style="color:var(--acc)">Supabase → Auth → Users</a> → <strong>Add user</strong> → enter their email + password → tick <strong>Auto Confirm User</strong> → Create.<br>
+            2. Come back here → click <strong>🔄 Sync</strong> → they appear in the list → pick their role → click <strong>✅ Add</strong>.<br>
+            3. Done. They log in immediately with that email + password.
+            <div style="margin-top:8px;color:var(--yellow)">⚠️ To remove access permanently: Supabase → Auth → Users → find them → Delete.</div>
+          </div>
+
+          <!-- Role legend -->
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px">
+            <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">👑</div><div style="font-size:10px;font-weight:800;color:var(--acc)">Admin</div>
+              <div style="font-size:9px;color:var(--txt3);margin-top:2px">Full access</div>
             </div>
-            <div style="background:rgba(79,143,255,.06);border:1px solid rgba(79,143,255,.15);border-radius:8px;padding:8px 10px">
-              <div style="font-weight:800;font-size:11px;color:#4f8fff">🏢 Manager</div>
-              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Jobs, invoices, finance, reports. No settings.</div>
+            <div style="background:rgba(79,143,255,.06);border:1px solid rgba(79,143,255,.15);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">🏢</div><div style="font-size:10px;font-weight:800;color:#4f8fff">Manager</div>
+              <div style="font-size:9px;color:var(--txt3);margin-top:2px">Jobs + finance</div>
             </div>
-            <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:8px 10px">
-              <div style="font-weight:800;font-size:11px;color:#22c55e">📋 Staff</div>
-              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Limited access per the checkboxes below.</div>
+            <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">📋</div><div style="font-size:10px;font-weight:800;color:#22c55e">Staff</div>
+              <div style="font-size:9px;color:var(--txt3);margin-top:2px">Office app</div>
             </div>
-            <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px;padding:8px 10px">
-              <div style="font-weight:800;font-size:11px;color:#a855f7">👁 Viewer</div>
-              <div style="font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5">Read-only. Cannot edit, create or delete.</div>
+            <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">👁</div><div style="font-size:10px;font-weight:800;color:#a855f7">Viewer</div>
+              <div style="font-size:9px;color:var(--txt3);margin-top:2px">Read-only</div>
+            </div>
+            <div style="background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.15);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:16px">👷</div><div style="font-size:10px;font-weight:800;color:#14b8a6">Engineer</div>
+              <div style="font-size:9px;color:var(--txt3);margin-top:2px">Portal only</div>
             </div>
           </div>
 
-          <!-- INVITE NEW USER -->
-          <div class="set-card" style="margin-bottom:16px;border:1px solid rgba(79,143,255,.25);background:rgba(79,143,255,.04)">
-            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:4px">➕ Add New Staff Member</div>
-            <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">You set their password — no emails needed. They log in immediately.</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name *</label>
-                <input type="text" class="fi" id="inv-name" placeholder="e.g. Sarah Jones" autocapitalize="words">
-              </div>
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address *</label>
-                <input type="email" class="fi" id="inv-email" placeholder="sarah@example.com" autocapitalize="off">
-              </div>
-              <div style="position:relative">
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Password * <span style="color:var(--txt3);font-weight:400">(tell them)</span></label>
-                <input type="password" class="fi" id="inv-password" placeholder="Min 6 characters" autocomplete="new-password" style="padding-right:38px">
-                <button onclick="const e=document.getElementById('inv-password');e.type=e.type==='password'?'text':'password'" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--txt3)">👁</button>
-              </div>
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Role</label>
-                <select class="fs" id="inv-role" style="padding:10px 12px;font-size:13px">
-                  <option value="staff">📋 Staff</option>
-                  <option value="manager">🏢 Manager</option>
-                  <option value="admin">👑 Admin</option>
-                  <option value="viewer">👁 Viewer</option>
-                </select>
+          <!-- Team list card -->
+          <div class="set-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+              <div style="font-size:14px;font-weight:800">Team Members</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-acc btn-sm" id="btn-team-sync" onclick="loadTeam()">🔄 Sync from Supabase</button>
+                <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/users" target="_blank" class="btn btn-ghost btn-sm">➕ Add in Supabase</a>
               </div>
             </div>
-            <div>
-              <button class="btn btn-acc btn-sm" onclick="addOfficeStaff()">👤 Create Account</button>
-            </div>
-            <div id="inv-status" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:12px"></div>
+            <div id="team-list"><div style="text-align:center;padding:28px;color:var(--txt3);font-size:12px">
+              <div style="font-size:28px;margin-bottom:8px">👥</div>
+              Click <strong>🔄 Sync from Supabase</strong> to load your team
+            </div></div>
+            <div id="team-sync-status" style="margin-top:8px;font-size:11px;color:var(--txt3)"></div>
           </div>
 
-          <!-- ACTIVE USERS TABLE -->
-          <div class="set-card" style="margin-bottom:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div style="font-size:13px;font-weight:800">Active Users</div>
-              <button class="btn btn-ghost btn-sm" onclick="loadAuthUsers()">↺ Refresh</button>
-            </div>
-            <div id="auth-users-list"><div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">Click Refresh to load users</div></div>
-            <div id="user-sync-status" style="margin-top:8px;font-size:11px;color:var(--txt3)"></div>
-          </div>
-
-          <!-- SUPABASE LINKS -->
-          <div class="set-card" style="background:rgba(0,0,0,.03)">
-            <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--txt2)">🔗 Manage directly in Supabase</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/users" target="_blank" class="btn btn-ghost btn-sm">👤 Auth Users</a>
-              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/editor" target="_blank" class="btn btn-ghost btn-sm">🗄️ Database</a>
-              <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/auth/policies" target="_blank" class="btn btn-ghost btn-sm">🔒 Auth Policies</a>
-            </div>
-            <div style="margin-top:12px;padding:10px 12px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:8px;font-size:11px;color:var(--yellow);line-height:1.6">
-              ⚠️ <strong>To permanently revoke access:</strong> go to <em>Auth Users</em> above → find the person → click Delete. They will be immediately signed out on their next request and can never log back in, even with an old copy of the HTML file.
-            </div>
-          </div>
-
-          <!-- hidden for legacy compatibility -->
+          <!-- Hidden legacy elements kept for JS compatibility -->
+          <input type="hidden" id="inv-name"><input type="hidden" id="inv-email">
+          <input type="hidden" id="inv-password"><input type="hidden" id="inv-role">
+          <input type="hidden" id="einv-name"><input type="hidden" id="einv-email">
+          <input type="hidden" id="einv-password"><input type="hidden" id="einv-phone">
+          <div id="inv-status" style="display:none"></div>
+          <div id="einv-status" style="display:none"></div>
+          <div id="einv-spinner" style="display:none"></div>
+          <button id="einv-btn" style="display:none"></button>
+          <div id="auth-users-list" style="display:none"></div>
+          <div id="eng-auth-list" style="display:none"></div>
+          <div id="unlinked-users-banner" style="display:none"></div>
+          <div id="unlinked-engs-banner" style="display:none"></div>
           <table style="display:none" id="st-users"><thead><tr></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-
-      <!-- ENGINEERS TAB -->
-      <div class="set-tab-panel" id="stab-engineers">
-        <div class="set-section">
-          <div class="set-title">👷 Engineers</div>
-
-          <!-- Add engineer — admin sets password directly, no email needed -->
-          <div class="set-card" style="margin-bottom:16px;border:1px solid rgba(79,143,255,.25);background:rgba(79,143,255,.04)">
-            <div style="font-size:13px;font-weight:800;color:#4f8fff;margin-bottom:4px">➕ Add New Engineer</div>
-            <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">You set their email and password — they use these to log into the engineer portal immediately. No email invite needed.</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Full Name *</label>
-                <input type="text" class="fi" id="einv-name" placeholder="e.g. John Smith" autocapitalize="words" style="margin-bottom:0">
-              </div>
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Email Address *</label>
-                <input type="email" class="fi" id="einv-email" placeholder="john@email.com" autocapitalize="off" style="margin-bottom:0">
-              </div>
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Portal Password *</label>
-                <div style="position:relative">
-                  <input type="password" class="fi" id="einv-password" placeholder="Min 6 characters" autocomplete="new-password" style="margin-bottom:0;padding-right:40px">
-                  <button onclick="const e=document.getElementById('einv-password');e.type=e.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--txt3)">👁</button>
-                </div>
-              </div>
-              <div>
-                <label class="fl" style="font-size:11px;margin-bottom:4px">Phone</label>
-                <input type="tel" class="fi" id="einv-phone" placeholder="07..." style="margin-bottom:0">
-              </div>
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <button class="btn btn-acc btn-sm" id="einv-btn" onclick="addEngineer()">👷 Create Engineer Account</button>
-              <div id="einv-spinner" style="display:none;font-size:12px;color:var(--txt3)">⏳ Creating…</div>
-            </div>
-            <div id="einv-status" style="display:none;margin-top:10px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6"></div>
-          </div>
-
-          <!-- Active engineers list -->
-          <div class="set-card" style="margin-bottom:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div style="font-size:13px;font-weight:800">Active Engineers</div>
-              <button class="btn btn-ghost btn-sm" onclick="loadEngineers()">↺ Refresh</button>
-            </div>
-            <div id="eng-auth-list"><div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">Click Refresh to load</div></div>
-          </div>
-
-          <!-- legacy table hidden but kept for internal S.engineers compatibility -->
           <table style="display:none" id="st-engs"><thead><tr></tr></thead><tbody></tbody></table>
-        </div>
-        <div class="set-section">
-          <div class="set-title">🔑 Access Types</div>
-          <table class="set-table" id="st-access"><thead><tr><th>Type</th><th></th></tr></thead><tbody></tbody></table>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addAccessRow()">+ Add</button>
-          <button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="saveSettings()">Save</button>
+
+          <!-- Access Types (kept from engineers tab) -->
+          <div class="set-section" style="margin-top:20px">
+            <div class="set-title">🔑 Access Types</div>
+            <table class="set-table" id="st-access"><thead><tr><th>Type</th><th></th></tr></thead><tbody></tbody></table>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addAccessRow()">+ Add</button>
+            <button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="saveSettings()">Save</button>
+          </div>
         </div>
       </div>
 
@@ -2604,7 +2571,7 @@ body.density-relaxed .jtable td{font-size:15px}
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
               <button class="btn btn-acc btn-sm" onclick="checkSecurityStatus()">🔍 Check Security Status</button>
-              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('users')">👤 Manage Users & PINs</button>
+              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('team')">👤 Manage Team</button>
             </div>
             <div id="sec-status-result" style="margin-top:8px;font-size:11px;color:var(--txt2)"></div>
           </div>
@@ -2661,6 +2628,105 @@ body.density-relaxed .jtable td{font-size:15px}
             </div>
           </div>
 
+
+          <!-- TASK 27: SCHEDULED CERT REMINDERS SQL -->
+          <div class="set-title" style="margin-top:18px">⏰ Task 27 — Scheduled Cert Expiry Reminders (pg_cron)</div>
+          <div class="set-card" style="margin-bottom:12px;background:rgba(20,184,166,.04);border-color:rgba(20,184,166,.2)">
+            <div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:6px">Automatic daily WhatsApp reminder for expiring certificates</div>
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+              Run this SQL once in Supabase. It creates:<br>
+              1. A <code>cert_reminder_log</code> table to prevent duplicate sends<br>
+              2. A <code>send_cert_reminders()</code> function that finds certs expiring within the reminder window and logs them<br>
+              3. A <code>pg_cron</code> job that runs daily at 9am UTC<br>
+              <strong style="color:var(--yellow)">Note:</strong> pg_cron must be enabled in your Supabase project under Database → Extensions.
+              WhatsApp is opened via a webhook — replace WEBHOOK_URL with your own (e.g. a Make/Zapier webhook that calls the WA Business API).
+            </div>
+            <div class="sql-block" onclick="copySql(this)" style="font-size:11px;line-height:1.6;white-space:pre">-- ══ STEP 1: Enable pg_cron extension (do this in Extensions tab first) ══
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- ══ STEP 2: Reminder log table ══
+CREATE TABLE IF NOT EXISTS cert_reminder_log (
+  id           text PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  cert_id      text NOT NULL,
+  sent_at      timestamptz NOT NULL DEFAULT now(),
+  days_before  int,
+  method       text DEFAULT 'whatsapp'
+);
+CREATE INDEX IF NOT EXISTS idx_cert_reminder_log_cert ON cert_reminder_log(cert_id, sent_at);
+
+-- ══ STEP 3: Function that finds certs needing reminders ══
+CREATE OR REPLACE FUNCTION send_cert_reminders()
+RETURNS TABLE(cert_id text, address text, landlord text, cert_type text, expiry_date date, days_left int, phone text)
+LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  warn_days int[] := ARRAY[60, 30, 14, 7, 1];  -- send reminders at these thresholds
+  d int;
+BEGIN
+  FOREACH d IN ARRAY warn_days LOOP
+    FOR cert_id, address, landlord, cert_type, expiry_date, days_left, phone IN
+      SELECT
+        c.id,
+        c.address,
+        c.landlord,
+        c.type,
+        c.expirydate::date,
+        (c.expirydate::date - CURRENT_DATE) as days_left,
+        COALESCE(p.wa, p.phone, '') as phone
+      FROM certs c
+      LEFT JOIN persons p ON lower(p.name) = lower(c.landlord)
+      WHERE
+        c.expirydate IS NOT NULL
+        AND c.noexpiry IS NOT TRUE
+        AND (c.expirydate::date - CURRENT_DATE) = d
+        AND NOT EXISTS (
+          SELECT 1 FROM cert_reminder_log rl
+          WHERE rl.cert_id = c.id
+            AND rl.days_before = d
+            AND rl.sent_at > now() - interval '2 days'
+        )
+    LOOP
+      -- Log the reminder (app/webhook reads this table to send WA messages)
+      INSERT INTO cert_reminder_log(cert_id, days_before, sent_at)
+      VALUES (cert_id, d, now())
+      ON CONFLICT DO NOTHING;
+
+      -- Return the row so the caller can send the actual message
+      RETURN NEXT;
+    END LOOP;
+  END LOOP;
+END;
+$$;
+
+-- ══ STEP 4: Schedule daily at 9am UTC ══
+SELECT cron.schedule(
+  'deepflow-cert-reminders',
+  '0 9 * * *',
+  $$ SELECT send_cert_reminders(); $$
+);
+
+-- ══ CHECK: view scheduled jobs ══
+-- SELECT * FROM cron.job WHERE jobname = 'deepflow-cert-reminders';
+
+-- ══ UNSCHEDULE if needed ══
+-- SELECT cron.unschedule('deepflow-cert-reminders');</div>
+
+            <div style="margin-top:14px;font-size:12px;color:var(--txt2);line-height:1.6">
+              <strong style="color:var(--acc)">How to connect this to WhatsApp:</strong><br>
+              The function logs pending reminders to <code>cert_reminder_log</code>. 
+              To actually send the messages, set up a Make / Zapier / n8n workflow that:<br>
+              1. Runs every morning, queries <code>cert_reminder_log</code> for today's entries<br>
+              2. For each row, looks up the phone number and sends a WhatsApp message<br>
+              3. Or use the manual bulk-reminder button in Certificates → Reminders for immediate sends
+            </div>
+            <button class="btn btn-acc btn-sm" style="margin-top:10px" onclick="window.open('https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/database/extensions','_blank')">
+              🔌 Open Supabase Extensions →
+            </button>
+            <button class="btn btn-ghost btn-sm" style="margin-top:10px;margin-left:6px" onclick="checkCronSetup()">
+              ✓ Check if pg_cron is active
+            </button>
+            <div id="cron-check-result" style="font-size:12px;margin-top:8px;color:var(--txt3)"></div>
+          </div>
+
           <!-- SQL Quick Reference -->
           <div class="set-title" style="margin-top:18px">⚡ SQL Quick Reference</div>
           <div style="font-size:12px;color:var(--txt3);margin-bottom:12px">Copy these into the <a href="https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/editor" target="_blank" style="color:var(--acc)">SQL Editor</a>. Click any snippet to copy it.</div>
@@ -2695,6 +2761,108 @@ body.density-relaxed .jtable td{font-size:15px}
             <div style="font-size:12px;color:var(--txt2);margin-bottom:12px">Creates <code>engineer_requests</code> and <code>engineer_alerts</code> tables in one click. Safe to run even if they already exist.</div>
             <button class="btn btn-acc" onclick="createAllTables()" style="width:100%;padding:10px">⚡ Create All Required Tables Now</button>
             <div id="table-setup-status" style="font-size:12px;color:var(--txt3);margin-top:8px;text-align:center"></div>
+          </div>
+
+          <!-- FIX: Users table RLS policy if create account is failing -->
+          <div class="set-title" style="margin-top:18px">🔐 Fix 1 — Can't Create Staff or Engineers?</div>
+          <div class="set-card" style="margin-bottom:12px;background:rgba(240,68,68,.04);border-color:rgba(240,68,68,.2)">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6">If creating office staff or engineers fails with an RLS error, run this SQL once in Supabase.</div>
+            <div class="sql-block" onclick="copySql(this)">-- Fix users table RLS policy (run if Create Account fails)
+DROP POLICY IF EXISTS "auth_users_write" ON users;
+DROP POLICY IF EXISTS "auth_users_read" ON users;
+
+CREATE POLICY "users_read" ON users
+  FOR SELECT TO authenticated USING (true);
+CREATE POLICY "users_insert" ON users
+  FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "users_update" ON users
+  FOR UPDATE TO authenticated
+  USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.role = 'admin' AND u.active = true))
+  WITH CHECK (true);
+CREATE POLICY "users_delete" ON users
+  FOR DELETE TO authenticated
+  USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.role = 'admin' AND u.active = true));</div>
+          </div>
+
+
+          <!-- get_auth_users function for Sync -->
+          <div class="set-title" style="margin-top:18px">🔄 Enable "Sync from Supabase" button</div>
+          <div class="set-card" style="margin-bottom:12px;background:rgba(79,143,255,.04);border-color:rgba(79,143,255,.2)">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6">
+              Run this SQL once to enable the <strong>Sync from Supabase</strong> button. It creates a safe function that lets DeepFlow read your Supabase Auth users list.
+            </div>
+            <div class="sql-block" onclick="copySql(this)">-- Run ONCE — enables Sync from Supabase button in Settings → Users
+CREATE OR REPLACE FUNCTION get_auth_users()
+RETURNS TABLE(id uuid, email text, created_at timestamptz)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = auth, public AS $$
+BEGIN
+  RETURN QUERY
+  SELECT u.id, u.email::text, u.created_at
+  FROM auth.users u
+  ORDER BY u.created_at DESC;
+END; $$;</div>
+          </div>
+
+          <!-- PERMANENT FIX: create_confirmed_user function -->
+          <div class="set-title" style="margin-top:18px">✅ Fix 2 — Staff can't log in (email confirmation required)?</div>
+          <div class="set-card" style="margin-bottom:12px;background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.2)">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6">
+              Run this SQL <strong>once</strong>. It creates a function that makes new staff accounts <strong>instantly active — no email confirmation ever needed</strong>. After this, every new staff member you create can log in immediately.
+            </div>
+            <div class="sql-block" onclick="copySql(this)" style="font-size:11px;line-height:1.6">-- ══ Create confirmed user function (run ONCE — permanent fix) ══
+-- After this, all new office staff accounts work immediately with no email confirmation.
+CREATE OR REPLACE FUNCTION create_confirmed_user(p_email text, p_password text)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = auth, public
+AS $$
+DECLARE
+  v_user_id uuid;
+  v_encrypted_pw text;
+BEGIN
+  v_user_id := gen_random_uuid();
+  v_encrypted_pw := crypt(p_password, gen_salt('bf'));
+
+  INSERT INTO auth.users (
+    instance_id, id, aud, role, email,
+    encrypted_password, email_confirmed_at, recovery_sent_at,
+    last_sign_in_at, raw_app_meta_data, raw_user_meta_data,
+    created_at, updated_at, confirmation_token, email_change,
+    email_change_token_new, recovery_token
+  ) VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    v_user_id,
+    'authenticated',
+    'authenticated',
+    p_email,
+    v_encrypted_pw,
+    now(),   -- email_confirmed_at = NOW = pre-confirmed, no email needed
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{}',
+    now(), now(), '', '', '', ''
+  );
+
+  INSERT INTO auth.identities (
+    id, user_id, provider_id, identity_data, provider,
+    last_sign_in_at, created_at, updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    v_user_id,
+    p_email,
+    json_build_object('sub', v_user_id::text, 'email', p_email),
+    'email',
+    now(), now(), now()
+  );
+
+  RETURN v_user_id;
+END;
+$$;</div>
+            <div style="margin-top:10px;font-size:12px;color:var(--acc);line-height:1.6">
+              After running this SQL, go to <strong>Settings → Users & Access</strong> and use the "🔑 Create Login" button on any existing "⚠ No login yet" users to fix them instantly too.
+            </div>
           </div>
 
           <!-- Engineer Requests table info -->
@@ -2827,6 +2995,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
           <option value="In Progress">🟡 In Progress</option>
           <option value="Completed">🟢 Completed</option>
           <option value="Invoiced">🔵 Invoiced</option>
+          <option value="Cannot Access">🚫 Cannot Access</option>
           <option value="Cancelled">⚪ Cancelled</option>
         </select>
       </div>
@@ -3100,8 +3269,16 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <div class="fg"><label class="fl">Certificate Number (optional)</label><input type="text" id="cf-num" class="fi"></div>
   </div>
   <div class="fg"><label class="fl">Notes</label><input type="text" id="cf-notes" class="fi" placeholder="Any notes…"></div>
+  <!-- FIX 10: Hidden fields store the originating job link when cert is created from a job.
+       These are populated by openCertModalFromJob(jobId, jobNum) and cleared on close. -->
+  <input type="hidden" id="cf-job-id" value="">
+  <input type="hidden" id="cf-job-num" value="">
+  <!-- Visual indicator shown only when creating from a job -->
+  <div id="cf-job-banner" style="display:none;background:rgba(79,143,255,.08);border:1px solid rgba(79,143,255,.2);border-radius:8px;padding:9px 13px;font-size:12px;color:var(--acc);margin-top:4px">
+    🔗 Linked to job <strong id="cf-job-banner-num"></strong>
+  </div>
   <div class="modal-actions">
-    <button class="btn btn-ghost" onclick="closeModal('mo-cert')">Cancel</button>
+    <button class="btn btn-ghost" onclick="closeModal('mo-cert');document.getElementById('cf-job-id').value='';document.getElementById('cf-job-num').value='';document.getElementById('cf-job-banner').style.display='none';window._certLinkedJob=null;">Cancel</button>
     <button class="btn btn-acc" onclick="saveCert()">Save</button>
   </div>
 </div>
@@ -3493,6 +3670,20 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 //  DATABASE — Supabase
 //  Schema field names match the app exactly — no mapping needed
 // ════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+//  DeepFlow v2.7 — Production build
+//  © 2024-2026 DeepFlow. Internal use only.
+// ═══════════════════════════════════════════
+const DF_VERSION = '2.7';
+
+// Global unhandled error catcher — surfaces silent failures in production
+window.addEventListener('unhandledrejection', e => {
+  console.error('Unhandled promise rejection:', e.reason);
+});
+window.onerror = (msg, src, line) => {
+  console.error(`JS error: ${msg} (${src}:${line})`);
+};
+
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 
@@ -3606,7 +3797,9 @@ async function dAll(store) {
     const v = localStorage.getItem('df_all_'+store);
     return v ? JSON.parse(v) : [];
   }
-  const rows = await _sb(store+'?limit=5000&order=created.desc') || [];
+  // select=* explicitly requests all columns — prevents PostgREST from
+  // omitting columns due to column-level security or default projection settings
+  const rows = await _sb(store+'?limit=5000&order=created.desc&select=*') || [];
   return rows.map(r => _fromDb(store, r));
 }
 
@@ -3691,8 +3884,16 @@ async function loadSettings(){
   // 2. Load from Supabase DB — overrides localStorage so all users see same settings
   await _loadSettingsFromDb();
   // 2. Fetch ALL users from Supabase — single source of truth for every device
+  // Explicitly get the JWT first to avoid timing gap with session restore
   try{
-    const allSbUsers=await _sb('users?active=eq.true&order=name.asc&select=*');
+    const _jwt = await _getJWT();
+    const allSbUsers = await (async()=>{
+      const res = await fetch(`${SB_URL}/rest/v1/users?active=eq.true&order=name.asc&select=*`, {
+        headers: {'apikey':SB_KEY,'Authorization':'Bearer '+_jwt,'Content-Type':'application/json'}
+      });
+      if(!res.ok) throw new Error(await res.text());
+      return (await res.json()) || [];
+    })();
     if(allSbUsers&&allSbUsers.length){
       const sbEngs=allSbUsers.filter(u=>u.role==='engineer');
       const sbOffice=allSbUsers.filter(u=>u.role!=='engineer');
@@ -3775,8 +3976,7 @@ async function _pushAllSettingsToDb(){
       const err=await res.text();
       console.warn('Settings save failed:',res.status,err);
     } else {
-      console.log('✅ Settings saved to Supabase');
-    }
+      }
   }catch(e){
     console.warn('Settings push failed:',e.message);
   }
@@ -3793,7 +3993,6 @@ async function _loadSettingsFromDb(){
       S[k]=v;
       localStorage.setItem('df_setting_'+k,JSON.stringify(v));
     }
-    console.log('✅ Settings loaded from Supabase');
     return true;
   }catch(e){
     console.warn('Settings DB load failed, using localStorage:',e.message);
@@ -3809,7 +4008,7 @@ async function logActivity(msg,type='info'){
 // ════════════════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════════════════
-const PTITLES={dash:'Dashboard',jobs:'Job Management',inv:'Invoices',stmt:'Statements',exp:'Expenses & Materials',ts:'Timesheets',rep:'Reports',req:'Engineer Requests',dir:'Directories',props:'Properties',certs:'Certificates',set:'Settings',map:'Live Maps & Engineer Tracking'};
+const PTITLES={dash:'Dashboard',jobs:'Job Management',inv:'Invoices',stmt:'Statements',exp:'Expenses & Materials',ts:'Timesheets',rep:'Reports',req:'Engineer Requests',dir:'Directories',props:'Properties',certs:'Certificates',client:'Client View',set:'Settings',map:'Live Maps & Engineer Tracking',team:'Team'};
 let curPg='dash';
 
 
@@ -3894,7 +4093,7 @@ function nav(pg){
   curPg=pg;
   setTopbarActions(pg);
   if(pg==='dash') renderDash();
-  if(pg==='jobs') {renderJobs();renderSavedViews();}
+  if(pg==='jobs') {_invalidateJobCache();renderJobs();renderSavedViews();}
   if(pg==='inv') { if(invViewMode==='kanban') renderKanban(); else renderInvList(); }
   if(pg==='stmt') renderStmt();
   if(pg==='exp') renderExpenses();
@@ -3904,6 +4103,7 @@ function nav(pg){
   if(pg==='dir') renderDir();
   if(pg==='props') renderProps();
   if(pg==='certs'){switchCertTab(_certTab||'dash');}
+  if(pg==='client'){renderClientPicker();}
   if(pg==='set'){renderSettings();setTimeout(loadStorageStats,400);setTimeout(loadEngineerLocations,800);setTimeout(forceSyncUsers,600);}
   if(pg==='map'){setTimeout(()=>{onMapViewChange();},50);}
 }
@@ -4674,8 +4874,15 @@ async function doLogin(){
       return;
     }
 
-    // Step 3: Build _appUser from profile
-    const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
+    // Step 3: Block engineers — they must use the engineer portal, not this app
+    if(profile.role === 'engineer'){
+      await _supaAuth.auth.signOut();
+      _loginMsg('⚠️ Engineer accounts use the Engineer Portal, not this app.\n\nAsk your office manager for the Engineer Portal link.');
+      return;
+    }
+
+    // Build _appUser from profile
+    const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'};
     const role=roleMap[profile.role]||'Staff';
     const isAdmin=role==='Admin';
     const isMgr=role==='Manager';
@@ -4816,17 +5023,11 @@ function applyUserPermissions(){
       dataTab._storageHooked=true;
       dataTab.addEventListener('click',()=>{setTimeout(loadStorageDashboard,300);});
     }
-    // Auto-load users when Users tab opens
-    const usersTab=document.querySelector('.set-tab[data-tab="users"]');
-    if(usersTab&&!usersTab._authHooked){
-      usersTab._authHooked=true;
-      usersTab.addEventListener('click',()=>{setTimeout(loadAuthUsers,200);});
-    }
-    // Auto-load engineers when Engineers tab opens
-    const engsTab=document.querySelector('.set-tab[data-tab="engineers"]');
-    if(engsTab&&!engsTab._engHooked){
-      engsTab._engHooked=true;
-      engsTab.addEventListener('click',()=>{setTimeout(loadEngineers,200);});
+    // Auto-load team when Team tab opens
+    const teamTab=document.querySelector('.set-tab[data-tab="team"]');
+    if(teamTab&&!teamTab._teamHooked){
+      teamTab._teamHooked=true;
+      teamTab.addEventListener('click',()=>{setTimeout(loadTeam,200);});
     }
   }
 
@@ -4966,8 +5167,8 @@ function fmtDshort(s){
   try{const d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}catch{return s}
 }
 
-const sEmoji={Pending:'🔴','In Progress':'🟡',Completed:'🟢',Invoiced:'🔵',Cancelled:'⚪'};
-const sBadge=(s)=>{const cls={Pending:'b-pending','In Progress':'b-progress',Completed:'b-completed',Invoiced:'b-invoiced',Cancelled:'b-cancelled'}[s]||'';return`<span class="badge ${cls}">${sEmoji[s]||'⚪'} ${s}</span>`};
+const sEmoji={Pending:'🔴','In Progress':'🟡',Completed:'🟢',Invoiced:'🔵','Cannot Access':'🚫',Cancelled:'⚪'};
+const sBadge=(s)=>{const cls={Pending:'b-pending','In Progress':'b-progress',Completed:'b-completed',Invoiced:'b-invoiced','Cannot Access':'b-noaccess',Cancelled:'b-cancelled'}[s]||'';return`<span class="badge ${cls}">${sEmoji[s]||'⚪'} ${s}</span>`};
 const tradeColor=(t)=>{const f=(S.trades||[]).find(x=>x.name===t);return f?f.color:'#4a5570'};
 
 // ════════════════════════════════════════════════════════════════
@@ -4976,6 +5177,27 @@ const tradeColor=(t)=>{const f=(S.trades||[]).find(x=>x.name===t);return f?f.col
 let _jRange = 'all';
 let _jcalMonth = null;
 let _jcalJobDates = {};
+
+// ── In-memory job cache — avoids a Supabase round-trip on every filter/search/render ──
+let _jobCache = null;        // null = stale/unloaded; array = valid cache
+let _jobCacheTs = 0;         // timestamp of last fetch
+const JOB_CACHE_TTL = 30000; // 30 seconds — refresh if older than this
+
+async function _getJobs(forceRefresh=false){
+  const now = Date.now();
+  if(!forceRefresh && _jobCache && (now - _jobCacheTs) < JOB_CACHE_TTL){
+    return _jobCache;
+  }
+  const rows = await dAll('jobs');
+  _jobCache = rows;
+  _jobCacheTs = now;
+  return rows;
+}
+
+function _invalidateJobCache(){
+  _jobCache = null;
+  _jobCacheTs = 0;
+}
 let _calPaneVisible = true;
 
 function toggleCalPane(){
@@ -5074,7 +5296,14 @@ async function renderJobs(){
   const sfVal  = document.getElementById('j-status-filter')?.value||'';
   const pfVal  = document.getElementById('j-priority-filter')?.value||'';
 
-  let allJobs = await dAll('jobs');
+  let allJobs;
+  try{
+    allJobs = await _getJobs();
+  }catch(err){
+    const scroll=document.getElementById('jobs-list-scroll');
+    if(scroll) scroll.innerHTML=`<div style="padding:48px;text-align:center;color:var(--red)"><div style="font-size:28px;margin-bottom:12px">⚠️</div><div style="font-family:var(--fh);font-weight:700;font-size:14px;margin-bottom:6px">Could not load jobs</div><div style="font-size:12px;color:var(--txt3)">${(err.message||'Network error').slice(0,120)}</div><div style="margin-top:16px"><button class="btn btn-acc btn-sm" onclick="renderJobs()">Retry</button></div></div>`;
+    return;
+  }
   const today = TODAY();
 
   _jcalJobDates = {};
@@ -5121,8 +5350,8 @@ async function renderJobs(){
   const groupOrder = [];
   jobs.forEach(j=>{ const d=j.date||'TBC'; if(!groups[d]){groups[d]=[];groupOrder.push(d);} groups[d].push(j); });
 
-  const stripeClass = s => ({'Pending':'jsr-stripe-pending','In Progress':'jsr-stripe-progress','Completed':'jsr-stripe-done','Invoiced':'jsr-stripe-invoiced','Cancelled':'jsr-stripe-cancelled','Emergency':'jsr-stripe-emg'}[s]||'jsr-stripe-pending');
-  const statusSel = (jid,s) => `<select class="jsr-sel" onchange="quickStatus('${jid}',this.value)" onclick="event.stopPropagation()">${['Pending','In Progress','Completed','Invoiced','Cancelled'].map(st=>`<option ${s===st?'selected':''}>${st}</option>`).join('')}</select>`;
+  const stripeClass = s => ({'Pending':'jsr-stripe-pending','In Progress':'jsr-stripe-progress','Completed':'jsr-stripe-done','Invoiced':'jsr-stripe-invoiced','Cannot Access':'jsr-stripe-noaccess','Cancelled':'jsr-stripe-cancelled','Emergency':'jsr-stripe-emg'}[s]||'jsr-stripe-pending');
+  const statusSel = (jid,s) => `<select class="jsr-sel" onchange="quickStatus('${jid}',this.value)" onclick="event.stopPropagation()">${['Pending','In Progress','Completed','Invoiced','Cannot Access','Cancelled'].map(st=>`<option ${s===st?'selected':''}>${st}</option>`).join('')}</select>`;
 
   let html = '';
   groupOrder.forEach(dateKey=>{
@@ -5185,7 +5414,7 @@ async function renderJobs(){
                         : contact ? contact
                         : accessInfo ? '🔑 '+accessInfo : '';
 
-      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" draggable="true">
+      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" draggable="true" onclick="openJobModal('${j.id}')" style="cursor:pointer">
         <div class="jsr-drag-handle" title="Drag" onclick="event.stopPropagation()">⠿</div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
 
@@ -5193,7 +5422,10 @@ async function renderJobs(){
           ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
         </div>
-        <div class="jsr3-cell jsr3-cell-addr" onclick="openJobModal('${j.id}')">${j.address||'<em style="color:var(--txt3)">No address</em>'}</div>
+        <div class="jsr3-cell jsr3-cell-addr">${j.address
+          ? j.address
+          : `<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><em style="color:var(--txt3);font-size:10px;font-style:normal">No address</em>${descShort?`<span style="font-size:11px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${descShort}</span>`:''}</span>`
+        }</div>
         <div class="jsr3-cell jsr3-cell-desc" title="${descFull.replace(/"/g,'&quot;')}">${descShort||'—'}</div>
         <div class="jsr3-cell jsr3-cell-contact">${contactLine||'—'}</div>
         <div class="jsr3-cell jsr3-cell-time">${j.timeSlot||'—'}</div>
@@ -5216,6 +5448,10 @@ async function renderJobs(){
   });
 
   scroll.innerHTML = html;
+  // Rebuild header from JOB_COLS (keeps it in sync after every render)
+  renderJobsHeader();
+  // Apply template to all newly rendered rows
+  applyColTemplate();
   initScrollListDrag();
   updateBulkBar();
   setTimeout(attachJobTooltips,100);
@@ -5242,8 +5478,21 @@ async function quickStatus(id,status){
   const j=await dGet('jobs',id);
   if(!j)return;
   const old=j.status;
+  if(old===status) return; // no-op
+  // Use targeted PATCH (only update status+modified) rather than full PUT
+  // This avoids overwriting fields another user may have just changed
+  try{
+    await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{
+      method:'PATCH',
+      body:{status,modified:Date.now()},
+      prefer:'return=minimal'
+    });
+  }catch(e){
+    toast('Status update failed: '+( e.message||'').slice(0,80),'error');
+    return;
+  }
   j.status=status;j.modified=Date.now();
-  await dPut('jobs',j);
+  _invalidateJobCache();
   if(status==='Completed'&&old!=='Completed') onJobComplete(j);
   await logActivity(`Job "${j.address}" → ${status}`,'job');
   renderJobs();updateBadges();
@@ -5373,21 +5622,35 @@ async function createCertEntry(ct,expiry,certNum,issueDate){
 }
 
 
+// Mutex to prevent concurrent nextJobNum calls producing duplicate numbers
+let _jobNumLock = false;
+
 async function nextJobNum(){
-  // Scan existing jobs to guarantee uniqueness
-  const prefix=S.jobPrefix||'JOB-';
-  const allJobs=await dAll('jobs');
-  let maxN=S.jobNextNum||1001;
-  allJobs.forEach(j=>{
-    if(j.jobNum&&j.jobNum.startsWith(prefix)){
-      const parsed=parseInt(j.jobNum.replace(prefix,''),10);
-      if(!isNaN(parsed)&&parsed>=maxN) maxN=parsed+1;
-    }
-  });
-  const chosen=maxN;
-  S.jobNextNum=chosen+1;
-  saveSetting('jobNextNum',S.jobNextNum);
-  return prefix+String(chosen).padStart(4,'0');
+  // Spin-wait if another call is in progress (simple mutex for async)
+  const deadline = Date.now() + 5000;
+  while(_jobNumLock && Date.now() < deadline){
+    await new Promise(r=>setTimeout(r,80));
+  }
+  _jobNumLock = true;
+  try{
+    // Always re-fetch from Supabase (bypass cache) to get the true current max
+    const prefix=S.jobPrefix||'JOB-';
+    const rows = await _sb('jobs?select=jobnum&order=jobnum.desc&limit=500') || [];
+    let maxN=S.jobNextNum||1001;
+    rows.forEach(r=>{
+      const jn = r.jobnum||r.jobNum||'';
+      if(jn.startsWith(prefix)){
+        const parsed=parseInt(jn.replace(prefix,''),10);
+        if(!isNaN(parsed)&&parsed>=maxN) maxN=parsed+1;
+      }
+    });
+    const chosen=maxN;
+    S.jobNextNum=chosen+1;
+    saveSetting('jobNextNum',S.jobNextNum);
+    return prefix+String(chosen).padStart(4,'0');
+  }finally{
+    _jobNumLock = false;
+  }
 }
 
 async function autoInvoice(j){
@@ -5396,7 +5659,7 @@ async function autoInvoice(j){
 
   // Guard: skip if an invoice already exists for this job
   const allInvs=await dAll('invoices');
-  if(allInvs.some(i=>i.jobId===j.id)) return;
+  if(allInvs.some(i=>i.jobId===j.id||i.linkedJobId===j.id)) return;
 
   // Find client — try referrer name first, then landlord name
   const persons=await dAll('persons');
@@ -5415,6 +5678,31 @@ async function autoInvoice(j){
   }
   if(!client) return; // truly no client info at all
 
+  // TASK 24: Build line items intelligently:
+  // 1. Labour line from engineer hours × hourly rate (if hours were logged)
+  // 2. Fallback to job price field if no hours, or as a separate materials line
+  const engObj=(S.engineers||[]).find(e=>e.name===j.engineer);
+  const hourlyRate=engObj?.rate||0;
+  const hours=parseFloat(j.hours)||0;
+  const jobPrice=Number(j.price)||0;
+
+  const items=[];
+  if(hours>0&&hourlyRate>0){
+    // Hours logged + rate known → Labour line
+    items.push({desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h @ £${hourlyRate}/h)`,qty:hours,unit:hourlyRate,vat:true});
+    // If job also has a separate price (materials), add it as a second line
+    if(jobPrice>0&&Math.abs(jobPrice-(hours*hourlyRate))>0.01){
+      items.push({desc:`Materials / Additional — ${j.description||j.address}`,qty:1,unit:jobPrice,vat:true});
+    }
+  } else if(hours>0){
+    // Hours logged but no rate → show hours, zero price so office can fill in
+    items.push({desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h)`,qty:hours,unit:0,vat:true});
+    if(jobPrice>0) items.push({desc:`Works at ${j.address}`,qty:1,unit:jobPrice,vat:true});
+  } else {
+    // No hours — use job price as a single line
+    items.push({desc:j.description||'Labour',qty:1,unit:jobPrice,vat:true});
+  }
+
   const inv={
     id:uid(),
     number:await nextInvNum(),
@@ -5427,13 +5715,16 @@ async function autoInvoice(j){
     dueDate:'',
     description:j.description||'',
     jobId:j.id,
+    linkedJobId:j.id,
     jobNum:j.jobNum||'',
-    items:[{desc:j.description||'Labour',qty:1,unit:Number(j.price)||0,vat:true}],
+    items,
     status:'Draft',
     created:Date.now(),
   };
   await dPut('invoices',inv);
-  await logActivity(`Draft invoice ${inv.number} auto-created for ${client.name}`,'invoice');
+  // Update job status to Invoiced
+  await _sb(`jobs?id=eq.${encodeURIComponent(j.id)}`,{method:'PATCH',body:{status:'Invoiced',linkedInvId:inv.id,modified:Date.now()},prefer:'return=minimal'}).catch(()=>{});
+  await logActivity(`Draft invoice ${inv.number} auto-created for ${client.name} (${hours?hours+'h':('£'+jobPrice)})`, 'invoice');
   toast(`📄 Draft invoice ${inv.number} created — review in Invoices`,'info',5000);
   updateBadges();
 }
@@ -5696,6 +5987,7 @@ async function saveJob(){
   if(btn){btn.disabled=true;btn.textContent='Saving...';}
   try{
     await dPut('jobs',j);
+    _invalidateJobCache();
     if(j.status==='Completed'&&existingJob?.status!=='Completed') onJobComplete(j);
     try{await logActivity((isNew?'Created':'Updated')+' job: '+j.address+' ('+jobNum+')','job');}catch(_){}
     closeModal('mo-job');closeAddrDrop();closeAllAutofillDrops();
@@ -5772,6 +6064,7 @@ async function deleteAttachment(attId, storagePath){
 async function deleteCurrentJob(){
   confirm2('Delete Job','This will permanently delete the job. Are you sure?',async()=>{
     await dDel('jobs',editJid);
+    _invalidateJobCache();
     await logActivity('Deleted job','job');
     closeModal('mo-job');renderJobs();updateBadges();
     toast('Job deleted','warn');
@@ -6273,7 +6566,11 @@ function buildJobWAMsg(jobs, engName){
     const num = i+1;
     const ordinals=['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'];
     const ord = ordinals[i]||`${num}th`;
-    return `*${ord} Job — ${j.timeSlot||'Time TBC'}*\n📍 *Address:* ${j.address}\n👤 *Referrer:* ${j.referrer||'—'}\n🔧 *Work:* ${j.description||'—'}\n🔑 *Access:* ${j.access||'—'}${j.contact?'\n🔐 *Code/Contact:* '+j.contact:''}\n📝 *Notes:* ${j.notes||'—'}`;
+    // FIX 20: Access code and contact person are now on separate labelled lines.
+    // Previously merged as "🔑 access · contact" which was ambiguous.
+    const accessPart = j.access ? `\n🔑 *Access:* ${j.access}` : '';
+    const contactPart = j.contact ? `\n👤 *Contact:* ${j.contact}` : '';
+    return `*${ord} Job — ${j.timeSlot||'Time TBC'}*\n📍 *Address:* ${j.address}\n👤 *Referrer:* ${j.referrer||'—'}\n🔧 *Work:* ${j.description||'—'}${accessPart}${contactPart}\n📝 *Notes:* ${j.notes||'—'}`;
   }).join('\n\n─────────────────\n\n');
 
   if(tpl.includes('{jobs_list}')){
@@ -6327,13 +6624,19 @@ function waShowEng(engName, tabEl){
       <div class="wa-job-cards">
         ${jobs.map((j,i)=>{
           const ords=['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'];
+          // FIX 20: Previously access and contact were merged on one line with 🔑 making
+          // it unclear whether the contact field is an access code or a person's name.
+          // Now rendered as two distinct lines with clear labels when both are present.
+          const accessLine = j.access ? `🔑 ${j.access}` : '';
+          const contactLine = j.contact ? `👤 Contact: ${j.contact}` : '';
           return `<div class="wa-job-card">
             <div class="wa-job-num">${ords[i]||i+1+'th'} Job ${j.timeSlot?'· '+j.timeSlot:''}</div>
             <div class="wa-job-addr">${j.address}</div>
             <div class="wa-job-meta">
               👤 ${j.referrer||'—'}<br>
               🔧 ${j.description||'—'}<br>
-              🔑 ${j.access||'—'}${j.contact?' · '+j.contact:''}<br>
+              ${accessLine?accessLine+'<br>':''}
+              ${contactLine?contactLine+'<br>':''}
               ${j.notes?'📝 '+j.notes:''}
             </div>
           </div>`;
@@ -6417,7 +6720,11 @@ async function renderInvList(){
     const missedJobs=allJobs.filter(j=>{
       const eligible=j.status==='Completed'||j.status==='Invoiced';
       if(!eligible)return false;
-      const linked=allInvs.some(i=>i.linkedJobId===j.id||i.jobRef===j.id||(j.invNumber&&i.number===j.invNumber));
+      // FIX 4: Single canonical check using linkedJobId.
+      // jobRef is kept as a legacy fallback for older records.
+      // The previous third check (j.invNumber === i.number) was unreliable —
+      // it compared in the wrong direction and caused false "not invoiced" results.
+      const linked=allInvs.some(i=>i.linkedJobId===j.id||i.jobRef===j.id);
       return!linked;
     });
 
@@ -6495,8 +6802,8 @@ async function renderInvList(){
           </div>`}
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-acc btn-sm" ${canCreate?'':'disabled title="Fix the issues above first"'} onclick="createInvFromJob('${j.id}');event.stopPropagation()">
-              ${canCreate?'🧾 Create Invoice':'🚫 Create Invoice (fix issues first)'}
+            <button class="btn btn-acc btn-sm" onclick="createInvFromJob('${j.id}');event.stopPropagation()">
+              🧾 Create Invoice${issues.length?' (as draft)':''}
             </button>
             <button class="btn btn-ghost btn-sm" onclick="openJobModal('${j.id}');event.stopPropagation()">✎ Open Job to Fix</button>
             ${client?`<button class="btn btn-ghost btn-sm" onclick="nav('pg-persons');event.stopPropagation()">👤 View Client in Contacts</button>`:''}
@@ -6539,26 +6846,55 @@ async function renderInvList(){
 }
 
 async function createInvFromJob(jobId){
-  const j=await dGet('jobs',jobId);
-  if(!j)return;
-  const ps=await dAll('persons');
-  const cl=ps.find(p=>p.name===j.referrer)||{};
-  invItems=[{desc:j.description||j.address,qty:1,unit:j.price||0,vat:true}];
-  editInvId=null;
-  document.getElementById('mo-inv-title').textContent='◎ New Invoice from Job';
-  document.getElementById('if-date').value=j.date||TODAY();
-  document.getElementById('if-desc').value=j.description||j.address||'';
-  document.getElementById('if-notes').value=S.invNotes||'';
-  document.getElementById('if-terms').value=S.payTerms||'';
-  document.getElementById('if-jobref').value=j.id.slice(-6).toUpperCase();
-  document.getElementById('if-agent').value=j.agentName||'';
-  document.getElementById('if-agent-cc').value=j.agentEmail||'';
-  document.getElementById('if-status').value='Draft';
-  await fillInvClientDrop(cl.id);
-  renderInvItems();
-  document.getElementById('if-vat-pct').textContent=S.vatRate||20;
-  window._pendingJobLink=jobId;
-  openModal('mo-inv');
+  try{
+    const j=await dGet('jobs',jobId);
+    if(!j){toast('Job not found — try refreshing','error');return;}
+    const ps=await dAll('persons');
+    const cl=ps.find(p=>p.name===j.referrer)||{};
+
+    // Build Labour line from hours × rate
+    const engObj=(S.engineers||[]).find(e=>e.name===j.engineer);
+    const hourlyRate=engObj?.rate||0;
+    const hours=parseFloat(j.hours)||0;
+    const jobPrice=Number(j.price)||0;
+
+    if(hours>0&&hourlyRate>0){
+      invItems=[{desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h @ £${hourlyRate}/h)`,qty:hours,unit:hourlyRate,vat:true}];
+      if(jobPrice>0&&Math.abs(jobPrice-(hours*hourlyRate))>0.01){
+        invItems.push({desc:`Materials / Additional — ${j.description||j.address}`,qty:1,unit:jobPrice,vat:true});
+      }
+    } else if(hours>0){
+      invItems=[{desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h)`,qty:hours,unit:0,vat:true}];
+      if(jobPrice>0) invItems.push({desc:`Works at ${j.address}`,qty:1,unit:jobPrice,vat:true});
+    } else {
+      invItems=[{desc:j.description||j.address||'Works',qty:1,unit:jobPrice,vat:true}];
+    }
+
+    editInvId=null;
+    window._pendingJobLink=jobId;
+    document.getElementById('mo-inv-title').textContent='◎ New Invoice from Job';
+    document.getElementById('if-date').value=j.date||TODAY();
+    document.getElementById('if-desc').value=j.description||j.address||'';
+    document.getElementById('if-notes').value=S.invNotes||'';
+    document.getElementById('if-terms').value=S.payTerms||'';
+    document.getElementById('if-jobref').value=(j.jobNum||j.id.slice(-6)).toUpperCase();
+    document.getElementById('if-agent').value=j.agentName||'';
+    document.getElementById('if-agent-cc').value=j.agentEmail||'';
+    document.getElementById('if-status').value='Draft';
+    await fillInvClientDrop(cl.id);
+    renderInvItems();
+    document.getElementById('if-vat-pct').textContent=S.vatRate||20;
+
+    // Set due date
+    const dd=new Date();dd.setDate(dd.getDate()+(S.dueDays||14));
+    const dueEl=document.getElementById('if-due');
+    if(dueEl) dueEl.value=dd.toISOString().slice(0,10);
+
+    openModal('mo-inv');
+  }catch(err){
+    toast('❌ Could not open invoice: '+(err.message||'').slice(0,80),'error');
+    console.error('createInvFromJob error:',err);
+  }
 }
 
 function calcInvTotal(inv){
@@ -6815,8 +7151,33 @@ async function downloadInvPDFById(id){
 
 async function markInvPaid(id){
   const inv=await dGet('invoices',id);
-  inv.status='Paid';await dPut('invoices',inv);
-  await logActivity(`Invoice ${inv.number} marked Paid`,'invoice');
+  if(!inv) return;
+  const t=calcInvTotal(inv);
+
+  // TASK 25: Check if a payment record already covers the full amount.
+  // If not, create one so markInvPaid always leaves an audit trail — consistent
+  // with the full payment modal. This means every Paid invoice has at least one
+  // payment entry with a date, method, and amount.
+  const allPmts=await dAll('payments');
+  const invPmts=allPmts.filter(p=>p.invId===id);
+  const alreadyPaid=invPmts.reduce((s,p)=>s+p.amount,0);
+  if(alreadyPaid<t.grand-0.01){
+    const remaining=Math.max(0,t.grand-alreadyPaid);
+    const payment={
+      id:uid(),invId:id,
+      date:TODAY(),
+      amount:remaining,
+      method:'Bank Transfer',
+      ref:inv.number,
+      recorded_by:_appUser?.name||'Office',
+      created:Date.now()
+    };
+    await dPut('payments',payment);
+  }
+
+  inv.status='Paid';
+  await dPut('invoices',inv);
+  await logActivity(`Invoice ${inv.number} marked Paid (£${t.grand.toFixed(2)})`,'invoice');
   toast('Invoice marked as Paid','success');
   renderInvList();viewInv(id);updateBadges();
 }
@@ -7117,7 +7478,7 @@ async function renderEngineersSection(){
   if(!grid) return;
 
   if(!engs.length){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">👷</div><p>No engineers yet.<br><button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="showPage('set');switchSetTab('engineers');setTimeout(addEngRow,300)">+ Add First Engineer</button></p></div>`;
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">👷</div><p>No engineers yet.<br><button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="showPage('set');switchSetTab('team');setTimeout(addEngRow,300)">+ Add First Engineer</button></p></div>`;
     return;
   }
 
@@ -7165,7 +7526,7 @@ async function renderEngineersSection(){
           <div style="font-size:10px;color:var(--txt3)">Last seen: ${lastSeen}</div>
           <div style="display:flex;gap:6px">
             ${hasLocation?`<a href="https://maps.google.com/?q=${e.last_lat},${e.last_lng}" target="_blank" onclick="event.stopPropagation()" class="btn btn-ghost btn-xs">📍 Map</a>`:''}
-            <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();showPage('set');switchSetTab('engineers')">⚙ Edit</button>
+            <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();showPage('set');switchSetTab('team')">⚙ Edit</button>
           </div>
         </div>
       </div>
@@ -7212,7 +7573,7 @@ async function openEngDir(sbIdOrName){
           ${eng.wa?`<a href="https://wa.me/${eng.wa}" target="_blank" style="font-size:12px;color:#25d366;text-decoration:none">📱 WhatsApp</a>`:''}
         </div>
       </div>
-      ${(getUserPerm('canEdit'))?`<button class="btn btn-ghost btn-sm" onclick="closeModal('mo-eng-dir');showPage('set');switchSetTab('engineers')">⚙ Edit</button>`:''}
+      ${(getUserPerm('canEdit'))?`<button class="btn btn-ghost btn-sm" onclick="closeModal('mo-eng-dir');showPage('set');switchSetTab('team')">⚙ Edit</button>`:''}
     </div>
 
     <!-- Stats row -->
@@ -7558,7 +7919,23 @@ async function saveAgency(silent=false){
 }
 
 async function deleteCurrentAgency(){
-  confirm2('Delete Agency','This will permanently delete this agency.',async()=>{
+  // FIX 17: Check for linked agents and jobs before deleting
+  const a = await dGet('agencies', editAgencyId);
+  if(!a) return;
+
+  const [allAgents, allJobs] = await Promise.all([dAll('agents'), dAll('jobs')]);
+  const linkedAgents = allAgents.filter(ag => ag.agencyId === editAgencyId);
+  const linkedJobs   = allJobs.filter(j => j.agencyName === a.name);
+
+  const warningLines = [];
+  if(linkedAgents.length) warningLines.push(`• ${linkedAgents.length} agent${linkedAgents.length!==1?'s':''} linked to this agency`);
+  if(linkedJobs.length)   warningLines.push(`• ${linkedJobs.length} job${linkedJobs.length!==1?'s':''} referencing this agency`);
+
+  const msg = warningLines.length
+    ? `"${a.name}" is linked to:\n${warningLines.join('\n')}\n\nThose records will lose their agency link.\n\nDelete anyway?`
+    : `Permanently delete agency "${a.name}"?`;
+
+  confirm2('Delete Agency', msg, async()=>{
     await dDel('agencies',editAgencyId);
     closeModal('mo-agency');renderDirSection('agencies');toast('Agency deleted','warn');
   });
@@ -7615,7 +7992,18 @@ async function saveAgent(silent=false){
 }
 
 async function deleteCurrentAgent(){
-  confirm2('Delete Agent','This will permanently delete this agent.',async()=>{
+  // FIX 17: Check for linked jobs before deleting
+  const ag = await dGet('agents', editAgentId);
+  if(!ag) return;
+
+  const allJobs = await dAll('jobs');
+  const linkedJobs = allJobs.filter(j => j.agentName === ag.name);
+
+  const msg = linkedJobs.length
+    ? `"${ag.name}" is referenced in ${linkedJobs.length} job${linkedJobs.length!==1?'s':''}.\n\nThose jobs will lose their agent link.\n\nDelete anyway?`
+    : `Permanently delete agent "${ag.name}"?`;
+
+  confirm2('Delete Agent', msg, async()=>{
     await dDel('agents',editAgentId);
     closeModal('mo-agent');renderDirSection('agents');toast('Agent deleted','warn');
   });
@@ -7710,9 +8098,31 @@ async function savePerson(silent=false){
 }
 
 async function deleteCurrentPerson(){
-  confirm2('Delete Person','This will permanently delete this person.',async()=>{
+  // FIX 17: Check for dependent records before deleting — previously this deleted
+  // immediately with no warning, orphaning all linked jobs, invoices, and certs.
+  const p = await dGet('persons', editPid);
+  if(!p) return;
+
+  const [allJobs, allInvs, allCerts] = await Promise.all([
+    dAll('jobs'), dAll('invoices'), dAll('certs')
+  ]);
+  const linkedJobs  = allJobs.filter(j => j.referrer === p.name || j.landlordName === p.name);
+  const linkedInvs  = allInvs.filter(i => i.clientName === p.name || i.clientId === editPid);
+  const linkedCerts = allCerts.filter(c => c.landlord === p.name);
+
+  const hasLinks = linkedJobs.length || linkedInvs.length || linkedCerts.length;
+  const warningLines = [];
+  if(linkedJobs.length)  warningLines.push(`• ${linkedJobs.length} job${linkedJobs.length!==1?'s':''}`);
+  if(linkedInvs.length)  warningLines.push(`• ${linkedInvs.length} invoice${linkedInvs.length!==1?'s':''}`);
+  if(linkedCerts.length) warningLines.push(`• ${linkedCerts.length} certificate${linkedCerts.length!==1?'s':''}`);
+
+  const msg = hasLinks
+    ? `"${p.name}" is linked to:\n${warningLines.join('\n')}\n\nDeleting will NOT remove those records but they will lose their contact link.\n\nDelete anyway?`
+    : `Permanently delete "${p.name}"?`;
+
+  confirm2('Delete Person', msg, async()=>{
     await dDel('persons',editPid);
-    closeModal('mo-person');renderDir();toast('Deleted','warn');
+    closeModal('mo-person');renderDir();toast('Person deleted','warn');
   });
 }
 
@@ -8316,8 +8726,29 @@ async function generateBulkReminder(){
   filtered.sort((a,b)=>(a.expiryDate||'')>(b.expiryDate||'')?1:-1);
 
   const clientName=ll||ag||'Client';
-  const email=filtered[0]?.email||'';
-  const phone=filtered[0]?.phone||'';
+
+  // FIX 9: Look up contact details from the directory (persons or agencies table) using
+  // the selected name — NOT from filtered[0] which was reading the first cert's fields
+  // and would use the wrong contact if certs came from different jobs with mixed details.
+  let email='', phone='';
+  if(ll){
+    const persons=await dAll('persons');
+    const match=persons.find(p=>p.name===ll||(p.roles||[]).includes('landlord')&&p.name===ll)
+      || persons.find(p=>p.name===ll);
+    email=match?.email||'';
+    phone=match?.phone||match?.wa||'';
+  } else if(ag){
+    const agencies=await dAll('agencies');
+    const agents=await dAll('agents');
+    const agencyMatch=agencies.find(a=>a.name===ag);
+    const agentMatch=agents.find(a=>a.name===ag);
+    const contact=agencyMatch||agentMatch;
+    email=contact?.email||'';
+    phone=contact?.phone||contact?.wa||'';
+  }
+  // Fallback: if not found in directory, try the cert fields as last resort
+  if(!email) email=filtered[0]?.email||'';
+  if(!phone) phone=filtered[0]?.phone||'';
 
   const out=document.getElementById('crem-output');
   const preview=document.getElementById('crem-preview');
@@ -8891,26 +9322,71 @@ async function waCertReminder(id){
 
 function openCertModal(){
   window._editCertModalId=null;
+  window._certLinkedJob=null;
   const d=new Date();d.setFullYear(d.getFullYear()+1);
   document.getElementById('cf-addr').value='';document.getElementById('cf-ll').value='';
   document.getElementById('cf-issue').value=TODAY();document.getElementById('cf-expiry').value=d.toISOString().slice(0,10);
   document.getElementById('cf-num').value='';document.getElementById('cf-notes').value='';
+  document.getElementById('cf-job-id').value='';
+  document.getElementById('cf-job-num').value='';
+  document.getElementById('cf-job-banner').style.display='none';
   // Populate type dropdown from S.certTypes
   const ts=document.getElementById('cf-type');
   if(ts) ts.innerHTML=(S.certTypes||[]).map(ct=>`<option value="${ct.name}">${ct.name}</option>`).join('')||'<option>Other</option>';
   openModal('mo-cert');
 }
+
+// FIX 10 helper: open cert form pre-filled and linked to a specific job.
+// Call this instead of openCertModal() when creating a cert from a completed job.
+async function openCertModalFromJob(jobId, jobNum, prefill={}){
+  openCertModal(); // resets everything first
+  window._certLinkedJob={id:jobId, jobnum:jobNum};
+  document.getElementById('cf-job-id').value=jobId||'';
+  document.getElementById('cf-job-num').value=jobNum||'';
+  if(jobNum){
+    document.getElementById('cf-job-banner').style.display='block';
+    document.getElementById('cf-job-banner-num').textContent=jobNum;
+  }
+  // Pre-fill address, landlord etc from job if provided
+  if(prefill.address) document.getElementById('cf-addr').value=prefill.address;
+  if(prefill.landlord) document.getElementById('cf-ll').value=prefill.landlord;
+  if(prefill.type){
+    const ts=document.getElementById('cf-type');
+    if(ts){const opt=[...ts.options].find(o=>o.value===prefill.type);if(opt)ts.value=opt.value;}
+  }
+}
 async function saveCert(){
   const certId=window._editCertModalId||uid();
-  const c={id:certId,address:document.getElementById('cf-addr').value.trim(),type:document.getElementById('cf-type').value,
-    landlord:document.getElementById('cf-ll').value.trim(),issueDate:document.getElementById('cf-issue').value,
-    expiryDate:document.getElementById('cf-expiry').value,certNum:document.getElementById('cf-num').value,
-    notes:document.getElementById('cf-notes').value,noExpiry:!document.getElementById('cf-expiry').value};
+
+  // FIX 10: Capture optional job link. When the cert modal is opened from a job context
+  // (e.g. the future "create cert from completed job" prompt), the caller sets
+  // window._certLinkedJob = {id, jobnum}. We store both fields on the cert record so
+  // certs and jobs are permanently linked and can be navigated between.
+  const linkedJob=window._certLinkedJob||null;
+
+  const c={
+    id:certId,
+    address:document.getElementById('cf-addr').value.trim(),
+    type:document.getElementById('cf-type').value,
+    landlord:document.getElementById('cf-ll').value.trim(),
+    issueDate:document.getElementById('cf-issue').value,
+    expiryDate:document.getElementById('cf-expiry').value,
+    certNum:document.getElementById('cf-num').value,
+    notes:document.getElementById('cf-notes').value,
+    noExpiry:!document.getElementById('cf-expiry').value,
+    // Job link fields — null when cert created standalone, populated when from a job
+    jobId:linkedJob?.id||document.getElementById('cf-job-id')?.value||null,
+    jobNum:linkedJob?.jobnum||document.getElementById('cf-job-num')?.value||null,
+  };
   if(!c.address){toast('Address required','error');return}
   await dPut('certs',c);
-  await logActivity(`Certificate ${window._editCertModalId?'updated':'added'}: ${c.type} at ${c.address}`,'cert');
+  await logActivity(`Certificate ${window._editCertModalId?'updated':'added'}: ${c.type} at ${c.address}${c.jobNum?' (Job '+c.jobNum+')':''}`, 'cert');
   window._editCertModalId=null;
-  closeModal('mo-cert');if(_certTab==='list')renderCertTable();else renderCerts();updateBadges();toast('Certificate saved','success');
+  window._certLinkedJob=null;
+  closeModal('mo-cert');
+  if(_certTab==='list')renderCertTable();else renderCerts();
+  updateBadges();
+  toast('Certificate saved'+(c.jobNum?' — linked to job '+c.jobNum:''),'success');
 }
 async function delCert(id){
   confirm2('Delete Certificate','Remove this certificate permanently?',async()=>{
@@ -9499,8 +9975,37 @@ function renderSettings(){
   }
 }
 
-function addTradeRow(){S.trades.push({name:'New Trade',color:'#888',defPrice:0,defHours:1});renderSettings()}
-function addEngRow(){S.engineers.push({name:'',phone:'',rate:0,otRate:0,wa:'',trade:'',capacity:8,pin:''});renderSettings()}
+function addTradeRow(){S.trades.push({name:'New Trade',color:'#888',defPrice:0,defHours:1});renderSettings();_markSettingsUnsaved();}
+function addEngRow(){
+  // FIX 7: Engineers live in Supabase — adding a row is NOT saved until the user clicks
+  // "Save Settings". Previously there was zero indication of this, so rows vanished silently
+  // on navigation. Now we show a persistent banner and scroll to the save button.
+  S.engineers.push({name:'',phone:'',rate:0,otRate:0,wa:'',trade:'',capacity:8,pin:''});
+  renderSettings();
+  _markSettingsUnsaved();
+  // Scroll the new row into view
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('#st-engineers tbody tr');
+    if(rows.length) rows[rows.length-1].scrollIntoView({behavior:'smooth',block:'center'});
+  },100);
+}
+
+let _settingsUnsaved=false;
+function _markSettingsUnsaved(){
+  if(_settingsUnsaved) return;
+  _settingsUnsaved=true;
+  // Insert a sticky warning banner at top of settings pane if not already present
+  let banner=document.getElementById('settings-unsaved-banner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='settings-unsaved-banner';
+    banner.style.cssText='position:sticky;top:0;z-index:50;background:#f5a623;color:#1a1a1a;padding:10px 18px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px;';
+    banner.innerHTML=`<span>⚠️ Unsaved changes — scroll down and click Save Settings or your new rows will be lost.</span>
+      <button onclick="saveSettings();document.getElementById('settings-unsaved-banner')?.remove();window._settingsUnsaved=false;" style="background:#1a1a1a;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;">Save Now</button>`;
+    const pane=document.getElementById('pg-settings')||document.querySelector('.page-settings');
+    if(pane) pane.prepend(banner); else document.body.prepend(banner);
+  }
+}
 
 // Sync all engineers to Supabase users table so they can log into the engineer portal
 // Force-refresh users from Supabase and update the UI
@@ -9508,399 +10013,227 @@ function addEngRow(){S.engineers.push({name:'',phone:'',rate:0,otRate:0,wa:'',tr
 // SUPABASE AUTH USER MANAGEMENT (Admin Settings)
 // ═══════════════════════════════════════════════════════════════
 
-async function addOfficeStaff(){
-  const name  =(document.getElementById('inv-name')?.value||'').trim();
-  const email =(document.getElementById('inv-email')?.value||'').trim().toLowerCase();
-  const role  = document.getElementById('inv-role')?.value||'staff';
-  const pwd   =(document.getElementById('inv-password')?.value||'').trim();
-  const statusEl=document.getElementById('inv-status');
+// ════════════════════════════════════════════════════════════════
+//  UNIFIED TEAM MANAGEMENT
+//  One function: loadTeam() fetches ALL Supabase Auth users,
+//  cross-references with our users table, and renders a single
+//  unified list with role pickers for each person.
+// ════════════════════════════════════════════════════════════════
 
-  if(!name||!email){_showInvStatus('Enter name and email','error');return;}
-  if(!email.includes('@')){_showInvStatus('Enter a valid email','error');return;}
-  if(!pwd||pwd.length<6){_showInvStatus('Password must be at least 6 characters','error');return;}
-
-  const btn=document.querySelector('[onclick="addOfficeStaff()"]');
-  if(btn){btn.disabled=true;btn.textContent='Creating…';}
+async function loadTeam(){
+  const el   = document.getElementById('team-list');
+  const stat = document.getElementById('team-sync-status');
+  const btn  = document.getElementById('btn-team-sync');
+  if(!el) return;
+  if(btn){btn.disabled=true;btn.textContent='🔄 Syncing…';}
+  el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--txt3);font-size:12px"><div class="spin" style="width:20px;height:20px;border-width:2px;margin:0 auto 8px"></div>Loading…</div>';
 
   try{
-    // Check duplicate
-    const existing=await _sb(`users?email=eq.${encodeURIComponent(email)}&select=id`).catch(()=>[]);
-    if(existing?.length){
-      _showInvStatus('⚠️ A user with this email already exists.','warn');
-      if(btn){btn.disabled=false;btn.textContent='👤 Create Account';} return;
-    }
-
-    // Hash password same way engineers do: sha256('df2024:email:password')
-    const enc=new TextEncoder();
-    const buf=await crypto.subtle.digest('SHA-256',enc.encode('df2024:'+email+':'+pwd));
-    const pin=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-
-    // Also create Supabase Auth account so they can sign in via email+password
-    let authId=null;
+    // 1. Get all Supabase Auth users
+    let authUsers = [];
     try{
-      const {data,error}=await _supaAuth.auth.signUp({email,password:pwd,options:{data:{name,role}}});
-      if(!error&&data?.user?.id) authId=data.user.id;
-    }catch(e){}
+      const {data, error} = await _supaAuth.rpc('get_auth_users');
+      if(!error && Array.isArray(data)) authUsers = data;
+    }catch(e){
+      el.innerHTML = `<div style="background:rgba(240,68,68,.08);border:1px solid rgba(240,68,68,.2);border-radius:8px;padding:14px;font-size:12px;color:#e05252">
+        <strong>⚠️ Sync not set up yet.</strong><br>Run this SQL in Supabase first, then click Sync again:<br><br>
+        <code style="background:var(--s2);padding:6px 10px;border-radius:6px;display:block;margin-top:6px;font-size:11px;user-select:all">
+CREATE OR REPLACE FUNCTION get_auth_users() RETURNS TABLE(id uuid, email text, created_at timestamptz) LANGUAGE plpgsql SECURITY DEFINER SET search_path = auth, public AS $$ BEGIN RETURN QUERY SELECT u.id, u.email::text, u.created_at FROM auth.users u ORDER BY u.created_at DESC; END; $$;</code>
+      </div>`;
+      return;
+    }
 
-    const payload={
-      id: crypto.randomUUID(),
-      name, email, role, active:true,
-      pin,  // 64-char hash — used if Supabase Auth fails
-      can_edit:   role!=='viewer',
-      can_delete: role==='admin'||role==='manager',
-      can_invoice:role!=='viewer',
-      can_finance:role==='admin'||role==='manager',
-      see_landlord:true,see_landlord_phone:true,
-      see_agent:true,see_contact:true,see_price:role!=='viewer',
-      created:Math.floor(Date.now()/1000),
+    // 2. Get our users table rows
+    const ourUsers = await _sb('users?select=*&active=eq.true&order=name.asc') || [];
+    const byEmail  = {};
+    const byAuthId = {};
+    ourUsers.forEach(u => {
+      if(u.email)   byEmail[u.email.toLowerCase()] = u;
+      if(u.auth_id) byAuthId[u.auth_id] = u;
+    });
+
+    const roleInfo = {
+      admin:    {icon:'👑',label:'Admin',   col:'#f5a623',bg:'rgba(245,166,35,.1)'},
+      manager:  {icon:'🏢',label:'Manager', col:'#4f8fff',bg:'rgba(79,143,255,.1)'},
+      staff:    {icon:'📋',label:'Staff',   col:'#22c55e',bg:'rgba(34,197,94,.1)'},
+      viewer:   {icon:'👁',label:'Viewer',  col:'#a855f7',bg:'rgba(168,85,247,.1)'},
+      engineer: {icon:'👷',label:'Engineer',col:'#14b8a6',bg:'rgba(20,184,166,.1)'},
     };
-    if(authId) payload.auth_id=authId;
 
-    await _sb('users',{method:'POST',body:payload,prefer:'return=minimal'});
+    const roleOpts = Object.entries(roleInfo).map(([v,r])=>`<option value="${v}">${r.icon} ${r.label}</option>`).join('');
+    const me = _appUser?.email;
 
-    _showInvStatus(`✅ ${name} added! They can log in with ${email} / the password you set.`,'success');
-    document.getElementById('inv-name').value='';
-    document.getElementById('inv-email').value='';
-    if(document.getElementById('inv-password')) document.getElementById('inv-password').value='';
-    setTimeout(loadAuthUsers,800);
-  }catch(e){
-    _showInvStatus('❌ Error: '+(e.message||'Failed'),'error');
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='👤 Create Account';}
-  }
-}
+    let rows = '';
+    authUsers.forEach(au => {
+      const profile = byAuthId[au.id] || byEmail[(au.email||'').toLowerCase()];
+      const isMe    = (au.email||'').toLowerCase() === (me||'').toLowerCase();
+      const ri      = profile ? (roleInfo[profile.role]||roleInfo.staff) : null;
+      const lastSeen = profile?.last_seen
+        ? new Date(profile.last_seen*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+        : 'Never';
 
-
-async function loadAuthUsers(){
-  const container=document.getElementById('auth-users-list');
-  const statusEl=document.getElementById('user-sync-status');
-  if(!container)return;
-  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--txt3);font-size:12px"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto 6px"></div>Loading…</div>';
-
-  try{
-    const users=await _sb('users?order=name.asc&select=*&active=eq.true');
-    if(!users||!users.length){
-      container.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">No users found. Use the Invite form above to add users.</div>';
-      return;
-    }
-
-    const roleColors={admin:'rgba(245,166,35,.1)',manager:'rgba(79,143,255,.08)',staff:'rgba(34,197,94,.06)',viewer:'rgba(168,85,247,.06)',engineer:'rgba(79,143,255,.04)'};
-    const roleIcons={admin:'👑',manager:'🏢',staff:'📋',viewer:'👁',engineer:'👷'};
-    const roleBorder={admin:'rgba(245,166,35,.25)',manager:'rgba(79,143,255,.2)',staff:'rgba(34,197,94,.15)',viewer:'rgba(168,85,247,.2)',engineer:'rgba(79,143,255,.15)'};
-    const isMe=(u)=>u.auth_id===_appUser?._authId||u.email===_appUser?.email;
-
-    container.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
-    ${users.map(u=>{
-      const ri=roleIcons[u.role]||'👤';
-      const me=isMe(u);
-      const lastSeen=u.last_seen?new Date(u.last_seen*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Never';
-      const isAuthLinked=!!u.auth_id;
-      return `<div style="background:${roleColors[u.role]||'var(--s2)'};border:1px solid ${roleBorder[u.role]||'var(--border)'};border-radius:10px;padding:12px 14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-            <div style="font-size:22px;flex-shrink:0">${ri}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px">
-                ${u.name||'—'}
-                ${me?'<span style="font-size:10px;background:rgba(79,143,255,.15);color:#4f8fff;padding:1px 7px;border-radius:10px;font-weight:700">YOU</span>':''}
-                ${isAuthLinked?'<span style="font-size:10px;color:#22c55e;font-weight:600" title="Linked to Supabase Auth">🔗</span>':'<span style="font-size:10px;color:#f5a623;font-weight:600" title="Not yet linked to Auth — needs to accept invite">⚠️ invite pending</span>'}
-              </div>
-              <div style="font-size:11px;color:var(--txt3);margin-top:2px">${u.email||'No email'} · Last seen: ${lastSeen}</div>
+      if(profile){
+        // Already in DeepFlow — show with role dropdown
+        rows += `
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:${isMe?'rgba(245,166,35,.04)':'var(--s1)'};flex-wrap:wrap">
+          <div style="width:36px;height:36px;border-radius:50%;background:${ri.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${ri.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              ${profile.name||'—'}
+              ${isMe?'<span style="font-size:10px;background:rgba(79,143,255,.15);color:#4f8fff;padding:1px 7px;border-radius:10px">YOU</span>':''}
+              <span style="font-size:10px;background:${ri.bg};color:${ri.col};padding:1px 7px;border-radius:10px;font-weight:700">✓ Active</span>
             </div>
+            <div style="font-size:11px;color:var(--txt3);margin-top:2px">${au.email} · Last seen: ${lastSeen}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-            <select style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--s1);color:var(--txt);font-size:12px;font-family:var(--font)" onchange="updateUserRole('${u.id}',this.value,this)" ${me?'disabled title="Cannot change your own role"':''}>
-              <option value="admin"   ${u.role==='admin'   ?'selected':''}>👑 Admin</option>
-              <option value="manager" ${u.role==='manager' ?'selected':''}>🏢 Manager</option>
-              <option value="staff"   ${u.role==='staff'   ?'selected':''}>📋 Staff</option>
-              <option value="viewer"  ${u.role==='viewer'  ?'selected':''}>👁 Viewer</option>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap">
+            <select style="padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--txt);font-size:12px" ${isMe?'disabled':''} onchange="teamChangeRole('${profile.id}','${au.email}',this.value,this)">
+              ${Object.entries(roleInfo).map(([v,r])=>`<option value="${v}" ${profile.role===v?'selected':''}>${r.icon} ${r.label}</option>`).join('')}
             </select>
-            ${!me?`<button class="btn btn-red btn-xs" onclick="revokeUser('${u.id}','${(u.name||'').replace(/'/g,"\'")}','${u.auth_id||''}')" title="Revoke access — they will be immediately signed out">🗑 Revoke</button>`:'<span style="font-size:11px;color:var(--txt3)">(you)</span>'}
+            ${!isMe?`<button class="btn btn-red btn-xs" onclick="teamRevoke('${profile.id}','${profile.name||au.email}')">🗑 Remove</button>`:'<span style="font-size:11px;color:var(--txt3)">(you)</span>'}
           </div>
-        </div>
-      </div>`;
-    }).join('')}
-    </div>`;
-
-    if(statusEl)statusEl.textContent=`${users.length} user${users.length!==1?'s':''} — last refreshed ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
-
-    // Also sync S.users for internal use
-    const sbOffice=users.filter(u=>u.role!=='engineer');
-    S.users=sbOffice.map(su=>{
-      const role={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'}[su.role]||'Staff';
-      return {id:su.id,_sbId:su.id,name:su.name,email:su.email||'',role,auth_id:su.auth_id||null,
-        canEdit:su.can_edit!==false,canDelete:su.can_delete===true||role==='Admin',
-        canInvoice:su.can_invoice!==false,canFinance:su.can_finance===true||role==='Admin'||role==='Manager',
-        seeLandlord:su.see_landlord!==false,seeLandlordPhone:su.see_landlord_phone!==false,
-        seeAgent:su.see_agent!==false,seeContact:su.see_contact!==false,seePrice:su.see_price!==false};
+        </div>`;
+      } else {
+        // In Supabase Auth but NOT in DeepFlow yet — show Add row
+        rows += `
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;border:1px dashed rgba(79,143,255,.4);background:rgba(79,143,255,.04);flex-wrap:wrap" id="new-row-${au.id}">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(79,143,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>
+          <div style="flex:1;min-width:0">
+            <input type="text" id="tname-${au.id}" placeholder="Enter full name *"
+              style="padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--txt);font-size:12px;width:100%;max-width:200px;margin-bottom:3px">
+            <div style="font-size:11px;color:var(--txt3)">${au.email}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap">
+            <select id="trole-${au.id}" style="padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--txt);font-size:12px">
+              ${roleOpts}
+            </select>
+            <button class="btn btn-acc btn-sm" onclick="teamAdd('${au.id}','${au.email}')">✅ Add</button>
+          </div>
+        </div>`;
+      }
     });
 
-  }catch(e){
-    container.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">❌ Failed to load users: ${e.message}</div>`;
-  }
-}
+    el.innerHTML = rows || '<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">No Supabase Auth users found. Add users in Supabase first.</div>';
+    if(stat) stat.textContent = `${authUsers.length} Supabase user${authUsers.length!==1?'s':''} · ${ourUsers.length} in DeepFlow — last synced ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
 
-async function updateUserRole(userId, newRole, selectEl){
-  if(!userId)return;
-  try{
-    await _sb(`users?id=eq.${userId}`,{method:'PATCH',body:{role:newRole},prefer:'return=minimal'});
-    toast(`✅ Role updated to ${newRole}`,'success');
-    loadAuthUsers();
-  }catch(e){
-    toast('❌ Failed to update role: '+e.message,'error');
-    if(selectEl)loadAuthUsers(); // reset dropdown
-  }
-}
+    // Sync S.engineers + S.users for job dropdowns — save to localStorage so refresh works
+    S.engineers = ourUsers.filter(u=>u.role==='engineer').map(u=>({
+      _sbId:u.id, name:u.name, phone:u.phone||'', rate:u.rate||0,
+      otRate:0, wa:'', trade:'', capacity:8, pin:u.pin||'', email:u.email||''
+    }));
+    localStorage.setItem('df_setting_engineers', JSON.stringify(S.engineers));
 
-async function revokeUser(userId, name, authId){
-  if(!confirm(`Revoke access for "${name}"?\n\nThis will:\n• Disable their login immediately\n• They will be signed out within minutes\n• Works even if they have an old copy of the HTML\n\nYou can re-enable them later if needed.`))return;
-  try{
-    // 1. Set active=false in our users table
-    await _sb(`users?id=eq.${userId}`,{method:'PATCH',body:{active:false},prefer:'return=minimal'});
-    // 2. Delete from Supabase Auth (if linked) — requires Supabase dashboard for anon key
-    toast(`✅ ${name} revoked — they can no longer log in`,'success');
-    if(authId){
-      toast(`ℹ️ Also delete "${name}" from Supabase Auth to fully remove them: Settings → Auth Users`,'warn',7000);
-    }
-    loadAuthUsers();
-  }catch(e){
-    toast('❌ Failed: '+e.message,'error');
-  }
-}
-
-// addUserRow kept as no-op for legacy compatibility
-function addUserRow(){ toast('Use the Invite form above to add new users','info'); }
-
-async function forceSyncUsers(){
-  const statusEl=document.getElementById('user-sync-status');
-  if(statusEl) statusEl.textContent='🔄 Fetching from Supabase…';
-  try{
-    const all=await _sb('users?active=eq.true&order=name.asc&select=*');
-    if(!all||!all.length){
-      if(statusEl) statusEl.textContent='⚠️ No users found in Supabase. Add users below and click Save & Sync.';
-      return;
-    }
-    const localUsers=JSON.parse(localStorage.getItem('df_setting_users')||'[]');
-    const localEngs=JSON.parse(localStorage.getItem('df_setting_engineers')||'[]');
-    const sbEngs=all.filter(u=>u.role==='engineer');
-    const sbOffice=all.filter(u=>u.role!=='engineer');
-    S.engineers=sbEngs.map(sbe=>{
-      const local=localEngs.find(e=>e._sbId===sbe.id||e.name===sbe.name)||{};
-      return {...local,_sbId:sbe.id,name:sbe.name,phone:sbe.phone||'',pin:sbe.pin||'',rate:local.rate||0,otRate:local.otRate||0,wa:local.wa||'',trade:local.trade||'',capacity:local.capacity||8};
-    });
-    S.users=sbOffice.map(su=>{
-      const local=localUsers.find(u=>u._sbId===su.id||u.name===su.name)||{};
-      const role=su.role==='admin'?'Admin':su.role==='manager'?'Manager':su.role==='viewer'?'Viewer':'Staff';
-      const isAdmin=role==='Admin'||role==='Manager';
-      return {id:su.id,_sbId:su.id,name:su.name,pin:su.pin||'',role:local.role||role,
-        canEdit:local.canEdit!==undefined?local.canEdit:true,
-        canDelete:local.canDelete!==undefined?local.canDelete:isAdmin,
-        canInvoice:local.canInvoice!==undefined?local.canInvoice:true,
-        canFinance:local.canFinance!==undefined?local.canFinance:isAdmin,
-        seeLandlord:local.seeLandlord!==undefined?local.seeLandlord:true,
-        seeLandlordPhone:local.seeLandlordPhone!==undefined?local.seeLandlordPhone:true,
-        seeAgent:local.seeAgent!==undefined?local.seeAgent:true,
-        seeContact:local.seeContact!==undefined?local.seeContact:true,
-        seePrice:local.seePrice!==undefined?local.seePrice:true};
-    });
-    localStorage.setItem('df_setting_users',JSON.stringify(S.users));
-    localStorage.setItem('df_setting_engineers',JSON.stringify(S.engineers));
-    renderSettings();
-    if(statusEl) statusEl.innerHTML=`✅ Loaded ${sbOffice.length} office user${sbOffice.length!==1?'s':''} + ${sbEngs.length} engineer${sbEngs.length!==1?'s':''} from Supabase`;
-    toast(`✅ ${sbOffice.length} users loaded from Supabase`,'success');
-  }catch(e){
-    if(statusEl) statusEl.textContent='❌ Supabase fetch failed: '+e.message;
-    toast('Supabase sync failed','error');
-  }
-}
-
-// ── Engineer account creation ──────────────────────────────────────────
-// Uses a fake internal email for Supabase Auth so NO emails are ever sent
-// and NO rate limits are hit. Real email stored in users table.
-// Engineer logs in with real email → portal looks up internal email → Auth.
-async function addEngineer(){
-  const name     = (document.getElementById('einv-name')?.value||'').trim();
-  const realEmail= (document.getElementById('einv-email')?.value||'').trim().toLowerCase();
-  const password = (document.getElementById('einv-password')?.value||'').trim();
-  const phone    = (document.getElementById('einv-phone')?.value||'').trim();
-
-  if(!name)     { _showEngInvStatus('❌ Enter engineer name','error'); return; }
-  if(!realEmail||!realEmail.includes('@')){ _showEngInvStatus('❌ Enter a valid email address','error'); return; }
-  if(!password||password.length<6){ _showEngInvStatus('❌ Password must be at least 6 characters','error'); return; }
-  if(!_supaAuth){ _showEngInvStatus('❌ Not connected to Supabase','error'); return; }
-
-  const btn  = document.getElementById('einv-btn');
-  const spin = document.getElementById('einv-spinner');
-  if(btn){btn.disabled=true; btn.style.display='none';}
-  if(spin) spin.style.display='';
-  document.getElementById('einv-status').style.display='none';
-
-  try{
-    // 1. Check real email not already used
-    const existing = await _sb(`users?email=eq.${encodeURIComponent(realEmail)}&select=id,name,role`).catch(()=>[]);
-    if(existing?.length){
-      _showEngInvStatus(`⚠️ "${realEmail}" is already registered (${existing[0].name}). Use a different email.`,'warn');
-      return;
-    }
-
-    const newId = crypto.randomUUID();
-
-    // 2. Hash email+password to make a deterministic internal password for Supabase Auth
-    //    We store the hash in users table — engineer portal uses it to re-authenticate
-    //    No signUp() call = NO email sent, NO rate limits
-    const enc = new TextEncoder();
-    const hashBuf = await crypto.subtle.digest('SHA-256', enc.encode('df2024:' + realEmail + ':' + password));
-    const hashArr = Array.from(new Uint8Array(hashBuf));
-    const pwHash  = hashArr.map(b=>b.toString(16).padStart(2,'0')).join('');
-
-    // 3. Store profile in users table — no Supabase Auth account created yet
-    //    The engineer portal will verify the hash locally, then use a shared
-    //    service approach for the session JWT
-    await _sb('users', {method:'POST', prefer:'return=minimal', body:{
-      id:       newId,
-      name,
-      email:    realEmail,
-      phone:    phone||null,
-      pin:      pwHash.slice(0,64),  // store hash in pin field (64 hex chars)
-      role:     'engineer',
-      active:   true,
-      created:  Math.floor(Date.now()/1000),
-      can_edit:false, can_delete:false, can_invoice:false, can_finance:false,
-      see_landlord:true, see_landlord_phone:false,
-      see_agent:false, see_contact:true, see_price:false,
-    }});
-
-    _showEngInvStatus(
-      `✅ ${name} added successfully!\n\n` +
-      `They can log in to the engineer portal with:\n` +
-      `📧 ${realEmail}\n` +
-      `🔑 The password you just set\n\n` +
-      `No emails sent — active immediately.`,
-      'success'
-    );
-
-    ['einv-name','einv-email','einv-password','einv-phone'].forEach(id=>{
-      const el=document.getElementById(id); if(el) el.value='';
-    });
-    loadEngineers();
-    forceSyncUsers();
+    const officeUsers = ourUsers.filter(u=>u.role!=='engineer');
+    S.users = officeUsers.map(u=>({
+      id:u.id, _sbId:u.id, name:u.name, email:u.email||'',
+      role:{admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'}[u.role]||'Staff',
+      auth_id:u.auth_id||null,
+      canEdit:u.can_edit!==false, canDelete:u.can_delete===true||u.role==='admin'||u.role==='manager',
+      canInvoice:u.can_invoice!==false, canFinance:u.can_finance===true||u.role==='admin'||u.role==='manager',
+      seeLandlord:u.see_landlord!==false, seeLandlordPhone:u.see_landlord_phone!==false,
+      seeAgent:u.see_agent!==false, seeContact:u.see_contact!==false, seePrice:u.see_price!==false,
+    }));
+    localStorage.setItem('df_setting_users', JSON.stringify(S.users));
 
   }catch(e){
-    _showEngInvStatus('❌ Failed: ' + e.message, 'error');
-    console.error('addEngineer error:',e);
+    el.innerHTML = `<div style="color:var(--red);font-size:12px;padding:12px">❌ Failed: ${e.message}</div>`;
+    console.error('loadTeam:',e);
   }finally{
-    if(btn){ btn.disabled=false; btn.style.display=''; }
-    if(spin) spin.style.display='none';
+    if(btn){btn.disabled=false;btn.textContent='🔄 Sync from Supabase';}
   }
 }
 
-async function inviteEngineer(){ return addEngineer(); }
+// Add a Supabase Auth user to our users table
+async function teamAdd(authId, email){
+  const nameEl  = document.getElementById('tname-'+authId);
+  const roleEl  = document.getElementById('trole-'+authId);
+  const name    = nameEl?.value.trim();
+  const role    = roleEl?.value || 'staff';
 
-function _showEngInvStatus(msg,type='info'){
-  const el=document.getElementById('einv-status');
-  if(!el)return;
-  el.style.display='block';
-  const s={success:{bg:'rgba(34,197,94,.1)',b:'rgba(34,197,94,.3)',c:'#22c55e'},error:{bg:'rgba(239,68,68,.1)',b:'rgba(239,68,68,.3)',c:'#ef4444'},warn:{bg:'rgba(245,166,35,.1)',b:'rgba(245,166,35,.3)',c:'#f5a623'},info:{bg:'rgba(79,143,255,.08)',b:'rgba(79,143,255,.25)',c:'#4f8fff'}}[type]||{};
-  el.style.background=s.bg;el.style.border='1px solid '+s.b;el.style.color=s.c;el.style.borderRadius='8px';el.style.padding='10px 12px';el.style.lineHeight='1.6';
-  el.textContent=msg;
-}
+  if(!name){ toast('Enter a name first','error'); nameEl?.focus(); return; }
 
-async function loadEngineers(){
-  const container=document.getElementById('eng-auth-list');
-  if(!container)return;
-  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--txt3);font-size:12px">Loading…</div>';
+  const isEng = role === 'engineer';
+  const payload = {
+    id: crypto.randomUUID(),
+    name, email: email.toLowerCase(), role, active: true,
+    auth_id: authId, pin: '',
+    can_edit:    !isEng && role!=='viewer',
+    can_delete:  role==='admin'||role==='manager',
+    can_invoice: !isEng && role!=='viewer',
+    can_finance: role==='admin'||role==='manager',
+    see_landlord:true, see_landlord_phone:!isEng,
+    see_agent:   !isEng, see_contact:true, see_price:!isEng && role!=='viewer',
+    created: Math.floor(Date.now()/1000),
+  };
+
   try{
-    const engs=await _sb('users?role=eq.engineer&active=eq.true&order=name.asc&select=*');
-    if(!engs?.length){
-      container.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px">No engineers yet. Use the Invite form above.</div>';
-      return;
+    await _sb('users',{method:'POST',body:payload,prefer:'return=minimal'});
+    toast(`✅ ${name} added as ${role} — they can log in now`,'success',4000);
+    loadTeam();
+  }catch(e){
+    let msg = e.message||'Unknown error';
+    if(msg.includes('42501')||msg.includes('row-level security')){
+      msg='RLS error — run the Fix SQL in Guide & SQL tab, then try again.';
+    } else if(msg.includes('duplicate')||msg.includes('unique')){
+      msg='This email is already in DeepFlow. Click Sync to refresh.';
     }
-    const fmt=ts=>ts?new Date(ts*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Never';
-    container.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
-    ${engs.map(e=>{
-      const linked=!!e.auth_id;
-      const lastSeen=fmt(e.last_seen);
-      return `<div style="background:${linked?'rgba(34,197,94,.04)':'rgba(245,166,35,.04)'};border:1px solid ${linked?'rgba(34,197,94,.2)':'rgba(245,166,35,.2)'};border-radius:10px;padding:12px 14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-            <div style="font-size:24px">👷</div>
-            <div style="min-width:0">
-              <div style="font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                ${e.name}
-                ${linked
-                  ?'<span style="font-size:10px;background:rgba(34,197,94,.15);color:#22c55e;padding:1px 7px;border-radius:10px;font-weight:700">✓ Active</span>'
-                  :'<span style="font-size:10px;background:rgba(245,166,35,.15);color:#f5a623;padding:1px 7px;border-radius:10px;font-weight:700">⚠ Pending login</span>'}
-              </div>
-              <div style="font-size:11px;color:var(--txt3);margin-top:3px">
-                📧 ${e.email||'<em>no email</em>'} · 📞 ${e.phone||'—'} · Last seen: ${lastSeen}
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-xs" onclick="resetEngPassword('${e.id}','${(e.name||'').replace(/'/g,"\'")}','${e.email||''}')">🔑 Reset PW</button>
-            <button class="btn btn-red btn-xs" onclick="deleteEngineer('${e.id}','${(e.name||'').replace(/'/g,"\'")}')">🗑 Delete</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('')}
-    </div>`;
-    // Sync to S.engineers
-    S.engineers=engs.map(e=>({_sbId:e.id,name:e.name,phone:e.phone||'',rate:e.rate||0,otRate:0,wa:'',trade:'',capacity:8,pin:e.pin||'',email:e.email||''}));
-    localStorage.setItem('df_setting_engineers',JSON.stringify(S.engineers));
-  }catch(err){
-    container.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">❌ ${err.message}</div>`;
+    toast('❌ '+msg,'error',6000);
   }
 }
 
-async function setEngEmail(id,name){
-  const email=prompt(`Enter email address for ${name}:`,'');
-  if(!email||!email.includes('@'))return;
+// Change an existing user's role
+async function teamChangeRole(userId, email, newRole, sel){
+  const isEng = newRole==='engineer';
   try{
-    await _sb(`users?id=eq.${id}`,{method:'PATCH',body:{email:email.trim().toLowerCase()},prefer:'return=minimal'});
-    toast(`✅ Email set for ${name}`,'success');
-    loadEngineers();
-  }catch(e){toast('❌ '+e.message,'error');}
-}
-
-async function deleteEngineer(id, name){
-  if(!confirm(`Delete engineer "${name}"?\n\nThis will:\n• Remove their profile immediately\n• They cannot log into the portal\n• Their past jobs are kept\n\nProceed?`))return;
-  try{
-    // Remove profile from users table (hard delete)
-    const r=await _sb(`users?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
-    toast(`✅ ${name} deleted — they cannot log in`,'success');
-    loadEngineers();
-    // Refresh S.engineers
-    S.engineers=(S.engineers||[]).filter(e=>e._sbId!==id);
-    localStorage.setItem('df_setting_engineers',JSON.stringify(S.engineers));
-  }catch(e){toast('❌ Delete failed: '+e.message,'error');}
-}
-
-async function revokeEngineer(id,name){ deleteEngineer(id,name); }
-
-async function resetEngPassword(id, name, email){
-  if(!email||!email.includes('@')){
-    toast('❌ No email on file for '+name+' — edit their record first','error');
-    return;
+    await _sb(`users?id=eq.${userId}`,{method:'PATCH',prefer:'return=minimal',body:{
+      role:newRole,
+      can_edit:    !isEng && newRole!=='viewer',
+      can_delete:  newRole==='admin'||newRole==='manager',
+      can_invoice: !isEng && newRole!=='viewer',
+      can_finance: newRole==='admin'||newRole==='manager',
+      see_landlord:true, see_landlord_phone:!isEng,
+      see_agent:!isEng, see_price:!isEng && newRole!=='viewer',
+    }});
+    toast(`✅ Role updated to ${newRole}`,'success',2500);
+    loadTeam();
+  }catch(e){
+    toast('❌ '+e.message,'error');
+    loadTeam(); // reset
   }
-  const newPw=prompt(`Set new portal password for ${name}:\n(Min 6 characters)`,'');
-  if(!newPw){return;}
-  if(newPw.length<6){toast('❌ Password must be at least 6 characters','error');return;}
-  if(!_supaAuth){toast('❌ Not connected','error');return;}
+}
 
-  // We cannot change another user password via anon key directly
-  // Best approach: send password reset email
+// Remove a user from DeepFlow (they stay in Supabase Auth — delete there to block login)
+async function teamRevoke(userId, name){
+  if(!confirm(`Remove "${name}" from DeepFlow?\n\nThis removes their profile and permissions.\nTo block login completely, also delete them in Supabase Auth → Users.`)) return;
   try{
-    const {error}=await _supaAuth.auth.resetPasswordForEmail(email);
-    if(error){toast('❌ '+error.message,'error');return;}
-    toast(`✅ Password reset email sent to ${email}. ${name} will get a link to set their new password.`,'success');
-  }catch(e){toast('❌ '+e.message,'error');}
+    await _sb(`users?id=eq.${userId}`,{method:'DELETE',prefer:'return=minimal'});
+    toast(`✅ ${name} removed from DeepFlow`,'success');
+    loadTeam();
+  }catch(e){ toast('❌ '+e.message,'error'); }
 }
 
-async function syncEngineers(){
-  // Legacy — just refresh the list
-  await loadEngineers();
-  return (S.engineers||[]).length;
-}
+// Legacy stubs — keep so old code calling these doesn't break
+async function loadAuthUsers(){ await loadTeam(); }
+async function loadEngineers(){ await loadTeam(); }
+async function syncFromSupabaseAuth(){ await loadTeam(); }
+async function syncEngineersFromSupabase(){ await loadTeam(); }
+async function addOfficeStaff(){ toast('Use Sync from Supabase to add users','info'); }
+async function addEngineer(){ toast('Use Sync from Supabase to add engineers','info'); }
+async function inviteEngineer(){ return addEngineer(); }
+async function importAuthUser(id,email){ await teamAdd(id,email); }
+async function addEngFromAuth(id,email){ await teamAdd(id,email); }
+function _showInvStatus(msg,type){ toast(msg,type); }
+function _showEngInvStatus(msg,type){ toast(msg,type); }
+async function fixUserAuth(){ await loadTeam(); }
+async function resetStaffPassword(){ toast('Go to Supabase Auth → find user → send reset email','info'); }
+async function setEngPwd(){ toast('Go to Supabase Auth → find user → reset password there','info'); }
+async function deleteEngineer(id,name){ await teamRevoke(id,name); }
+async function revokeEngineer(id,name){ await teamRevoke(id,name); }
+async function revokeUser(id,name){ await teamRevoke(id,name); }
+async function updateUserRole(id,role,sel){ await teamChangeRole(id,'',role,sel); }
+async function syncEngineers(){ await loadTeam(); return (S.engineers||[]).length; }
+async function resetEngPassword(id,name,email){ toast('Go to Supabase Auth → find '+email+' → reset password','info',5000); }
+
+
 function addAccessRow(){S.access.push('New Access Type');renderSettings()}
 function addPropRow(){S.properties=S.properties||[];S.properties.push({id:uid(),address:'',landlord:'',postcode:'',notes:''});renderSettings()}
 
@@ -10028,11 +10361,19 @@ async function renderMapPage() {
   }
 }
 
+let _mapEngineersLoadedAt = 0; // timestamp of last fetch
+
 async function _loadEngineerList() {
-  if (_mapEngineers.length) return;
+  // FIX 8: Previously this returned immediately if _mapEngineers had any data,
+  // meaning the dropdown NEVER refreshed after the first load — deactivated or
+  // newly-added engineers would be wrong until a full browser refresh.
+  // Now we re-fetch if the cache is older than 5 minutes.
+  const STALE_MS = 5 * 60 * 1000;
+  if (_mapEngineers.length && (Date.now() - _mapEngineersLoadedAt) < STALE_MS) return;
   try {
     const users = await _sb('users?role=eq.engineer&active=eq.true&order=name.asc');
     _mapEngineers = users || [];
+    _mapEngineersLoadedAt = Date.now();
     const sel = document.getElementById('map-eng-sel');
     if (sel && _mapEngineers.length) {
       const cur = sel.value;
@@ -10087,8 +10428,15 @@ async function _mapJobsByDate(info, status, mode) {
   }
 
   // Geocode addresses (batch, rate limited)
+  // FIX 19: Add visible feedback when jobs exceed the 30-job cap so users know
+  // they are not seeing all jobs, rather than silently missing them.
+  const GEO_CAP = 30;
+  const jobsToGeocode = jobs.slice(0, GEO_CAP);
+  const truncated = jobs.length > GEO_CAP;
+  if (status) status.textContent = `Geocoding ${jobsToGeocode.length}${truncated ? ` of ${jobs.length}` : ''} addresses…`;
+
   const geocoded = [];
-  for (const j of jobs.slice(0, 30)) {  // limit to 30 to respect rate limits
+  for (const j of jobsToGeocode) {
     const coords = await _geocode(j.address);
     if (coords) geocoded.push({ ...j, ...coords });
     await _sleep(300); // Nominatim rate limit: 1 req/sec
@@ -10109,19 +10457,21 @@ async function _mapJobsByDate(info, status, mode) {
   }));
 
   _buildAndShowMap(points, centLat, centLng, 11);
-  if (status) status.textContent = `${geocoded.length} of ${jobs.length} jobs mapped`;
+  if (status) status.textContent = truncated
+    ? `Showing ${geocoded.length} of ${jobs.length} jobs — geocoding capped at ${GEO_CAP} (Nominatim rate limit)`
+    : `${geocoded.length} of ${jobs.length} jobs mapped`;
 
   // Info panel
   info.innerHTML = `
     <div style="padding:10px 16px;font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">
-      ${mode==='today'?'Today':'Upcoming'} · ${geocoded.length} jobs mapped
+      ${mode==='today'?'Today':'Upcoming'} · ${geocoded.length} jobs mapped${truncated?` <span style="color:var(--yellow);font-weight:700">(${jobs.length - GEO_CAP} not shown — over ${GEO_CAP} limit)</span>`:''}
     </div>
     ${geocoded.map(j=>`
       <div style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
         <div style="width:8px;height:8px;border-radius:50%;background:${j.status==='Completed'?'#22c55e':j.priority==='Emergency'?'#f04444':'#4f8fff'};flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.address}</div>
-          <div style="font-size:10px;color:var(--txt3)">${j.engineer||'Unassigned'} ${j.timeSlot?'· 🕐 '+j.timeSlot:''}</div>
+          <div style="font-size:10px;color:var(--txt3)">${j.engineer||'Unassigned'} ${j.timeslot?'· 🕐 '+j.timeslot:''}</div>
         </div>
         <span style="font-size:10px;padding:2px 7px;border-radius:8px;background:${j.status==='Completed'?'rgba(34,197,94,.12)':'rgba(79,143,255,.12)'}; color:${j.status==='Completed'?'#22c55e':'#4f8fff'}">${j.status||'Pending'}</span>
       </div>`).join('')}
@@ -10535,6 +10885,13 @@ async function saveSettings(){
   if(S.fontSize) setFontSize(S.fontSize);
   if(S.sidebarWidth) setSidebarWidth(S.sidebarWidth);
   if(localStorage.getItem('df_sb_collapsed')==='1') toggleSidebar();
+  // Update mini logo with company initials now that settings are loaded
+  const miniMark=document.getElementById('sidebar-mini-mark');
+  if(miniMark){
+    const name=S?.coName||S?.appWord1||'DF';
+    const initials=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'DF';
+    miniMark.textContent=initials;
+  }
   if(S.rowDensity) setRowDensity(S.rowDensity);
   // Apply online status visibility
   const onlineWidget = document.querySelector('.sidebar-foot > div:first-child');
@@ -11050,118 +11407,217 @@ function initDragDrop(){
 // ════════════════════════════════════════════════════════════════
 
 // ════ Column config — which columns show, and their widths ════
-const JOB_COLS=[
-  {key:'status', label:'Status',   w:80,  min:60,  fixed:true},
-  {key:'jobnum', label:'Job #',    w:54,  min:40},
-  {key:'address',label:'Address',  w:null,min:120, flex:true},
-  {key:'desc',   label:'Description',w:200,min:80},
-  {key:'contact',label:'Contact',  w:160, min:80},
-  {key:'time',   label:'Time',     w:80,  min:50},
-  {key:'eng',    label:'Engineer', w:110, min:70},
-  {key:'certs',  label:'Certs',    w:90,  min:50},
-  {key:'price',  label:'£',        w:52,  min:36},
-  {key:'sel',    label:'Change',   w:90,  min:70,  fixed:true},
-  {key:'actions',label:'Actions',  w:58,  min:44,  fixed:true},
+// ════════════════════════════════════════════════════════════
+//  COLUMN SYSTEM — single source of truth
+//  JOB_COLS drives: header, rows, resize, show/hide, persistence
+// ════════════════════════════════════════════════════════════
+const JOB_COLS = [
+  {key:'status',  label:'Status',      w:90,  min:70,  fixed:true,  protect:true},
+  {key:'jobnum',  label:'Job #',       w:70,  min:52},
+  {key:'address', label:'Address',     w:null,min:180, flex:true,   protect:true},
+  {key:'desc',    label:'Description', w:200, min:90},
+  {key:'contact', label:'Contact',     w:160, min:80},
+  {key:'time',    label:'Time',        w:82,  min:52},
+  {key:'eng',     label:'Engineer',    w:120, min:70},
+  {key:'certs',   label:'Certs',       w:90,  min:50},
+  {key:'price',   label:'£',           w:56,  min:40},
+  {key:'sel',     label:'Change',      w:110, min:90,  fixed:true},
+  {key:'actions', label:'',            w:62,  min:50,  fixed:true},
 ];
-// Hidden cols loaded from localStorage
-let _hiddenCols=JSON.parse(localStorage.getItem('df_hidden_cols')||'[]');
 
+// Persist hidden cols + widths
+let _hiddenCols = [];
+(function _loadColState(){
+  try{
+    const raw = JSON.parse(localStorage.getItem('df_hidden_cols')||'[]');
+    // Strip any protected columns that may have been hidden in a previous buggy session
+    _hiddenCols = raw.filter(k => {
+      const col = JOB_COLS.find(c => c.key === k);
+      return col && !col.protect; // never hide protected columns
+    });
+  }catch(e){ _hiddenCols = []; }
+  try{
+    // Version-guard: if the saved widths count doesn't match JOB_COLS count,
+    // discard them — they're from a different column layout and will misalign
+    const saved = JSON.parse(localStorage.getItem('df_col_widths')||'null');
+    if(saved && Array.isArray(saved) && saved.length === JOB_COLS.length){
+      saved.forEach((w,i)=>{ if(w && JOB_COLS[i]) JOB_COLS[i].w = w; });
+    } else if(saved){
+      // Stale — clear it so columns use clean defaults
+      localStorage.removeItem('df_col_widths');
+    }
+  }catch(e){}
+})();
+
+function _saveColState(){
+  localStorage.setItem('df_hidden_cols', JSON.stringify(_hiddenCols));
+  localStorage.setItem('df_col_widths',  JSON.stringify(JOB_COLS.map(c=>c.w||null)));
+}
+
+// Build the CSS grid template string from current state
 function getColTemplate(){
-  return '18px 3px '+JOB_COLS.map(c=>{
+  return '20px 4px ' + JOB_COLS.map(c=>{
     if(_hiddenCols.includes(c.key)) return '0px';
     if(c.flex) return 'minmax('+c.min+'px,1fr)';
-    return (c.w||80)+'px';
+    return Math.max(c.min||40, c.w||80)+'px';
   }).join(' ');
 }
 
+// Rebuild the sticky header from scratch so it always matches JOB_COLS exactly
+function renderJobsHeader(){
+  const hd = document.getElementById('jobs-col-hd');
+  if(!hd) return;
+  const t = getColTemplate();
+  hd.style.gridTemplateColumns = t;
+
+  // Drag handle + stripe placeholders
+  let html = '<div></div><div></div>';
+
+  JOB_COLS.forEach((c, i) => {
+    const hidden = _hiddenCols.includes(c.key);
+    const isFixed = c.fixed;
+    const resizeHandle = !isFixed
+      ? `<div class="col-resize-handle" data-resize-col="${i}" title="Drag to resize"
+           style="position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;z-index:2;border-radius:0 2px 2px 0"
+           onmouseenter="this.style.background='var(--acc)'" onmouseleave="if(!_colResizing)this.style.background=''"></div>`
+      : '';
+    const extraStyle = c.key==='actions'
+      ? 'display:flex;align-items:center;gap:4px;'
+      : c.key==='price' ? 'justify-content:flex-end;' : '';
+
+    const colMenu = c.key==='actions'
+      ? `<button onclick="showColMenu(event)" title="Show/hide columns"
+           style="margin-left:auto;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer;color:var(--txt2);white-space:nowrap">⊞ Cols</button>`
+      : '';
+
+    html += `<div data-hd-col="${c.key}" style="position:relative;font-size:9px;font-weight:800;color:var(--txt3);
+      text-transform:uppercase;letter-spacing:.8px;padding:6px 7px;display:${hidden?'none':'flex'};
+      align-items:center;overflow:hidden;${extraStyle}">
+      ${c.label}${colMenu}${resizeHandle}
+    </div>`;
+  });
+
+  hd.innerHTML = html;
+  // Re-attach resize mousedown after rebuilding
+  _bindResizeHandles();
+}
+
+// Apply template + visibility to all rows without rebuilding header
 function applyColTemplate(){
-  const t=getColTemplate();
-  document.querySelectorAll('.jsr3,#jobs-col-hd').forEach(el=>el.style.gridTemplateColumns=t);
-  // Hide/show cells
+  const t = getColTemplate();
+  // Header
+  const hd = document.getElementById('jobs-col-hd');
+  if(hd){
+    hd.style.gridTemplateColumns = t;
+    hd.querySelectorAll('[data-hd-col]').forEach(cell=>{
+      cell.style.display = _hiddenCols.includes(cell.dataset.hdCol) ? 'none' : 'flex';
+    });
+  }
+  // Rows
   document.querySelectorAll('.jsr3').forEach(row=>{
+    row.style.gridTemplateColumns = t;
     JOB_COLS.forEach((c,i)=>{
-      const cell=row.children[i+2]; // +2 for drag+stripe
-      if(cell) cell.style.display=_hiddenCols.includes(c.key)?'none':'';
+      const cell = row.children[i+2]; // offset by drag handle + stripe
+      if(cell) cell.style.display = _hiddenCols.includes(c.key) ? 'none' : '';
     });
   });
-  document.querySelectorAll('#jobs-col-hd > div').forEach((cell,i)=>{
-    if(i<2) return;
-    const col=JOB_COLS[i-2];
-    if(col) cell.style.display=_hiddenCols.includes(col.key)?'none':'';
+}
+
+// Show/hide column toggle
+function toggleCol(key, show){
+  // Never hide protected columns (address, status)
+  const col = JOB_COLS.find(c=>c.key===key);
+  if(col?.protect) return;
+  if(show) _hiddenCols = _hiddenCols.filter(k=>k!==key);
+  else if(!_hiddenCols.includes(key)) _hiddenCols.push(key);
+  _saveColState();
+  applyColTemplate();
+  const hd = document.getElementById('jobs-col-hd');
+  if(hd) hd.querySelectorAll('[data-hd-col]').forEach(cell=>{
+    cell.style.display = _hiddenCols.includes(cell.dataset.hdCol) ? 'none' : 'flex';
   });
 }
 
 function showColMenu(e){
   e.stopPropagation();
-  const existing=document.getElementById('col-menu');
+  const existing = document.getElementById('col-menu');
   if(existing){ existing.remove(); return; }
-  const menu=document.createElement('div');
-  menu.id='col-menu';
-  menu.style.cssText='position:fixed;z-index:6000;background:var(--s1);border:1px solid var(--border2);border-radius:10px;box-shadow:var(--sh2);padding:8px 0;min-width:180px;animation:mIn .1s ease';
-  menu.innerHTML='<div style="padding:6px 14px 4px;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Show / Hide Columns</div>'+
-    JOB_COLS.filter(c=>!c.fixed).map(c=>`
-    <label style="display:flex;align-items:center;gap:8px;padding:5px 14px;cursor:pointer;font-size:12px;color:var(--txt2)" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background=''">
-      <input type="checkbox" ${_hiddenCols.includes(c.key)?'':'checked'} onchange="toggleCol('${c.key}',this.checked)" style="cursor:pointer">
+  const menu = document.createElement('div');
+  menu.id = 'col-menu';
+  menu.style.cssText = 'position:fixed;z-index:6000;background:var(--s1);border:1px solid var(--border2);border-radius:10px;box-shadow:var(--sh2);padding:8px 0;min-width:190px;animation:mIn .1s ease';
+  menu.innerHTML = '<div style="padding:6px 14px 4px;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px">Show / Hide Columns</div>'
+    // Only show non-fixed, non-protected columns in the picker
+    + JOB_COLS.filter(c=>!c.fixed && !c.protect).map(c=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;font-size:12px;color:var(--txt2)" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background=''">
+      <input type="checkbox" ${_hiddenCols.includes(c.key)?'':'checked'} onchange="toggleCol('${c.key}',this.checked)" style="cursor:pointer;accent-color:var(--acc)">
       ${c.label}
-    </label>`).join('');
-  const r=e.target.getBoundingClientRect();
-  menu.style.left=r.left+'px'; menu.style.top=(r.bottom+4)+'px';
+    </label>`).join('')
+    + `<div style="border-top:1px solid var(--border);margin:4px 0;padding:4px 14px">
+      <button onclick="resetColWidths()" style="font-size:11px;color:var(--txt3);background:none;border:none;cursor:pointer;padding:0">↺ Reset widths</button>
+    </div>`;
+  const r = e.target.getBoundingClientRect();
+  menu.style.left = Math.max(4, r.right - 200)+'px';
+  menu.style.top  = (r.bottom + 4)+'px';
   document.body.appendChild(menu);
   setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),50);
 }
 
-function toggleCol(key,show){
-  if(show) _hiddenCols=_hiddenCols.filter(k=>k!==key);
-  else if(!_hiddenCols.includes(key)) _hiddenCols.push(key);
-  localStorage.setItem('df_hidden_cols',JSON.stringify(_hiddenCols));
+function resetColWidths(){
+  JOB_COLS.forEach(c=>{ if(!c.flex) c.w = undefined; });
+  _hiddenCols = [];
+  _saveColState();
+  renderJobsHeader();
   applyColTemplate();
+  document.getElementById('col-menu')?.remove();
 }
 
-// ════ Column resize via header drag ════
-let _colResizing=null, _colResizeStartX=0, _colResizeStartW=0;
-function initColResize(){
-  const hd=document.getElementById('jobs-col-hd');
+// ════ Column resize ════
+let _colResizing = null, _colResizeStartX = 0, _colResizeStartW = 0;
+
+function _bindResizeHandles(){
+  const hd = document.getElementById('jobs-col-hd');
   if(!hd) return;
   hd.querySelectorAll('[data-resize-col]').forEach(handle=>{
-    handle.onmousedown=null;
-    handle.addEventListener('mousedown',e=>{
+    handle.onmousedown = e => {
       e.preventDefault(); e.stopPropagation();
-      const colIdx=parseInt(handle.dataset.resizeCol);
-      if(isNaN(colIdx)||!JOB_COLS[colIdx]) return;
-      _colResizing=colIdx;
-      _colResizeStartX=e.clientX;
-      _colResizeStartW=JOB_COLS[colIdx].w || JOB_COLS[colIdx].min || 80;
-      document.body.style.cursor='col-resize';
-      document.body.style.userSelect='none';
-      handle.style.background='var(--acc)';
-    });
+      const colIdx = parseInt(handle.dataset.resizeCol);
+      if(isNaN(colIdx) || !JOB_COLS[colIdx]) return;
+      _colResizing = colIdx;
+      _colResizeStartX = e.clientX;
+      _colResizeStartW = JOB_COLS[colIdx].w || JOB_COLS[colIdx].min || 80;
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      handle.style.background = 'var(--acc)';
+      handle.style.width = '3px';
+    };
   });
 }
-document.addEventListener('mousemove',e=>{
-  if(_colResizing===null) return;
-  const dx=e.clientX-_colResizeStartX;
-  const col=JOB_COLS[_colResizing];
+
+document.addEventListener('mousemove', e=>{
+  if(_colResizing === null) return;
+  const col = JOB_COLS[_colResizing];
   if(!col) return;
-  col.w=Math.max(col.min||40, _colResizeStartW+dx);
+  const dx = e.clientX - _colResizeStartX;
+  col.w = Math.max(col.min||40, _colResizeStartW + dx);
   applyColTemplate();
-  // Save widths
-  localStorage.setItem('df_col_widths', JSON.stringify(JOB_COLS.map(c=>c.w||null)));
 });
-document.addEventListener('mouseup',e=>{
-  if(_colResizing!==null){
-    _colResizing=null;
-    document.body.style.cursor='';
-    document.body.style.userSelect='';
-    document.querySelectorAll('[data-resize-col]').forEach(h=>h.style.background='');
+
+document.addEventListener('mouseup', ()=>{
+  if(_colResizing !== null){
+    _colResizing = null;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    _saveColState();
+    // Reset handle colours
+    document.querySelectorAll('[data-resize-col]').forEach(h=>{
+      h.style.background = '';
+      h.style.width = '';
+    });
   }
 });
-// Restore saved widths
-(function(){
-  try{
-    const saved=JSON.parse(localStorage.getItem('df_col_widths')||'null');
-    if(saved&&Array.isArray(saved)) saved.forEach((w,i)=>{ if(w&&JOB_COLS[i]) JOB_COLS[i].w=w; });
-  }catch(e){}
-})();
+
+// Call renderJobsHeader() after renderJobs() populates the list
+// This is done at end of renderJobs — see patch below
 
 // ════ Row drag — cross-date reorder ════
 let _slDragSrc=null;
@@ -11288,8 +11744,8 @@ function initScrollListDrag(){
     _slDragSrc=null; _dragOverDate=null;
   });
 
-  // Apply col template after render
-  setTimeout(()=>{applyColTemplate();initColResize();},50);
+  // Apply col template after drag-render
+  setTimeout(()=>{ renderJobsHeader(); applyColTemplate(); },50);
 }
 
 
@@ -12086,6 +12542,7 @@ document.addEventListener('contextmenu',async e=>{
     <div style="padding:4px 0">
       <div class="ctx-item" onclick="quickStatus('${job.id}','Completed');closeCtx()">✅ Mark Completed</div>
       <div class="ctx-item" onclick="quickStatus('${job.id}','In Progress');closeCtx()">🔨 Mark In Progress</div>
+      <div class="ctx-item" onclick="quickStatus('${job.id}','Cannot Access');closeCtx()">🚫 Mark Cannot Access</div>
       <div class="ctx-item" onclick="quickStatus('${job.id}','Invoiced');closeCtx()">◎ Mark Invoiced</div>
       <div class="ctx-item" onclick="quickStatus('${job.id}','Cancelled');closeCtx()">✕ Mark Cancelled</div>
     </div>
@@ -12429,7 +12886,14 @@ function toggleSidebar(){
   const btn=document.getElementById('sidebar-toggle');
   sb.classList.toggle('collapsed');
   const col=sb.classList.contains('collapsed');
-  if(btn){ btn.textContent=col?'›':'‹'; btn.style.left=col?'100%':'100%'; }
+  if(btn){ btn.textContent=col?'›':'‹'; btn.title=col?'Expand sidebar':'Collapse sidebar'; }
+  // Update mini logo initials from company name
+  const miniMark=document.getElementById('sidebar-mini-mark');
+  if(miniMark){
+    const name=S?.coName||S?.appWord1||'DF';
+    const initials=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'DF';
+    miniMark.textContent=initials;
+  }
   localStorage.setItem('df_sb_collapsed',col?'1':'');
 }
 
@@ -13455,12 +13919,23 @@ async function saveInvWithJobSync(){
     await dPut('jobs', newJob);
     await logActivity(`Job auto-created from invoice ${invNum}`, 'job');
     toast(`Job auto-linked to ${invNum}`, 'info');
-  } else if(linkedJob && editInvId){
-    // Update existing linked job price/desc
-    linkedJob.price = jobPrice;
-    linkedJob.description = jobDesc;
-    linkedJob.modified = Date.now();
-    await dPut('jobs', linkedJob);
+  } else if(linkedJob){
+    // FIX 15: Update the existing linked job — set status to Invoiced and refresh price/desc.
+    // Previously only ran on editInvId, so a newly-created invoice for an existing job
+    // (via createInvFromJob) never updated the job's status from Completed → Invoiced.
+    const updatedJob = {...linkedJob, modified: Date.now()};
+    if(jobPrice) updatedJob.price = jobPrice;
+    if(jobDesc && !linkedJob.description) updatedJob.description = jobDesc;
+    // Only advance to Invoiced — never regress a status (e.g. don't overwrite Cancelled)
+    if(linkedJob.status === 'Completed' || linkedJob.status === 'Pending' || linkedJob.status === 'In Progress'){
+      updatedJob.status = 'Invoiced';
+      updatedJob.invNumber = invNum;
+      updatedJob.linkedInvId = invId;
+    }
+    await dPut('jobs', updatedJob);
+    if(updatedJob.status === 'Invoiced' && linkedJob.status !== 'Invoiced'){
+      await logActivity(`Job ${linkedJob.jobnum||linkedJob.id} → Invoiced (invoice ${invNum})`, 'job');
+    }
   }
 
   await logActivity(`${editInvId?'Updated':'Created'} invoice ${invNum}`, 'invoice');
@@ -13690,7 +14165,24 @@ function showJobsSkeleton(){
         }
       }
       if(profile){
-        const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
+        // Block engineers from the office app
+        if(profile.role === 'engineer'){
+          await _supaAuth.auth.signOut();
+          if(overlay)overlay.style.display='flex';
+          setTimeout(()=>{
+            const errEl=document.getElementById('login-err');
+            if(errEl){
+              errEl.style.display='block';
+              errEl.style.background='rgba(245,166,35,.1)';
+              errEl.style.border='1px solid rgba(245,166,35,.3)';
+              errEl.style.color='#f5a623';
+              errEl.textContent='⚠️ Engineer accounts use the Engineer Portal. Ask your office manager for the link.';
+            }
+          }, 100);
+          init().catch(()=>{});
+          return;
+        }
+        const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'};
         const role=roleMap[profile.role]||'Staff';
         const isAdmin=role==='Admin',isMgr=role==='Manager';
         _appUser={
@@ -13704,6 +14196,14 @@ function showJobsSkeleton(){
         if(overlay)overlay.style.display='none';
         await init();
         applyUserPermissions();
+        // Re-run team sync after init to ensure engineers/users are fresh
+        // (init may have run before session was fully available)
+        setTimeout(async()=>{
+          try{
+            await loadSettings();
+            renderDash();updateBadges();
+          }catch(e){}
+        }, 800);
         return;
       } else {
         // Auth session but no profile — sign out
@@ -14167,6 +14667,291 @@ function copySql(card) {
   });
 }
 
+
+// ════════════════════════════════════════════════════════════════
+//  TASK 27: Check if pg_cron is active in Supabase
+// ════════════════════════════════════════════════════════════════
+async function checkCronSetup(){
+  const el=document.getElementById('cron-check-result');
+  if(el) el.textContent='Checking…';
+  try{
+    // Try to query the cron.job table — only works if pg_cron is enabled
+    const r=await _sb('rpc/query_cron_jobs',{method:'POST',body:{},prefer:'return=representation'}).catch(()=>null);
+    // Fallback: try a direct SQL ping via a test query
+    const rows=await _sb('cert_reminder_log?limit=1&select=id').catch(()=>null);
+    if(rows!==null){
+      if(el) el.innerHTML='<span style="color:var(--green)">✅ cert_reminder_log table exists — Step 2 complete</span>';
+    } else {
+      if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ cert_reminder_log not found — run the SQL above first</span>';
+    }
+  }catch(e){
+    if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ Could not check — run the SQL in Supabase first</span>';
+  }
+}
+
+
+//  Single-page view: all jobs + invoices + certs + payment status
+//  for one landlord / person / agency.
+// ════════════════════════════════════════════════════════════════
+let _cvClientId   = null; // current person/agency id
+let _cvClientType = null; // 'person' | 'agency'
+let _cvClientName = null;
+let _cvActiveTab  = 'jobs';
+
+async function cvSearch(q){
+  const ql = q.trim().toLowerCase();
+  const picker = document.getElementById('cv-pick-list');
+  if(!ql){ picker.innerHTML = ''; return; }
+
+  const [persons, agencies] = await Promise.all([dAll('persons'), dAll('agencies')]);
+  const pMatches = persons.filter(p => (p.name||'').toLowerCase().includes(ql)).slice(0,6);
+  const aMatches = agencies.filter(a => (a.name||'').toLowerCase().includes(ql)).slice(0,4);
+
+  const rows = [
+    ...pMatches.map(p => `
+      <div onclick="cvLoadClient('person','${p.id}','${(p.name||'').replace(/'/g,"\'")}',this)"
+        style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;background:var(--s1);transition:background .12s"
+        onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s1)'">
+        <span style="font-size:20px">👤</span>
+        <div>
+          <div style="font-weight:700;font-size:13px">${p.name}</div>
+          <div style="font-size:11px;color:var(--txt3)">${p.phone||''} ${p.email?'· '+p.email:''}</div>
+        </div>
+      </div>`),
+    ...aMatches.map(a => `
+      <div onclick="cvLoadClient('agency','${a.id}','${(a.name||'').replace(/'/g,"\'")}',this)"
+        style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;background:var(--s1);transition:background .12s"
+        onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s1)'">
+        <span style="font-size:20px">🏢</span>
+        <div>
+          <div style="font-weight:700;font-size:13px">${a.name}</div>
+          <div style="font-size:11px;color:var(--txt3)">Agency${a.phone?' · '+a.phone:''}</div>
+        </div>
+      </div>`)
+  ];
+
+  picker.innerHTML = rows.length ? rows.join('') : '<div style="font-size:12px;color:var(--txt3)">No matches found</div>';
+}
+
+function renderClientPicker(){
+  document.getElementById('cv-picker').style.display = 'block';
+  document.getElementById('cv-record').style.display = 'none';
+  document.getElementById('cv-search').value = '';
+  document.getElementById('cv-pick-list').innerHTML = '';
+}
+
+async function cvLoadClient(type, id, name){
+  _cvClientId   = id;
+  _cvClientType = type;
+  _cvClientName = name;
+  _cvActiveTab  = 'jobs';
+
+  document.getElementById('cv-picker').style.display = 'none';
+  document.getElementById('cv-record').style.display = 'flex';
+  document.getElementById('cv-record').style.flexDirection = 'column';
+  document.getElementById('cv-hero').innerHTML = '<div style="color:var(--txt3);font-size:12px">Loading…</div>';
+  document.getElementById('cv-kpis').innerHTML = '';
+  document.getElementById('cv-tabs').innerHTML = '';
+  document.getElementById('cv-panel-jobs').innerHTML = '';
+  document.getElementById('cv-panel-invoices').innerHTML = '';
+  document.getElementById('cv-panel-certs').innerHTML = '';
+
+  // Fetch everything in parallel
+  const [allJobs, allInvs, allCerts, allPmts] = await Promise.all([
+    dAll('jobs'), dAll('invoices'), dAll('certs'), dAll('payments')
+  ]);
+
+  // Match by name (both referrer and landlordName on jobs, clientName on invoices)
+  const jobs = allJobs.filter(j =>
+    j.referrer === name || j.landlordName === name || j.agencyName === name
+  ).sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  const invs = allInvs.filter(i =>
+    i.clientName === name || i.clientId === id
+  ).sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  const certs = allCerts.filter(c =>
+    c.landlord === name || c.agent === name
+  ).sort((a,b) => (a.expiryDate||'').localeCompare(b.expiryDate||''));
+
+  // Payment totals
+  const invIds = new Set(invs.map(i => i.id));
+  const pmts = allPmts.filter(p => invIds.has(p.invId));
+  const totalInvoiced = invs.reduce((s,i) => s + (calcInvTotal(i).grand||0), 0);
+  const totalPaid     = pmts.reduce((s,p) => s + (p.amount||0), 0);
+  const outstanding   = Math.max(0, totalInvoiced - totalPaid);
+  const expiredCerts  = certs.filter(c => c.expiryDate && daysDiff(c.expiryDate) < 0).length;
+  const expiringSoon  = certs.filter(c => c.expiryDate && daysDiff(c.expiryDate) >= 0 && daysDiff(c.expiryDate) <= 60).length;
+
+  // ── Hero ──
+  const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('cv-hero').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#1a1a1a;flex-shrink:0">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:var(--fh);font-size:20px;font-weight:800;color:var(--txt)">${name}</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:3px">${type==='agency'?'🏢 Agency':'👤 Person / Landlord'}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="renderClientPicker()">← Back</button>
+    </div>`;
+
+  // ── KPIs ──
+  const kpi = (val, lbl, col) => `
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center;border-top:3px solid ${col}">
+      <div style="font-size:22px;font-weight:800;font-family:var(--fm);color:var(--txt)">${val}</div>
+      <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-top:4px;font-weight:700">${lbl}</div>
+    </div>`;
+  document.getElementById('cv-kpis').innerHTML =
+    kpi(jobs.length, 'Total Jobs', 'var(--acc)') +
+    kpi(jobs.filter(j=>j.status==='Completed'||j.status==='Invoiced').length, 'Completed', 'var(--green)') +
+    kpi(invs.length, 'Invoices', 'var(--purple)') +
+    kpi('£'+totalPaid.toFixed(0), 'Paid', 'var(--green)') +
+    kpi(outstanding>0?'£'+outstanding.toFixed(0):'£0', 'Outstanding', outstanding>0?'var(--yellow)':'var(--green)') +
+    kpi(certs.length, 'Certificates', 'var(--teal)') +
+    (expiredCerts ? kpi(expiredCerts, 'Expired Certs', 'var(--red)') : '') +
+    (expiringSoon ? kpi(expiringSoon, 'Expiring <60d', 'var(--yellow)') : '');
+
+  // ── Tabs ──
+  const tabBtn = (id, lbl, count) => `
+    <button id="cv-tab-${id}" onclick="cvSwitchTab('${id}')"
+      style="padding:8px 14px;border:none;background:${_cvActiveTab===id?'var(--acc)':'transparent'};color:${_cvActiveTab===id?'#fff':'var(--txt2)'};border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fh);transition:all .15s">
+      ${lbl} <span style="opacity:.7">(${count})</span>
+    </button>`;
+  document.getElementById('cv-tabs').innerHTML =
+    tabBtn('jobs','⊞ Jobs',jobs.length) +
+    tabBtn('invoices','◎ Invoices',invs.length) +
+    tabBtn('certs','◈ Certs',certs.length);
+
+  // ── Jobs panel ──
+  document.getElementById('cv-panel-jobs').innerHTML = jobs.length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Date</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Address</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Trade</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Engineer</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Status</th>
+        <th style="text-align:right;padding:8px 10px;color:var(--txt3);font-weight:700">Price</th>
+      </tr></thead>
+      <tbody>
+        ${jobs.map(j=>`<tr style="border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="openJobModal('${j.id}')">
+          <td style="padding:9px 10px;white-space:nowrap">${j.date||'—'}</td>
+          <td style="padding:9px 10px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j.address||'—'}</td>
+          <td style="padding:9px 10px">${j.trade||'—'}</td>
+          <td style="padding:9px 10px">${j.engineer||'—'}</td>
+          <td style="padding:9px 10px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${j.status==='Completed'?'rgba(37,213,142,.12)':j.status==='Invoiced'?'rgba(168,85,247,.12)':j.status==='Cancelled'?'rgba(100,116,139,.12)':'rgba(245,166,35,.12)'};color:${j.status==='Completed'?'var(--green)':j.status==='Invoiced'?'var(--purple)':j.status==='Cancelled'?'var(--txt3)':'var(--yellow)'};font-weight:700">${j.status||'Pending'}</span></td>
+          <td style="padding:9px 10px;text-align:right;font-family:var(--fm)">${j.price?'£'+Number(j.price).toFixed(2):'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>` : '<div style="color:var(--txt3);font-size:13px;padding:20px 0">No jobs found for this client</div>';
+
+  // ── Invoices panel ──
+  document.getElementById('cv-panel-invoices').innerHTML = invs.length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Invoice #</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Date</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Description</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Status</th>
+        <th style="text-align:right;padding:8px 10px;color:var(--txt3);font-weight:700">Total</th>
+        <th style="text-align:right;padding:8px 10px;color:var(--txt3);font-weight:700">Paid</th>
+        <th style="text-align:right;padding:8px 10px;color:var(--txt3);font-weight:700">Outstanding</th>
+      </tr></thead>
+      <tbody>
+        ${invs.map(i=>{
+          const t=calcInvTotal(i);
+          const invPaid=pmts.filter(p=>p.invId===i.id).reduce((s,p)=>s+p.amount,0);
+          const owed=Math.max(0,t.grand-invPaid);
+          const sCol={'Draft':'var(--txt3)','Awaiting Payment':'var(--yellow)','Paid':'var(--green)','Cancelled':'var(--red)'}[i.status]||'var(--txt3)';
+          return `<tr style="border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="nav('inv');setTimeout(()=>viewInv('${i.id}'),200)">
+            <td style="padding:9px 10px;font-family:var(--fm);color:var(--acc)">${i.number}</td>
+            <td style="padding:9px 10px;white-space:nowrap">${i.date||'—'}</td>
+            <td style="padding:9px 10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.description||'—'}</td>
+            <td style="padding:9px 10px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${sCol}22;color:${sCol};font-weight:700">${i.status}</span></td>
+            <td style="padding:9px 10px;text-align:right;font-family:var(--fm)">£${t.grand.toFixed(2)}</td>
+            <td style="padding:9px 10px;text-align:right;font-family:var(--fm);color:var(--green)">£${invPaid.toFixed(2)}</td>
+            <td style="padding:9px 10px;text-align:right;font-family:var(--fm);color:${owed>0?'var(--yellow)':'var(--green)'};font-weight:${owed>0?700:400}">${owed>0?'£'+owed.toFixed(2):'✓'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+      <tfoot><tr style="border-top:2px solid var(--border)">
+        <td colspan="4" style="padding:10px;font-weight:700;font-size:12px">Totals</td>
+        <td style="padding:10px;text-align:right;font-weight:800;font-family:var(--fm)">£${totalInvoiced.toFixed(2)}</td>
+        <td style="padding:10px;text-align:right;font-weight:800;font-family:var(--fm);color:var(--green)">£${totalPaid.toFixed(2)}</td>
+        <td style="padding:10px;text-align:right;font-weight:800;font-family:var(--fm);color:${outstanding>0?'var(--yellow)':'var(--green)'}">${outstanding>0?'£'+outstanding.toFixed(2):'All paid ✓'}</td>
+      </tr></tfoot>
+    </table>` : '<div style="color:var(--txt3);font-size:13px;padding:20px 0">No invoices found for this client</div>';
+
+  // ── Certs panel ──
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cv-panel-certs').innerHTML = certs.length ? `
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Address</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Type</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Cert #</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Issued</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Expires</th>
+        <th style="text-align:left;padding:8px 10px;color:var(--txt3);font-weight:700">Status</th>
+      </tr></thead>
+      <tbody>
+        ${certs.map(c=>{
+          const diff = c.expiryDate ? daysDiff(c.expiryDate) : null;
+          const expired = diff !== null && diff < 0;
+          const soon    = diff !== null && diff >= 0 && diff <= 60;
+          const sLabel  = diff===null?'No date':expired?Math.abs(diff)+'d overdue':diff===0?'Expires today':diff+'d left';
+          const sCol    = diff===null?'var(--txt3)':expired?'var(--red)':soon?'var(--yellow)':'var(--green)';
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:9px 10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'—'}</td>
+            <td style="padding:9px 10px">${c.type||'—'}</td>
+            <td style="padding:9px 10px;font-family:var(--fm);font-size:11px;color:var(--acc)">${c.certNum||'—'}</td>
+            <td style="padding:9px 10px;white-space:nowrap">${c.issueDate||'—'}</td>
+            <td style="padding:9px 10px;white-space:nowrap">${c.expiryDate||'—'}</td>
+            <td style="padding:9px 10px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${sCol}22;color:${sCol};font-weight:700">${sLabel}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>` : '<div style="color:var(--txt3);font-size:13px;padding:20px 0">No certificates found for this client</div>';
+
+  cvSwitchTab('jobs');
+}
+
+function cvSwitchTab(tab){
+  _cvActiveTab = tab;
+  ['jobs','invoices','certs'].forEach(t=>{
+    const panel = document.getElementById('cv-panel-'+t);
+    const btn   = document.getElementById('cv-tab-'+t);
+    if(panel) panel.style.display = t===tab ? 'block' : 'none';
+    if(btn){
+      btn.style.background = t===tab ? 'var(--acc)' : 'transparent';
+      btn.style.color      = t===tab ? '#fff' : 'var(--txt2)';
+    }
+  });
+}
+
+// Allow opening client view directly from a person/agency name anywhere in the app
+function openClientView(name, type){
+  nav('client');
+  setTimeout(()=>{
+    document.getElementById('cv-search').value = name;
+    cvSearch(name);
+  }, 100);
+}
+
+
+</script>
+<script>
+(function(){
+  if('serviceWorker' in navigator){
+    const sw=`const C='oe-v2';self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll([location.pathname])))});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n)))));self.clients.claim()});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(C).then(cache=>cache.put(e.request,c))}return r}).catch(()=>caches.match(e.request)))})`;
+    const url=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
+    navigator.serviceWorker.register(url).catch(()=>{});
+  }
+  let _ip=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_ip=e;const b=document.getElementById('btn-install-app');if(b)b.style.display='';});
+  window.addEventListener('appinstalled',()=>{_ip=null;const b=document.getElementById('btn-install-app');if(b)b.style.display='none';});
+  window._triggerInstall=async()=>{if(!_ip)return;_ip.prompt();const{outcome}=await _ip.userChoice;if(outcome==='accepted')_ip=null;};
+})();
 </script>
 </body>
 </html>
