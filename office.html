@@ -275,6 +275,16 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
 .toast.info{border-left:3px solid var(--blue)}
 .toast.warn{border-left:3px solid var(--yellow)}
 .toast.wa{border-left:3px solid #25d366}
+.kpi-tile{padding:12px 16px;border-top:3px solid var(--border);cursor:pointer;transition:background .12s;background:var(--s1)}
+.kpi-tile:hover{background:var(--s2)}
+.kpi-tile .kpi-val{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--txt);line-height:1.1}
+.kpi-tile .kpi-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-top:4px}
+.inv-quick-actions{border-top:1px solid var(--border);padding-top:6px;margin-top:4px}
+.btn-xs{padding:2px 7px;font-size:10px;border-radius:5px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--s2);color:var(--txt2);font-family:var(--fh)}
+.btn-xs:hover{background:var(--s3)}
+.btn-green.btn-xs{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:var(--green)}
+.btn-blue.btn-xs{background:rgba(79,143,255,.1);border-color:rgba(79,143,255,.25);color:#4f8fff}
+.btn-wa.btn-xs{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.25);color:#25d366}
 @keyframes tIn{from{transform:translateX(20px);opacity:0}}
 
 /* ── Status badges ── */
@@ -1469,40 +1479,48 @@ body.density-relaxed .jtable td{font-size:15px}
 
   <!-- INVOICES -->
   <div class="page" id="pg-inv">
-    <div class="kanban-inv-view-toggle">
-      <div style="font-family:var(--fh);font-size:15px;font-weight:700">Invoices</div>
-      <div style="display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-left:auto">
-        <button class="btn btn-ghost btn-sm" id="btn-inv-list" onclick="setInvView('list')" style="border-radius:0;border:none;padding:6px 12px">☰ List</button>
-        <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:6px 12px">⊞ Kanban</button>
+    <!-- Invoice KPI bar -->
+    <div id="inv-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--border);flex-shrink:0"></div>
+
+    <!-- Toolbar -->
+    <div style="display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;flex-shrink:0;background:var(--s1)">
+      <select class="fs" id="inv-filter" onchange="renderInvList()" style="width:155px;padding:6px 10px;font-size:12px">
+        <option value="">All Invoices</option>
+        <option value="Draft">📝 Draft</option>
+        <option value="Awaiting Payment">⏳ Unpaid</option>
+        <option value="Paid">✓ Paid</option>
+        <option value="Cancelled">✕ Cancelled</option>
+        <option value="Credit Note">↩ Credit Note</option>
+        <option value="__overdue__">🔴 Overdue</option>
+        <option value="__missed__">⚠ Missed</option>
+      </select>
+      <input type="search" class="fi" id="inv-search" placeholder="🔍 Search…" oninput="renderInvList()" style="max-width:150px;font-size:12px">
+      <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:145px;padding:6px 10px;font-size:12px">
+        <option value="date_desc">📅 Newest first</option>
+        <option value="date_asc">📅 Oldest first</option>
+        <option value="num_desc">🔢 Inv # desc</option>
+        <option value="amount_desc">💷 Amount ↓</option>
+        <option value="amount_asc">💷 Amount ↑</option>
+        <option value="client">👤 Client A–Z</option>
+      </select>
+      <div style="display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+        <button class="btn btn-ghost btn-sm" id="btn-inv-list" onclick="setInvView('list')" style="border-radius:0;border:none;padding:6px 10px;font-size:12px">☰ List</button>
+        <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:6px 10px;font-size:12px">⊞ Board</button>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="exportInvsCSV()" title="Export filtered invoices to CSV">⬇ Export CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendAllOverdueWA()" title="Send WhatsApp reminders to all overdue clients">📱 Chase All</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteDuplicateInvoices()" title="Find and remove duplicate invoices" style="color:var(--red)">🗑 Clean Dupes</button>
+        <button class="btn btn-purple btn-sm" onclick="openCreditNoteModal()">↩ Credit Note</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" title="Mark all filtered Awaiting Payment invoices as Paid">✓ Bulk Paid</button>
+        <button class="btn btn-acc btn-sm" onclick="openNewInvModal()">+ New Invoice</button>
       </div>
     </div>
 
     <!-- List view -->
-    <div id="inv-list-view" style="flex:1;overflow-y:auto">
+    <div id="inv-list-view" style="flex:1;overflow-y:auto;min-height:0">
       <div class="inv-wrap">
         <div class="inv-list-col">
-          <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
-            <select class="fs" id="inv-filter" onchange="renderInvList()" style="width:160px;padding:6px 10px;font-size:12px">
-              <option value="">All Invoices</option>
-              <option value="Draft">Draft</option>
-              <option value="Awaiting Payment">Unpaid</option>
-              <option value="Paid">Paid</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Credit Note">Credit Note</option>
-              <option value="__missed__">⚠ Missed (No Invoice)</option>
-            </select>
-            <input type="search" class="fi" id="inv-search" placeholder="Search…" oninput="renderInvList()" style="max-width:160px">
-            <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:140px;padding:6px 10px;font-size:12px" title="Sort invoices">
-              <option value="date_desc">📅 Newest First</option>
-              <option value="date_asc">📅 Oldest First</option>
-              <option value="num_desc">🔢 Inv # Desc</option>
-              <option value="amount_desc">💷 Amount ↓</option>
-              <option value="amount_asc">💷 Amount ↑</option>
-              <option value="client">👤 Client A–Z</option>
-            </select>
-            <button class="btn btn-acc btn-sm" onclick="openNewInvModal()">+ New Invoice</button>
-            <button class="btn btn-purple btn-sm" onclick="openCreditNoteModal()">✎ Credit Note</button>
-          </div>
           <div id="inv-list"></div>
         </div>
         <div class="inv-detail-col">
@@ -2763,6 +2781,25 @@ SELECT cron.schedule(
             <div id="table-setup-status" style="font-size:12px;color:var(--txt3);margin-top:8px;text-align:center"></div>
           </div>
 
+
+          <!-- FIX: Missing invoice columns -->
+          <div class="set-title" style="margin-top:18px">🔧 Fix — Invoice save fails (missing columns)?</div>
+          <div class="set-card" style="margin-bottom:12px;background:rgba(240,68,68,.04);border-color:rgba(240,68,68,.2)">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6">If saving an invoice fails with a column not found error, run this SQL once to add the missing columns.</div>
+            <div class="sql-block" onclick="copySql(this)">-- Add missing invoice columns (safe to run even if they already exist)
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentcc text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentname text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS linkedjobid text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS jobref text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS duecate text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS terms text;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS notes text;
+
+-- Also fix RLS if invoice saves are being blocked
+DROP POLICY IF EXISTS "invoices_office_only" ON invoices;
+CREATE POLICY "invoices_auth" ON invoices FOR ALL TO authenticated USING (true) WITH CHECK (true);</div>
+          </div>
+
           <!-- FIX: Users table RLS policy if create account is failing -->
           <div class="set-title" style="margin-top:18px">🔐 Fix 1 — Can't Create Staff or Engineers?</div>
           <div class="set-card" style="margin-bottom:12px;background:rgba(240,68,68,.04);border-color:rgba(240,68,68,.2)">
@@ -3211,7 +3248,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <div class="fg"><label class="fl">Due Date</label><input type="date" id="if-due" class="fi"></div>
   </div>
   <div class="frow">
-    <div class="fg"><label class="fl">Description / Reference</label><input type="text" id="if-desc" class="fi" placeholder="e.g. Plumbing works at 12 Main St"></div>
+    <div class="fg"><label class="fl">Description / Reference</label><textarea id="if-desc" class="fi" rows="2" placeholder="e.g. EICR at 12 Main St, replacement fuseboard..." style="resize:vertical;min-height:46px;line-height:1.5;padding-top:8px"></textarea></div>
     <div class="fg"><label class="fl">Status</label>
       <select id="if-status" class="fs">
         <option value="Draft">Draft</option>
@@ -3247,6 +3284,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
   </div>
   <div class="modal-actions">
     <button class="btn btn-ghost" onclick="closeModal('mo-inv')">Cancel</button>
+    <button class="btn btn-ghost" onclick="saveAndSendInv()" title="Save and immediately open the Send dialog">Save &amp; Send</button>
     <button class="btn btn-acc" onclick="saveInv()">Save Invoice</button>
   </div>
 </div>
@@ -3757,9 +3795,10 @@ const _TO_DB = {
     landlordName:'landlordname',landlordPhone:'landlordphone',landlordEmail:'landlordemail',
     landlordAddr:'landlordaddr',landlordWA:'landlordwa',landlordNotes:'landlordnotes',
     agencyName:'agencyname',agencyPhone:'agencyphone',agencyEmail:'agencyemail',agencyNotes:'agencynotes',
-    agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail',_sortOrder:'sortorder'},
+    agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail',_sortOrder:'sortorder',
+    invNumber:'invnumber',linkedInvId:'linkedinvid',jobNum:'jobnum'},
   certs:    {issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
-  invoices: {clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',clientWA:'clientwa',dueDate:'duedate',jobId:'jobid'},
+  invoices: {clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',agentCC:'agentcc',agentName:'agentname',linkedJobId:'linkedjobid',jobRef:'jobref',createdAt:'createdat'},
   agents:   {agencyId:'agencyid'},
 };
 const _FROM_DB = {};
@@ -4094,7 +4133,7 @@ function nav(pg){
   setTopbarActions(pg);
   if(pg==='dash') renderDash();
   if(pg==='jobs') {_invalidateJobCache();renderJobs();renderSavedViews();}
-  if(pg==='inv') { if(invViewMode==='kanban') renderKanban(); else renderInvList(); }
+  if(pg==='inv') { if(invViewMode==='kanban') renderKanban(); else renderInvList(); renderInvKPIs(); }
   if(pg==='stmt') renderStmt();
   if(pg==='exp') renderExpenses();
   if(pg==='ts') renderTS();
@@ -4916,7 +4955,7 @@ async function doLogin(){
     _loadSettingsFromDb().then(loaded=>{
       if(loaded){
         renderSettings();
-        applyTheme(S.theme||'light');
+        applyTheme(localStorage.getItem('df_theme')||S.theme||'light');
         if(S.accent) setAccent(S.accent);
         if(S.fontSize) setFontSize(S.fontSize);
         updateLogo();
@@ -6707,10 +6746,48 @@ let invItems=[];
 let curInvId=null;
 
 async function renderInvList(){
+  renderInvKPIs(); // keep KPIs in sync with every list refresh
   const filter=document.getElementById('inv-filter')?.value||'';
   const search=(document.getElementById('inv-search')?.value||'').toLowerCase();
   const list=document.getElementById('inv-list');
   const sMap={'Draft':'b-draft','Awaiting Payment':'b-awaiting','Paid':'b-paid','Cancelled':'b-cancelled','Credit Note':'b-credit'};
+
+  // Special: Overdue invoices
+  if(filter==='__overdue__'){
+    let allInvs2=await dAll('invoices');
+    const today2=TODAY();
+    const overdue=allInvs2.filter(i=>i.status==='Awaiting Payment'&&i.dueDate&&i.dueDate<today2);
+    if(!overdue.length){
+      list.innerHTML='<div class="empty"><div class="ei">✓</div><p>No overdue invoices!</p></div>';
+      return;
+    }
+    // Re-render as normal list with overdue filter applied
+    const _allPmts2=await dAll('payments');
+    const today3=TODAY();
+    list.innerHTML=overdue.sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).map(inv=>{
+      const t=calcInvTotal(inv);
+      const paid=_allPmts2.filter(p=>p.invId===inv.id).reduce((s,p)=>s+p.amount,0);
+      const outstanding=Math.max(0,t.grand-paid);
+      const daysOver=Math.ceil((new Date(today3)-new Date(inv.dueDate))/86400000);
+      return `<div class="inv-card ${inv.id===curInvId?'active':''}" onclick="viewInv('${inv.id}')">
+        <div class="inv-card-row">
+          <div class="inv-num">${inv.number}</div>
+          <span style="font-size:10px;background:rgba(224,82,82,.15);color:var(--red);padding:2px 8px;border-radius:8px;font-weight:700">${daysOver}d overdue</span>
+          <div class="inv-client" style="flex:1;padding:0 8px">${inv.clientName||'—'}</div>
+          <div class="inv-amt">£${outstanding.toFixed(2)}</div>
+        </div>
+        <div class="inv-meta">Due: ${inv.dueDate} · ${inv.description||'—'}</div>
+        <div class="inv-quick-actions" onclick="event.stopPropagation()" style="display:flex;gap:4px;margin-top:4px">
+          <button class="btn btn-green btn-xs" onclick="markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>
+          <button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>
+          <button class="btn btn-ghost btn-xs" onclick="sendOverdueWA('${inv.id}')">📱 Chase</button>
+          <button class="btn btn-ghost btn-xs" onclick="downloadInvPDFById('${inv.id}')">⬇ PDF</button>
+          <span style="font-size:11px;color:var(--red);font-weight:700;margin-left:auto;align-self:center">£${outstanding.toFixed(2)} owed</span>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
 
   // Special: Missed Invoices — completed/invoiced jobs with no linked invoice
   if(filter==='__missed__'){
@@ -6823,24 +6900,49 @@ async function renderInvList(){
     switch(invSortBy){
       case 'date_asc':  return (a.date||'').localeCompare(b.date||'');
       case 'date_desc': return (b.date||'').localeCompare(a.date||'');
-      case 'amount_desc': return (b.items||[]).reduce((s,i)=>s+(i.qty||0)*(i.price||0),0) - (a.items||[]).reduce((s,i)=>s+(i.qty||0)*(i.price||0),0);
-      case 'amount_asc':  return (a.items||[]).reduce((s,i)=>s+(i.qty||0)*(i.price||0),0) - (b.items||[]).reduce((s,i)=>s+(i.qty||0)*(i.price||0),0);
+      case 'amount_desc': return calcInvTotal(b).grand - calcInvTotal(a).grand;
+      case 'amount_asc':  return calcInvTotal(a).grand - calcInvTotal(b).grand;
       case 'num_desc': return (b.number||'').localeCompare(a.number||'');
       case 'client': return (a.clientName||'').localeCompare(b.clientName||'');
       default: return b.created-a.created;
     }
   });
   if(!invs.length){list.innerHTML='<div class="empty"><div class="ei">◎</div><p>No invoices yet</p></div>';return}
+  // Pre-load payments for overdue/paid progress display
+  const _allPmts = await dAll('payments');
+  const today = TODAY();
+
   list.innerHTML=invs.map(inv=>{
     const t=calcInvTotal(inv);
+    const invPmts = _allPmts.filter(p=>p.invId===inv.id);
+    const paid = invPmts.reduce((s,p)=>s+(p.amount||0),0);
+    const outstanding = Math.max(0, t.grand - paid);
+    const pct = t.grand>0 ? Math.min(100, paid/t.grand*100) : 0;
+    const isOverdue = inv.status==='Awaiting Payment' && inv.dueDate && inv.dueDate < today;
+    const daysOver = isOverdue ? Math.ceil((new Date(today)-new Date(inv.dueDate))/(86400000)) : 0;
+
     return `<div class="inv-card ${inv.id===curInvId?'active':''}" onclick="viewInv('${inv.id}')">
       <div class="inv-card-row">
-        <div class="inv-num">${inv.number}</div>
-        <div class="inv-client">${inv.clientName||'—'}</div>
-        <div class="inv-amt">£${t.grand.toFixed(2)}</div>
-        <span class="badge ${sMap[inv.status]||''}">${inv.status}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+          <div class="inv-num">${inv.number}</div>
+          ${isOverdue?`<span style="font-size:9px;background:rgba(224,82,82,.15);color:var(--red);padding:1px 6px;border-radius:8px;font-weight:700;white-space:nowrap">${daysOver}d overdue</span>`:''}
+        </div>
+        <div class="inv-client" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${inv.clientName||'—'}</div>
+        <div class="inv-amt" style="white-space:nowrap">£${t.grand.toFixed(2)}</div>
+        <span class="badge ${sMap[inv.status]||''}" style="white-space:nowrap">${inv.status}</span>
       </div>
-      <div class="inv-meta">${inv.description||'—'} · ${inv.date}${inv.jobRef?` · <span style="color:var(--txt3);font-size:10px">Job: ${inv.jobRef}</span>`:''}</div>
+      <div class="inv-meta" style="margin-bottom:${pct>0&&pct<100?'6px':'0'}">${inv.description||'—'}${inv.date?' · '+inv.date:''}${inv.jobRef?` · <span style="color:var(--txt3);font-size:10px">Job: ${inv.jobRef}</span>`:''}</div>
+      ${pct>0&&pct<100?`<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 0 6px"><div style="height:100%;width:${pct.toFixed(0)}%;background:var(--acc);border-radius:2px"></div></div>`:''}
+      <div class="inv-quick-actions" onclick="event.stopPropagation()" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
+        ${inv.status==='Draft'?`<button class="btn btn-ghost btn-xs" onclick="markInvSent('${inv.id}')">Mark Sent</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!=='Cancelled'?`<button class="btn btn-green btn-xs" onclick="event.stopPropagation();markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!=='Cancelled'?`<button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>`:''}
+        <button class="btn btn-ghost btn-xs" onclick="duplicateInv('${inv.id}')">⧉ Copy</button>
+        <button class="btn btn-ghost btn-xs" onclick="downloadInvPDFById('${inv.id}')">⬇ PDF</button>
+        <button class="btn btn-wa btn-xs" onclick="openInvSendModal('${inv.id}')">📱 Send</button>
+        ${outstanding>0&&inv.status==='Awaiting Payment'?`<span style="font-size:11px;color:var(--yellow);font-weight:700;margin-left:auto;align-self:center">£${outstanding.toFixed(2)} owed</span>`:''}
+        ${inv.status==='Paid'?`<span style="font-size:11px;color:var(--green);font-weight:700;margin-left:auto;align-self:center">✓ Fully paid</span>`:''}
+      </div>
     </div>`;
   }).join('');
 }
@@ -6877,7 +6979,7 @@ async function createInvFromJob(jobId){
     document.getElementById('if-desc').value=j.description||j.address||'';
     document.getElementById('if-notes').value=S.invNotes||'';
     document.getElementById('if-terms').value=S.payTerms||'';
-    document.getElementById('if-jobref').value=(j.jobNum||j.id.slice(-6)).toUpperCase();
+    document.getElementById('if-jobref').value=j.jobNum||'';
     document.getElementById('if-agent').value=j.agentName||'';
     document.getElementById('if-agent-cc').value=j.agentEmail||'';
     document.getElementById('if-status').value='Draft';
@@ -6896,6 +6998,277 @@ async function createInvFromJob(jobId){
     console.error('createInvFromJob error:',err);
   }
 }
+
+async function _renderInvPayments(invId, invTotal){
+  const box = document.getElementById('inv-detail-box');
+  if(!box) return;
+  try{
+    const allPmts = await dAll('payments');
+    const pmts = allPmts.filter(p=>p.invId===invId).sort((a,b)=>a.date.localeCompare(b.date));
+    const totalPaid = pmts.reduce((s,p)=>s+p.amount,0);
+    const outstanding = Math.max(0, invTotal.grand - totalPaid);
+    const pct = invTotal.grand>0 ? Math.min(100, totalPaid/invTotal.grand*100) : 0;
+
+    const section = document.createElement('div');
+    section.style.cssText = 'margin:0 18px 18px;border:1px solid var(--border);border-radius:10px;overflow:hidden';
+    section.innerHTML = `
+      <div style="background:var(--s2);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;font-weight:700;color:var(--txt2)">💳 Payment Status</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-size:12px;color:var(--txt3)">Paid: <strong style="color:var(--green)">£${totalPaid.toFixed(2)}</strong></span>
+          <span style="font-size:12px;color:var(--txt3)">Outstanding: <strong style="color:${outstanding>0?'var(--yellow)':'var(--green)'}">${outstanding<=0?'£0 ✓':'£'+outstanding.toFixed(2)}</strong></span>
+          <span style="font-size:12px;color:var(--txt3)">Total: <strong>£${invTotal.grand.toFixed(2)}</strong></span>
+        </div>
+      </div>
+      <div style="padding:8px 14px;background:var(--s1)">
+        <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px">
+          <div style="height:100%;width:${pct.toFixed(0)}%;background:${pct>=100?'var(--green)':'var(--acc)'};border-radius:3px;transition:width .3s"></div>
+        </div>
+        <div style="font-size:10px;color:var(--txt3)">${pct.toFixed(0)}% paid</div>
+      </div>
+      ${pmts.length ? `
+      <div style="padding:10px 14px">
+        <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px">Payment History</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px 8px 6px 0;color:var(--txt3);font-weight:600;font-size:10px">DATE</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--txt3);font-weight:600;font-size:10px">AMOUNT</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--txt3);font-weight:600;font-size:10px">METHOD</th>
+            <th style="text-align:left;padding:4px 8px 6px;color:var(--txt3);font-weight:600;font-size:10px">REFERENCE</th>
+          </tr></thead>
+          <tbody>${pmts.map(p=>`
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:6px 8px 6px 0">${p.date||'—'}</td>
+              <td style="padding:6px 8px;color:var(--green);font-weight:700">£${p.amount.toFixed(2)}</td>
+              <td style="padding:6px 8px;color:var(--txt2)">${p.method||'—'}</td>
+              <td style="padding:6px 8px;color:var(--txt3)">${p.ref||'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : `<div style="padding:12px 14px;font-size:12px;color:var(--txt3)">No payments recorded yet.</div>`}
+    `;
+    // Append after the actions bar
+    box.appendChild(section);
+  }catch(e){ /* non-critical */ }
+}
+
+
+// ── Bulk mark Awaiting Payment → Paid ──
+async function bulkMarkPaid(){
+  const filter = document.getElementById('inv-filter')?.value||'';
+  const search = (document.getElementById('inv-search')?.value||'').toLowerCase();
+  let invs = await dAll('invoices');
+  invs = invs.filter(i=>i.status==='Awaiting Payment');
+  if(filter && filter!=='Awaiting Payment') invs = invs.filter(i=>i.status===filter);
+  if(search) invs = invs.filter(i=>(i.clientName+i.number+i.description).toLowerCase().includes(search));
+  if(!invs.length){ toast('No unpaid invoices to mark','info'); return; }
+  if(!confirm(`Mark ${invs.length} invoice${invs.length!==1?'s':''} as Paid?\n\nThis will create a payment record for each.`)) return;
+  const btn = document.querySelector('[onclick="bulkMarkPaid()"]');
+  if(btn){btn.disabled=true;btn.textContent='Marking…';}
+  let done=0;
+  try{
+    for(const inv of invs){
+      const t=calcInvTotal(inv);
+      await dPut('payments',{id:uid(),invId:inv.id,date:TODAY(),amount:t.grand,method:'Bank Transfer',ref:inv.number,recorded_by:_appUser?.name||'Office',created:Date.now()});
+      await dPut('invoices',{...inv,status:'Paid'});
+      done++;
+    }
+    toast(`✅ ${done} invoice${done!==1?'s':''} marked as Paid`,'success');
+  }catch(e){
+    toast('❌ Bulk paid failed: '+e.message.slice(0,80),'error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='✓ Bulk Paid';}
+    renderInvList();
+    updateBadges();
+  }
+}
+
+// ── Create a recurring invoice (copy with next month's dates) ──
+async function createRecurringInv(id){
+  const inv = await dGet('invoices', id);
+  if(!inv) return;
+  const newNum = await nextInvNum();
+  // Advance dates by 1 month
+  const advanceMonth = (dateStr) => {
+    if(!dateStr) return TODAY();
+    const d = new Date(dateStr);
+    d.setMonth(d.getMonth()+1);
+    return d.toISOString().slice(0,10);
+  };
+  const newInv = {
+    ...inv,
+    id: uid(),
+    number: newNum,
+    date: advanceMonth(inv.date),
+    dueDate: advanceMonth(inv.dueDate),
+    status: 'Draft',
+    created: Date.now(),
+  };
+  await dPut('invoices', newInv);
+  toast(`✅ Recurring invoice created: ${newNum}`, 'success');
+  renderInvList();
+  setTimeout(()=>viewInv(newInv.id), 200);
+}
+
+// ── Send invoice via email immediately after saving ──
+async function saveAndSendInv(){
+  await saveInvWithJobSync();
+  if(curInvId) setTimeout(()=>openInvSendModal(curInvId), 400);
+}
+
+
+// ── Find and delete duplicate invoices (same job ref + same amount + same date) ──
+async function deleteDuplicateInvoices(){
+  const invs = await dAll('invoices');
+  // Group by: date + jobRef + clientName + total amount
+  const seen = {};
+  const dupes = [];
+  invs.sort((a,b)=>a.created-b.created); // keep oldest
+  invs.forEach(inv=>{
+    const t = calcInvTotal(inv);
+    const key = [inv.date||'', inv.jobRef||'', inv.clientName||'', t.grand.toFixed(2), inv.description||''].join('|');
+    if(seen[key]){
+      dupes.push(inv); // this one is a duplicate — mark for deletion
+    } else {
+      seen[key] = inv.id;
+    }
+  });
+  if(!dupes.length){ toast('✅ No duplicate invoices found!','success'); return; }
+  if(!confirm(`Found ${dupes.length} duplicate invoice${dupes.length!==1?'s':''} (same date, job, client and amount).\n\nThe oldest copy of each will be kept, duplicates will be deleted.\n\nProceed?`)) return;
+  let deleted=0;
+  for(const inv of dupes){
+    try{ await dDel('invoices',inv.id); deleted++; }catch(e){}
+  }
+  toast(`✅ Deleted ${deleted} duplicate invoice${deleted!==1?'s':''}. ${dupes.length-deleted>0?`${dupes.length-deleted} failed — try again.`:''}`, 'success', 5000);
+  renderInvList();
+  renderInvKPIs();
+  updateBadges();
+}
+
+
+// ── Duplicate an invoice ──
+async function duplicateInv(id){
+  const inv = await dGet('invoices', id);
+  if(!inv) return;
+  const newNum = await nextInvNum();
+  const newInv = {
+    ...inv,
+    id: uid(),
+    number: newNum,
+    date: TODAY(),
+    status: 'Draft',
+    created: Date.now(),
+  };
+  // Set due date from settings
+  const dd = new Date(); dd.setDate(dd.getDate()+(S.dueDays||14));
+  newInv.dueDate = dd.toISOString().slice(0,10);
+  await dPut('invoices', newInv);
+  toast(`✅ Invoice copied as ${newNum}`, 'success');
+  renderInvList();
+  setTimeout(()=>viewInv(newInv.id), 200);
+}
+
+// ── Export all visible invoices to CSV ──
+async function exportInvsCSV(){
+  const filter = document.getElementById('inv-filter')?.value||'';
+  const search = (document.getElementById('inv-search')?.value||'').toLowerCase();
+  let invs = await dAll('invoices');
+  if(filter) invs = invs.filter(i=>i.status===filter);
+  if(search) invs = invs.filter(i=>(i.clientName+i.number+i.description).toLowerCase().includes(search));
+  invs.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  const allPmts = await dAll('payments');
+  const rows = [['Invoice #','Date','Due Date','Client','Description','Subtotal','VAT','Total','Paid','Outstanding','Status','Job Ref']];
+  invs.forEach(inv=>{
+    const t = calcInvTotal(inv);
+    const paid = allPmts.filter(p=>p.invId===inv.id).reduce((s,p)=>s+p.amount,0);
+    rows.push([
+      inv.number, inv.date||'', inv.dueDate||'',
+      inv.clientName||'', (inv.description||'').replace(/,/g,' '),
+      t.sub.toFixed(2), t.vat.toFixed(2), t.grand.toFixed(2),
+      paid.toFixed(2), Math.max(0,t.grand-paid).toFixed(2),
+      inv.status||'', inv.jobRef||''
+    ]);
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'invoices-'+TODAY()+'.csv';
+  a.click();
+  toast(`✅ ${invs.length} invoices exported to CSV`, 'success');
+}
+
+// ── Send all overdue reminders via WhatsApp at once ──
+async function sendAllOverdueWA(){
+  const invs = await dAll('invoices');
+  const today = TODAY();
+  const overdue = invs.filter(i=>i.status==='Awaiting Payment' && i.dueDate && i.dueDate < today);
+  if(!overdue.length){ toast('No overdue invoices to remind','info'); return; }
+  const confirmed = confirm(`Send WhatsApp overdue reminders to ${overdue.length} client${overdue.length!==1?'s':''}?`);
+  if(!confirmed) return;
+  let sent = 0;
+  for(const inv of overdue){
+    const t = calcInvTotal(inv);
+    const daysOver = Math.ceil((new Date(today)-new Date(inv.dueDate))/86400000);
+    const msg = (S.waOverdueTpl||'Invoice {invoice_num} for £{amount} is {days_overdue} days overdue. Please arrange payment.')
+      .replace('{invoice_num}',inv.number)
+      .replace('{amount}',t.grand.toFixed(2))
+      .replace('{days_overdue}',daysOver)
+      .replace('{client_name}',inv.clientName||'')
+      .replace('{due_date}',inv.dueDate||'')
+      .replace('{company_name}',S.coName||'');
+    const wa = inv.clientWA||'';
+    if(wa){ window.open('https://wa.me/'+wa.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(msg),'_blank'); sent++; await new Promise(r=>setTimeout(r,600)); }
+  }
+  toast(`📱 Opened ${sent} WhatsApp reminders`, 'success');
+}
+
+// ── Invoice KPI summary for the header ──
+async function renderInvKPIs(){
+  const kpiEl = document.getElementById('inv-kpis');
+  if(!kpiEl) return;
+  const invs = await dAll('invoices');
+  const pmts = await dAll('payments');
+  const today = TODAY();
+  const thisMonth = today.slice(0,7);
+
+  const monthInvs = invs.filter(i=>i.date?.startsWith(thisMonth));
+  const monthTotal = monthInvs.reduce((s,i)=>s+calcInvTotal(i).grand,0);
+  const outstanding = invs.filter(i=>i.status==='Awaiting Payment'||i.status==='Draft')
+    .reduce((s,i)=>s+Math.max(0,calcInvTotal(i).grand-pmts.filter(p=>p.invId===i.id).reduce((a,p)=>a+p.amount,0)),0);
+  const overdue = invs.filter(i=>i.status==='Awaiting Payment'&&i.dueDate&&i.dueDate<today).length;
+  const paidThisMonth = pmts.filter(p=>p.date?.startsWith(thisMonth)).reduce((s,p)=>s+p.amount,0);
+
+  kpiEl.innerHTML = `
+    <div class="kpi-tile" onclick="document.getElementById('inv-filter').value='';renderInvList()">
+      <div class="kpi-val">£${monthTotal.toFixed(0)}</div>
+      <div class="kpi-lbl">Invoiced this month</div>
+    </div>
+    <div class="kpi-tile" style="border-top-color:var(--green)" onclick="document.getElementById('inv-filter').value='Paid';renderInvList()">
+      <div class="kpi-val" style="color:var(--green)">£${paidThisMonth.toFixed(0)}</div>
+      <div class="kpi-lbl">Collected this month</div>
+    </div>
+    <div class="kpi-tile" style="border-top-color:var(--yellow)" onclick="document.getElementById('inv-filter').value='Awaiting Payment';renderInvList()">
+      <div class="kpi-val" style="color:var(--yellow)">£${outstanding.toFixed(0)}</div>
+      <div class="kpi-lbl">Outstanding</div>
+    </div>
+    <div class="kpi-tile" style="border-top-color:var(--red)" onclick="setInvFilter('overdue')">
+      <div class="kpi-val" style="color:${overdue>0?'var(--red)':'var(--green)'}">${overdue}</div>
+      <div class="kpi-lbl">Overdue invoices</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-val">${invs.filter(i=>i.status==='Draft').length}</div>
+      <div class="kpi-lbl">Drafts pending</div>
+    </div>
+  `;
+}
+
+function setInvFilter(val){
+  const el = document.getElementById('inv-filter');
+  if(el){ el.value = val; renderInvList(); }
+}
+
 
 function calcInvTotal(inv){
   const vr=S.vatRate||20;let sub=0,vat=0;
@@ -6944,7 +7317,6 @@ async function viewInv(id){
       </div>
     </div>
     <div class="inv-detail-body">
-      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px"><strong style="color:var(--txt)">${inv.description}</strong></div>
       <table class="inv-table">
         <thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>VAT</th><th style="text-align:right">Total</th></tr></thead>
         <tbody>
@@ -6975,15 +7347,20 @@ async function viewInv(id){
     </div>
     <div class="inv-actions-bar">
       <button class="btn btn-ghost btn-sm" onclick="editInvModal('${id}')">✎ Edit</button>
+      ${inv.clientName?`<button class="btn btn-ghost btn-sm" onclick="nav('stmt');setTimeout(()=>{const el=document.getElementById('stmt-landlord');if(el){el.value='${(inv.clientName||'').replace(/'/g,"\\'")}';renderStmt();}},300)">📋 Client Stmt</button>`:''}
       ${inv.status!=='Paid'?`<button class="btn btn-green btn-sm" onclick="markInvPaid('${id}')">✓ Mark Paid</button>`:''}
       ${inv.status!=='Paid'?`<button class="btn btn-blue btn-sm" onclick="openPaymentModal('${id}')">💳 Record Payment</button>`:''}
       ${inv.status==='Paid'?`<button class="btn btn-ghost btn-sm" onclick="markInvUnpaid('${id}')" title="Undo paid status — clears all payments for correction">↩ Mark Unpaid</button>`:''}
       ${inv.status==='Draft'?`<button class="btn btn-ghost btn-sm" onclick="markInvSent('${id}')">Mark Sent</button>`:''}
       ${inv.status==='Awaiting Payment'?`<button class="btn btn-ghost btn-sm" onclick="sendOverdueWA('${id}')">⚠️ Overdue Reminder</button>`:''}
       <button class="btn btn-wa btn-sm" onclick="openInvSendModal('${id}')">📱 Send / Share</button>
+      <button class="btn btn-ghost btn-sm" onclick="downloadInvPDFById('${id}')">⬇ PDF</button>
+      <button class="btn btn-ghost btn-sm" onclick="createRecurringInv('${id}')" title="Copy this invoice to next month as a new draft">↻ Recurring</button>
       <button class="btn btn-red btn-sm" style="margin-left:auto" onclick="deleteInv('${id}')">Delete</button>
     </div>
   `;
+  // Append payment history section async (doesn't block render)
+  _renderInvPayments(id, t);
   renderInvList();
 }
 
@@ -7048,105 +7425,173 @@ async function downloadInvPDF(){
 
 async function downloadInvPDFById(id){
   const inv=await dGet('invoices',id);
-  if(!inv)return;
+  if(!inv){toast('Invoice not found','error');return;}
+  if(!window.jspdf){toast('PDF library not loaded — check your internet and try again','error');return;}
+
   const t=calcInvTotal(inv);
   const vr=S.vatRate||20;
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=210,M=18;
+  const W=210, H=297, M=18, RW=W-M*2;
+  const accent=[245,166,35], dark=[22,24,35], mid=[80,85,110], light=[245,246,250];
 
-  // Logo
+  // ── Helper: safe text with word wrap ──
+  const safeText=(txt,x,y,maxW)=>{
+    if(!txt)return;
+    const lines=doc.splitTextToSize(String(txt),maxW||80);
+    doc.text(lines,x,y);
+    return lines.length;
+  };
+
+  // ── TOP COLOUR BAR ──
+  doc.setFillColor(...accent);doc.rect(0,0,W,4,'F');
+
+  // ── LOGO ──
+  let logoBottom=M;
   if(S.logoData){
-    try{doc.addImage(S.logoData,'PNG',M,M,40,20,'','FAST')}catch(e){}
+    try{
+      doc.addImage(S.logoData,'PNG',M,M+4,36,18,'','FAST');
+      logoBottom=M+24;
+    }catch(e){}
   }
 
-  // Header
-  doc.setFont('helvetica','bold');doc.setFontSize(24);
-  doc.setTextColor(240,166,35);doc.text('INVOICE',W-M,26,{align:'right'});
-  doc.setTextColor(30,30,40);doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text(S.coName||'',M,S.logoData?42:24);
-  if(S.coAddr)doc.text(S.coAddr,M,S.logoData?48:30);
-  if(S.coPhone)doc.text(S.coPhone,M,S.logoData?54:36);
-  if(S.coVatNum)doc.text('VAT: '+S.coVatNum,M,S.logoData?60:42);
+  // ── COMPANY DETAILS (left) ──
+  let cy=logoBottom+4;
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...dark);
+  doc.text(S.coName||'Your Company',M,cy); cy+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...mid);
+  if(S.coAddr){safeText(S.coAddr,M,cy,70);cy+=4*(S.coAddr.split(',').length);}
+  if(S.coPhone){doc.text(S.coPhone,M,cy);cy+=4;}
+  if(S.coEmail){doc.text(S.coEmail,M,cy);cy+=4;}
+  if(S.coVatNum){doc.text('VAT No: '+S.coVatNum,M,cy);}
 
+  // ── INVOICE META (right) ──
+  doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(...accent);
+  doc.text('INVOICE',W-M,M+10,{align:'right'});
+  doc.setFontSize(10);doc.setTextColor(...dark);
+  doc.text(inv.number,W-M,M+20,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mid);
+  doc.text('Issue date: '+(inv.date||'—'),W-M,M+28,{align:'right'});
+  if(inv.dueDate)doc.text('Due date:    '+inv.dueDate,W-M,M+34,{align:'right'});
   doc.setFont('helvetica','bold');
-  doc.text(inv.number,W-M,34,{align:'right'});
-  doc.setFont('helvetica','normal');
-  doc.text('Date: '+inv.date,W-M,40,{align:'right'});
-  if(inv.dueDate)doc.text('Due: '+inv.dueDate,W-M,46,{align:'right'});
+  const statusColour={'Paid':[34,197,94],'Awaiting Payment':[245,166,35],'Cancelled':[200,60,60],'Draft':[120,130,150]}[inv.status]||mid;
+  doc.setTextColor(...statusColour);
+  doc.text(inv.status||'Draft',W-M,M+42,{align:'right'});
 
-  let y=75;
-  // Bill To
-  doc.setFillColor(240,166,35);doc.rect(M,y,W-M*2,7,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(20,20,20);
-  doc.text('BILL TO',M+3,y+4.5);doc.text('DESCRIPTION',M+80,y+4.5);
-  y+=12;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(30,30,40);
-  doc.text(inv.clientName||'',M,y);
-  if(inv.clientAddr)doc.text(inv.clientAddr,M,y+6);
-  doc.text(inv.description||'',M+80,y);
-  y+=22;
+  // ── DIVIDER ──
+  let y=Math.max(cy+6, 62);
+  doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;
 
-  // Table
-  doc.setFillColor(30,35,55);doc.rect(M,y,W-M*2,7,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(180,180,200);
-  ['Description','Qty','Unit Price','VAT','Total'].forEach((h,i)=>{
-    const xs=[M+2,M+90,M+110,M+135,W-M-2];
-    const al=[null,null,null,null,'right'];
-    doc.text(h,xs[i],y+4.5,al[i]?{align:al[i]}:null);
-  });
-  y+=10;
-  doc.setTextColor(40,40,60);
+  // ── BILL TO (left) + INVOICE FOR (right, no duplicate description) ──
+  const colW=(RW-10)/2;
+  // BILL TO header
+  doc.setFillColor(...light);doc.rect(M,y,colW,6,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+  doc.text('BILL TO',M+3,y+4);
+  y+=9;
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...dark);
+  doc.text(inv.clientName||'—',M,y);
+  let clientY = y+5;
+  if(inv.clientAddr){
+    doc.setFontSize(8.5);doc.setTextColor(...mid);
+    const addrLines=doc.splitTextToSize(inv.clientAddr,colW);
+    doc.text(addrLines,M,clientY);clientY+=addrLines.length*4.5;
+  }
+  if(inv.clientEmail){doc.setFontSize(8);doc.setTextColor(...mid);doc.text(inv.clientEmail,M,clientY);clientY+=5;}
+  y=clientY+4;
+
+  // ── LINE ITEMS TABLE ──
+  doc.setDrawColor(220,220,230);doc.line(M,y,W-M,y);y+=2;
+  // Header row
+  doc.setFillColor(...dark);doc.rect(M,y,RW,6.5,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(200,200,220);
+  const cols=[M+2,M+90,M+113,M+133,W-M-2];
+  const hdrs=['DESCRIPTION','QTY','UNIT PRICE','VAT','TOTAL'];
+  const aligns=['left','left','left','left','right'];
+  hdrs.forEach((h,i)=>doc.text(h,cols[i],y+4.5,aligns[i]==='right'?{align:'right'}:null));
+  y+=8;
+
+  // Item rows
   (inv.items||[]).forEach((item,ii)=>{
     const l=(item.qty||1)*(item.unit||0);
     const v=item.vat?l*vr/100:0;
-    if(ii%2===0){doc.setFillColor(248,248,252);doc.rect(M,y-4,W-M*2,7,'F')}
-    doc.setFont('helvetica','normal');doc.setFontSize(9);
-    doc.text(String(item.desc||'').slice(0,40),M+2,y);
-    doc.text(String(item.qty||1),M+91,y);
-    doc.text('£'+Number(item.unit||0).toFixed(2),M+111,y);
-    doc.text(item.vat?vr+'%':'—',M+136,y);
-    doc.text('£'+(l+v).toFixed(2),W-M-2,y,{align:'right'});
-    y+=8;
+    const rowH=7;
+    if(y>H-50){doc.addPage();doc.setFillColor(...accent);doc.rect(0,0,W,4,'F');y=14;}
+    if(ii%2===0){doc.setFillColor(249,249,252);doc.rect(M,y-3,RW,rowH,'F');}
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...dark);
+    const dTxt=String(item.desc||'');
+    const dLines=doc.splitTextToSize(dTxt,82);
+    doc.text(dLines[0]+(dLines.length>1?'…':''),M+2,y+1);
+    doc.text(String(item.qty||1),cols[1],y+1);
+    doc.text('£'+Number(item.unit||0).toFixed(2),cols[2],y+1);
+    doc.setTextColor(item.vat?100:160,item.vat?120:160,item.vat?160:160);
+    doc.text(item.vat?vr+'%':'—',cols[3],y+1);
+    doc.setTextColor(...dark);
+    doc.text('£'+(l+v).toFixed(2),cols[4],y+1,{align:'right'});
+    y+=rowH;
   });
-  y+=4;
-  doc.line(M,y,W-M,y);y+=8;
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('Subtotal:',W-M-40,y);doc.text('£'+t.sub.toFixed(2),W-M,y,{align:'right'});y+=6;
-  doc.text(`VAT (${vr}%):`,W-M-40,y);doc.text('£'+t.vat.toFixed(2),W-M,y,{align:'right'});y+=8;
-  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(240,166,35);
-  doc.text('TOTAL:',W-M-40,y);doc.text('£'+t.grand.toFixed(2),W-M,y,{align:'right'});
+  y+=3;doc.setDrawColor(220,220,230);doc.line(M,y,W-M,y);y+=6;
 
-  // Bank / footer
+  // ── TOTALS (right aligned) ──
+  const tCol=W-M-50;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...mid);
+  doc.text('Subtotal:',tCol,y);doc.text('£'+t.sub.toFixed(2),W-M,y,{align:'right'});y+=5.5;
+  doc.text(`VAT (${vr}%):`,tCol,y);doc.text('£'+t.vat.toFixed(2),W-M,y,{align:'right'});y+=2;
+  doc.setDrawColor(220,220,230);doc.line(tCol,y,W-M,y);y+=5;
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...accent);
+  doc.text('TOTAL:',tCol,y);doc.text('£'+t.grand.toFixed(2),W-M,y,{align:'right'});y+=8;
+
+  // ── PAID WATERMARK ──
+  if(inv.status==='Paid'){
+    doc.saveGraphicsState();
+    doc.setGState(doc.GState({opacity:0.08}));
+    doc.setFont('helvetica','bold');doc.setFontSize(80);doc.setTextColor(34,197,94);
+    doc.text('PAID',W/2,H/2,{align:'center',angle:35});
+    doc.restoreGraphicsState();
+  }
+
+  // ── PAYMENT DETAILS ──
   if(S.bankName||S.bankAcc){
-    y+=14;doc.setTextColor(80,80,100);doc.setFontSize(8);doc.setFont('helvetica','normal');
-    doc.text('Payment Details:',M,y);y+=5;
+    y+=2;
+    doc.setFillColor(...light);doc.rect(M,y,RW,5.5,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    doc.text('PAYMENT DETAILS',M+3,y+3.8);y+=7;
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...dark);
     if(S.bankName)doc.text('Bank: '+S.bankName,M,y);
-    if(S.bankAcc)doc.text('Account: '+S.bankAcc+(S.bankSort?' | Sort: '+S.bankSort:''),M+50,y);
-    if(S.bankIBAN){y+=4;doc.text('IBAN: '+S.bankIBAN,M,y)}
+    if(S.bankAcc)doc.text('Acc: '+S.bankAcc+(S.bankSort?' · Sort: '+S.bankSort:''),M+55,y);y+=5;
+    if(S.bankIBAN)doc.text('IBAN: '+S.bankIBAN,M,y);
   }
-  // Payment reference box
-  y+=10;
-  doc.setFillColor(245,166,35);doc.setDrawColor(245,166,35);
-  doc.roundedRect(M,y-4,W-M*2,10,2,2,'S');
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,60,10);
-  doc.text(`Please use invoice number ${inv.number} as your payment reference`,M+4,y+2);
-  y+=14;
+
+  // ── PAYMENT REFERENCE BOX ──
+  y+=8;
+  doc.setFillColor(254,248,235);doc.setDrawColor(...accent);doc.setLineWidth(0.5);
+  doc.roundedRect(M,y-3,RW,9,2,2,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(100,70,10);
+  doc.text('Please quote reference: '+inv.number+' with your payment',M+3,y+2.5);
+  y+=13;
+
+  // ── TERMS & NOTES ──
   if(S.payTerms||S.invNotes){
-    doc.setFontSize(8);doc.setTextColor(120,120,140);doc.setFont('helvetica','normal');
-    if(S.payTerms)doc.text(S.payTerms,M,y);
-    if(S.invNotes){y+=5;doc.text(S.invNotes,M,y)}
-    y+=8;
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    if(S.payTerms){safeText(S.payTerms,M,y,RW);y+=5;}
+    if(S.invNotes){safeText(S.invNotes,M,y,RW);y+=5;}
   }
-  // Small footer: job ref + agent
-  doc.setFontSize(7);doc.setTextColor(160,160,180);doc.setFont('helvetica','normal');
-  const footParts=[];
-  if(inv.jobRef)footParts.push('Job Ref: '+inv.jobRef);
-  if(inv.agentName)footParts.push('Requested by: '+inv.agentName);
-  if(footParts.length){doc.text(footParts.join('   ·   '),M,y);y+=5}
+
+  // ── FOOTER LINE ──
+  doc.setDrawColor(220,220,230);doc.line(M,H-14,W-M,H-14);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(170,175,195);
+  const footParts=[S.coName||''];
+  if(inv.jobRef)footParts.push('Job: '+inv.jobRef);
+  if(inv.agentName)footParts.push('Agent: '+inv.agentName);
+  doc.text(footParts.join(' · '),M,H-9);
+  doc.text('Generated by DeepFlow',W-M,H-9,{align:'right'});
+
+  // ── BOTTOM COLOUR BAR ──
+  doc.setFillColor(...accent);doc.rect(0,H-4,W,4,'F');
 
   doc.save((inv.number||'invoice')+'.pdf');
-  toast('PDF downloaded','success');
+  await logActivity('PDF downloaded: '+inv.number,'invoice');
+  toast('✅ PDF downloaded — '+inv.number,'success');
 }
 
 async function markInvPaid(id){
@@ -7227,17 +7672,20 @@ async function editInvModal(id){
   document.getElementById('if-notes').value=inv.notes||S.invNotes||'';
   document.getElementById('if-terms').value=inv.terms||S.payTerms||'';
   document.getElementById('if-status').value=inv.status||'Draft';
+  document.getElementById('if-due').value=inv.dueDate||'';
   document.getElementById('if-jobref').value=inv.jobRef||'';
   document.getElementById('if-agent').value=inv.agentName||'';
   document.getElementById('if-agent-cc').value=inv.agentCC||'';
   invItems=JSON.parse(JSON.stringify(inv.items||[]));
   fillInvClientDrop(inv.clientId);renderInvItems();
+  document.getElementById('if-vat-pct').textContent=S.vatRate||20;
   openModal('mo-inv');
 }
 
 async function fillInvClientDrop(selId){
   const ps=await dAll('persons');
-  document.getElementById('if-client').innerHTML=ps.map(p=>`<option value="${p.id}" ${p.id===selId?'selected':''}>${p.name}</option>`).join('');
+  const blank=selId?'':'<option value="" selected>— Select client —</option>';
+  document.getElementById('if-client').innerHTML=blank+ps.map(p=>`<option value="${p.id}" ${p.id===selId?'selected':''}>${p.name}</option>`).join('');
 }
 
 function addInvItem(){invItems.push({desc:'',qty:1,unit:0,vat:true});renderInvItems()}
@@ -8936,6 +9384,7 @@ async function exportCertCSV(){
 
 async function exportCertPDF(){
   if(!window.jspdf)return toast('PDF library not loaded','error');
+  if(!window.jspdf){toast('PDF library not loaded — please check your internet connection and try again','error');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF('l','mm','a4');
   const all=await dAll('certs');
@@ -9673,6 +10122,7 @@ function getTopAddresses(jobs,n){
 async function exportReportPDF(){
   toast('Generating report PDF…','info');
   const days=parseInt(document.getElementById('rep-period')?.value||30);
+  if(!window.jspdf){toast('PDF library not loaded — please check your internet connection and try again','error');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
   doc.setFont('helvetica','bold');doc.setFontSize(18);
@@ -10633,7 +11083,7 @@ function _buildAndShowMap(points, centLat, centLng, zoom) {
     + '<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></sc' + 'ript>'
     + '<script>'
     + 'var map=L.map("m").setView([' + lat + ',' + lng + '],' + z + ');'
-    + 'L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"\u00a9 OpenStreetMap",maxZoom:19}).addTo(map);'
+    + 'L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"\u00a9 OpenStreetMap \u00a9 CARTO",maxZoom:19,subdomains:"abcd"}).addTo(map);'
     + markersJs
     + '</sc' + 'ript></body></html>';
 
@@ -11091,8 +11541,13 @@ async function init(){
   // Apply online status visibility
   const onlineWidget = document.querySelector('.sidebar-foot > div:first-child');
   if(onlineWidget && S.showOnlineStatus===false) onlineWidget.style.display = 'none';
-  // Apply theme from DB (overrides localStorage if different)
-  const savedTheme = S.theme || localStorage.getItem('df_theme') || 'light';
+  // Theme priority: localStorage (user's explicit choice) > DB setting > default light
+  // Never use browser prefers-color-scheme — user sets their own preference in-app
+  const _lsTheme = localStorage.getItem('df_theme');
+  const savedTheme = _lsTheme || S.theme || 'light';
+  // If DB has a theme that differs from localStorage, localStorage wins
+  // (localStorage is the most recent explicit choice by the user on this device)
+  if(savedTheme !== S.theme) S.theme = savedTheme;
   applyTheme(savedTheme);
   S.themeMode = S.themeMode || 'manual';
   startThemeScheduler();
@@ -13579,7 +14034,29 @@ async function kanbanDrop(e, newStatus){
   const inv = await dGet('invoices', _kanbanDragId);
   if(!inv) return;
   inv.status = newStatus;
-  await dPut('invoices', inv);
+  // Try full save first; if a column doesn't exist, strip it and retry
+  try{
+    await dPut('invoices', inv);
+  }catch(colErr){
+    if(colErr.message?.includes('PGRST204')||colErr.message?.includes('not find')){
+      // Extract which column is missing and strip it
+      const missingCol = (colErr.message.match(/not find the '(\w+)' column/)||[])[1];
+      if(missingCol){
+        const stripped = {...inv};
+        // Try to find the camelCase key for this DB column
+        const dbMap = Object.entries(_TO_DB.invoices||{});
+        const camelKey = dbMap.find(([k,v])=>v===missingCol)?.[0] || missingCol;
+        delete stripped[camelKey];
+        delete stripped[missingCol];
+        toast(`ℹ️ Column '${missingCol}' not in DB yet — saving without it. Run the SQL in Guide & SQL to add it.`,'warn',5000);
+        await dPut('invoices', stripped);
+      } else {
+        throw colErr;
+      }
+    } else {
+      throw colErr;
+    }
+  }
   await logActivity(`Invoice ${inv.number} moved to ${newStatus}`, 'invoice');
   toast(`${inv.number} → ${newStatus}`, 'success');
   renderKanban();
@@ -13857,7 +14334,30 @@ async function saveQuickEngineer(){
 const _origSaveInv = saveInv;
 // We'll patch saveInv below after it's defined
 
+let _invSaving = false; // global lock — prevents double-save on repeated clicks
+
 async function saveInvWithJobSync(){
+  // ── LOCK: if already saving, ignore extra clicks completely ──
+  if(_invSaving){ toast('Already saving, please wait…','info',1500); return; }
+  _invSaving = true;
+
+  const _saveBtn = document.querySelector('[onclick="saveInv()"]');
+  const _sendBtn = document.querySelector('[onclick="saveAndSendInv()"]');
+  const _disableBtn = btn => { if(btn){btn.disabled=true;btn.style.opacity='0.6';} };
+  const _enableBtn  = btn => { if(btn){btn.disabled=false;btn.style.opacity='';} };
+  if(_saveBtn){_saveBtn.disabled=true;_saveBtn.textContent='Saving…';_saveBtn.style.opacity='0.7';}
+  _disableBtn(_sendBtn);
+
+  try{
+  // Validate required fields
+  const dateVal = document.getElementById('if-date')?.value;
+  if(!dateVal){ toast('Please set an invoice date','error'); return; }
+  const descVal = document.getElementById('if-desc')?.value?.trim();
+  if(!descVal){ toast('Please add a description for this invoice','error'); return; }
+  if(invItems.length===0){ toast('Add at least one line item','error'); return; }
+  const hasAmount = invItems.some(i=>(i.qty||1)*(i.unit||0)>0);
+  if(!hasAmount){ toast('At least one line item must have an amount greater than £0','error'); return; }
+
   const ps = await dAll('persons');
   const cid = document.getElementById('if-client').value;
   const cl = ps.find(p=>p.id===cid)||{};
@@ -13882,6 +14382,10 @@ async function saveInvWithJobSync(){
     linkedJobId: window._pendingJobLink || (editInvId ? existingInv.linkedJobId : null),
     created: editInvId ? existingInv.created : Date.now()
   };
+  // Ensure agentCC column exists — run this SQL if save still fails:
+  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentcc text;
+  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentname text;
+  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS linkedjobid text;
   await dPut('invoices', inv);
 
   // Auto-create or update linked job
@@ -13893,7 +14397,9 @@ async function saveInvWithJobSync(){
   // Check if a job with this invoice number already exists
   const allJobs = await dAll('jobs');
   let linkedJob = allJobs.find(j => j.invNumber === invNum || j.id === inv.linkedJobId);
-  if(!linkedJob && !editInvId){
+  // Only auto-create a job if this invoice was explicitly created FROM a job (createInvFromJob sets _pendingJobLink)
+  // For standalone invoices (New Invoice button), never auto-create a job
+  if(!linkedJob && !editInvId && window._pendingJobLink){
     // Create new job for this invoice
     const newJob = {
       id: uid(),
@@ -13944,8 +14450,28 @@ async function saveInvWithJobSync(){
   updateBadges();
   renderJobs();
   renderFutureJobs();
-  toast('Invoice saved','success');
+  toast('Invoice saved ✅','success');
   if(!editInvId) viewInv(invId);
+  }catch(err){
+    let msg = err.message||'Save failed';
+    if(msg.includes('42501')||msg.includes('row-level security')){
+      msg = 'Permission denied — check Supabase RLS. Run: CREATE POLICY "invoices_auth" ON invoices FOR ALL TO authenticated USING (true) WITH CHECK (true);';
+    } else if(msg.includes('Failed to fetch')||msg.includes('NetworkError')){
+      msg = 'No internet connection. Check your network and try again.';
+    } else if(msg.includes('duplicate')||msg.includes('unique')){
+      msg = 'Invoice number already exists. Refresh and try again.';
+    } else if(msg.includes('PGRST204')||msg.includes('not find')){
+      const col=(msg.match(/not find the '(\w+)' column of '(\w+)'/)||[]);
+      msg = col[1] ? `Column '${col[1]}' missing in table '${col[2]||''}'. Run: ALTER TABLE ${col[2]||'invoices'} ADD COLUMN IF NOT EXISTS ${col[1]} text;` : msg.slice(0,140);
+    }
+    toast('❌ Save failed: '+msg.slice(0,160),'error',8000);
+    console.error('saveInvWithJobSync error:',err);
+  }finally{
+    _invSaving = false;
+    if(_saveBtn){_saveBtn.disabled=false;_saveBtn.textContent='Save Invoice';_saveBtn.style.opacity='';}
+    const _sb2=document.querySelector('[onclick="saveAndSendInv()"]');
+    if(_sb2){_sb2.disabled=false;_sb2.style.opacity='';}
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -14012,10 +14538,12 @@ function startThemeScheduler() {
   }
 }
 
-// Init theme from localStorage first (instant, before DB load)
+// Init theme from localStorage first (instant, no flash of wrong theme)
+// Default is always light — user must explicitly switch to dark
 (function() {
   const saved = localStorage.getItem('df_theme') || 'light';
   document.body.classList.toggle('theme-dark', saved === 'dark');
+  document.body.classList.toggle('theme-light', saved !== 'dark');
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = saved === 'light' ? '🌙' : '☀️';
 })();
