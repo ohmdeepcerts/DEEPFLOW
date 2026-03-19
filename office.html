@@ -1396,6 +1396,10 @@ body.density-relaxed .jtable td{font-size:15px}
     <!-- Toolbar -->
     <div class="jobs-ctrl">
       <button id="btn-cal-toggle" onclick="toggleCalPane()" title="Toggle calendar">📅</button>
+      <!-- Day nav -->
+      <button class="btn btn-ghost btn-sm" onclick="shiftDay(-1)" title="Previous day (←)">◀</button>
+      <button class="btn btn-ghost btn-sm" onclick="jPickDate(TODAY());renderJobs()" style="font-weight:700;min-width:52px" title="Jump to today">Today</button>
+      <button class="btn btn-ghost btn-sm" onclick="shiftDay(1)" title="Next day (→)">▶</button>
       <input type="search" class="fi" id="j-search" placeholder="🔍  Search jobs, addresses, engineers…" oninput="renderJobs()" style="max-width:220px">
       <select class="fs" id="j-eng-filter" onchange="renderJobs()" style="width:130px;padding:5px 8px">
         <option value="">All Engineers</option>
@@ -1415,8 +1419,13 @@ body.density-relaxed .jtable td{font-size:15px}
       <input type="date" id="j-datepick" style="display:none" onchange="jPickDate(this.value)">
       <div class="date-lbl" id="j-date-lbl" style="display:none"></div>
       <div id="j-bulk" style="display:none;gap:6px">
-        <button class="btn btn-wa btn-sm" onclick="waJobsSelected()">📱 WhatsApp Selected</button>
-        <button class="btn btn-ghost btn-sm" onclick="mergeJobsInvoice()">Merge Invoice</button>
+        <span id="bulk-count" style="font-size:11px;font-weight:700;color:var(--txt2)"></span>
+        <button class="btn btn-wa btn-sm" onclick="waJobsSelected()">📱 WA Send</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkAssignEngineer()" title="Assign all selected to one engineer">👷 Assign Engineer</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkReschedule()" title="Move all selected to another date">📅 Reschedule</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkCopyToDate()" title="Copy selected jobs to another date">⧉ Copy to Date</button>
+        <button class="btn btn-ghost btn-sm" onclick="mergeJobsInvoice()">◎ Merge Invoice</button>
+        <button class="btn btn-red btn-sm" onclick="bulkDeleteJobs()">🗑 Delete</button>
         <button class="btn btn-ghost btn-sm" onclick="clearSel()">✕ Clear</button>
       </div>
       <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -5222,6 +5231,183 @@ let _jobCache = null;        // null = stale/unloaded; array = valid cache
 let _jobCacheTs = 0;         // timestamp of last fetch
 const JOB_CACHE_TTL = 30000; // 30 seconds — refresh if older than this
 
+
+// ══════════════════════════════════════════════════════════════
+//  JOBS — NEW FEATURES
+// ══════════════════════════════════════════════════════════════
+
+// ── Day navigation: shift jDate by N days ──
+function shiftDay(n){
+  const d = new Date((jDate||TODAY())+'T00:00:00');
+  d.setDate(d.getDate()+n);
+  jDate = d.toISOString().slice(0,10);
+  // Update range to show just that day if we're navigating
+  _jRange = '7';
+  ['all','7','30','past'].forEach(k=>{
+    const b=document.getElementById('jrange-btn-'+k);
+    if(b) b.classList.toggle('active', k==='7');
+  });
+  renderJobs();
+  // Scroll to the date group
+  setTimeout(()=>{
+    const el=document.querySelector(`[data-date-group="${jDate}"]`);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  },120);
+}
+
+// ── Keyboard arrow navigation ──
+document.addEventListener('keydown', e=>{
+  if(document.activeElement?.tagName==='INPUT'||document.activeElement?.tagName==='TEXTAREA'||document.activeElement?.tagName==='SELECT') return;
+  if(document.querySelector('.overlay.open')) return;
+  const pg = document.querySelector('.page.active');
+  if(!pg || pg.id !== 'pg-jobs') return;
+  if(e.key==='ArrowLeft'){ e.preventDefault(); shiftDay(-1); }
+  if(e.key==='ArrowRight'){ e.preventDefault(); shiftDay(1); }
+});
+
+// ── Bulk assign engineer ──
+async function bulkAssignEngineer(){
+  const ids=[...selJobs];
+  if(!ids.length){toast('Select jobs first','error');return;}
+  const engs=(S.engineers||[]).map(e=>e.name);
+  if(!engs.length){toast('No engineers configured','error');return;}
+  const name=await _pickFromList('Assign to engineer:',engs);
+  if(!name) return;
+  let done=0;
+  for(const id of ids){
+    try{
+      await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{engineer:name,modified:Date.now()},prefer:'return=minimal'});
+      done++;
+    }catch(e){}
+  }
+  _invalidateJobCache();
+  toast(`✅ Assigned ${done} job${done!==1?'s':''} to ${name}`,'success');
+  clearSel(); renderJobs();
+}
+
+// ── Bulk reschedule to a new date ──
+async function bulkReschedule(){
+  const ids=[...selJobs];
+  if(!ids.length){toast('Select jobs first','error');return;}
+  const newDate=prompt('Move selected jobs to date (YYYY-MM-DD):',TODAY());
+  if(!newDate||!/^\d{4}-\d{2}-\d{2}$/.test(newDate)){toast('Invalid date','error');return;}
+  let done=0;
+  for(const id of ids){
+    try{
+      await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{date:newDate,modified:Date.now()},prefer:'return=minimal'});
+      done++;
+    }catch(e){}
+  }
+  _invalidateJobCache();
+  toast(`✅ Moved ${done} job${done!==1?'s':''} to ${newDate}`,'success');
+  clearSel(); renderJobs();
+}
+
+// ── Bulk copy to a new date (keeps originals) ──
+async function bulkCopyToDate(){
+  const ids=[...selJobs];
+  if(!ids.length){toast('Select jobs first','error');return;}
+  const newDate=prompt('Copy selected jobs to date (YYYY-MM-DD):',TODAY());
+  if(!newDate||!/^\d{4}-\d{2}-\d{2}$/.test(newDate)){toast('Invalid date','error');return;}
+  let done=0;
+  for(const id of ids){
+    try{
+      const j=await dGet('jobs',id);
+      if(!j) continue;
+      const copy={...j,id:uid(),date:newDate,status:'Pending',created:Date.now(),modified:Date.now(),jobNum:await nextJobNum()};
+      delete copy.invNumber; delete copy.linkedInvId;
+      await dPut('jobs',copy); done++;
+    }catch(e){}
+  }
+  _invalidateJobCache();
+  toast(`✅ Copied ${done} job${done!==1?'s':''} to ${newDate}`,'success');
+  clearSel(); renderJobs();
+}
+
+// ── Bulk delete ──
+async function bulkDeleteJobs(){
+  const ids=[...selJobs];
+  if(!ids.length){toast('Select jobs first','error');return;}
+  if(!confirm(`Delete ${ids.length} selected job${ids.length!==1?'s':''}? This cannot be undone.`)) return;
+  let done=0;
+  for(const id of ids){
+    try{ await dDel('jobs',id); done++; }catch(e){}
+  }
+  _invalidateJobCache();
+  toast(`✅ Deleted ${done} job${done!==1?'s':''}`,'success');
+  clearSel(); renderJobs();
+}
+
+// ── Quick inline time edit ──
+async function quickEditTime(id, current, spanEl){
+  const newVal = prompt('Edit time slot:', current||'');
+  if(newVal===null) return;
+  try{
+    await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{timeslot:newVal,modified:Date.now()},prefer:'return=minimal'});
+    spanEl.textContent = newVal||'—';
+    _invalidateJobCache();
+  }catch(e){ toast('Update failed: '+e.message,'error'); }
+}
+
+// ── Quick inline price edit ──
+async function quickEditPrice(id, current, spanEl){
+  const newVal = prompt('Edit price (£):', current||'0');
+  if(newVal===null) return;
+  const num = parseFloat(newVal)||0;
+  try{
+    await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{price:num,modified:Date.now()},prefer:'return=minimal'});
+    spanEl.textContent = num>0?'£'+num.toFixed(0):'—';
+    _invalidateJobCache();
+  }catch(e){ toast('Update failed: '+e.message,'error'); }
+}
+
+// ── Copy single job to next day ──
+async function copyJobToNextDay(id){
+  const j = await dGet('jobs',id);
+  if(!j) return;
+  const d = new Date((j.date||TODAY())+'T00:00:00');
+  d.setDate(d.getDate()+1);
+  const nextDate = d.toISOString().slice(0,10);
+  const copy = {...j, id:uid(), date:nextDate, status:'Pending', created:Date.now(), modified:Date.now()};
+  delete copy.invNumber; delete copy.linkedInvId;
+  try{
+    copy.jobNum = await nextJobNum();
+    await dPut('jobs', copy);
+    _invalidateJobCache();
+    toast(`✅ Job copied to ${nextDate}`, 'success');
+    renderJobs();
+  }catch(e){ toast('Copy failed: '+e.message,'error'); }
+}
+
+// ── Helper: pick from a dropdown list ──
+function _pickFromList(title, options){
+  return new Promise(resolve=>{
+    const overlay = document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+    overlay.innerHTML=`<div style="background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:20px;min-width:280px;box-shadow:var(--sh2)">
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--txt)">${title}</div>
+      <select id="_pick-sel" class="fs" style="width:100%;margin-bottom:14px">
+        ${options.map(o=>`<option value="${o}">${o}</option>`).join('')}
+      </select>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="this.closest('div[style*=fixed]').remove();window._pickResolve(null)">Cancel</button>
+        <button class="btn btn-acc btn-sm" onclick="window._pickResolve(document.getElementById('_pick-sel').value);this.closest('div[style*=fixed]').remove()">Confirm</button>
+      </div>
+    </div>`;
+    window._pickResolve = resolve;
+    document.body.appendChild(overlay);
+    setTimeout(()=>document.getElementById('_pick-sel')?.focus(),50);
+  });
+}
+
+// ── Keep bulk count in sync ──
+const _origUpdateBulkBar = updateBulkBar;
+function updateBulkBar(){
+  _origUpdateBulkBar?.();
+  const countEl = document.getElementById('bulk-count');
+  if(countEl) countEl.textContent = selJobs.size > 0 ? `${selJobs.size} selected` : '';
+}
+
 async function _getJobs(forceRefresh=false){
   const now = Date.now();
   if(!forceRefresh && _jobCache && (now - _jobCacheTs) < JOB_CACHE_TTL){
@@ -5352,7 +5538,7 @@ async function renderJobs(){
 
   let jobs = allJobs;
   if(search){
-    jobs = jobs.filter(j=>(j.address+j.description+j.referrer+j.engineer+j.notes+(j.jobNum||'')).toLowerCase().includes(search));
+    jobs = jobs.filter(j=>(j.address+' '+j.description+' '+j.referrer+' '+j.engineer+' '+(j.notes||'')+' '+(j.jobNum||'')+' '+(j.contact||'')+' '+(j.landlordName||'')+' '+(j.trade||'')).toLowerCase().includes(search));
   } else {
     if(_jRange === '7'){
       const lim = new Date(today); lim.setDate(lim.getDate()+7);
@@ -5456,7 +5642,7 @@ async function renderJobs(){
       html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" draggable="true" onclick="openJobModal('${j.id}')" style="cursor:pointer">
         <div class="jsr-drag-handle" title="Drag" onclick="event.stopPropagation()">⠿</div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
-
+        ${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);const col=palette[idx>=0?idx%palette.length:Math.abs((j.engineer||' ').charCodeAt(0))%palette.length];return j.engineer?'<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+col+';border-radius:0 2px 2px 0"></div>':''})()}
         <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
           ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
@@ -5467,14 +5653,15 @@ async function renderJobs(){
         }</div>
         <div class="jsr3-cell jsr3-cell-desc" title="${descFull.replace(/"/g,'&quot;')}">${descShort||'—'}</div>
         <div class="jsr3-cell jsr3-cell-contact">${contactLine||'—'}</div>
-        <div class="jsr3-cell jsr3-cell-time">${j.timeSlot||'—'}</div>
-        <div class="jsr3-cell jsr3-cell-eng">${j.engineer||'—'}</div>
+        <div class="jsr3-cell jsr3-cell-time" onclick="event.stopPropagation()" title="Click to edit time slot"><span onclick="quickEditTime('${j.id}','${j.timeSlot||''}',this)" style="cursor:text;min-width:40px;display:inline-block">${j.timeSlot||'—'}</span></div>
+        <div class="jsr3-cell jsr3-cell-eng">${j.engineer?`<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);return palette[idx>=0?idx%palette.length:Math.abs(j.engineer.charCodeAt(0))%palette.length];})()};flex-shrink:0"></span>${j.engineer}</span>`:'—'}</div>
         <div class="jsr3-cell jsr3-cell-certs">${certPills||'<span style="color:var(--txt3);font-size:10px">—</span>'}</div>
-        <div class="jsr3-cell jsr3-cell-price">${priceStr||''}</div>
+        <div class="jsr3-cell jsr3-cell-price" onclick="event.stopPropagation()" title="Click to edit price"><span onclick="quickEditPrice('${j.id}','${j.price||0}',this)" style="cursor:text;min-width:32px;display:inline-block">${priceStr||'—'}</span></div>
         <div class="jsr3-cell jsr3-cell-sel" onclick="event.stopPropagation()">${statusSel(j.id,j.status)}</div>
         <div class="jsr3-cell jsr3-cell-actions" onclick="event.stopPropagation()">
           <button class="jsr-btn" title="WhatsApp" onclick="waSingleJobById('${j.id}')">📱</button>
           <button class="jsr-btn" title="Edit" onclick="openJobModal('${j.id}')">✎</button>
+          <button class="jsr-btn" title="Copy to next day" onclick="copyJobToNextDay('${j.id}')">⧉</button>
         </div>
       </div>`;
     });
@@ -15471,15 +15658,38 @@ function openClientView(name, type){
 <script>
 (function(){
   if('serviceWorker' in navigator){
-    const sw=`const C='oe-v2';self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll([location.pathname])))});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n)))));self.clients.claim()});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(C).then(cache=>cache.put(e.request,c))}return r}).catch(()=>caches.match(e.request)))})`;
-    const url=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
-    navigator.serviceWorker.register(url).catch(()=>{});
+    const swCode="const C='oe-v1773931106';\n// ── Install: cache the app shell ──\nself.addEventListener('install',e=>{\n  self.skipWaiting();\n  e.waitUntil(caches.open(C).then(c=>c.addAll([location.pathname])));\n});\n// ── Activate: wipe ALL old caches ──\nself.addEventListener('activate',e=>{\n  e.waitUntil(\n    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==C).map(k=>caches.delete(k))))\n    .then(()=>self.clients.claim())\n  );\n  // Tell all open tabs a new version is active\n  self.clients.matchAll({type:'window'}).then(wins=>wins.forEach(w=>w.postMessage({type:'SW_UPDATED'})));\n});\n// ── Fetch: NETWORK-FIRST for HTML, cache-first for everything else ──\nself.addEventListener('fetch',e=>{\n  if(e.request.method!=='GET')return;\n  const isHtml=e.request.destination==='document'||e.request.headers.get('accept')?.includes('text/html');\n  if(isHtml){\n    // Always try network first for the HTML file — gets latest version\n    e.respondWith(\n      fetch(e.request,{cache:'no-cache'}).then(r=>{\n        if(r.ok){const cc=r.clone();caches.open(C).then(c=>c.put(e.request,cc));}\n        return r;\n      }).catch(()=>caches.match(e.request))\n    );\n  }else{\n    // Assets: cache-first\n    e.respondWith(\n      caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{\n        if(r.ok){const cc=r.clone();caches.open(C).then(c=>c.put(e.request,cc));}\n        return r;\n      }))\n    );\n  }\n});";
+    const blob=new Blob([swCode],{type:'text/javascript'});
+    const swUrl=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).then(reg=>{
+      window._swReg=reg;
+      setInterval(()=>reg.update(),30*60*1000);
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller)_showUpdateBanner();
+        });
+      });
+    }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='SW_UPDATED')_showUpdateBanner();});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r?.update());});
   }
   let _ip=null;
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_ip=e;const b=document.getElementById('btn-install-app');if(b)b.style.display='';});
   window.addEventListener('appinstalled',()=>{_ip=null;const b=document.getElementById('btn-install-app');if(b)b.style.display='none';});
   window._triggerInstall=async()=>{if(!_ip)return;_ip.prompt();const{outcome}=await _ip.userChoice;if(outcome==='accepted')_ip=null;};
 })();
+
+function _showUpdateBanner(){
+  if(document.getElementById('_update-banner')) return;
+  const b=document.createElement('div');
+  b.id='_update-banner';
+  b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#111827;border-top:3px solid #4f8fff;padding:12px 16px;display:flex;align-items:center;gap:12px;font-family:system-ui,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,.4)';
+  b.innerHTML='<span style="font-size:22px">🔄</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:#fff">New version available</div><div style="font-size:11px;color:#9ca3af;margin-top:1px">Tap Update to get the latest version</div></div><button onclick="window.location.reload(true)" style="background:#4f8fff;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">⬆ Update Now</button><button onclick="this.closest(\'#_update-banner\').remove()" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;padding:0 4px">✕</button>';
+  document.body.appendChild(b);
+  if(navigator.vibrate) navigator.vibrate([100,50,100]);
+}
+
 </script>
 </body>
 </html>
