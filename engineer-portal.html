@@ -119,12 +119,66 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 [data-theme="light"] .job-card.s-noaccess{background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.28)}
 
 /* Left accent stripe */
+.job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
 .job-card-stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
-.job-card.s-pending .job-card-stripe{background:var(--yellow)}
-.job-card.s-progress .job-card-stripe{background:var(--acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
-.job-card.s-completed .job-card-stripe{background:var(--green)}
-.job-card.s-emergency .job-card-stripe{background:var(--red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
-.job-card.s-noaccess .job-card-stripe{background:var(--orange)}
+.job-card.s-pending .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--yellow)}
+.job-card.s-progress .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
+.job-card.s-completed .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--green)}
+.job-card.s-emergency .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
+.job-card.s-noaccess .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--orange)}
 
 .job-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
 .job-num{font-size:11px;font-weight:700;color:var(--acc);font-family:var(--mono);letter-spacing:.5px}
@@ -149,7 +203,16 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 /* Cancelled job card */
 .job-card.s-cancelled{background:rgba(100,116,139,.07);border-color:rgba(100,116,139,.2);opacity:.75}
 [data-theme="light"] .job-card.s-cancelled{background:rgba(100,116,139,.05);border-color:rgba(100,116,139,.2)}
-.job-card.s-cancelled .job-card-stripe{background:var(--txt3)}
+.job-card.s-cancelled .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
+.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
+.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
+.jq-map{background:rgba(245,166,35,.12);color:#d97706}
+
+.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
+
+.job-card-stripe{background:var(--txt3)}
 
 /* EMPTY STATE */
 .empty{text-align:center;padding:60px 24px;color:var(--txt3)}
@@ -1789,9 +1852,29 @@ function _certLabel(c){
   if(!c)return'';
   return _CERT_MAP[c]||_CERT_MAP[c.toLowerCase()]||c;
 }
+async function quickStatusUpdate(id, newStatus){
+  try{
+    await sb(`jobs?id=eq.${id}`,{method:'PATCH',body:{status:newStatus,modified:Date.now()},prefer:'return=minimal'});
+    // Update local cache
+    if(_allJobs){ const j=_allJobs.find(x=>x.id===id); if(j) j.status=newStatus; }
+    loadJobs();
+    if(newStatus==='Completed'){
+      toast('✅ Job marked complete!','success');
+      if(navigator.vibrate) navigator.vibrate([100,50,200]);
+    } else if(newStatus==='In Progress'){
+      toast('▶ Job started','info');
+    } else if(newStatus==='Cannot Access'){
+      toast('🚫 Marked as cannot access','warn');
+    }
+  }catch(e){
+    toast('Update failed: '+e.message,'error');
+  }
+}
+
 function _buildCard(j){
   const sc=_sc(j.status,j.priority);
   const certs=(j.certTypes||[]).map(c=>`<span class="job-chip chip-cert">${_certLabel(c)}</span>`).join('');
+  const mapUrl='https://maps.google.com/?q='+encodeURIComponent(j.address||'');
   return`<div class="job-card ${sc}" onclick="openJob('${j.id}')">
     <div class="job-card-stripe"></div>
     
@@ -1807,6 +1890,12 @@ function _buildCard(j){
       ${j.trade?`<span class="job-chip chip-trade">🔧 ${j.trade}</span>`:''}
       ${j.hours?`<span class="job-chip chip-hours">⏱ ${j.hours}h</span>`:''}
       ${certs}
+    </div>
+    <div class="job-quick-row" onclick="event.stopPropagation()">
+      ${j.status!=='Completed'?`<button class="jq-btn jq-green" onclick="quickStatusUpdate('${j.id}','Completed')">✅ Done</button>`:''}
+      ${j.status==='Pending'?`<button class="jq-btn jq-blue" onclick="quickStatusUpdate('${j.id}','In Progress')">▶ Start</button>`:''}
+      ${j.status!=='Cannot Access'?`<button class="jq-btn jq-red" onclick="quickStatusUpdate('${j.id}','Cannot Access')">🚫 No Access</button>`:''}
+      ${j.address?`<a class="jq-btn jq-map" href="${mapUrl}" target="_blank">🗺 Map</a>`:''}
     </div>
   </div>`;
 }
@@ -1976,9 +2065,9 @@ function renderJobDetail(j,atts){
         <button class="quality-btn ${!_uploadHD?'active':''}" onclick="setQuality(false,this)">📱 Compressed</button>
         <button class="quality-btn ${_uploadHD?'active':''}" onclick="setQuality(true,this)">🔷 HD Original</button>
       </div>
-      <input type="file" id="photo-input" accept="image/*" capture="environment" multiple onchange="handleUpload(this,'photo')">
-      <input type="file" id="photo-input-before" accept="image/*" capture="environment" onchange="_handleBAUpload(this,'before')">
-      <input type="file" id="photo-input-after"  accept="image/*" capture="environment" onchange="_handleBAUpload(this,'after')">
+      <input type="file" id="photo-input" accept="image/*" multiple onchange="handleUpload(this,'photo')">
+      <input type="file" id="photo-input-before" accept="image/*" onchange="_handleBAUpload(this,'before')">
+      <input type="file" id="photo-input-after"  accept="image/*" onchange="_handleBAUpload(this,'after')">
       <div id="std-upload-btn" style="display:${_baMode?'none':'block'}">
         <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
           <div class="upload-zone-icon">📷</div>
@@ -2758,122 +2847,73 @@ function _stampPhoto(file,jobAddress,engineerName,captureTime,seqLabel){
       // 1. Draw original photo
       ctx.drawImage(img,0,0);
 
-      // 2. Dimensions
-      const m=W*0.04;
-      const cardH=H*0.13;
-      const cardY=H-cardH-m;
-      const cardW=W-(m*2);
-      const r=Math.min(W*0.025,28);
+      // ── Compact lower-left corner stamp ──
+      // Small pill, 8% white bg, small text, doesn't obscure the photo
 
-      // 3. Soft vignette behind card area for readability
-      const vGrad=ctx.createLinearGradient(0,H*0.72,0,H);
-      vGrad.addColorStop(0,'rgba(0,0,0,0)');
-      vGrad.addColorStop(1,'rgba(0,0,0,0.45)');
-      ctx.fillStyle=vGrad;
-      ctx.fillRect(0,H*0.72,W,H-H*0.72);
+      const m = W * 0.03;
+      // Stamp dimensions — max 35% of image width, height scales with width
+      const stampW = Math.min(W * 0.52, 520);
+      const fBase  = Math.max(14, Math.round(W * 0.022)); // base font size
+      const lineH  = fBase * 1.5;
+      const pad    = fBase * 0.7;
+      const lines  = [];
+      if(jobAddress) lines.push((jobAddress.length>38 ? jobAddress.slice(0,36)+'…' : jobAddress));
+      const ts = captureTime.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+                +' '+captureTime.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      lines.push(ts + '  ·  ' + engineerName + (seqLabel?' · '+seqLabel:''));
 
-      // 4. Card shadow
-      ctx.shadowColor='rgba(0,0,0,0.45)';
-      ctx.shadowBlur=W*0.025;
-      ctx.shadowOffsetY=W*0.008;
+      const stampH = pad*2 + lines.length * lineH;
+      const stampX = m;
+      const stampY = H - stampH - m;
+      const rr     = Math.min(fBase*0.6, 10);
 
-      // 5. Glassmorphism card — milky white
+      // 8% semi-transparent dark background
+      ctx.save();
       ctx.beginPath();
-      if(ctx.roundRect){
-        ctx.roundRect(m,cardY,cardW,cardH,r);
-      } else {
-        // fallback for older browsers
-        ctx.moveTo(m+r,cardY);
-        ctx.lineTo(m+cardW-r,cardY);
-        ctx.quadraticCurveTo(m+cardW,cardY,m+cardW,cardY+r);
-        ctx.lineTo(m+cardW,cardY+cardH-r);
-        ctx.quadraticCurveTo(m+cardW,cardY+cardH,m+cardW-r,cardY+cardH);
-        ctx.lineTo(m+r,cardY+cardH);
-        ctx.quadraticCurveTo(m,cardY+cardH,m,cardY+cardH-r);
-        ctx.lineTo(m,cardY+r);
-        ctx.quadraticCurveTo(m,cardY,m+r,cardY);
+      if(ctx.roundRect){ ctx.roundRect(stampX, stampY, stampW, stampH, rr); }
+      else {
+        ctx.moveTo(stampX+rr,stampY);ctx.lineTo(stampX+stampW-rr,stampY);
+        ctx.quadraticCurveTo(stampX+stampW,stampY,stampX+stampW,stampY+rr);
+        ctx.lineTo(stampX+stampW,stampY+stampH-rr);
+        ctx.quadraticCurveTo(stampX+stampW,stampY+stampH,stampX+stampW-rr,stampY+stampH);
+        ctx.lineTo(stampX+rr,stampY+stampH);
+        ctx.quadraticCurveTo(stampX,stampY+stampH,stampX,stampY+stampH-rr);
+        ctx.lineTo(stampX,stampY+rr);
+        ctx.quadraticCurveTo(stampX,stampY,stampX+rr,stampY);
         ctx.closePath();
       }
-      ctx.fillStyle='rgba(255,255,255,0.88)';
+      ctx.fillStyle = 'rgba(0,0,0,0.09)';
       ctx.fill();
-      ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-
-      // 6. Subtle card border
-      ctx.strokeStyle='rgba(255,255,255,0.6)';
-      ctx.lineWidth=W*0.002;
+      // Thin white border
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = Math.max(1, W*0.001);
       ctx.stroke();
+      ctx.restore();
 
-      // 7. Left accent stripe (electric blue)
-      const stripeW=W*0.008;
-      const stripeInset=W*0.012;
-      ctx.fillStyle='#4f8fff';
-      const sR=stripeW/2;
+      // Left accent line
+      ctx.save();
+      ctx.fillStyle = '#4f8fff';
       ctx.beginPath();
-      ctx.roundRect(m+stripeInset,cardY+(cardH*0.18),stripeW,cardH*0.64,sR);
+      if(ctx.roundRect) ctx.roundRect(stampX+pad*0.3, stampY+pad*0.6, Math.max(2,W*0.004), stampH-pad*1.2, 2);
       ctx.fill();
+      ctx.restore();
 
-      // 8. Text
-      const textX=m+stripeInset+stripeW+(W*0.022);
-      ctx.textBaseline='middle';
-      ctx.textAlign='left';
-
-      // Address — bold dark
-      const fAddr=Math.max(18,Math.round(cardH*0.33));
-      ctx.font=`800 ${fAddr}px 'DM Sans',Arial,sans-serif`;
-      ctx.fillStyle='#0f1623';
-      const addr=(jobAddress||'').length>32?(jobAddress.slice(0,32)+'…'):jobAddress||'Job Site';
-      ctx.fillText(addr,textX,cardY+(cardH*(seqLabel?0.28:0.36)));
-
-      // Sequence label badge (Before/After) — shown below address when present
-      if(seqLabel){
-        const fSeq=Math.max(13,Math.round(cardH*0.22));
-        ctx.font=`800 ${fSeq}px 'DM Sans',Arial,sans-serif`;
-        // Colour: Before=amber, After=green
-        const isBefore=seqLabel.toLowerCase().includes('before');
-        ctx.fillStyle=isBefore?'#f5a623':'#22c55e';
-        ctx.fillText(seqLabel,textX,cardY+(cardH*0.53));
-      }
-
-      ctx.font=`600 ${Math.max(12,Math.round(cardH*0.21))}px 'JetBrains Mono',monospace,Arial`;
-      const ts=captureTime.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})
-        +' · '+captureTime.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      ctx.fillStyle='#4e6080';
-      ctx.fillText(`${ts}  ·  ${engineerName}`,textX,cardY+(cardH*(seqLabel?0.78:0.74)));
-
-      // 9. Verified tick circle (right side)
-      const iconD=cardH*0.42;
-      const iconR=iconD/2;
-      const iconCX=m+cardW-(W*0.04)-iconR;
-      const iconCY=cardY+(cardH/2);
-
-      // Green circle
-      ctx.beginPath();
-      ctx.arc(iconCX,iconCY,iconR,0,Math.PI*2);
-      ctx.fillStyle='#22c55e';
-      ctx.fill();
-      // Subtle inner glow ring
-      ctx.beginPath();
-      ctx.arc(iconCX,iconCY,iconR,0,Math.PI*2);
-      ctx.strokeStyle='rgba(255,255,255,0.4)';
-      ctx.lineWidth=iconR*0.12;
-      ctx.stroke();
-      // White checkmark
-      ctx.beginPath();
-      ctx.moveTo(iconCX-iconR*0.32,iconCY);
-      ctx.lineTo(iconCX-iconR*0.05,iconCY+iconR*0.3);
-      ctx.lineTo(iconCX+iconR*0.38,iconCY-iconR*0.28);
-      ctx.strokeStyle='#fff';
-      ctx.lineWidth=iconR*0.18;
-      ctx.lineCap='round';
-      ctx.lineJoin='round';
-      ctx.stroke();
-
-      // 10. DeepFlow watermark (top-right corner)
-      const wfSize=Math.max(10,Math.round(W*0.018));
-      ctx.font=`700 ${wfSize}px 'DM Sans',Arial,sans-serif`;
-      ctx.fillStyle='rgba(79,143,255,0.75)';
-      ctx.textAlign='right';
-      ctx.fillText('DeepFlow ⚡',W-m,m+wfSize);
+      // Text
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.textAlign = 'left';
+      const textX = stampX + pad*0.3 + W*0.004 + pad*0.5;
+      lines.forEach((line,i)=>{
+        if(i===0){
+          ctx.font = `700 ${fBase}px Arial,sans-serif`;
+          ctx.fillStyle = 'rgba(255,255,255,0.97)';
+        } else {
+          ctx.font = `400 ${Math.round(fBase*0.82)}px Arial,sans-serif`;
+          ctx.fillStyle = 'rgba(255,255,255,0.80)';
+        }
+        ctx.fillText(line, textX, stampY + pad + i*lineH);
+      });
+      ctx.restore();
 
       c.toBlob(b=>{
         if(!b){resolve(file);return;}
@@ -3244,6 +3284,11 @@ async function _initPush(){
   },2000);
 }
 function _setBaseline(){if(_allJobs.length){_lastJobIds=new Set(_allJobs.map(j=>j.id));}}
+
+// ── Online/offline status banner ──
+window.addEventListener('offline',()=>{ toast('📵 No internet — working offline','warn',0); document.body.classList.add('offline'); });
+window.addEventListener('online',()=>{ toast('✅ Back online','success'); document.body.classList.remove('offline'); loadJobs(); });
+
 // ══ BROADCAST ALERT POLLING ══
 let _lastAlertCheck=Math.floor(Date.now()/1000);
 let _shownAlerts=JSON.parse(localStorage.getItem('df_shown_alerts')||'[]');
@@ -3535,15 +3580,38 @@ function _clearDraft(id){
 <script>
 (function(){
   if('serviceWorker' in navigator){
-    const sw=`const C='oe-v2';self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll([location.pathname])))});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==C).map(n=>caches.delete(n)))));self.clients.claim()});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(C).then(cache=>cache.put(e.request,c))}return r}).catch(()=>caches.match(e.request)))})`;
-    const url=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
-    navigator.serviceWorker.register(url).catch(()=>{});
+    const swCode="const C='oe-v1773931106';\n// ── Install: cache the app shell ──\nself.addEventListener('install',e=>{\n  self.skipWaiting();\n  e.waitUntil(caches.open(C).then(c=>c.addAll([location.pathname])));\n});\n// ── Activate: wipe ALL old caches ──\nself.addEventListener('activate',e=>{\n  e.waitUntil(\n    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==C).map(k=>caches.delete(k))))\n    .then(()=>self.clients.claim())\n  );\n  // Tell all open tabs a new version is active\n  self.clients.matchAll({type:'window'}).then(wins=>wins.forEach(w=>w.postMessage({type:'SW_UPDATED'})));\n});\n// ── Fetch: NETWORK-FIRST for HTML, cache-first for everything else ──\nself.addEventListener('fetch',e=>{\n  if(e.request.method!=='GET')return;\n  const isHtml=e.request.destination==='document'||e.request.headers.get('accept')?.includes('text/html');\n  if(isHtml){\n    // Always try network first for the HTML file — gets latest version\n    e.respondWith(\n      fetch(e.request,{cache:'no-cache'}).then(r=>{\n        if(r.ok){const cc=r.clone();caches.open(C).then(c=>c.put(e.request,cc));}\n        return r;\n      }).catch(()=>caches.match(e.request))\n    );\n  }else{\n    // Assets: cache-first\n    e.respondWith(\n      caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{\n        if(r.ok){const cc=r.clone();caches.open(C).then(c=>c.put(e.request,cc));}\n        return r;\n      }))\n    );\n  }\n});";
+    const blob=new Blob([swCode],{type:'text/javascript'});
+    const swUrl=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).then(reg=>{
+      window._swReg=reg;
+      setInterval(()=>reg.update(),30*60*1000);
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller)_showUpdateBanner();
+        });
+      });
+    }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='SW_UPDATED')_showUpdateBanner();});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r?.update());});
   }
   let _ip=null;
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_ip=e;const b=document.getElementById('btn-install-app');if(b)b.style.display='';});
   window.addEventListener('appinstalled',()=>{_ip=null;const b=document.getElementById('btn-install-app');if(b)b.style.display='none';});
   window._triggerInstall=async()=>{if(!_ip)return;_ip.prompt();const{outcome}=await _ip.userChoice;if(outcome==='accepted')_ip=null;};
 })();
+
+function _showUpdateBanner(){
+  if(document.getElementById('_update-banner')) return;
+  const b=document.createElement('div');
+  b.id='_update-banner';
+  b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#111827;border-top:3px solid #4f8fff;padding:12px 16px;display:flex;align-items:center;gap:12px;font-family:system-ui,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,.4)';
+  b.innerHTML='<span style="font-size:22px">🔄</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:#fff">New version available</div><div style="font-size:11px;color:#9ca3af;margin-top:1px">Tap Update to get the latest version</div></div><button onclick="window.location.reload(true)" style="background:#4f8fff;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">⬆ Update Now</button><button onclick="this.closest(\'#_update-banner\').remove()" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;padding:0 4px">✕</button>';
+  document.body.appendChild(b);
+  if(navigator.vibrate) navigator.vibrate([100,50,100]);
+}
+
 </script>
 </body>
 </html>
