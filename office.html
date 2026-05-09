@@ -3290,6 +3290,19 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <div class="fg"><label class="fl">Invoice Date</label><input type="date" id="if-date" class="fi"></div>
     <div class="fg"><label class="fl">Due Date</label><input type="date" id="if-due" class="fi"></div>
   </div>
+  
+  <!-- Client/Agency Address -->
+  <div class="fg">
+    <label class="fl" id="if-client-addr-label">Client Address</label>
+    <textarea id="if-client-addr" class="fi" rows="2" placeholder="Client billing address" style="resize:vertical;min-height:46px;line-height:1.5;padding-top:8px"></textarea>
+  </div>
+  
+  <!-- Job Address (only shown for agencies) -->
+  <div class="fg" id="if-job-addr-container" style="display:none;">
+    <label class="fl">Job Address <span style="font-weight:400;text-transform:none;font-size:10px;color:var(--txt3)">(property where work was done)</span></label>
+    <textarea id="if-job-addr" class="fi" rows="2" placeholder="Property address" style="resize:vertical;min-height:46px;line-height:1.5;padding-top:8px"></textarea>
+  </div>
+  
   <div class="frow">
     <div class="fg"><label class="fl">Description / Reference</label><textarea id="if-desc" class="fi" rows="2" placeholder="e.g. EICR at 12 Main St, replacement fuseboard..." style="resize:vertical;min-height:46px;line-height:1.5;padding-top:8px"></textarea></div>
     <div class="fg"><label class="fl">Status</label>
@@ -3841,7 +3854,7 @@ const _TO_DB = {
     agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail',_sortOrder:'sortorder',
     invNumber:'invnumber',linkedInvId:'linkedinvid',jobNum:'jobnum'},
   certs:    {issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
-  invoices: {clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',agentCC:'agentcc',agentName:'agentname',linkedJobId:'linkedjobid',jobRef:'jobref',createdAt:'createdat'},
+  invoices: {clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',jobAddr:'jobaddr',isAgency:'isagency',clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',agentCC:'agentcc',agentName:'agentname',linkedJobId:'linkedjobid',jobRef:'jobref',createdAt:'createdat'},
   agents:   {agencyId:'agencyid'},
 };
 const _FROM_DB = {};
@@ -5457,6 +5470,11 @@ function updateBulkBar(){
   if(_origUpdateBulkBar && _origUpdateBulkBar !== updateBulkBar){
     _origUpdateBulkBar();
   }
+}
+
+async function forceSyncUsers(){
+  // Placeholder function - can be implemented later for user sync
+  console.log('Force sync users called');
 }
 
 async function _getJobs(forceRefresh=false){
@@ -7270,6 +7288,43 @@ async function createInvFromJob(jobId){
     
     document.getElementById('if-status').value='Draft';
     await fillInvClientDrop(cl.id);
+    
+    // ═══ SMART ADDRESS LOGIC: Agency vs Individual ═══
+    const isAgency = !!(j.agencyName || j.agentName); // Has agency/agent = agency job
+    
+    const clientAddrField = document.getElementById('if-client-addr');
+    const clientAddrLabel = document.getElementById('if-client-addr-label');
+    const jobAddrContainer = document.getElementById('if-job-addr-container');
+    const jobAddrField = document.getElementById('if-job-addr');
+    
+    if(isAgency) {
+      // AGENCY JOB: Bill to agency, separate job address
+      if(clientAddrLabel) clientAddrLabel.textContent = 'Agency Address';
+      if(clientAddrField) {
+        clientAddrField.value = j.agencyAddr || cl.address || '';
+        clientAddrField.placeholder = 'Agency office address';
+      }
+      // Show job address field
+      if(jobAddrContainer) jobAddrContainer.style.display = '';
+      if(jobAddrField) jobAddrField.value = j.address || '';
+      
+      console.log('✅ Agency job detected - showing separate job address');
+    } else {
+      // INDIVIDUAL LANDLORD: Bill to property address
+      if(clientAddrLabel) clientAddrLabel.textContent = 'Property Address';
+      if(clientAddrField) {
+        clientAddrField.value = j.address || cl.address || '';
+        clientAddrField.placeholder = 'Property address where work was done';
+      }
+      // Hide job address field
+      if(jobAddrContainer) jobAddrContainer.style.display = 'none';
+      
+      console.log('✅ Individual landlord - using property address only');
+    }
+    
+    // Store whether this is an agency job
+    window._invoiceIsAgency = isAgency;
+    
     renderInvItems();
     document.getElementById('if-vat-pct').textContent=S.vatRate||20;
 
@@ -7782,22 +7837,47 @@ async function downloadInvPDFById(id){
   let y=Math.max(cy+6, 62);
   doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;
 
-  // ── BILL TO (left) + INVOICE FOR (right, no duplicate description) ──
+  // ── BILL TO (left) + JOB ADDRESS (for agencies) ──
   const colW=(RW-10)/2;
+  
+  // Determine if this is an agency job
+  const isAgency = inv.isAgency || !!(inv.jobAddr && inv.jobAddr.trim());
+  
   // BILL TO header
   doc.setFillColor(...light);doc.rect(M,y,colW,6,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
   doc.text('BILL TO',M+3,y+4);
   y+=9;
+  
+  // Client/Agency name
   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...dark);
   doc.text(inv.clientName||'—',M,y);
   let clientY = y+5;
+  
+  // Client/Agency address
   if(inv.clientAddr){
     doc.setFontSize(8.5);doc.setTextColor(...mid);
     const addrLines=doc.splitTextToSize(inv.clientAddr,colW);
     doc.text(addrLines,M,clientY);clientY+=addrLines.length*4.5;
   }
-  if(inv.clientEmail){doc.setFontSize(8);doc.setTextColor(...mid);doc.text(inv.clientEmail,M,clientY);clientY+=5;}
+  if(inv.clientEmail){
+    doc.setFontSize(8);doc.setTextColor(...mid);
+    doc.text(inv.clientEmail,M,clientY);clientY+=5;
+  }
+  
+  // Add JOB ADDRESS section if this is an agency job
+  if(isAgency && inv.jobAddr && inv.jobAddr.trim()){
+    clientY += 6; // Extra space
+    doc.setFillColor(...light);doc.rect(M,clientY-2,colW,6,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    doc.text('JOB ADDRESS',M+3,clientY+2);
+    clientY += 7;
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mid);
+    const jobAddrLines=doc.splitTextToSize(inv.jobAddr,colW);
+    doc.text(jobAddrLines,M,clientY);
+    clientY+=jobAddrLines.length*4.5;
+  }
+  
   y=clientY+4;
 
   // ── LINE ITEMS TABLE ──
@@ -7877,12 +7957,20 @@ async function downloadInvPDFById(id){
     if(S.invNotes){safeText(S.invNotes,M,y,RW);y+=5;}
   }
 
-  // ── FOOTER LINE ──
+  // ── FOOTER LINE - Company · Agent (only for agencies) ──
   doc.setDrawColor(220,220,230);doc.line(M,H-14,W-M,H-14);
   doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(170,175,195);
-  const footParts=[S.coName||''];
-  if(inv.jobRef)footParts.push('Job: '+inv.jobRef);
-  if(inv.agentName)footParts.push('Agent: '+inv.agentName);
+  const footParts=[];
+  
+  // Add company name
+  if(S.coName) footParts.push(S.coName);
+  
+  // Add agent name ONLY if this is an agency job
+  const isAgency = inv.isAgency || !!(inv.jobAddr && inv.jobAddr.trim());
+  if(isAgency && inv.agentName && inv.agentName.trim()) {
+    footParts.push('Agent: ' + inv.agentName.trim());
+  }
+  
   doc.text(footParts.join(' · '),M,H-9);
   doc.text('Generated by DeepFlow',W-M,H-9,{align:'right'});
 
@@ -14687,7 +14775,11 @@ async function saveInvWithJobSync(){
   const inv = {
     id: invId,
     number: invNum,
-    clientId: cid, clientName: cl.name, clientEmail: cl.email, clientAddr: cl.address, clientWA: cl.wa||'',
+    clientId: cid, clientName: cl.name, clientEmail: cl.email, 
+    clientAddr: document.getElementById('if-client-addr')?.value || cl.address || '', 
+    jobAddr: document.getElementById('if-job-addr')?.value || '',
+    isAgency: window._invoiceIsAgency || false,
+    clientWA: cl.wa||'',
     date: document.getElementById('if-date').value,
     dueDate: document.getElementById('if-due').value,
     description: document.getElementById('if-desc').value,
