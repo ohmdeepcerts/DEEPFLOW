@@ -3854,7 +3854,21 @@ const _TO_DB = {
     agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail',_sortOrder:'sortorder',
     invNumber:'invnumber',linkedInvId:'linkedinvid',jobNum:'jobnum'},
   certs:    {issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
-  invoices: {clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',jobAddr:'jobaddr',isAgency:'isagency',clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',agentCC:'agentcc',agentName:'agentname',linkedJobId:'linkedjobid',jobRef:'jobref',createdAt:'createdat'},
+  invoices: {
+    clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',
+    clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',linkedJobId:'linkedjobid',jobRef:'jobref',
+    agentCC:'agentcc',agentName:'agentname',agentEmail:'agentemail',createdAt:'createdat',
+    // PROPER INVOICE TYPE FIELDS
+    invoiceType:'invoicetype',
+    billToName:'billtoname',
+    billToAddress:'billtoaddress',
+    jobAddress:'jobaddress',
+    agencyName:'agencyname',
+    agencyAddress:'agencyaddress',
+    landlordName:'landlordname',
+    propertyAddress:'propertyaddress',
+    jobNum:'jobnum'
+  },
   agents:   {agencyId:'agencyid'},
 };
 const _FROM_DB = {};
@@ -7214,14 +7228,31 @@ async function createInvFromJob(jobId){
     const j=await dGet('jobs',jobId);
     if(!j){toast('Job not found — try refreshing','error');return;}
     
-    // ═══ DEBUG: Log what fields the job actually has ═══
-    console.log('📋 Job fields available:', Object.keys(j));
-    console.log('🔍 Job number value:', j.jobNum || j.jobnum || j.job_num || 'MISSING');
-    console.log('🔍 Agent name value:', j.agentName || j.agentname || 'MISSING');
-    console.log('🔍 Agent email value:', j.agentEmail || j.agentemail || 'MISSING');
+    // ══════════════════════════════════════════════════════════════
+    // DEBUG: Log EVERYTHING about this job
+    // ══════════════════════════════════════════════════════════════
+    console.log('═══════════════════════════════════════════════');
+    console.log('📋 COMPLETE JOB DATA:');
+    console.log(JSON.stringify(j, null, 2));
+    console.log('═══════════════════════════════════════════════');
+    console.log('🔍 Checking specific fields:');
+    console.log('  jobNum:', j.jobNum);
+    console.log('  jobnum:', j.jobnum);
+    console.log('  agentName:', j.agentName);
+    console.log('  agentname:', j.agentname);
+    console.log('  agencyName:', j.agencyName);
+    console.log('  agencyname:', j.agencyname);
+    console.log('  landlordName:', j.landlordName);
+    console.log('  landlordname:', j.landlordname);
+    console.log('  referrer:', j.referrer);
+    console.log('  address:', j.address);
+    console.log('═══════════════════════════════════════════════');
     
     const ps=await dAll('persons');
     const cl=ps.find(p=>p.name===j.referrer)||{};
+    
+    console.log('🏢 Client found:', cl.name);
+    console.log('📍 Client address:', cl.address);
 
     // Build Labour line from hours × rate
     const engObj=(S.engineers||[]).find(e=>e.name===j.engineer);
@@ -7244,16 +7275,47 @@ async function createInvFromJob(jobId){
     editInvId=null;
     window._pendingJobLink=jobId;
     
-    // ═══ CRITICAL FIX: Store values for later use ═══
-    const jobNumber = j.jobNum || j.jobnum || j.job_num || j.jobNumber || '';
-    const agentName = j.agentName || j.agentname || j.agent_name || '';
-    const agentEmail = j.agentEmail || j.agentemail || j.agent_email || '';
+    // ══════════════════════════════════════════════════════════════
+    // PROPER INVOICE DATA STRUCTURE
+    // Saved to DB - NO temporary variables!
+    // ══════════════════════════════════════════════════════════════
     
-    window._invoiceJobNumber = jobNumber;
-    window._invoiceAgentName = agentName;
-    window._invoiceAgentEmail = agentEmail;
+    // Extract all field variations  
+    const jobNumber = j.jobNum || j.jobnum || '';
+    const agentName = (j.agentName || j.agentname || '').trim();
+    const agentEmail = (j.agentEmail || j.agentemail || '').trim();
+    const agencyName = (j.agencyName || j.agencyname || '').trim();
+    const agencyAddr = (j.agencyAddr || j.agencyaddr || '').trim();
+    const landlordName = (j.landlordName || j.landlordname || j.referrer || '').trim();
+    const propertyAddress = (j.address || '').trim();
     
-    console.log('💾 Stored for invoice:', {jobNumber, agentName, agentEmail});
+    // Determine invoice type
+    const hasAgency = !!(agencyName || agentName);
+    const invoiceType = hasAgency ? 'agency' : 'landlord';
+    
+    console.log('🔍 Detection Results:');
+    console.log('  agencyName:', agencyName, '→', !!agencyName);
+    console.log('  agentName:', agentName, '→', !!agentName);
+    console.log('  hasAgency:', hasAgency);
+    console.log('  invoiceType:', invoiceType);
+    
+    // Build complete invoice data structure
+    window._newInvoiceData = {
+      invoiceType: invoiceType,
+      billToName: hasAgency ? agencyName : landlordName,
+      billToAddress: hasAgency ? (agencyAddr || cl.address || '') : propertyAddress,
+      jobAddress: hasAgency ? propertyAddress : '',
+      agentName: hasAgency ? agentName : '',
+      agentEmail: hasAgency ? agentEmail : '',
+      agencyName: agencyName,
+      agencyAddress: agencyAddr,
+      landlordName: landlordName,
+      propertyAddress: propertyAddress,
+      jobNum: jobNumber
+    };
+    
+    console.log('📋 Invoice Type:', invoiceType);
+    console.log('💼 Complete Invoice Data:', window._newInvoiceData);
     
     document.getElementById('mo-inv-title').textContent='◎ New Invoice from Job';
     document.getElementById('if-date').value=j.date||TODAY();
@@ -7261,69 +7323,45 @@ async function createInvFromJob(jobId){
     document.getElementById('if-notes').value=S.invNotes||'';
     document.getElementById('if-terms').value=S.payTerms||'';
     
-    // ═══ FIX: Set fields with ALL possible variations ═══
+    // Set form fields
     const jobRefField = document.getElementById('if-jobref');
-    if(jobRefField) {
-      jobRefField.value = jobNumber;
-      console.log('✅ Set job ref field to:', jobNumber);
-    } else {
-      console.error('❌ Job ref field not found!');
-    }
+    if(jobRefField) jobRefField.value = jobNumber;
     
     const agentField = document.getElementById('if-agent');
-    if(agentField) {
-      agentField.value = agentName;
-      console.log('✅ Set agent name field to:', agentName);
-    } else {
-      console.error('❌ Agent name field not found!');
-    }
+    if(agentField) agentField.value = hasAgency ? agentName : '';
     
     const agentCCField = document.getElementById('if-agent-cc');
-    if(agentCCField) {
-      agentCCField.value = agentEmail;
-      console.log('✅ Set agent email field to:', agentEmail);
-    } else {
-      console.error('❌ Agent email field not found!');
-    }
+    if(agentCCField) agentCCField.value = hasAgency ? agentEmail : '';
     
     document.getElementById('if-status').value='Draft';
     await fillInvClientDrop(cl.id);
     
-    // ═══ SMART ADDRESS LOGIC: Agency vs Individual ═══
-    const isAgency = !!(j.agencyName || j.agentName); // Has agency/agent = agency job
-    
+    // ═══ SMART ADDRESS FIELDS ═══
     const clientAddrField = document.getElementById('if-client-addr');
     const clientAddrLabel = document.getElementById('if-client-addr-label');
     const jobAddrContainer = document.getElementById('if-job-addr-container');
     const jobAddrField = document.getElementById('if-job-addr');
     
-    if(isAgency) {
-      // AGENCY JOB: Bill to agency, separate job address
+    if(hasAgency) {
+      // AGENCY: Show agency address + job address
       if(clientAddrLabel) clientAddrLabel.textContent = 'Agency Address';
       if(clientAddrField) {
-        clientAddrField.value = j.agencyAddr || cl.address || '';
+        clientAddrField.value = window._newInvoiceData.billToAddress;
         clientAddrField.placeholder = 'Agency office address';
       }
-      // Show job address field
       if(jobAddrContainer) jobAddrContainer.style.display = '';
-      if(jobAddrField) jobAddrField.value = j.address || '';
-      
-      console.log('✅ Agency job detected - showing separate job address');
+      if(jobAddrField) jobAddrField.value = propertyAddress;
+      console.log('✅ Agency invoice');
     } else {
-      // INDIVIDUAL LANDLORD: Bill to property address
+      // LANDLORD: Show property address only
       if(clientAddrLabel) clientAddrLabel.textContent = 'Property Address';
       if(clientAddrField) {
-        clientAddrField.value = j.address || cl.address || '';
-        clientAddrField.placeholder = 'Property address where work was done';
+        clientAddrField.value = propertyAddress;
+        clientAddrField.placeholder = 'Property address';
       }
-      // Hide job address field
       if(jobAddrContainer) jobAddrContainer.style.display = 'none';
-      
-      console.log('✅ Individual landlord - using property address only');
+      console.log('✅ Landlord invoice');
     }
-    
-    // Store whether this is an agency job
-    window._invoiceIsAgency = isAgency;
     
     renderInvItems();
     document.getElementById('if-vat-pct').textContent=S.vatRate||20;
@@ -7334,20 +7372,6 @@ async function createInvFromJob(jobId){
     if(dueEl) dueEl.value=dd.toISOString().slice(0,10);
 
     openModal('mo-inv');
-    
-    // ═══ ANOTHER FIX: Set fields AGAIN after modal opens ═══
-    setTimeout(() => {
-      const jobRefField = document.getElementById('if-jobref');
-      const agentField = document.getElementById('if-agent');
-      const agentCCField = document.getElementById('if-agent-cc');
-      
-      if(jobRefField && !jobRefField.value) jobRefField.value = jobNumber;
-      if(agentField && !agentField.value) agentField.value = agentName;
-      if(agentCCField && !agentCCField.value) agentCCField.value = agentEmail;
-      
-      console.log('🔄 Re-checked fields after modal open');
-    }, 200);
-    
   }catch(err){
     toast('❌ Could not open invoice: '+(err.message||'').slice(0,80),'error');
     console.error('createInvFromJob error:',err);
@@ -7837,11 +7861,13 @@ async function downloadInvPDFById(id){
   let y=Math.max(cy+6, 62);
   doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;
 
-  // ── BILL TO (left) + JOB ADDRESS (for agencies) ──
+  // ══════════════════════════════════════════════════════════════
+  // BILL TO SECTION - Using proper saved invoice data
+  // ══════════════════════════════════════════════════════════════
   const colW=(RW-10)/2;
   
-  // Determine if this is an agency job
-  const isAgency = inv.isAgency || !!(inv.jobAddr && inv.jobAddr.trim());
+  // Determine invoice type from saved data
+  const isAgency = inv.invoiceType === 'agency' || !!(inv.jobAddress && inv.jobAddress.trim());
   
   // BILL TO header
   doc.setFillColor(...light);doc.rect(M,y,colW,6,'F');
@@ -7849,31 +7875,35 @@ async function downloadInvPDFById(id){
   doc.text('BILL TO',M+3,y+4);
   y+=9;
   
-  // Client/Agency name
+  // Bill To Name (Agency or Landlord)
   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...dark);
-  doc.text(inv.clientName||'—',M,y);
+  const billToName = inv.billToName || inv.clientName || '—';
+  doc.text(billToName,M,y);
   let clientY = y+5;
   
-  // Client/Agency address
-  if(inv.clientAddr){
+  // Bill To Address (Agency address or Property address)
+  const billToAddr = inv.billToAddress || inv.clientAddr || '';
+  if(billToAddr){
     doc.setFontSize(8.5);doc.setTextColor(...mid);
-    const addrLines=doc.splitTextToSize(inv.clientAddr,colW);
+    const addrLines=doc.splitTextToSize(billToAddr,colW);
     doc.text(addrLines,M,clientY);clientY+=addrLines.length*4.5;
   }
+  
+  // Email
   if(inv.clientEmail){
     doc.setFontSize(8);doc.setTextColor(...mid);
     doc.text(inv.clientEmail,M,clientY);clientY+=5;
   }
   
-  // Add JOB ADDRESS section if this is an agency job
-  if(isAgency && inv.jobAddr && inv.jobAddr.trim()){
-    clientY += 6; // Extra space
+  // JOB ADDRESS section (only for agencies)
+  if(isAgency && inv.jobAddress && inv.jobAddress.trim()){
+    clientY += 6;
     doc.setFillColor(...light);doc.rect(M,clientY-2,colW,6,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
     doc.text('JOB ADDRESS',M+3,clientY+2);
     clientY += 7;
     doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mid);
-    const jobAddrLines=doc.splitTextToSize(inv.jobAddr,colW);
+    const jobAddrLines=doc.splitTextToSize(inv.jobAddress,colW);
     doc.text(jobAddrLines,M,clientY);
     clientY+=jobAddrLines.length*4.5;
   }
@@ -14771,13 +14801,17 @@ async function saveInvWithJobSync(){
   const existingInv = editInvId ? await dGet('invoices',editInvId) : null;
   const invNum = editInvId ? existingInv.number : await nextInvNum();
 
+  // ══════════════════════════════════════════════════════════════
+  // PROPER INVOICE OBJECT - Complete data structure saved to DB
+  // ══════════════════════════════════════════════════════════════
+  const invoiceData = window._newInvoiceData || {};
+  
   const inv = {
     id: invId,
     number: invNum,
-    clientId: cid, clientName: cl.name, clientEmail: cl.email, 
-    clientAddr: document.getElementById('if-client-addr')?.value || cl.address || '', 
-    jobAddr: document.getElementById('if-job-addr')?.value || '',
-    isAgency: window._invoiceIsAgency || false,
+    clientId: cid,
+    clientName: cl.name,
+    clientEmail: cl.email,
     clientWA: cl.wa||'',
     date: document.getElementById('if-date').value,
     dueDate: document.getElementById('if-due').value,
@@ -14786,16 +14820,30 @@ async function saveInvWithJobSync(){
     terms: document.getElementById('if-terms').value,
     items: JSON.parse(JSON.stringify(invItems)),
     status: document.getElementById('if-status')?.value || (editInvId ? existingInv.status : 'Draft'),
-    jobRef: document.getElementById('if-jobref')?.value || window._invoiceJobNumber || '',
-    agentName: document.getElementById('if-agent')?.value || window._invoiceAgentName || '',
-    agentCC: document.getElementById('if-agent-cc')?.value || window._invoiceAgentEmail || '',
     linkedJobId: window._pendingJobLink || (editInvId ? existingInv.linkedJobId : null),
-    created: editInvId ? existingInv.created : Date.now()
+    created: editInvId ? existingInv.created : Date.now(),
+    
+    // ═══ COMPLETE INVOICE TYPE DATA ═══
+    invoiceType: invoiceData.invoiceType || 'landlord',
+    billToName: invoiceData.billToName || cl.name || '',
+    billToAddress: document.getElementById('if-client-addr')?.value || invoiceData.billToAddress || '',
+    jobAddress: document.getElementById('if-job-addr')?.value || invoiceData.jobAddress || '',
+    agentName: document.getElementById('if-agent')?.value || invoiceData.agentName || '',
+    agentEmail: document.getElementById('if-agent-cc')?.value || invoiceData.agentEmail || '',
+    agencyName: invoiceData.agencyName || '',
+    agencyAddress: invoiceData.agencyAddress || '',
+    landlordName: invoiceData.landlordName || '',
+    propertyAddress: invoiceData.propertyAddress || '',
+    jobNum: document.getElementById('if-jobref')?.value || invoiceData.jobNum || ''
   };
-  // Ensure agentCC column exists — run this SQL if save still fails:
-  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentcc text;
-  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS agentname text;
-  // ALTER TABLE invoices ADD COLUMN IF NOT EXISTS linkedjobid text;
+  
+  console.log('💾 Saving invoice with complete data:', {
+    invoiceType: inv.invoiceType,
+    billToName: inv.billToName,
+    jobAddress: inv.jobAddress,
+    agentName: inv.agentName
+  });
+  
   await dPut('invoices', inv);
 
   // Auto-create or update linked job
