@@ -7965,8 +7965,7 @@ async function downloadInvPDFById(id){
   // Add company name
   if(S.coName) footParts.push(S.coName);
   
-  // Add agent name ONLY if this is an agency job
-  const isAgency = inv.isAgency || !!(inv.jobAddr && inv.jobAddr.trim());
+  // Add agent name ONLY if this is an agency job (use isAgency from above)
   if(isAgency && inv.agentName && inv.agentName.trim()) {
     footParts.push('Agent: ' + inv.agentName.trim());
   }
