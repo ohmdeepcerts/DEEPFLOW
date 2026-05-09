@@ -2,6 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- 
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  🚨 CRITICAL SECURITY WARNING - READ BEFORE DEPLOYMENT 🚨     ║
+  ╠════════════════════════════════════════════════════════════════╣
+  ║  1. SUPABASE ROW LEVEL SECURITY (RLS) MUST BE ENABLED!        ║
+  ║     Currently using allow_all policies - DANGEROUS!            ║
+  ║     Anyone with the URL can delete your entire database!       ║
+  ║                                                                ║
+  ║  2. HARDCODED API KEYS - This is normal for SPAs but:          ║
+  ║     - The anon key is public (expected)                        ║
+  ║     - RLS is what protects your data                           ║
+  ║     - NEVER commit service_role keys to git                    ║
+  ║                                                                ║
+  ║  BEFORE GOING LIVE:                                            ║
+  ║  ✅ Enable RLS on ALL tables                                   ║
+  ║  ✅ Add auth.uid() policies for each table                     ║
+  ║  ✅ Test that users can ONLY see their own data                ║
+  ║  ✅ Never use service_role key in frontend                     ║
+  ╚════════════════════════════════════════════════════════════════╝
+-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="DeepFlow — Field service job management, invoicing and certificates">
 <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIk9FIERlZXBGbG93IiwgInNob3J0X25hbWUiOiAiRGVlcEZsb3ciLCAiZGVzY3JpcHRpb24iOiAiT2htIEVsZWN0cmljYWwgXHUyMDE0IEpvYiAmIEludm9pY2UgTWFuYWdlbWVudCIsICJzdGFydF91cmwiOiAiLi8iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiIzFhMWExYSIsICJ0aGVtZV9jb2xvciI6ICIjZjVhNjIzIiwgIm9yaWVudGF0aW9uIjogImFueSIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhPVElpSUdobGFXZG9kRDBpTVRreUlpQjJhV1YzUW05NFBTSXdJREFnTVRreUlERTVNaUkrUEhKbFkzUWdkMmxrZEdnOUlqRTVNaUlnYUdWcFoyaDBQU0l4T1RJaUlISjRQU0l6TmlJZ1ptbHNiRDBpSXpGaE1XRXhZU0l2UGp4MFpYaDBJSGc5SWprMklpQjVQU0l4TVRraUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlJR1p2Ym5RdFptRnRhV3g1UFNKQmNtbGhiQ0JDYkdGamF5eEJjbWxoYkN4ellXNXpMWE5sY21sbUlpQm1iMjUwTFhOcGVtVTlJams1SWlCbWIyNTBMWGRsYVdkb2REMGlPVEF3SWlCbWFXeHNQU0lqWlRBMU1qVXlJajdPcVR3dmRHVjRkRDQ4ZEdWNGRDQjRQU0k1TmlJZ2VUMGlNVFUzSWlCMFpYaDBMV0Z1WTJodmNqMGliV2xrWkd4bElpQm1iMjUwTFdaaGJXbHNlVDBpUVhKcFlXd3NjMkZ1Y3kxelpYSnBaaUlnWm05dWRDMXphWHBsUFNJek1pSWdabTl1ZEMxM1pXbG5hSFE5SWpjd01DSWdabWxzYkQwaUkyWTFZell5TXlJZ2JHVjBkR1Z5TFhOd1lXTnBibWM5SWpjaVBrOUZQQzkwWlhoMFBqd3ZjM1puUGc9PSIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVElpSUdobGFXZG9kRDBpTlRFeUlpQjJhV1YzUW05NFBTSXdJREFnTlRFeUlEVXhNaUkrUEhKbFkzUWdkMmxrZEdnOUlqVXhNaUlnYUdWcFoyaDBQU0kxTVRJaUlISjRQU0k1TnlJZ1ptbHNiRDBpSXpGaE1XRXhZU0l2UGp4MFpYaDBJSGc5SWpJMU5pSWdlVDBpTXpFM0lpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dnUW14aFkyc3NRWEpwWVd3c2MyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0l5TmpZaUlHWnZiblF0ZDJWcFoyaDBQU0k1TURBaUlHWnBiR3c5SWlObE1EVXlOVElpUHM2cFBDOTBaWGgwUGp4MFpYaDBJSGc5SWpJMU5pSWdlVDBpTkRFNUlpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dzYzJGdWN5MXpaWEpwWmlJZ1ptOXVkQzF6YVhwbFBTSTROeUlnWm05dWRDMTNaV2xuYUhROUlqY3dNQ0lnWm1sc2JEMGlJMlkxWXpZeU15SWdiR1YwZEdWeUxYTndZV05wYm1jOUlqSXdJajVQUlR3dmRHVjRkRDQ4TDNOMlp6ND0iLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhkcFpIUm9QU0l4T0RBaUlHaGxhV2RvZEQwaU1UZ3dJaUIyYVdWM1FtOTRQU0l3SURBZ01UZ3dJREU0TUNJK1BISmxZM1FnZDJsa2RHZzlJakU0TUNJZ2FHVnBaMmgwUFNJeE9EQWlJSEo0UFNJek5DSWdabWxzYkQwaUl6RmhNV0V4WVNJdlBqeDBaWGgwSUhnOUlqa3dJaUI1UFNJeE1URWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpSUdadmJuUXRabUZ0YVd4NVBTSkJjbWxoYkNCQ2JHRmpheXhCY21saGJDeHpZVzV6TFhObGNtbG1JaUJtYjI1MExYTnBlbVU5SWpreklpQm1iMjUwTFhkbGFXZG9kRDBpT1RBd0lpQm1hV3hzUFNJalpUQTFNalV5SWo3T3FUd3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJNU1DSWdlVDBpTVRRM0lpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaVFYSnBZV3dzYzJGdWN5MXpaWEpwWmlJZ1ptOXVkQzF6YVhwbFBTSXpNQ0lnWm05dWRDMTNaV2xuYUhROUlqY3dNQ0lnWm1sc2JEMGlJMlkxWXpZeU15SWdiR1YwZEdWeUxYTndZV05wYm1jOUlqY2lQazlGUEM5MFpYaDBQand2YzNablBnPT0iLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLCAicHVycG9zZSI6ICJhbnkifV19">
@@ -14,6 +34,7 @@
 <title>DeepFlow — Job & Invoice Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <style>
 /* ══════════════════════════════════════
    THEME SYSTEM — Light Default (v9)
@@ -3063,6 +3084,19 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
         <div class="jm-info-row"><span class="jm-info-lbl">Address</span><span class="jm-info-val" id="jmi-ll-addr">—</span></div>
         <div class="jm-info-row"><span class="jm-info-lbl">WhatsApp</span><span class="jm-info-val" id="jmi-ll-wa">—</span></div>
       </div>
+      
+      <!-- ═══ CLIENT CREDIT CHECK PANEL ═══ -->
+      <div id="credit-check-panel" class="credit-check-panel" style="display:none;margin:16px 0;padding:16px;border:2px solid var(--border);border-radius:var(--r2);background:white;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-weight:700;font-size:13px;color:var(--txt);">💳 PAYMENT HISTORY</div>
+          <div id="credit-rating-stars" style="font-size:18px;letter-spacing:2px;"></div>
+        </div>
+        <div id="credit-rating-text" style="font-size:11px;font-weight:700;margin-bottom:12px;"></div>
+        <div id="credit-stats" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;font-size:11px;"></div>
+        <div id="credit-recent-jobs" style="font-size:11px;margin-top:12px;"></div>
+        <div id="credit-warning" style="display:none;margin-top:12px;padding:10px;background:rgba(224,82,82,0.1);border-left:3px solid var(--red);border-radius:4px;font-size:11px;font-weight:600;color:var(--red);"></div>
+      </div>
+      
       <div class="fg" style="position:relative">
         <label class="fl">Landlord Name <span style="color:var(--txt3);font-weight:400;text-transform:none;font-size:10px">(optional if phone known)</span></label>
         <input type="text" id="jf-ll-name" class="fi" placeholder="Type landlord name…" oninput="smartAutofill('landlord',this.value)" autocomplete="off">
@@ -3845,10 +3879,24 @@ async function dAll(store) {
     const v = localStorage.getItem('df_all_'+store);
     return v ? JSON.parse(v) : [];
   }
-  // select=* explicitly requests all columns — prevents PostgREST from
-  // omitting columns due to column-level security or default projection settings
-  const rows = await _sb(store+'?limit=5000&order=created.desc&select=*') || [];
-  return rows.map(r => _fromDb(store, r));
+  // ═══ FIXED: Pagination to fetch ALL rows (not just 5000) ═══
+  let allRows = [];
+  let offset = 0;
+  const limit = 1000; // Fetch in chunks of 1000
+  
+  while (true) {
+    const chunk = await _sb(store+`?limit=${limit}&offset=${offset}&order=created.desc&select=*`) || [];
+    if (chunk.length === 0) break; // No more rows
+    allRows = allRows.concat(chunk);
+    if (chunk.length < limit) break; // Last chunk (less than limit means we're done)
+    offset += limit;
+    // Safety: Stop at 50k rows to prevent infinite loop
+    if (offset > 50000) {
+      console.warn(`⚠️ Stopped fetching ${store} at 50k rows - implement proper filtering`);
+      break;
+    }
+  }
+  return allRows.map(r => _fromDb(store, r));
 }
 
 async function dPut(store, obj) {
@@ -5401,11 +5449,14 @@ function _pickFromList(title, options){
 }
 
 // ── Keep bulk count in sync ──
-const _origUpdateBulkBar = updateBulkBar;
+let _origUpdateBulkBar = null; // Initialize to null first
 function updateBulkBar(){
-  _origUpdateBulkBar?.();
   const countEl = document.getElementById('bulk-count');
   if(countEl) countEl.textContent = selJobs.size > 0 ? `${selJobs.size} selected` : '';
+  // Call original if it exists and is different from this function
+  if(_origUpdateBulkBar && _origUpdateBulkBar !== updateBulkBar){
+    _origUpdateBulkBar();
+  }
 }
 
 async function _getJobs(forceRefresh=false){
@@ -6055,6 +6106,12 @@ function fillLandlordInfoBox(j){
     g('jmi-ll-email').textContent=j.landlordEmail||'—';
     g('jmi-ll-addr').textContent=j.landlordAddr||'—';
     g('jmi-ll-wa').textContent=j.landlordWA||'—';
+    // Show credit check for this landlord
+    if(j.landlordName) showClientCreditCheck(j.landlordName);
+  } else {
+    // Hide credit check if no landlord
+    const creditPanel = document.getElementById('credit-check-panel');
+    if(creditPanel) creditPanel.style.display = 'none';
   }
 }
 
@@ -7138,6 +7195,13 @@ async function createInvFromJob(jobId){
   try{
     const j=await dGet('jobs',jobId);
     if(!j){toast('Job not found — try refreshing','error');return;}
+    
+    // ═══ DEBUG: Log what fields the job actually has ═══
+    console.log('📋 Job fields available:', Object.keys(j));
+    console.log('🔍 Job number value:', j.jobNum || j.jobnum || j.job_num || 'MISSING');
+    console.log('🔍 Agent name value:', j.agentName || j.agentname || 'MISSING');
+    console.log('🔍 Agent email value:', j.agentEmail || j.agentemail || 'MISSING');
+    
     const ps=await dAll('persons');
     const cl=ps.find(p=>p.name===j.referrer)||{};
 
@@ -7161,14 +7225,49 @@ async function createInvFromJob(jobId){
 
     editInvId=null;
     window._pendingJobLink=jobId;
+    
+    // ═══ CRITICAL FIX: Store values for later use ═══
+    const jobNumber = j.jobNum || j.jobnum || j.job_num || j.jobNumber || '';
+    const agentName = j.agentName || j.agentname || j.agent_name || '';
+    const agentEmail = j.agentEmail || j.agentemail || j.agent_email || '';
+    
+    window._invoiceJobNumber = jobNumber;
+    window._invoiceAgentName = agentName;
+    window._invoiceAgentEmail = agentEmail;
+    
+    console.log('💾 Stored for invoice:', {jobNumber, agentName, agentEmail});
+    
     document.getElementById('mo-inv-title').textContent='◎ New Invoice from Job';
     document.getElementById('if-date').value=j.date||TODAY();
     document.getElementById('if-desc').value=j.description||j.address||'';
     document.getElementById('if-notes').value=S.invNotes||'';
     document.getElementById('if-terms').value=S.payTerms||'';
-    document.getElementById('if-jobref').value=j.jobNum||'';
-    document.getElementById('if-agent').value=j.agentName||'';
-    document.getElementById('if-agent-cc').value=j.agentEmail||'';
+    
+    // ═══ FIX: Set fields with ALL possible variations ═══
+    const jobRefField = document.getElementById('if-jobref');
+    if(jobRefField) {
+      jobRefField.value = jobNumber;
+      console.log('✅ Set job ref field to:', jobNumber);
+    } else {
+      console.error('❌ Job ref field not found!');
+    }
+    
+    const agentField = document.getElementById('if-agent');
+    if(agentField) {
+      agentField.value = agentName;
+      console.log('✅ Set agent name field to:', agentName);
+    } else {
+      console.error('❌ Agent name field not found!');
+    }
+    
+    const agentCCField = document.getElementById('if-agent-cc');
+    if(agentCCField) {
+      agentCCField.value = agentEmail;
+      console.log('✅ Set agent email field to:', agentEmail);
+    } else {
+      console.error('❌ Agent email field not found!');
+    }
+    
     document.getElementById('if-status').value='Draft';
     await fillInvClientDrop(cl.id);
     renderInvItems();
@@ -7180,6 +7279,20 @@ async function createInvFromJob(jobId){
     if(dueEl) dueEl.value=dd.toISOString().slice(0,10);
 
     openModal('mo-inv');
+    
+    // ═══ ANOTHER FIX: Set fields AGAIN after modal opens ═══
+    setTimeout(() => {
+      const jobRefField = document.getElementById('if-jobref');
+      const agentField = document.getElementById('if-agent');
+      const agentCCField = document.getElementById('if-agent-cc');
+      
+      if(jobRefField && !jobRefField.value) jobRefField.value = jobNumber;
+      if(agentField && !agentField.value) agentField.value = agentName;
+      if(agentCCField && !agentCCField.value) agentCCField.value = agentEmail;
+      
+      console.log('🔄 Re-checked fields after modal open');
+    }, 200);
+    
   }catch(err){
     toast('❌ Could not open invoice: '+(err.message||'').slice(0,80),'error');
     console.error('createInvFromJob error:',err);
@@ -12955,14 +13068,33 @@ async function exportMasterXLSX(){
 }
 
 async function buildXLSX(d){
-  // Load SheetJS if not present
+  // Load SheetJS if not present - WITH PROPER RACE CONDITION FIX
   if(typeof XLSX==='undefined'){
     await new Promise((ok,er)=>{
       const s=document.createElement('script');
       s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      s.onload=ok;s.onerror=er;
+      s.onload=()=>{
+        // Wait for XLSX to actually be defined (race condition fix)
+        const checkXLSX = setInterval(()=>{
+          if(typeof XLSX !== 'undefined'){
+            clearInterval(checkXLSX);
+            ok();
+          }
+        }, 50); // Check every 50ms
+        // Timeout after 5 seconds
+        setTimeout(()=>{
+          clearInterval(checkXLSX);
+          if(typeof XLSX === 'undefined') er(new Error('XLSX failed to load'));
+          else ok();
+        }, 5000);
+      };
+      s.onerror=er;
       document.head.appendChild(s);
     });
+  }
+  if(typeof XLSX === 'undefined'){
+    toast('❌ Failed to load Excel library','error');
+    throw new Error('XLSX library not loaded');
   }
   const wb=XLSX.utils.book_new();
   const coName=d.settings.coName||(d.settings.appWord1+' '+d.settings.appWord2)||'Company';
@@ -14563,9 +14695,9 @@ async function saveInvWithJobSync(){
     terms: document.getElementById('if-terms').value,
     items: JSON.parse(JSON.stringify(invItems)),
     status: document.getElementById('if-status')?.value || (editInvId ? existingInv.status : 'Draft'),
-    jobRef: document.getElementById('if-jobref')?.value||'',
-    agentName: document.getElementById('if-agent')?.value||'',
-    agentCC: document.getElementById('if-agent-cc')?.value||'',
+    jobRef: document.getElementById('if-jobref')?.value || window._invoiceJobNumber || '',
+    agentName: document.getElementById('if-agent')?.value || window._invoiceAgentName || '',
+    agentCC: document.getElementById('if-agent-cc')?.value || window._invoiceAgentEmail || '',
     linkedJobId: window._pendingJobLink || (editInvId ? existingInv.linkedJobId : null),
     created: editInvId ? existingInv.created : Date.now()
   };
@@ -15688,6 +15820,116 @@ function _showUpdateBanner(){
   b.innerHTML='<span style="font-size:22px">🔄</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:#fff">New version available</div><div style="font-size:11px;color:#9ca3af;margin-top:1px">Tap Update to get the latest version</div></div><button onclick="window.location.reload(true)" style="background:#4f8fff;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">⬆ Update Now</button><button onclick="this.closest(\'#_update-banner\').remove()" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;padding:0 4px">✕</button>';
   document.body.appendChild(b);
   if(navigator.vibrate) navigator.vibrate([100,50,100]);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CLIENT CREDIT CHECK - 5 STAR RATING SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+async function showClientCreditCheck(clientName){
+  if(!clientName||!clientName.trim()){
+    const p=document.getElementById('credit-check-panel');
+    if(p)p.style.display='none';
+    return;
+  }
+  try{
+    const allInvs=await dAll('invoices');
+    const clientInvs=allInvs.filter(inv=>(inv.clientName||inv.clientname||'').toLowerCase()===clientName.toLowerCase());
+    if(clientInvs.length===0){
+      document.getElementById('credit-check-panel').style.display='none';
+      return;
+    }
+    const now=new Date();
+    const unpaid=clientInvs.filter(inv=>(inv.status||'Draft')!=='Paid'&&(inv.status||'Draft')!=='Cancelled');
+    const unpaidAmount=unpaid.reduce((sum,inv)=>sum+(inv.total||0),0);
+    const overdue=unpaid.filter(inv=>inv.dueDate&&new Date(inv.dueDate)<now);
+    const paid=clientInvs.filter(inv=>(inv.status||'')==='Paid').sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    
+    // ═══ STAR CALCULATION - Based on Payment Behavior ═══
+    let stars=5;
+    
+    // Deduct for significantly overdue invoices (time-based, not amount)
+    const veryOverdue = overdue.filter(inv => {
+      if(!inv.dueDate) return false;
+      const daysPast = Math.floor((now - new Date(inv.dueDate)) / (1000*60*60*24));
+      return daysPast > 60; // More than 60 days overdue
+    });
+    
+    // Deduct for overdue COUNT and severity
+    if(veryOverdue.length > 3) stars -= 3; // Chronic late payer
+    else if(veryOverdue.length > 0) stars -= 2; // Some very late invoices
+    else if(overdue.length > 3) stars -= 2; // Many overdue (but less than 60 days)
+    else if(overdue.length > 0) stars -= 1; // Some overdue
+    
+    // Deduct for high unpaid amount RELATIVE to invoice count
+    const avgInvoiceValue = clientInvs.length > 0 ? clientInvs.reduce((sum, inv) => sum + (inv.total || 0), 0) / clientInvs.length : 0;
+    if(unpaidAmount > avgInvoiceValue * 5) stars -= 2; // 5x average = problematic
+    else if(unpaidAmount > avgInvoiceValue * 3) stars -= 1; // 3x average = concerning
+    
+    // Bonus: Give back star if paid invoices > unpaid (good history)
+    if(paid.length > unpaid.length && paid.length > 3) stars += 1;
+    
+    stars=Math.max(1,Math.min(5,stars));
+    
+    // ═══ COLORS ═══
+    const starColors={1:'#e05252',2:'#f59e0b',3:'#f0c030',4:'#a3e635',5:'#25d58e'};
+    const starColor=starColors[stars];
+    const riskLevel=stars<=2?'HIGH RISK':stars==3?'MEDIUM RISK':'LOW RISK';
+    const riskColor=starColors[stars<=2?1:stars==3?3:5];
+    
+    // ═══ RENDER STARS ═══
+    let starsHTML='';
+    for(let i=1;i<=5;i++)starsHTML+=i<=stars?`<span style="color:${starColor}">★</span>`:'<span style="color:#d1d5db">☆</span>';
+    
+    // ═══ POPULATE PANEL ═══
+    const panel=document.getElementById('credit-check-panel');
+    panel.style.display='block';
+    panel.style.borderColor=starColor;
+    panel.style.background=`linear-gradient(to bottom, ${starColor}08, white)`;
+    
+    document.getElementById('credit-rating-stars').innerHTML=starsHTML;
+    document.getElementById('credit-rating-text').innerHTML=`<span style="color:${riskColor}">${stars}/5 STARS — ${riskLevel}</span>`;
+    
+    // ═══ STATS ═══
+    const lastPmt=paid[0];
+    const lastPmtDate=lastPmt?new Date(lastPmt.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Never';
+    const lastPmtAmt=lastPmt?(lastPmt.total||0).toFixed(2):'0.00';
+    const daysSinceLast=lastPmt?Math.floor((now-new Date(lastPmt.date))/(1000*60*60*24)):9999;
+    
+    document.getElementById('credit-stats').innerHTML=`
+      <div><span style="color:var(--txt3);font-size:10px">Unpaid Balance</span><br><strong style="color:${unpaidAmount>1000?'var(--red)':'var(--txt)'};font-size:14px">£${unpaidAmount.toFixed(2)}</strong></div>
+      <div><span style="color:var(--txt3);font-size:10px">Unpaid Invoices</span><br><strong style="font-size:14px">${unpaid.length}</strong></div>
+      <div><span style="color:var(--txt3);font-size:10px">Overdue Invoices</span><br><strong style="color:${overdue.length>0?'var(--red)':'var(--green)'};font-size:14px">${overdue.length}</strong></div>
+      <div><span style="color:var(--txt3);font-size:10px">Last Payment</span><br><strong style="font-size:13px">${lastPmtDate}</strong><br><span style="color:var(--txt3);font-size:10px">(${daysSinceLast}d ago, £${lastPmtAmt})</span></div>
+    `;
+    
+    // ═══ RECENT JOBS ═══
+    const allJobs=await dAll('jobs');
+    const clientJobs=allJobs.filter(j=>(j.referrer||j.landlordName||'').toLowerCase()===clientName.toLowerCase()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
+    if(clientJobs.length>0){
+      document.getElementById('credit-recent-jobs').innerHTML=`
+        <div style="color:var(--txt3);font-size:10px;margin-bottom:6px;font-weight:700">RECENT JOBS</div>
+        ${clientJobs.map(j=>{
+          const jobInv=clientInvs.find(inv=>(inv.jobRef||inv.jobref||'')===(j.jobNum||j.jobnum||''));
+          const status=jobInv?(jobInv.status==='Paid'?'<span style="color:var(--green)">Paid ✓</span>':`<span style="color:var(--yellow)">Invoiced</span>`):'<span style="color:var(--txt3)">Not invoiced</span>';
+          return `<div style="padding:4px 0;border-bottom:1px solid var(--s2)">• ${j.jobNum||j.jobnum||'Job'} - ${(j.description||j.address||'').slice(0,40)} (${status})</div>`;
+        }).join('')}
+      `;
+    }
+    
+    // ═══ WARNING ═══
+    if(stars<=2||unpaidAmount>2000||overdue.length>0){
+      const warnings=[];
+      if(unpaidAmount>2000)warnings.push(`£${unpaidAmount.toFixed(2)} unpaid`);
+      if(overdue.length>0)warnings.push(`${overdue.length} invoice${overdue.length>1?'s':''} overdue`);
+      if(daysSinceLast>90)warnings.push(`No payment for ${daysSinceLast} days`);
+      document.getElementById('credit-warning').style.display='block';
+      document.getElementById('credit-warning').innerHTML=`⚠️ WARNING: ${warnings.join(', ')}. Contact finance team before proceeding.`;
+    }else{
+      document.getElementById('credit-warning').style.display='none';
+    }
+  }catch(err){
+    console.error('Credit check error:',err);
+  }
 }
 
 </script>
