@@ -7862,12 +7862,18 @@ async function downloadInvPDFById(id){
   doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;
 
   // ══════════════════════════════════════════════════════════════
-  // BILL TO SECTION - Using proper saved invoice data
+  // BILL TO SECTION - Uses SAVED invoice data (not temporary vars)
   // ══════════════════════════════════════════════════════════════
   const colW=(RW-10)/2;
   
-  // Determine invoice type from saved data
-  const isAgency = inv.invoiceType === 'agency' || !!(inv.jobAddress && inv.jobAddress.trim());
+  // CRITICAL: Determine invoice type from SAVED data, not temporary variables
+  const isAgency = inv.invoiceType === 'agency';
+  
+  console.log('📄 PDF Generation:');
+  console.log('  invoiceType:', inv.invoiceType);
+  console.log('  isAgency:', isAgency);
+  console.log('  billToName:', inv.billToName);
+  console.log('  jobAddress:', inv.jobAddress);
   
   // BILL TO header
   doc.setFillColor(...light);doc.rect(M,y,colW,6,'F');
