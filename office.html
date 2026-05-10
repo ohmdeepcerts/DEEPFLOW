@@ -15983,9 +15983,23 @@ async function showClientCreditCheck(clientName){
       document.getElementById('credit-check-panel').style.display='none';
       return;
     }
+    
+    // Helper function to calculate invoice total from line items
+    const calcInvTotal = (inv) => {
+      const items = typeof inv.items === 'string' ? JSON.parse(inv.items || '[]') : (inv.items || []);
+      const subtotal = items.reduce((sum, item) => {
+        const qty = parseFloat(item.qty) || 0;
+        const unit = parseFloat(item.unit) || 0;
+        return sum + (qty * unit);
+      }, 0);
+      const vatRate = parseFloat(S.vatRate || 20) / 100;
+      const total = subtotal * (1 + vatRate);
+      return total;
+    };
+    
     const now=new Date();
     const unpaid=clientInvs.filter(inv=>(inv.status||'Draft')!=='Paid'&&(inv.status||'Draft')!=='Cancelled');
-    const unpaidAmount=unpaid.reduce((sum,inv)=>sum+(inv.total||0),0);
+    const unpaidAmount=unpaid.reduce((sum,inv)=>sum+calcInvTotal(inv),0);
     const overdue=unpaid.filter(inv=>inv.dueDate&&new Date(inv.dueDate)<now);
     const paid=clientInvs.filter(inv=>(inv.status||'')==='Paid').sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     
@@ -16006,7 +16020,7 @@ async function showClientCreditCheck(clientName){
     else if(overdue.length > 0) stars -= 1; // Some overdue
     
     // Deduct for high unpaid amount RELATIVE to invoice count
-    const avgInvoiceValue = clientInvs.length > 0 ? clientInvs.reduce((sum, inv) => sum + (inv.total || 0), 0) / clientInvs.length : 0;
+    const avgInvoiceValue = clientInvs.length > 0 ? clientInvs.reduce((sum, inv) => sum + calcInvTotal(inv), 0) / clientInvs.length : 0;
     if(unpaidAmount > avgInvoiceValue * 5) stars -= 2; // 5x average = problematic
     else if(unpaidAmount > avgInvoiceValue * 3) stars -= 1; // 3x average = concerning
     
@@ -16037,7 +16051,7 @@ async function showClientCreditCheck(clientName){
     // ═══ STATS ═══
     const lastPmt=paid[0];
     const lastPmtDate=lastPmt?new Date(lastPmt.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Never';
-    const lastPmtAmt=lastPmt?(lastPmt.total||0).toFixed(2):'0.00';
+    const lastPmtAmt=lastPmt?calcInvTotal(lastPmt).toFixed(2):'0.00';
     const daysSinceLast=lastPmt?Math.floor((now-new Date(lastPmt.date))/(1000*60*60*24)):9999;
     
     document.getElementById('credit-stats').innerHTML=`
