@@ -1139,11 +1139,51 @@ draw();
 
 'use strict';
 // ══════════════════════════════════════════════════════════════
-//  CONFIG
+//  CONFIG — inlined core (no external deepflow-core.js dependency)
 // ══════════════════════════════════════════════════════════════
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
+
+const STATUS = Object.freeze({
+  PENDING:'Pending', IN_PROGRESS:'In Progress', COMPLETED:'Completed',
+  INVOICED:'Invoiced', CANNOT_ACCESS:'Cannot Access', CANCELLED:'Cancelled',
+});
+
+const _TO_DB_JOBS = {jobNum:'jobnum',certTypes:'certtypes',timeSlot:'timeslot',
+  landlordName:'landlordname',landlordPhone:'landlordphone',landlordEmail:'landlordemail',
+  landlordAddr:'landlordaddr',landlordWA:'landlordwa',landlordNotes:'landlordnotes',
+  agencyName:'agencyname',agencyPhone:'agencyphone',agencyEmail:'agencyemail',
+  agencyNotes:'agencynotes',agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail'};
+const _FROM_DB_JOBS = Object.fromEntries(Object.entries(_TO_DB_JOBS).map(([k,v])=>[v,k]));
+function _fix(j){if(!j||typeof j!=='object')return j;const o={};for(const[k,v]of Object.entries(j))o[_FROM_DB_JOBS[k]||k]=v;return o;}
+
+async function _getJWT(){
+  try{const{data}=await _supaAuth.auth.getSession();return data?.session?.access_token||SB_KEY;}
+  catch(e){return SB_KEY;}
+}
+async function sb(path,opts={}){
+  const jwt=await _getJWT();
+  const res=await fetch(`${SB_URL}/rest/v1/${path}`,{
+    method:opts.method||'GET',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+jwt,'Content-Type':'application/json',
+      'Prefer':opts.prefer||(opts.method==='PATCH'?'return=minimal':opts.method==='POST'?'return=representation':'')},
+    body:opts.body!==undefined?JSON.stringify(opts.body):undefined,
+  });
+  const txt=await res.text();
+  if(!res.ok)throw new Error(`[DeepFlow] ${path} → ${res.status}: ${txt}`);
+  const d=txt?JSON.parse(txt):null;
+  return Array.isArray(d)?d.map(_fix):d;
+}
+
+const df=(()=>{
+  const _L={};
+  function on(ev,fn,opts={}){if(!_L[ev])_L[ev]=[];_L[ev].push({fn,once:!!opts.once});}
+  function off(ev,fn){if(_L[ev])_L[ev]=_L[ev].filter(l=>l.fn!==fn);}
+  function emit(ev,...args){if(!_L[ev])return;const run=[..._L[ev]];_L[ev]=_L[ev].filter(l=>!l.once);run.forEach(l=>{try{l.fn(...args);}catch(e){console.warn('[DeepFlow] bus',ev,e);}});}
+  function once(ev,fn){on(ev,fn,{once:true});}
+  return{on,off,emit,once};
+})();
 // FIX 13: No longer a hardcoded constant. Loaded from the settings table in
 // _loadOfficeSettings() which is called inside showApp(). Falls back to localStorage
 // cache, then to the placeholder below if neither is available.
@@ -1181,49 +1221,12 @@ let _lastJobIds  = new Set();
 let _lastLat     = null;  // engineer GPS position for nearest-job sort
 let _lastLng     = null;
 
-// ══════════════════════════════════════════════════════════════
-//  SUPABASE
-// ══════════════════════════════════════════════════════════════
-async function sb(path, opts={}) {
-  // Always use the real Supabase Auth JWT if available — required for RLS
-  let jwt = SB_KEY;
-  try{
-    const {data} = await _supaAuth.auth.getSession();
-    if(data?.session?.access_token) jwt = data.session.access_token;
-  }catch(e){}
-  const headers = {
-    'apikey':        SB_KEY,
-    'Authorization': 'Bearer ' + jwt,
-    'Content-Type':  'application/json',
-    'Prefer':        opts.prefer||(opts.method==='PATCH'?'return=minimal':opts.method==='POST'?'return=representation':''),
-  };
-  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
-    headers,
-    method: opts.method||'GET',
-    body:   opts.body ? JSON.stringify(opts.body) : undefined
-  });
-  if(!res.ok) throw new Error(await res.text());
-  const t = await res.text();
-  const d = t ? JSON.parse(t) : null;
-  return Array.isArray(d) ? d.map(_fix) : d;
-}
-
-function _fix(j){
-  if(!j||typeof j!=='object')return j;
-  const M={jobnum:'jobNum',certtypes:'certTypes',timeslot:'timeSlot',
-    landlordname:'landlordName',landlordphone:'landlordPhone',landlordemail:'landlordEmail',
-    landlordaddr:'landlordAddr',landlordwa:'landlordWA',landlordnotes:'landlordNotes',
-    agencyname:'agencyName',agencyphone:'agencyPhone',agencyemail:'agencyEmail',
-    agencynotes:'agencyNotes',agentname:'agentName',agentphone:'agentPhone',agentemail:'agentEmail'};
-  const r={};
-  for(const[k,v]of Object.entries(j))r[M[k]||k]=v;
-  return r;
-}
-
+// ── sbStorage — Supabase file upload ─────────────────────────
 async function sbStorage(path,file){
+  const jwt = await _getJWT();
   const res=await fetch(`${SB_URL}/storage/v1/object/deepflow/${path}`,{
     method:'POST',
-    headers:await(async()=>{let j=SB_KEY;try{const {data}=await _supaAuth.auth.getSession();if(data?.session?.access_token)j=data.session.access_token;}catch(e){}return{'apikey':SB_KEY,'Authorization':'Bearer '+j,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'};})(),
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+jwt,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},
     body:file
   });
   if(!res.ok)throw new Error('Upload failed: '+(await res.text()).slice(0,100));
@@ -1937,7 +1940,8 @@ async function openJob(id){
     if(!jobs?.[0])throw new Error('Job not found');
     const j=jobs[0];
     // Verify this engineer is still assigned — office may have reassigned it
-    if(j.engineer && j.engineer !== currentUser.name){
+    // FIX BUG3: use case-insensitive compare — DB may store "IZHAR" while users table has "Izhar"
+    if(j.engineer && j.engineer.toLowerCase() !== currentUser.name.toLowerCase()){
       modal.classList.remove('open');
       toast('⚠️ This job has been reassigned. Your job list will refresh.','warn',4000);
       setTimeout(loadJobs,500);
@@ -3559,12 +3563,25 @@ function _clearDraft(id){
   });
   document.getElementById('qn-overlay')?.addEventListener('click',e=>{if(e.target.id==='qn-overlay')closeQN();});
 
-  // ── Session restore — checks localStorage cache then verifies Supabase Auth session ──
+  // ── Session restore — checks localStorage cache then re-validates active status ──
+  // FIX BUG6: always re-check active=true in users table on restore so a deactivated
+  // engineer can't continue using the app for up to 30 days on a cached session.
   try{
     const saved = JSON.parse(localStorage.getItem('df_eng_user')||'null');
     const exp   = parseInt(localStorage.getItem('df_eng_sess_expires')||'0');
     if(saved?.name && saved?.role==='engineer' && (exp===0||Date.now()<exp)){
       currentUser=saved;
+      // Re-validate: confirm the account is still active in Supabase (non-blocking fast check)
+      (async()=>{
+        try{
+          const rows = await sb(`users?auth_id=eq.${encodeURIComponent(saved._authId)}&active=eq.true&select=id,active`);
+          if(!rows||!rows.length){
+            // Account deactivated since last login — force sign out
+            toast('⚠️ Your account has been deactivated. Contact the office.','error',6000);
+            setTimeout(_doSignOut, 2000);
+          }
+        }catch(e){ /* Network error — allow offline use, re-check next refresh */ }
+      })();
       showApp();
       return;
     }
