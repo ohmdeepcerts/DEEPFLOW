@@ -198,10 +198,10 @@ td[data-col="actions"]{position:relative}
 
 
 /* ── Column resize handle ── */
-.col-resize-handle{position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;z-index:10;display:flex;align-items:center;justify-content:center}
+.col-resize-handle{position:absolute;right:-3px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:10;display:flex;align-items:center;justify-content:center}
 .col-resize-handle::after{content:'';display:block;width:2px;height:60%;background:transparent;border-radius:2px;transition:background .15s}
 th:hover .col-resize-handle::after{background:var(--border2)}
-th.resizing .col-resize-handle::after,th .col-resize-handle:hover::after{background:var(--acc)!important}
+th.resizing .col-resize-handle::after,.col-resize-handle:hover::after,.col-resize-handle.active::after{background:var(--acc)!important}
 .jtable th{position:relative;overflow:visible!important}
 
 /* ── Description tooltip/popover ── */
@@ -1047,7 +1047,7 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsg-rows{padding:0 12px 3px;display:flex;flex-direction:column;gap:2px}
 .jsr{display:flex;align-items:stretch;background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .1s}
 .jsr:hover{border-color:var(--border2);transform:translateX(2px)}
-.jsr.jsr-past{opacity:.55}
+.jsr.jsr-past{opacity:1}/* FIX: removed past-job fade */
 .jsr.jsr-emg{background:rgba(224,82,82,.04)}
 .jsr-stripe{width:4px;flex-shrink:0}
 .jsr-stripe-pending{background:#f5a623}
@@ -1092,7 +1092,7 @@ body.density-relaxed .jtable td{font-size:15px}
 /* Layout: [drag 18px][stripe 3px][status 80px][job# 54px][address flex][desc 200px][contact 160px][time 80px][eng 110px][certs 90px][price 52px][sel 90px][actions 58px] */
 .jsr3{display:grid;align-items:center;background:var(--s1);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:default;transition:border-color .15s,box-shadow .15s;position:relative;min-height:0;box-sizing:border-box}
 .jsr3:hover{border-color:var(--border2);box-shadow:0 1px 8px rgba(0,0,0,.07)}
-.jsr3.jsr-past{opacity:.5}
+.jsr3.jsr-past{opacity:1}/* FIX: removed opacity fade for past jobs — all jobs display at full opacity regardless of date */
 .jsr3.jsr-emg{background:rgba(224,82,82,.04)}
 .jsr3.drag-over{border-color:var(--acc)!important;box-shadow:0 0 0 2px rgba(245,166,35,.3)!important}
 .jsr3.dragging{opacity:.4}
@@ -1110,6 +1110,8 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr3-cell-status{padding:4px 6px;display:flex;align-items:center}
 .jsr3-cell-addr{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--txt);padding:5px 8px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jsr3-cell-addr:hover{color:var(--acc)}
+.jsr3-cell-access{font-size:11px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jsr3-cell-referrer{font-size:11px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jsr3-cell-desc{font-size:11px;color:var(--txt3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 6px;cursor:help;font-style:italic}
 .jsr3-cell-contact{font-size:10.5px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 6px}
 .jsr3-cell-time{font-size:11px;color:#4f8fff;font-weight:600;padding:5px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1324,9 +1326,9 @@ body.density-relaxed .jtable td{font-size:15px}
           <div class="dash-sub" id="dg-date"></div>
         </div>
         <div class="dash-quick">
-          <button class="btn btn-acc" onclick="nav('jobs');setTimeout(openJobModal,100)">+ New Job</button>
-          <button class="btn btn-ghost" onclick="nav('inv');setTimeout(openNewInvModal,100)">+ Invoice</button>
-          <button class="btn btn-ghost" onclick="nav('dir');setTimeout(()=>openPersonModal(),100)">+ Person</button>
+          <button class="btn btn-acc" onclick="df.once('navDone:jobs',()=>{openJobModal});nav('jobs')">+ New Job</button>
+          <button class="btn btn-ghost" onclick="df.once('navDone:inv',()=>{openNewInvModal});nav('inv')">+ Invoice</button>
+          <button class="btn btn-ghost" onclick="df.once('navDone:dir',()=>{openPersonModal()});nav('dir')">+ Person</button>
         </div>
       </div>
       <div class="kpi-row">
@@ -3748,10 +3750,10 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
 <div id="fab">
   <div id="fab-menu">
-    <div class="fab-item" onclick="closeFab();nav('jobs');setTimeout(openJobModal,100)"><span class="fab-ico">⊞</span> New Job</div>
-    <div class="fab-item" onclick="closeFab();nav('inv');setTimeout(openNewInvModal,100)"><span class="fab-ico">◎</span> New Invoice</div>
-    <div class="fab-item" onclick="closeFab();nav('dir');setTimeout(()=>openPersonModal(),100)"><span class="fab-ico">◉</span> Add Person</div>
-    <div class="fab-item" onclick="closeFab();nav('certs');setTimeout(openCertModal,100)"><span class="fab-ico">◈</span> Add Certificate</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:jobs',()=>{openJobModal});nav('jobs')"><span class="fab-ico">⊞</span> New Job</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:inv',()=>{openNewInvModal});nav('inv')"><span class="fab-ico">◎</span> New Invoice</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:dir',()=>{openPersonModal()});nav('dir')"><span class="fab-ico">◉</span> Add Person</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:certs',()=>{openCertModal});nav('certs')"><span class="fab-ico">◈</span> Add Certificate</div>
     <div class="fab-item" onclick="closeFab();openModal('mo-overtime')"><span class="fab-ico">⏱</span> Log Overtime</div>
   </div>
   <button id="fab-main" onclick="toggleFab()" title="Quick Actions (+)">+</button>
@@ -3778,14 +3780,89 @@ window.onerror = (msg, src, line) => {
   console.error(`JS error: ${msg} (${src}:${line})`);
 };
 
+// ══════════════════════════════════════════════════════════════
+// DEEPFLOW CORE — credentials, STATUS constants, field mapping,
+// unified fetch layer, event bus. All in one file — no external deps.
+// ══════════════════════════════════════════════════════════════
+
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
-
-// Supabase Auth client — used for email/password login
 const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
 
+// ── STATUS CONSTANTS ─────────────────────────────────────────
+const STATUS = Object.freeze({
+  PENDING:'Pending', IN_PROGRESS:'In Progress', COMPLETED:'Completed',
+  INVOICED:'Invoiced', CANNOT_ACCESS:'Cannot Access', CANCELLED:'Cancelled',
+});
+
+// ── FIELD MAPPING: camelCase JS ↔ lowercase Supabase columns ─
+const _TO_DB = {
+  jobs:{jobNum:'jobnum',certTypes:'certtypes',timeSlot:'timeslot',
+    landlordName:'landlordname',landlordPhone:'landlordphone',landlordEmail:'landlordemail',
+    landlordAddr:'landlordaddr',landlordWA:'landlordwa',landlordNotes:'landlordnotes',
+    agencyName:'agencyname',agencyPhone:'agencyphone',agencyEmail:'agencyemail',
+    agencyNotes:'agencynotes',agentName:'agentname',agentPhone:'agentphone',
+    agentEmail:'agentemail',_sortOrder:'sortorder',invNumber:'invnumber',linkedInvId:'linkedinvid'},
+  certs:{issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
+  invoices:{clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',
+    clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',linkedJobId:'linkedjobid',jobRef:'jobref',
+    agentCC:'agentcc',agentName:'agentname',agentEmail:'agentemail',createdAt:'createdat',
+    invoiceType:'invoicetype',billToName:'billtoname',billToAddress:'billtoaddress',
+    jobAddress:'jobaddress',agencyName:'agencyname',agencyAddress:'agencyaddress',
+    landlordName:'landlordname',propertyAddress:'propertyaddress',jobNum:'jobnum'},
+  agents:{agencyId:'agencyid'},
+  payments:{invId:'inv_id',recordedBy:'recorded_by'},
+  expenses:{jobRef:'jobref',desc:'description'},
+  overtime:{},
+};
+const _FROM_DB = {};
+for(const [tbl,map] of Object.entries(_TO_DB)){
+  _FROM_DB[tbl]={};
+  for(const [k,v] of Object.entries(map)) _FROM_DB[tbl][v]=k;
+}
+function _toDb(store,obj){const map=_TO_DB[store];if(!map)return obj;const o={};for(const[k,v]of Object.entries(obj))o[map[k]||k]=v;return o;}
+function _fromDb(store,obj){if(!obj)return obj;const map=_FROM_DB[store];if(!map)return obj;const o={};for(const[k,v]of Object.entries(obj))o[map[k]||k]=v;return o;}
+function _fix(j){if(!j||typeof j!=='object')return j;return _fromDb('jobs',j);}
+
+// ── UNIFIED FETCH LAYER ──────────────────────────────────────
+async function _getJWT(){
+  try{const{data}=await _supaAuth.auth.getSession();return data?.session?.access_token||SB_KEY;}
+  catch(e){return SB_KEY;}
+}
+async function _sb(path,opts={}){
+  const jwt=await _getJWT();
+  const res=await fetch(`${SB_URL}/rest/v1/${path}`,{
+    method:opts.method||'GET',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+jwt,'Content-Type':'application/json',
+      'Prefer':opts.prefer||(opts.method==='PATCH'?'return=minimal':opts.method==='POST'?'return=representation':'')},
+    body:opts.body!==undefined?JSON.stringify(opts.body):undefined,
+  });
+  const txt=await res.text();
+  if(!res.ok)throw new Error(`[DeepFlow] ${path} → ${res.status}: ${txt}`);
+  return txt?JSON.parse(txt):null;
+}
+
+// ── EVENT BUS — replaces setTimeout coordination hacks ───────
+// df.on('jobSaved', fn)  df.emit('jobSaved')  df.once('navDone:jobs', fn)
+const df=(()=>{
+  const _L={};
+  function on(ev,fn,opts={}){if(!_L[ev])_L[ev]=[];_L[ev].push({fn,once:!!opts.once});}
+  function off(ev,fn){if(_L[ev])_L[ev]=_L[ev].filter(l=>l.fn!==fn);}
+  function emit(ev,...args){
+    if(!_L[ev])return;
+    const run=[..._L[ev]];
+    _L[ev]=_L[ev].filter(l=>!l.once);
+    run.forEach(l=>{try{l.fn(...args);}catch(e){console.warn('[DeepFlow] bus error',ev,e);}});
+  }
+  function once(ev,fn){on(ev,fn,{once:true});}
+  return{on,off,emit,once};
+})();
+
 // These stores live in localStorage — no network calls
-const _LOCAL = new Set(['settings','properties','overtime','payments','expenses']);
+// FIX BUG1: payments, expenses, overtime all moved to Supabase.
+// properties live in the app_settings blob (via saveSetting) so dAll('properties') is never called.
+// Only 'settings' remains local — it is managed entirely through S/saveSetting/saveAllSettings.
+const _LOCAL = new Set(['settings']);
 
 function _genSessionToken(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,12) + Math.random().toString(36).slice(2,12);
@@ -3812,84 +3889,12 @@ function _checkOfficeSession(){
   }catch(e){ return null; }
 }
 
-async function _getJWT(){
-  try{
-    const {data}=await _supaAuth.auth.getSession();
-    return data?.session?.access_token || SB_KEY;
-  }catch(e){return SB_KEY;}
-}
-
-async function _sb(path, opts={}) {
-  const jwt = await _getJWT();
-  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
-    method: opts.method || 'GET',
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + jwt,
-      'Content-Type': 'application/json',
-      'Prefer': opts.prefer || ''
-    },
-    body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
-  });
-  const txt = await res.text();
-  if (!res.ok) throw new Error(txt);
-  return txt ? JSON.parse(txt) : null;
-}
-
-async function initDB() { /* nothing needed */ }
-
+// uid() and TODAY() are office-only utilities
 const uid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
   const r = Math.random()*16|0;
   return (c==='x' ? r : (r&0x3|0x8)).toString(16);
 });
 const TODAY = () => new Date().toISOString().slice(0,10);
-
-// PostgreSQL lowercases all unquoted identifiers.
-// These maps translate app camelCase <-> DB lowercase for affected fields.
-const _TO_DB = {
-  jobs: {jobNum:'jobnum',certTypes:'certtypes',timeSlot:'timeslot',
-    landlordName:'landlordname',landlordPhone:'landlordphone',landlordEmail:'landlordemail',
-    landlordAddr:'landlordaddr',landlordWA:'landlordwa',landlordNotes:'landlordnotes',
-    agencyName:'agencyname',agencyPhone:'agencyphone',agencyEmail:'agencyemail',agencyNotes:'agencynotes',
-    agentName:'agentname',agentPhone:'agentphone',agentEmail:'agentemail',_sortOrder:'sortorder',
-    invNumber:'invnumber',linkedInvId:'linkedinvid',jobNum:'jobnum'},
-  certs:    {issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
-  invoices: {
-    clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',
-    clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',linkedJobId:'linkedjobid',jobRef:'jobref',
-    agentCC:'agentcc',agentName:'agentname',agentEmail:'agentemail',createdAt:'createdat',
-    // PROPER INVOICE TYPE FIELDS
-    invoiceType:'invoicetype',
-    billToName:'billtoname',
-    billToAddress:'billtoaddress',
-    jobAddress:'jobaddress',
-    agencyName:'agencyname',
-    agencyAddress:'agencyaddress',
-    landlordName:'landlordname',
-    propertyAddress:'propertyaddress',
-    jobNum:'jobnum'
-  },
-  agents:   {agencyId:'agencyid'},
-};
-const _FROM_DB = {};
-for(const [tbl,map] of Object.entries(_TO_DB)){
-  _FROM_DB[tbl]={};
-  for(const [k,v] of Object.entries(map)) _FROM_DB[tbl][v]=k;
-}
-
-function _toDb(store, obj){
-  const map=_TO_DB[store]; if(!map) return obj;
-  const o={};
-  for(const[k,v] of Object.entries(obj)) o[map[k]||k]=v;
-  return o;
-}
-function _fromDb(store, obj){
-  if(!obj) return obj;
-  const map=_FROM_DB[store]; if(!map) return obj;
-  const o={};
-  for(const[k,v] of Object.entries(obj)) o[map[k]||k]=v;
-  return o;
-}
 
 async function dGet(store, id) {
   if (_LOCAL.has(store)) {
@@ -3997,12 +4002,14 @@ let S = {
   themeLightStart:'07:00', themeLightEnd:'20:00',
 };
 
+async function initDB(){ /* no-op — Supabase REST needs no initialisation */ }
+
 async function loadSettings(){
   // 1. Load from localStorage first (instant, works offline)
   for(const k of Object.keys(S)){
     if(k==='users'||k==='engineers') continue;
     const v=localStorage.getItem('df_setting_'+k);
-    if(v!=null){try{S[k]=JSON.parse(v)}catch(e){}}
+    if(v!=null){try{S[k]=JSON.parse(v)}catch(e){ console.warn('[DeepFlow]', e); }}
   }
   // 2. Load from Supabase DB — overrides localStorage so all users see same settings
   await _loadSettingsFromDb();
@@ -4229,6 +4236,9 @@ function nav(pg){
   if(pg==='client'){renderClientPicker();}
   if(pg==='set'){renderSettings();setTimeout(loadStorageStats,400);setTimeout(loadEngineerLocations,800);setTimeout(forceSyncUsers,600);}
   if(pg==='map'){setTimeout(()=>{onMapViewChange();},50);}
+  // ISSUE 9 FIX: emit navDone so df.once('navDone:X') subscribers fire instead of setTimeout hacks
+  // Use requestAnimationFrame to ensure the render above has painted before listeners fire
+  requestAnimationFrame(()=>{ df.emit('navDone', pg); df.emit(`navDone:${pg}`); });
 }
 function setTopbarActions(pg){
   const a=document.getElementById('tb-actions');
@@ -4248,343 +4258,9 @@ document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
   nav(pg);
 }));
 
-// ════════════════════════════════════════════════════════════════
-//  COLUMN MANAGER — v11 (custom cols, comments, row gear)
-// ════════════════════════════════════════════════════════════════
+// ── Legacy COL_DEFS/FCOL_DEFS column manager removed (ISSUE 5) ──
+// JOB_COLS system (below) is the sole column manager now.
 
-// Built-in column definitions (fixed=cannot be hidden, builtin=not custom)
-const COL_DEFS = [
-  {id:'drag',       label:'⠿ Drag',          fixed:true,  builtin:true},
-  {id:'sel',        label:'☐ Select',         fixed:false, builtin:true},
-  {id:'num',        label:'# Row',            fixed:false, builtin:true},
-  {id:'jobnum',     label:'Job #',            fixed:false, builtin:true},
-  {id:'date',       label:'📅 Date',           fixed:false, builtin:true},
-  {id:'address',    label:'📍 Address',        fixed:true,  builtin:true},
-  {id:'description',label:'📝 Description',   fixed:false, builtin:true},
-  {id:'certs',      label:'◈ Certificates',   fixed:false, builtin:true},
-  {id:'access',     label:'🔑 Access',         fixed:false, builtin:true},
-  {id:'time',       label:'🕐 Time Slot',      fixed:false, builtin:true},
-  {id:'engineer',   label:'👷 Engineer',       fixed:false, builtin:true},
-  {id:'price',      label:'£ Price',           fixed:false, builtin:true},
-  {id:'contact',    label:'👤 Contact Person', fixed:false, builtin:true},
-  {id:'status',     label:'◉ Status',         fixed:true,  builtin:true},
-  {id:'comments',   label:'💬 Comments',       fixed:false, builtin:true,  defaultHidden:true},
-  {id:'actions',    label:'⋯ Actions',         fixed:true,  builtin:true},
-  {id:'landlord',   label:'🏠 Landlord',          fixed:false, builtin:true},
-  {id:'llphone',    label:'📞 LL Phone',           fixed:false, builtin:true},
-  {id:'agency',     label:'👔 Agency',             fixed:false, builtin:true},
-  {id:'hours',      label:'⏱ Hours',               fixed:false, builtin:true},
-  {id:'photos',     label:'📷 Photos',             fixed:false, builtin:true},
-];
-const FCOL_DEFS = [
-  {id:'fdate',        label:'📅 Date',          fixed:true,  builtin:true},
-  {id:'faddress',     label:'📍 Address',        fixed:true,  builtin:true},
-  {id:'fdescription', label:'📝 Description',    fixed:false, builtin:true},
-  {id:'faccess',      label:'🔑 Access',          fixed:false, builtin:true},
-  {id:'ftime',        label:'🕐 Time Slot',       fixed:false, builtin:true},
-  {id:'fengineer',    label:'👷 Engineer',        fixed:false, builtin:true},
-  {id:'fprice',       label:'£ Price',            fixed:false, builtin:true},
-  {id:'fcontact',     label:'👤 Contact Person',  fixed:false, builtin:true},
-  {id:'fstatus',      label:'◉ Status',          fixed:true,  builtin:true},
-  {id:'factions',     label:'⋯ Actions',          fixed:true,  builtin:true},
-];
-
-// Saved state
-// Col prefs are stored per-user (owner name from settings) so each user on same PC keeps their own layout
-function _colKey(k){ return `df_${k}_${(S&&S.owner?S.owner:'default').replace(/\s+/g,'_').toLowerCase()}`; }
-function _loadColPrefs(){
-  try{ hiddenCols = new Set(JSON.parse(localStorage.getItem(_colKey('hidden_cols')) || '["sel","num","comments"]')); }catch(e){ hiddenCols=new Set(['sel','num','comments']); }
-  try{ colWidths  = JSON.parse(localStorage.getItem(_colKey('col_widths'))  || '{}'); }catch(e){ colWidths={}; }
-  try{ customCols = JSON.parse(localStorage.getItem(_colKey('custom_cols')) || '[]'); }catch(e){ customCols=[]; }
-}
-let hiddenCols  = new Set(['sel','num','comments']);
-let colWidths   = {};
-let customCols  = [];
-
-function saveColPrefs(){
-  localStorage.setItem(_colKey('hidden_cols'), JSON.stringify([...hiddenCols]));
-  localStorage.setItem(_colKey('col_widths'),  JSON.stringify(colWidths));
-  localStorage.setItem(_colKey('custom_cols'), JSON.stringify(customCols));
-}
-
-function getAllColDefs(){
-  return [
-    ...COL_DEFS,
-    ...customCols.map(c=>({id:c.id, label:c.label, fixed:false, builtin:false}))
-  ];
-}
-
-// Apply/remove fluid (wrapping) class to cells in a column based on width
-// Default widths are stored in COL_DEFS — if wider than default, wrap text
-const _DEFAULT_COL_W = {
-  drag:24, sel:30, num:32, jobnum:90, date:110, address:170,
-  description:150, certs:110, access:90, time:95, engineer:95,
-  price:75, contact:160, status:120, comments:70, actions:70,
-  fdate:90, faddress:150, fdescription:130, faccess:90, ftime:90,
-  fengineer:90, fprice:60, fcontact:150, fstatus:110, factions:50
-};
-function _applyFluidCol(colId, w){
-  const defaultW = _DEFAULT_COL_W[colId] || 100;
-  const fluid = w > defaultW + 20; // 20px grace before wrapping kicks in
-  ['jtbl','future-jtbl'].forEach(tblId=>{
-    const tbl = document.getElementById(tblId);
-    if(!tbl) return;
-    tbl.querySelectorAll(`td[data-col="${colId}"] .ci`).forEach(ci=>{
-      ci.classList.toggle('fluid', fluid);
-      // Address: scale font size down slightly as column grows so more fits per line
-      if(colId==='address'||colId==='faddress'){
-        if(fluid){
-          // Scale: defaultW=170 → 13px, 250px → 12px, 350px+ → 11px
-          const fs = w < 220 ? 13 : w < 300 ? 12 : 11;
-          ci.style.fontSize = fs+'px';
-        } else {
-          ci.style.fontSize = '';
-        }
-      }
-    });
-  });
-}
-
-// ── Apply visibility + widths to both tables ──
-function applyColVisibility(){
-  _applyToTable('jtbl');
-  _applyToTable('future-jtbl');
-  // Also apply custom col headers if present
-  _ensureCustomColHeaders();
-}
-
-function _applyToTable(tblId){
-  const tbl = document.getElementById(tblId);
-  if(!tbl) return;
-  const headRow = tbl.querySelector('thead tr');
-  if(headRow){
-    [...headRow.children].forEach(th=>{
-      const col = th.dataset.col;
-      if(!col) return;
-      const hidden = hiddenCols.has(col);
-      th.style.display = hidden ? 'none' : '';
-      if(colWidths[col] && !hidden){
-        th.style.width    = colWidths[col]+'px';
-        th.style.minWidth = colWidths[col]+'px';
-      }
-    });
-  }
-  [...tbl.querySelectorAll('tbody tr:not(.comments-panel-row)')].forEach(row=>{
-    [...row.children].forEach(td=>{
-      const col = td.dataset.col;
-      if(!col) return;
-      td.style.display = hiddenCols.has(col) ? 'none' : '';
-    });
-  });
-  // Apply fluid classes for any saved widths
-  Object.keys(colWidths).forEach(col=>{
-    _applyFluidCol(col, colWidths[col]);
-  });
-}
-
-function _ensureCustomColHeaders(){
-  // Add custom column <th> elements to main table header if missing
-  const headRow = document.querySelector('#jtbl thead tr');
-  if(!headRow) return;
-  customCols.forEach(cc=>{
-    if(!headRow.querySelector(`th[data-col="${cc.id}"]`)){
-      const th = document.createElement('th');
-      th.dataset.col = cc.id;
-      th.innerHTML = `${cc.label}<div class="col-resize-handle" data-col="${cc.id}"></div>`;
-      th.style.width = (colWidths[cc.id]||100)+'px';
-      // Insert before actions column
-      const actTh = headRow.querySelector('th[data-col="actions"]');
-      if(actTh) headRow.insertBefore(th, actTh);
-      else headRow.appendChild(th);
-    }
-    // Hide/show
-    const th = headRow.querySelector(`th[data-col="${cc.id}"]`);
-    if(th) th.style.display = hiddenCols.has(cc.id)?'none':'';
-  });
-}
-
-// ── Build col-mgr panel HTML (shared by toolbar + row popup) ──
-function buildColMgrHTML(forTable){
-  // forTable: 'main' | 'future' | 'both'
-  const mainToggle = forTable!=='future';
-  const futureToggle = forTable!=='main';
-
-  const renderItems = (defs, isFuture)=>{
-    return defs.filter(d=>!d.fixed).map(d=>{
-      const hidden = hiddenCols.has(d.id);
-      const badge = d.builtin
-        ? `<span class="col-type-badge col-builtin-badge">built-in</span>`
-        : `<span class="col-type-badge col-custom-badge">custom</span>`;
-      const delBtn = !d.builtin
-        ? `<button style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 2px;line-height:1" onclick="event.stopPropagation();deleteCustomCol('${d.id}')" title="Delete column">✕</button>`
-        : '';
-      return `<div class="col-mgr-item" onclick="toggleCol('${d.id}',this)">
-        <input type="checkbox" ${hidden?'':'checked'} onclick="event.stopPropagation();toggleCol('${d.id}',this.closest('.col-mgr-item'))">
-        <label>${d.label}</label>
-        ${badge}${delBtn}
-      </div>`;
-    }).join('');
-  };
-
-  let html = '';
-  if(mainToggle){
-    html += `<div class="col-mgr-title">Today's Jobs <span class="reset-link" onclick="resetCols()">Reset all</span></div>`;
-    html += `<div class="col-mgr-body">`;
-    html += renderItems(getAllColDefs(), false);
-    html += `</div>`;
-    html += `<div class="col-mgr-add-row">
-      <input type="text" id="new-col-input" placeholder="New column name…" onkeydown="if(event.key==='Enter')addCustomCol()">
-      <button class="btn btn-ghost btn-xs" onclick="addCustomCol()">+ Add</button>
-    </div>`;
-  }
-  if(futureToggle){
-    html += `<div class="col-mgr-title" style="margin-top:${mainToggle?4:0}px">Future Jobs <span class="reset-link" onclick="resetCols()">Reset all</span></div>`;
-    html += `<div class="col-mgr-body">${renderItems(FCOL_DEFS, true)}</div>`;
-  }
-  html += `<div class="col-mgr-footer">
-    <button class="btn btn-acc btn-xs" onclick="closeAllColPanels()">Done</button>
-    <span style="font-size:10px;color:var(--txt3);margin-left:4px">Changes apply instantly</span>
-  </div>`;
-  return html;
-}
-
-function closeAllColPanels(){
-  const p = document.getElementById('col-mgr-panel');
-  if(p) p.style.display='none';
-  const rp = document.getElementById('row-col-popup');
-  if(rp) rp.remove();
-}
-
-// ── Toolbar button handler ──
-function toggleColMgr(){
-  const panel = document.getElementById('col-mgr-panel');
-  if(!panel) return;
-  const isOpen = panel.style.display !== 'none';
-  if(isOpen){ panel.style.display='none'; return; }
-  panel.innerHTML = buildColMgrHTML('both');
-  panel.style.display = 'block';
-  setTimeout(()=>{
-    const close=(e)=>{
-      if(!document.getElementById('col-mgr-wrap')?.contains(e.target) && !e.target.closest('#row-col-popup')){
-        panel.style.display='none';
-        document.removeEventListener('click',close);
-      }
-    };
-    document.addEventListener('click',close);
-  },60);
-}
-
-// ── Row gear button handler ──
-function openRowColMgr(e){
-  e.stopPropagation();
-  // Remove any existing popup
-  const existing = document.getElementById('row-col-popup');
-  if(existing) existing.remove();
-
-  const popup = document.createElement('div');
-  popup.id = 'row-col-popup';
-  popup.className = 'row-col-popup';
-  popup.innerHTML = buildColMgrHTML('both');
-  document.body.appendChild(popup);
-
-  // Position below the button
-  const btn = e.currentTarget;
-  const rect = btn.getBoundingClientRect();
-  let left = rect.right - 260;
-  let top  = rect.bottom + 4;
-  if(left < 8) left = 8;
-  if(top + 480 > window.innerHeight) top = rect.top - 480;
-  popup.style.cssText += `;position:fixed;left:${left}px;top:${top}px`;
-
-  // Close on outside click
-  setTimeout(()=>{
-    const close=(ev)=>{
-      if(!popup.contains(ev.target) && !ev.target.closest('.row-col-btn')){
-        popup.remove();
-        document.removeEventListener('click',close);
-      }
-    };
-    document.addEventListener('click',close);
-  },60);
-}
-
-function toggleCol(colId, itemEl){
-  if(hiddenCols.has(colId)){
-    hiddenCols.delete(colId);
-  } else {
-    hiddenCols.add(colId);
-  }
-  // Keep _hiddenCols array in sync (used by applyColTemplate)
-  _hiddenCols = [...hiddenCols];
-  localStorage.setItem('df_hidden_cols', JSON.stringify(_hiddenCols));
-  // Sync checkboxes
-  document.querySelectorAll(`#col-mgr-panel .col-mgr-item, #row-col-popup .col-mgr-item`).forEach(item=>{
-    const cb = item.querySelector('input[type=checkbox]');
-    if(!cb) return;
-    const onclick = item.getAttribute('onclick')||'';
-    if(onclick.includes(`'${colId}'`)){
-      cb.checked = !hiddenCols.has(colId);
-    }
-  });
-  saveColPrefs();
-  applyColVisibility();
-  applyColTemplate(); // also update the grid template
-}
-
-function resetCols(){
-  // Reset to defaults (only keep comments hidden)
-  hiddenCols = new Set(['comments']);
-  colWidths = {};
-  saveColPrefs();
-  // Rebuild panels
-  const panel = document.getElementById('col-mgr-panel');
-  if(panel && panel.style.display!=='none') panel.innerHTML = buildColMgrHTML('both');
-  const popup = document.getElementById('row-col-popup');
-  if(popup) popup.innerHTML = buildColMgrHTML('both');
-  applyColVisibility();
-  document.querySelectorAll('#jtbl th[data-col], #future-jtbl th[data-col]').forEach(th=>{
-    th.style.width=''; th.style.minWidth='';
-  });
-}
-
-// ── Custom column CRUD ──
-function addCustomCol(){
-  const inp = document.getElementById('new-col-input');
-  if(!inp) return;
-  const label = inp.value.trim();
-  if(!label){ inp.focus(); return; }
-  const id = 'cc_'+Date.now().toString(36);
-  customCols.push({id, label, created: Date.now()});
-  saveColPrefs();
-  inp.value='';
-  // Rebuild panels
-  const panel = document.getElementById('col-mgr-panel');
-  if(panel && panel.style.display!=='none') panel.innerHTML = buildColMgrHTML('both');
-  const popup = document.getElementById('row-col-popup');
-  if(popup) popup.innerHTML = buildColMgrHTML('both');
-  // Re-render jobs to include new column
-  renderJobs();
-  toast(`Column "${label}" added`, 'success');
-}
-
-function deleteCustomCol(id){
-  const col = customCols.find(c=>c.id===id);
-  if(!col) return;
-  confirm2('Delete Column', `Remove column "${col.label}"? Custom data in this column will be lost.`, async ()=>{
-    customCols = customCols.filter(c=>c.id!==id);
-    hiddenCols.delete(id);
-    delete colWidths[id];
-    saveColPrefs();
-    // Remove th from DOM
-    document.querySelectorAll(`th[data-col="${id}"], td[data-col="${id}"]`).forEach(el=>el.remove());
-    // Rebuild panels
-    const panel = document.getElementById('col-mgr-panel');
-    if(panel && panel.style.display!=='none') panel.innerHTML = buildColMgrHTML('both');
-    const popup = document.getElementById('row-col-popup');
-    if(popup) popup.innerHTML = buildColMgrHTML('both');
-    toast(`Column "${col.label}" removed`, 'warn');
-  });
-}
 
 // ── Column resize ──
 let _resizing = null;
@@ -4606,17 +4282,11 @@ document.addEventListener('mousemove', e=>{
   const newW = Math.max(40, _resizing.startW + diff);
   _resizing.th.style.width    = newW + 'px';
   _resizing.th.style.minWidth = newW + 'px';
-  // Live fluid preview
-  _applyFluidCol(_resizing.colId, newW);
+  // Legacy fluid col preview — no-op (tables are hidden stubs)
 });
 document.addEventListener('mouseup', ()=>{
   if(!_resizing) return;
-  const newW = _resizing.th.offsetWidth;
-  colWidths[_resizing.colId] = newW;
-  saveColPrefs();
   _resizing.th.classList.remove('resizing');
-  // Apply fluid wrapping to cells in this column
-  _applyFluidCol(_resizing.colId, newW);
   _resizing = null;
 });
 
@@ -4812,7 +4482,7 @@ function toggleOnlinePanel(){
 async function updateOnlinePanel(){
   // Write own last_seen to Supabase so others can see us
   if(_appUser?._sbId){
-    try{ await _sb('users?id=eq.'+_appUser._sbId,{method:'PATCH',body:{last_seen:Math.floor(Date.now()/1000)},prefer:'return=minimal'}); }catch(e){}
+    try{ await _sb('users?id=eq.'+_appUser._sbId,{method:'PATCH',body:{last_seen:Math.floor(Date.now()/1000)},prefer:'return=minimal'}); }catch(e){ console.warn('[DeepFlow]', e); }
   }
   // Fetch all users seen in last 5 minutes
   const fiveMinAgo=Math.floor(Date.now()/1000)-300;
@@ -4853,7 +4523,7 @@ setInterval(()=>{
       const n=active?.length||1;
       const countEl=document.getElementById('online-count');
       if(countEl) countEl.textContent=n+' online';
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   })();
 },30000);
 
@@ -4874,8 +4544,12 @@ setInterval(tick,60000); tick();
 function showToast(m,t){toast(m,t)}
 function toast(msg,type='info',dur=3500){
   const c=document.getElementById('toasts');
+  // Deduplicate: if identical message is already visible, just reset its timer
+  const existing=[...c.querySelectorAll('.toast')].find(t=>t.dataset.msg===msg);
+  if(existing){ existing.style.opacity='1'; return; }
   const t=document.createElement('div');
   t.className=`toast ${type}`;
+  t.dataset.msg=msg; // store for dedup check
   const ico={success:'✓',error:'✕',info:'ℹ',warn:'⚠',wa:'📱'}[type]||'ℹ';
   t.innerHTML=`<span style="font-size:15px">${ico}</span><span>${msg}</span>`;
   c.appendChild(t);
@@ -4977,7 +4651,7 @@ async function doLogin(){
     try{
       const rows = await _sb(`users?auth_id=eq.${authUser.id}&active=eq.true&select=*`);
       profile = rows?.[0] || null;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
 
     // Fallback: match by email
     if(!profile){
@@ -4988,7 +4662,7 @@ async function doLogin(){
         if(profile){
           _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:authUser.id},prefer:'return=minimal'}).catch(()=>{});
         }
-      }catch(e){}
+      }catch(e){ console.warn('[DeepFlow]', e); }
     }
 
     if(!profile){
@@ -5353,7 +5027,7 @@ async function bulkAssignEngineer(){
     try{
       await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{engineer:name,modified:Date.now()},prefer:'return=minimal'});
       done++;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   }
   _invalidateJobCache();
   toast(`✅ Assigned ${done} job${done!==1?'s':''} to ${name}`,'success');
@@ -5371,7 +5045,7 @@ async function bulkReschedule(){
     try{
       await _sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{date:newDate,modified:Date.now()},prefer:'return=minimal'});
       done++;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   }
   _invalidateJobCache();
   toast(`✅ Moved ${done} job${done!==1?'s':''} to ${newDate}`,'success');
@@ -5389,10 +5063,10 @@ async function bulkCopyToDate(){
     try{
       const j=await dGet('jobs',id);
       if(!j) continue;
-      const copy={...j,id:uid(),date:newDate,status:'Pending',created:Date.now(),modified:Date.now(),jobNum:await nextJobNum()};
+      const copy={...j,id:uid(),date:newDate,status:STATUS.PENDING,created:Date.now(),modified:Date.now(),jobNum:await nextJobNum()};
       delete copy.invNumber; delete copy.linkedInvId;
       await dPut('jobs',copy); done++;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   }
   _invalidateJobCache();
   toast(`✅ Copied ${done} job${done!==1?'s':''} to ${newDate}`,'success');
@@ -5406,7 +5080,7 @@ async function bulkDeleteJobs(){
   if(!confirm(`Delete ${ids.length} selected job${ids.length!==1?'s':''}? This cannot be undone.`)) return;
   let done=0;
   for(const id of ids){
-    try{ await dDel('jobs',id); done++; }catch(e){}
+    try{ await dDel('jobs',id); done++; }catch(e){ console.warn('[DeepFlow]', e); }
   }
   _invalidateJobCache();
   toast(`✅ Deleted ${done} job${done!==1?'s':''}`,'success');
@@ -5443,7 +5117,7 @@ async function copyJobToNextDay(id){
   const d = new Date((j.date||TODAY())+'T00:00:00');
   d.setDate(d.getDate()+1);
   const nextDate = d.toISOString().slice(0,10);
-  const copy = {...j, id:uid(), date:nextDate, status:'Pending', created:Date.now(), modified:Date.now()};
+  const copy = {...j, id:uid(), date:nextDate, status:STATUS.PENDING, created:Date.now(), modified:Date.now()};
   delete copy.invNumber; delete copy.linkedInvId;
   try{
     copy.jobNum = await nextJobNum();
@@ -5644,7 +5318,16 @@ async function renderJobs(){
   if(sfVal) jobs = jobs.filter(j=>j.status===sfVal);
   if(pfVal) jobs = jobs.filter(j=>j.priority===pfVal);
 
-  jobs.sort((a,b)=>{ const dc=(a.date||'').localeCompare(b.date||''); return dc||((a.timeSlot||'').localeCompare(b.timeSlot||''))||((a._sortOrder||a.created||0)-(b._sortOrder||b.created||0)); });
+  // Sort: date → manual sortOrder (user drag order) → timeSlot → created
+  // _sortOrder MUST come before timeSlot — otherwise saved drag order is silently undone
+  // by timeSlot alphabetical sort. timeSlot is only used as a tiebreaker when no manual order set.
+  jobs.sort((a,b)=>{
+    const dc=(a.date||'').localeCompare(b.date||'');
+    if(dc) return dc;
+    const aOrd=a._sortOrder||0; const bOrd=b._sortOrder||0;
+    if(aOrd||bOrd) return aOrd-bOrd; // manual order wins when either has it
+    return (a.timeSlot||'').localeCompare(b.timeSlot||'') || (a.created||0)-(b.created||0);
+  });
 
   const scroll = document.getElementById('jobs-list-scroll');
   if(!scroll) return;
@@ -5675,7 +5358,7 @@ async function renderJobs(){
       else if(diffDays===1) dayLabel='Tomorrow';
       else dayLabel=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'2-digit'});
     }
-    const doneCount = gjobs.filter(j=>j.status==='Completed'||j.status==='Invoiced').length;
+    const doneCount = gjobs.filter(j=>j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED).length;
     const countLabel = `${gjobs.length} job${gjobs.length!==1?'s':''}${doneCount?` · ${doneCount} done`:''}`;
     const dateShort = (dateKey!=='TBC')?new Date(dateKey+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'';
 
@@ -5726,21 +5409,67 @@ async function renderJobs(){
         <div class="jsr-drag-handle" title="Drag" onclick="event.stopPropagation()">⠿</div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
         ${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);const col=palette[idx>=0?idx%palette.length:Math.abs((j.engineer||' ').charCodeAt(0))%palette.length];return j.engineer?'<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+col+';border-radius:0 2px 2px 0"></div>':''})()}
+
+        <!-- COL 1: Job # + priority pill -->
         <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
           ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
         </div>
+
+        <!-- COL 2: Address -->
         <div class="jsr3-cell jsr3-cell-addr">${j.address
           ? j.address
-          : `<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><em style="color:var(--txt3);font-size:10px;font-style:normal">No address</em>${descShort?`<span style="font-size:11px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${descShort}</span>`:''}</span>`
+          : `<em style="color:var(--txt3);font-size:10px;font-style:normal">No address</em>`
         }</div>
-        <div class="jsr3-cell jsr3-cell-desc" title="${descFull.replace(/"/g,'&quot;')}">${descShort||'—'}</div>
-        <div class="jsr3-cell jsr3-cell-contact">${contactLine||'—'}</div>
-        <div class="jsr3-cell jsr3-cell-time" onclick="event.stopPropagation()" title="Click to edit time slot"><span onclick="quickEditTime('${j.id}','${j.timeSlot||''}',this)" style="cursor:text;min-width:40px;display:inline-block">${j.timeSlot||'—'}</span></div>
+
+        <!-- COL 3: Description -->
+        <div class="jsr3-cell jsr3-cell-desc">${descShort||'—'}</div>
+
+        <!-- COL 4: Access — Keys info / Tenant info / both with slash -->
+        <div class="jsr3-cell jsr3-cell-access">${(()=>{
+          const aType = j.access||'';
+          const aDetail = j.contact||'';
+          if(!aType && !aDetail) return '<span style="color:var(--txt3);font-size:10px">—</span>';
+          const isKey = aType.toLowerCase().includes('key');
+          const isTenant = aType.toLowerCase().includes('tenant');
+          const isVacant = aType.toLowerCase().includes('vacant');
+          let parts=[];
+          if(isKey && aDetail) parts.push('🔑 '+aDetail);
+          else if(isKey) parts.push('🔑 Keys');
+          if(isTenant && aDetail) parts.push('👤 '+aDetail);
+          else if(isTenant) parts.push('👤 Tenant');
+          if(isVacant) parts.push('🚪 Vacant');
+          if(!parts.length && aDetail) parts.push(aDetail);
+          else if(!parts.length && aType) parts.push(aType);
+          return parts.join(' / ');
+        })()}</div>
+
+        <!-- COL 5: Time slot -->
+        <div class="jsr3-cell jsr3-cell-time" onclick="event.stopPropagation()" title="Click to edit time slot">
+          <span onclick="quickEditTime('${j.id}','${j.timeSlot||''}',this)" style="cursor:text;min-width:40px;display:inline-block">${j.timeSlot||'—'}</span>
+        </div>
+
+        <!-- COL 6: Engineer -->
         <div class="jsr3-cell jsr3-cell-eng">${j.engineer?`<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);return palette[idx>=0?idx%palette.length:Math.abs(j.engineer.charCodeAt(0))%palette.length];})()};flex-shrink:0"></span>${j.engineer}</span>`:'—'}</div>
-        <div class="jsr3-cell jsr3-cell-certs">${certPills||'<span style="color:var(--txt3);font-size:10px">—</span>'}</div>
-        <div class="jsr3-cell jsr3-cell-price" onclick="event.stopPropagation()" title="Click to edit price"><span onclick="quickEditPrice('${j.id}','${j.price||0}',this)" style="cursor:text;min-width:32px;display:inline-block">${priceStr||'—'}</span></div>
+
+        <!-- COL 7: Amount -->
+        <div class="jsr3-cell jsr3-cell-price" onclick="event.stopPropagation()" title="Click to edit price">
+          <span onclick="quickEditPrice('${j.id}','${j.price||0}',this)" style="cursor:text;min-width:32px;display:inline-block">${priceStr||'—'}</span>
+        </div>
+
+        <!-- COL 8: Referrer — landlord > agent > agency > referrer field -->
+        <div class="jsr3-cell jsr3-cell-referrer">${(()=>{
+          if(j.landlordName) return '🏠 '+j.landlordName;
+          if(j.agentName)    return '👤 '+j.agentName;
+          if(j.agencyName)   return '🏢 '+j.agencyName;
+          if(j.referrer)     return j.referrer;
+          return '<span style="color:var(--txt3);font-size:10px">—</span>';
+        })()}</div>
+
+        <!-- COL 9: Status dropdown -->
         <div class="jsr3-cell jsr3-cell-sel" onclick="event.stopPropagation()">${statusSel(j.id,j.status)}</div>
+
+        <!-- COL 10: Actions -->
         <div class="jsr3-cell jsr3-cell-actions" onclick="event.stopPropagation()">
           <button class="jsr-btn" title="WhatsApp" onclick="waSingleJobById('${j.id}')">📱</button>
           <button class="jsr-btn" title="Edit" onclick="openJobModal('${j.id}')">✎</button>
@@ -5756,6 +5485,8 @@ async function renderJobs(){
     html += `</div>`;
   });
 
+  hideTip(); // Always hide any active tooltip before rebuilding the DOM — prevents orphan tooltips after re-render
+  scroll._dragInited = false; // Reset drag init flag — innerHTML wipe removes all listeners, must re-attach
   scroll.innerHTML = html;
   // Rebuild header from JOB_COLS (keeps it in sync after every render)
   renderJobsHeader();
@@ -5802,7 +5533,7 @@ async function quickStatus(id,status){
   }
   j.status=status;j.modified=Date.now();
   _invalidateJobCache();
-  if(status==='Completed'&&old!=='Completed') onJobComplete(j);
+  if(status===STATUS.COMPLETED&&old!==STATUS.COMPLETED) onJobComplete(j);
   await logActivity(`Job "${j.address}" → ${status}`,'job');
   renderJobs();updateBadges();
 }
@@ -6032,7 +5763,7 @@ async function autoInvoice(j){
   };
   await dPut('invoices',inv);
   // Update job status to Invoiced
-  await _sb(`jobs?id=eq.${encodeURIComponent(j.id)}`,{method:'PATCH',body:{status:'Invoiced',linkedInvId:inv.id,modified:Date.now()},prefer:'return=minimal'}).catch(()=>{});
+  await _sb(`jobs?id=eq.${encodeURIComponent(j.id)}`,{method:'PATCH',body:{status:STATUS.INVOICED,linkedInvId:inv.id,modified:Date.now()},prefer:'return=minimal'}).catch(()=>{});
   await logActivity(`Draft invoice ${inv.number} auto-created for ${client.name} (${hours?hours+'h':('£'+jobPrice)})`, 'invoice');
   toast(`📄 Draft invoice ${inv.number} created — review in Invoices`,'info',5000);
   updateBadges();
@@ -6303,15 +6034,15 @@ async function saveJob(){
   try{
     await dPut('jobs',j);
     _invalidateJobCache();
-    if(j.status==='Completed'&&existingJob?.status!=='Completed') onJobComplete(j);
-    try{await logActivity((isNew?'Created':'Updated')+' job: '+j.address+' ('+jobNum+')','job');}catch(_){}
+    if(j.status===STATUS.COMPLETED&&existingJob?.status!==STATUS.COMPLETED) onJobComplete(j);
+    try{await logActivity((isNew?'Created':'Updated')+' job: '+j.address+' ('+jobNum+')','job');}catch(_){ /* intentional no-op */ }
     closeModal('mo-job');closeAddrDrop();closeAllAutofillDrops();
     renderJobs();updateBadges();
     toast((isNew?'Job saved · ':'Job updated · ')+jobNum,'success');
   }catch(err){
     console.error('saveJob error:',err);
     let msg=err.message||'Unknown error';
-    try{const e=JSON.parse(msg);msg=e.message||e.details||msg;}catch(_){}
+    try{const e=JSON.parse(msg);msg=e.message||e.details||msg;}catch(_){ /* intentional no-op */ }
     toast('Save failed: '+msg.slice(0,100),'error',7000);
   }finally{
     if(btn){btn.disabled=false;btn.textContent='Save Job';}
@@ -7071,7 +6802,7 @@ async function renderInvList(){
     const allInvs=await dAll('invoices');
     const allPersons=await dAll('persons');
     const missedJobs=allJobs.filter(j=>{
-      const eligible=j.status==='Completed'||j.status==='Invoiced';
+      const eligible=j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED;
       if(!eligible)return false;
       // FIX 4: Single canonical check using linkedJobId.
       // jobRef is kept as a legacy fallback for older records.
@@ -7211,8 +6942,8 @@ async function renderInvList(){
       ${pct>0&&pct<100?`<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 0 6px"><div style="height:100%;width:${pct.toFixed(0)}%;background:var(--acc);border-radius:2px"></div></div>`:''}
       <div class="inv-quick-actions" onclick="event.stopPropagation()" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
         ${inv.status==='Draft'?`<button class="btn btn-ghost btn-xs" onclick="markInvSent('${inv.id}')">Mark Sent</button>`:''}
-        ${inv.status!=='Paid'&&inv.status!=='Cancelled'?`<button class="btn btn-green btn-xs" onclick="event.stopPropagation();markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>`:''}
-        ${inv.status!=='Paid'&&inv.status!=='Cancelled'?`<button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED?`<button class="btn btn-green btn-xs" onclick="event.stopPropagation();markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED?`<button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>`:''}
         <button class="btn btn-ghost btn-xs" onclick="duplicateInv('${inv.id}')">⧉ Copy</button>
         <button class="btn btn-ghost btn-xs" onclick="downloadInvPDFById('${inv.id}')">⬇ PDF</button>
         <button class="btn btn-wa btn-xs" onclick="openInvSendModal('${inv.id}')">📱 Send</button>
@@ -7516,7 +7247,7 @@ async function deleteDuplicateInvoices(){
   if(!confirm(`Found ${dupes.length} duplicate invoice${dupes.length!==1?'s':''} (same date, job, client and amount).\n\nThe oldest copy of each will be kept, duplicates will be deleted.\n\nProceed?`)) return;
   let deleted=0;
   for(const inv of dupes){
-    try{ await dDel('invoices',inv.id); deleted++; }catch(e){}
+    try{ await dDel('invoices',inv.id); deleted++; }catch(e){ console.warn('[DeepFlow]', e); }
   }
   toast(`✅ Deleted ${deleted} duplicate invoice${deleted!==1?'s':''}. ${dupes.length-deleted>0?`${dupes.length-deleted} failed — try again.`:''}`, 'success', 5000);
   renderInvList();
@@ -7831,7 +7562,7 @@ async function downloadInvPDFById(id){
     try{
       doc.addImage(S.logoData,'PNG',M,M+4,36,18,'','FAST');
       logoBottom=M+24;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   }
 
   // ── COMPANY DETAILS (left) ──
@@ -8222,7 +7953,7 @@ async function updateDirTabBadges(){
         badge.textContent=v;
       } else if(badge){badge.remove();}
     });
-  }catch(e){}
+  }catch(e){ console.warn('[DeepFlow]', e); }
 }
 
 async function renderDir(){
@@ -8363,7 +8094,7 @@ async function renderEngineersSection(){
     const col=palette[i%palette.length];
     const todayCount=todayJobs.filter(j=>j.engineer===e.name).length;
     const totalJobs=allJobs.filter(j=>j.engineer===e.name).length;
-    const doneToday=todayJobs.filter(j=>j.engineer===e.name&&(j.status==='Completed'||j.status==='Invoiced')).length;
+    const doneToday=todayJobs.filter(j=>j.engineer===e.name&&(j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED)).length;
     const lastSeen=e.last_seen?_notifTimeAgo(e.last_seen*1000):'Never';
     const hasLocation=e.last_lat&&e.last_lng;
     const initials=(e.name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
@@ -8410,7 +8141,7 @@ async function openEngDir(sbIdOrName){
   if(!eng) try{
     const r=await _sb(`users?id=eq.${encodeURIComponent(sbIdOrName)}&select=*`);
     if(r&&r.length) eng=r[0];
-  }catch(e){}
+  }catch(e){ console.warn('[DeepFlow]', e); }
   if(!eng){toast('Engineer not found','error');return;}
 
   // Get their jobs
@@ -8418,8 +8149,8 @@ async function openEngDir(sbIdOrName){
   const engJobs=allJobs.filter(j=>j.engineer===eng.name);
   const today=TODAY();
   const todayJobs=engJobs.filter(j=>j.date===today);
-  const pendingJobs=engJobs.filter(j=>j.status==='Pending'||j.status==='In Progress');
-  const completedJobs=engJobs.filter(j=>j.status==='Completed'||j.status==='Invoiced');
+  const pendingJobs=engJobs.filter(j=>j.status===STATUS.PENDING||j.status===STATUS.IN_PROGRESS);
+  const completedJobs=engJobs.filter(j=>j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED);
 
   const col=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899']
     [(S.engineers||[]).findIndex(e=>e.name===eng.name)%8]||'var(--acc)';
@@ -9829,7 +9560,7 @@ function downloadCertTemplate(){
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='CertImport_Template.csv';a.click();
 }
 
-async function waCertReminder(id){ certSendIndivWA(id); }
+// waCertReminder — merged: full implementation is below at waCertReminder(id) line ~9828
 
 async function renderCertDash(){
   const allCerts=await dAll('certs');
@@ -10005,7 +9736,7 @@ async function renderCertDash(){
       const pValid=pc.filter(c=>c.expiryDate&&daysDiff(c.expiryDate)>60);
       const statusCol=pExp.length?'var(--red)':pExpg.length?'var(--yellow)':pMiss.length?'#8a9bc0':pc.length?'var(--green)':'var(--txt3)';
       const statusIco=pExp.length?'❌':pExpg.length?'⚠️':pMiss.length?'📋':pc.length?'✅':'—';
-      const openJobs=(allJobsDb||[]).filter(j=>j.address&&j.address.toLowerCase().includes(key)&&(j.status==='Pending'||j.status==='In Progress'));
+      const openJobs=(allJobsDb||[]).filter(j=>j.address&&j.address.toLowerCase().includes(key)&&(j.status===STATUS.PENDING||j.status===STATUS.IN_PROGRESS));
       // Next expiry
       const nextExp=pc.filter(c=>c.expiryDate&&daysDiff(c.expiryDate)>=0).sort((a,b)=>new Date(a.expiryDate)-new Date(b.expiryDate))[0];
       return`<div onclick="nav('pg-props')" style="background:var(--s1);border:1px solid ${statusCol==='var(--txt3)'?'var(--border)':statusCol+'55'};border-left:3px solid ${statusCol};border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s1)'">
@@ -10271,7 +10002,7 @@ async function createRenewalJob(certId){
   const j={id:uid(),date:TODAY(),address:c.address,referrer:c.landlord||'',trade:'Gas',engineer:'',
     description:c.type+' Renewal',timeSlot:'',access:'',contact:'',hours:0,price:0,
     notes:'Auto-created from certificate renewal. Expiry was: '+c.expiryDate,
-    priority:'Normal',status:'Pending',created:Date.now(),modified:Date.now()};
+    priority:'Normal',status:STATUS.PENDING,created:Date.now(),modified:Date.now()};
   await dPut('jobs',j);
   await logActivity(`Renewal job created for ${c.address}`,'job');
   toast('Renewal job created on today\'s grid!','success');
@@ -10319,7 +10050,9 @@ async function renderTSDetail(){
   const panel=document.getElementById('ts-detail-panel');
   if(!selEng){panel.innerHTML='<div class="empty"><div class="ei">◷</div><p>Select an engineer</p></div>';return}
   const dates=getWeekDates(tsOff);
-  const allJobs=await dAll('jobs');
+  const dateFrom=dates[0]; const dateTo=dates[dates.length-1];
+  // ISSUE 3 FIX: fetch only this engineer's jobs in this week — not all jobs
+  const allJobs=await _sb(`jobs?engineer=eq.${encodeURIComponent(selEng)}&date=gte.${dateFrom}&date=lte.${dateTo}&select=*`).then(r=>(r||[]).map(j=>_fromDb('jobs',j))).catch(()=>[]);
   const allOTentries=await dAll('overtime');
   const ejobs=allJobs.filter(j=>j.engineer===selEng&&dates.includes(j.date));
   const eotEntries=allOTentries.filter(o=>o.engineer===selEng&&dates.includes(o.date));
@@ -10481,14 +10214,16 @@ async function rejectRequest(id){
 async function renderReports(){
   const days=parseInt(document.getElementById('rep-period')?.value||30);
   const cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
-  const all=await dAll('jobs');
+  const cutoffStr=cutoff.toISOString().slice(0,10);
+  // ISSUE 3 FIX: fetch only jobs within the report period — not all jobs ever
+  const all=await _sb(`jobs?date=gte.${cutoffStr}&select=*`).then(r=>(r||[]).map(j=>_fromDb('jobs',j))).catch(()=>[]);
   const invs=await dAll('invoices');
-  const period=all.filter(j=>new Date(j.date)>=cutoff);
+  const period=all; // already filtered server-side
   const paidInvs=invs.filter(i=>i.status==='Paid'&&new Date(i.created)>=cutoff);
   const awaitInvs=invs.filter(i=>i.status==='Awaiting Payment');
 
   const totalJobs=period.length;
-  const completedJobs=period.filter(j=>j.status==='Completed').length;
+  const completedJobs=period.filter(j=>j.status===STATUS.COMPLETED).length;
   const revenue=paidInvs.reduce((s,i)=>s+calcInvTotal(i).grand,0);
   const outstanding=awaitInvs.reduce((s,i)=>s+calcInvTotal(i).grand,0);
   const totalHrs=period.reduce((s,j)=>s+(j.hours||0),0);
@@ -10566,6 +10301,25 @@ async function renderDash(){
   document.getElementById('dg-greet').innerHTML=`${greet}, <span id="dg-name">${S.owner||'Boss'}</span>`;
   document.getElementById('dg-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
+  // ISSUE 2 FIX: Show skeleton placeholders immediately so the page feels responsive
+  // while the sequential fetches complete in the background.
+  const _skelPulse = 'background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%);background-size:200% 100%;animation:_skel 1.2s ease infinite;border-radius:6px;';
+  const _skel = (w='80px',h='18px') => `<span style="display:inline-block;width:${w};height:${h};${_skelPulse}"></span>`;
+  if(!document.getElementById('_skel_style')){
+    const s=document.createElement('style');
+    s.id='_skel_style';
+    s.textContent='@keyframes _skel{0%{background-position:200% 0}100%{background-position:-200% 0}}';
+    document.head.appendChild(s);
+  }
+  ['kv-jobs','kv-earn','kv-await','kv-certs','kv-drafts'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=_skel('48px','22px');
+  });
+  ['dp-pending','dp-activity','dp-certs','dp-invs'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=[1,2,3].map(()=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">${_skel('60%','14px')}<br style="margin:4px 0">${_skel('40%','11px')}</div>`).join('');
+  });
+
   const allJobs=await dAll('jobs');
   const allInvs=await dAll('invoices');
   const allCerts=await dAll('certs');
@@ -10573,7 +10327,7 @@ async function renderDash(){
   const thisMonth=new Date();thisMonth.setDate(1);thisMonth.setHours(0,0,0,0);
 
   const todayJobs=allJobs.filter(j=>j.date===TODAY());
-  const pendingToday=todayJobs.filter(j=>j.status==='Pending');
+  const pendingToday=todayJobs.filter(j=>j.status===STATUS.PENDING);
   const draftInvs=allInvs.filter(i=>i.status==='Draft');
   const awaitInvs=allInvs.filter(i=>i.status==='Awaiting Payment');
   const monthPaid=allInvs.filter(i=>i.status==='Paid'&&new Date(i.created)>=thisMonth);
@@ -11177,7 +10931,7 @@ async function syncOfficeUsers(){
         }
       }
     }
-  }catch(e){}
+  }catch(e){ console.warn('[DeepFlow]', e); }
   // Persist updated _sbId values
   localStorage.setItem('df_setting_users',JSON.stringify(S.users));
   return {synced,failed};
@@ -11326,7 +11080,7 @@ async function _mapJobsByDate(info, status, mode) {
   const points = geocoded.map(j => ({
     lat:j.lat, lng:j.lng,
     label: (j.jobnum||'') + ' ' + (j.engineer||''),
-    color: j.status==='Completed'?'green':j.priority==='Emergency'?'red':'blue'
+    color: j.status===STATUS.COMPLETED?'green':j.priority==='Emergency'?'red':'blue'
   }));
 
   _buildAndShowMap(points, centLat, centLng, 11);
@@ -11341,12 +11095,12 @@ async function _mapJobsByDate(info, status, mode) {
     </div>
     ${geocoded.map(j=>`
       <div style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
-        <div style="width:8px;height:8px;border-radius:50%;background:${j.status==='Completed'?'#22c55e':j.priority==='Emergency'?'#f04444':'#4f8fff'};flex-shrink:0"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${j.status===STATUS.COMPLETED?'#22c55e':j.priority==='Emergency'?'#f04444':'#4f8fff'};flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.address}</div>
           <div style="font-size:10px;color:var(--txt3)">${j.engineer||'Unassigned'} ${j.timeslot?'· 🕐 '+j.timeslot:''}</div>
         </div>
-        <span style="font-size:10px;padding:2px 7px;border-radius:8px;background:${j.status==='Completed'?'rgba(34,197,94,.12)':'rgba(79,143,255,.12)'}; color:${j.status==='Completed'?'#22c55e':'#4f8fff'}">${j.status||'Pending'}</span>
+        <span style="font-size:10px;padding:2px 7px;border-radius:8px;background:${j.status===STATUS.COMPLETED?'rgba(34,197,94,.12)':'rgba(79,143,255,.12)'}; color:${j.status===STATUS.COMPLETED?'#22c55e':'#4f8fff'}">${j.status||'Pending'}</span>
       </div>`).join('')}
   `;
 }
@@ -11399,7 +11153,7 @@ async function _mapEngineerRoute(info, status) {
     routeData = await rr.json();
   } catch(e) { console.warn('Route API:', e); }
 
-  const allPoints = [...geocoded.map(j => ({lat:j.lat,lng:j.lng,label:j.jobnum||j.address?.slice(0,20),color:j.status==='Completed'?'green':'blue'}))];
+  const allPoints = [...geocoded.map(j => ({lat:j.lat,lng:j.lng,label:j.jobnum||j.address?.slice(0,20),color:j.status===STATUS.COMPLETED?'green':'blue'}))];
   if (eng?.last_lat && eng?.last_lng) {
     allPoints.unshift({lat:eng.last_lat, lng:eng.last_lng, label:engName+' (now)', color:'red'});
   }
@@ -11457,7 +11211,7 @@ async function _mapHeatmap(info, status) {
 
   const centLat = geocoded.reduce((s,j)=>s+j.lat,0)/geocoded.length;
   const centLng = geocoded.reduce((s,j)=>s+j.lng,0)/geocoded.length;
-  const points  = geocoded.map(j=>({lat:j.lat,lng:j.lng,label:j.status,color:j.status==='Completed'?'green':'blue'}));
+  const points  = geocoded.map(j=>({lat:j.lat,lng:j.lng,label:j.status,color:j.status===STATUS.COMPLETED?'green':'blue'}));
   _buildAndShowMap(points, centLat, centLng, 10);
   if (status) status.textContent = `${geocoded.length} jobs mapped (last 200)`;
   info.innerHTML = `<div style="padding:12px 16px;font-size:12px;color:var(--txt2)">Showing last ${geocoded.length} geocoded jobs. Green = Completed · Blue = Pending/In Progress.</div>`;
@@ -11510,7 +11264,7 @@ function _buildAndShowMap(points, centLat, centLng, zoom) {
     + markersJs
     + '</sc' + 'ript></body></html>';
 
-  if (_mapBlobUrl) { try { URL.revokeObjectURL(_mapBlobUrl); } catch(e){} }
+  if (_mapBlobUrl) { try { URL.revokeObjectURL(_mapBlobUrl); } catch(e){ console.warn('[DeepFlow]', e); } }
   var blob = new Blob([html], {type:'text/html'});
   _mapBlobUrl = URL.createObjectURL(blob);
 
@@ -11798,7 +11552,7 @@ async function updateBadges(){
   const ec=certs.filter(c=>daysDiff(c.expiryDate)<=30&&daysDiff(c.expiryDate)>=0).length;
   const cb=document.getElementById('nb-certs');cb.textContent=ec;cb.style.display=ec?'':'none';
   const jobs=await dAll('jobs');
-  const pc=jobs.filter(j=>j.date===TODAY()&&j.status==='Pending').length;
+  const pc=jobs.filter(j=>j.date===TODAY()&&j.status===STATUS.PENDING).length;
   const jb=document.getElementById('nb-jobs');jb.textContent=pc;jb.style.display=pc?'':'none';
 }
 
@@ -11813,12 +11567,12 @@ async function renderCmd(q){
 
   // Commands
   const cmds=[
-    {ico:'⊞',title:'New Job',sub:'Create a new job',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('jobs');setTimeout(openJobModal,100)}},
-    {ico:'◎',title:'New Invoice',sub:'Create a new invoice',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('inv');setTimeout(openNewInvModal,100)}},
-    {ico:'↩',title:'Credit Note',sub:'Issue a credit note',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('inv');setTimeout(openCreditNoteModal,100)}},
-    {ico:'🧾',title:'Log Expense',sub:'Track material / fuel cost',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('exp');setTimeout(openExpenseModal,100)}},
-    {ico:'◉',title:'Add Person',sub:'Add to directories',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('dir');setTimeout(()=>openPersonModal(),100)}},
-    {ico:'◈',title:'Add Certificate',sub:'Log a certificate',type:'Action',fn:()=>{closeModal('cmd-overlay');nav('certs');setTimeout(openCertModal,100)}},
+    {ico:'⊞',title:'New Job',sub:'Create a new job',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:jobs',()=>{openJobModal});nav('jobs')}},
+    {ico:'◎',title:'New Invoice',sub:'Create a new invoice',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openNewInvModal});nav('inv')}},
+    {ico:'↩',title:'Credit Note',sub:'Issue a credit note',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openCreditNoteModal});nav('inv')}},
+    {ico:'🧾',title:'Log Expense',sub:'Track material / fuel cost',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:exp',()=>{openExpenseModal});nav('exp')}},
+    {ico:'◉',title:'Add Person',sub:'Add to directories',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:dir',()=>{openPersonModal()});nav('dir')}},
+    {ico:'◈',title:'Add Certificate',sub:'Log a certificate',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:certs',()=>{openCertModal});nav('certs')}},
     {ico:'◈',title:'Dashboard',sub:'Go to dashboard',type:'Navigate',fn:()=>{closeModal('cmd-overlay');nav('dash')}},
     {ico:'⊞',title:'Jobs',sub:'Open job management',type:'Navigate',fn:()=>{closeModal('cmd-overlay');nav('jobs')}},
     {ico:'◎',title:'Invoices',sub:'Open invoices',type:'Navigate',fn:()=>{closeModal('cmd-overlay');nav('inv')}},
@@ -11833,9 +11587,9 @@ async function renderCmd(q){
   if(q.length>1){
     // Deep search: jobs (address, desc, notes, referrer, engineer)
     const jobs=(await dAll('jobs')).filter(j=>(j.address+j.description+j.referrer+j.notes+j.engineer).toLowerCase().includes(ql)).slice(0,3);
-    jobs.forEach(j=>items.push({ico:'⊞',title:j.address,sub:j.description+' · '+j.date,type:'Job',fn:()=>{closeModal('cmd-overlay');jDate=j.date;nav('jobs');setTimeout(()=>openJobModal(j.id),200)}}));
+    jobs.forEach(j=>items.push({ico:'⊞',title:j.address,sub:j.description+' · '+j.date,type:'Job',fn:()=>{closeModal('cmd-overlay');jDate=j.date;df.once('navDone:jobs',()=>{openJobModal(j.id)});nav('jobs')}}));
     const ps=(await dAll('persons')).filter(p=>(p.name+p.phone+p.notes||'').toLowerCase().includes(ql)).slice(0,3);
-    ps.forEach(p=>items.push({ico:'◉',title:p.name,sub:p.phone||p.email,type:'Person',fn:()=>{closeModal('cmd-overlay');nav('dir');setTimeout(()=>openPersonModal(p.id),200)}}));
+    ps.forEach(p=>items.push({ico:'◉',title:p.name,sub:p.phone||p.email,type:'Person',fn:()=>{closeModal('cmd-overlay');df.once('navDone:dir',()=>{openPersonModal(p.id)});nav('dir')}}));
     // Deep invoice search — including line items
     const allInvs = await dAll('invoices');
     const invs = allInvs.filter(i=>{
@@ -11843,7 +11597,7 @@ async function renderCmd(q){
       const lines = (i.items||[]).map(it=>it.desc).join(' ').toLowerCase();
       return base.includes(ql) || lines.includes(ql);
     }).slice(0,2);
-    invs.forEach(i=>{const t=calcInvTotal(i);items.push({ico:'◎',title:i.number,sub:i.clientName+' · £'+t.grand.toFixed(2)+(i.items?.some(it=>it.desc?.toLowerCase().includes(ql))?' · matched in line items':''),type:'Invoice',fn:()=>{closeModal('cmd-overlay');nav('inv');setTimeout(()=>viewInv(i.id),200)}})});
+    invs.forEach(i=>{const t=calcInvTotal(i);items.push({ico:'◎',title:i.number,sub:i.clientName+' · £'+t.grand.toFixed(2)+(i.items?.some(it=>it.desc?.toLowerCase().includes(ql))?' · matched in line items':''),type:'Invoice',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{viewInv(i.id)});nav('inv')}})});
     // Expenses deep search
     const exps=(await dAll('expenses')).filter(e=>(e.desc+e.category+e.engineer+e.receipt||'').toLowerCase().includes(ql)).slice(0,2);
     exps.forEach(e=>items.push({ico:'🧾',title:e.desc,sub:'£'+e.cost.toFixed(2)+' · '+e.date+' · '+e.category,type:'Expense',fn:()=>{closeModal('cmd-overlay');nav('exp')}}));
@@ -11915,10 +11669,10 @@ async function importBackup(inp){
 
 async function clearAllData(){
   confirm2('⚠️ Clear ALL Data','This will permanently delete ALL jobs, invoices, people, and certificates. This cannot be undone!',async()=>{
-    for(const tbl of ['jobs','persons','invoices','certs','agencies','agents','job_comments','activity','attachments']){
-      try{await _sb(tbl+'?id=neq.00000000-0000-0000-0000-000000000000',{method:'DELETE',prefer:'return=minimal'});}catch(e){}
+    for(const tbl of ['jobs','persons','invoices','certs','agencies','agents','job_comments','activity','attachments','payments','expenses','overtime']){
+      try{await _sb(tbl+'?id=neq.00000000-0000-0000-0000-000000000000',{method:'DELETE',prefer:'return=minimal'});}catch(e){ console.warn('[DeepFlow]', e); }
     }
-    ['properties','overtime','payments','expenses'].forEach(s=>localStorage.removeItem('df_all_'+s));
+    // FIX BUG1: payments/expenses/overtime now in Supabase — localStorage cleanup no longer needed
     toast('All data cleared','warn');location.reload();
   });
 }
@@ -11955,12 +11709,49 @@ async function init(){
 
   const jobs=await dAll('jobs');
   // Live Supabase — no seed needed
+
+  // ── AUTO-MIGRATION: localStorage → Supabase ──────────────────────────────
+  // This runs silently on every app load. If any data is found in localStorage
+  // from the old local-only era, it is pushed to Supabase and the local copy
+  // is removed. Safe to run forever — if localStorage is already empty it exits
+  // instantly with zero network calls. No human action or memory required.
+  (async function _autoMigrateLocalData(){
+    const stores = ['payments','expenses','overtime'];
+    let migrated = 0;
+    for(const store of stores){
+      try{
+        const raw = localStorage.getItem('df_all_' + store);
+        if(!raw) continue;
+        const rows = JSON.parse(raw);
+        if(!Array.isArray(rows) || !rows.length){
+          localStorage.removeItem('df_all_' + store);
+          continue;
+        }
+        // Push each row to Supabase (dPut is idempotent — safe to re-run)
+        for(const row of rows){
+          // Guard: payments require an invId — skip orphaned rows without one
+          // (can happen from engineer-created ENG-* jobs that had no linked invoice)
+          if(store === 'payments' && !row.invId) continue;
+          await dPut(store, row);
+        }
+        // Only remove from localStorage after confirmed write
+        localStorage.removeItem('df_all_' + store);
+        migrated += rows.length;
+        console.info(`[DeepFlow] Auto-migrated ${rows.length} ${store} records to Supabase`);
+      }catch(e){
+        // Never let migration failure break the app — silently log and continue
+        console.warn(`[DeepFlow] Migration failed for ${store}:`, e);
+      }
+    }
+    if(migrated > 0) toast(`✅ ${migrated} local records synced to cloud`,'success',4000);
+  })();
+  // ─────────────────────────────────────────────────────────────────────────
   
   renderDash();updateBadges();
   loadDashNotes();
   updateOnlinePanel();
-  _loadColPrefs();           // Load column prefs keyed to this user (owner name from settings)
-  applyColVisibility();      // Restore saved column preferences
+  // _loadColPrefs() removed with legacy COL_DEFS system (ISSUE 5) — JOB_COLS handles its own state
+  // applyColVisibility() removed — legacy table system no longer active (ISSUE 5)
   // Apply online status visibility
   const onlineWidget = document.querySelector('.sidebar-foot > div:first-child');
   if(onlineWidget && S.showOnlineStatus===false) onlineWidget.style.display = 'none';
@@ -12009,11 +11800,11 @@ async function seedDemo(){
 
   const now=Date.now();
   const jobs=[
-    {id:uid(),date:TODAY(),address:'12 Main St, London E1 1AA',referrer:'John Doe',trade:'Gas',engineer:'Mike',description:'Annual Gas Safety Check',timeSlot:'9:00 – 11:00 AM',access:'Key Safe',contact:'Code: 1234 | Side gate',hours:2,price:150,notes:'',priority:'Normal',status:'Pending',created:now-3000,modified:now},
-    {id:uid(),date:TODAY(),address:'47 Oak Road, Manchester M1 1BB',referrer:'John Doe',trade:'Plumbing',engineer:'Mike',description:'Leaking Tap — Kitchen',timeSlot:'11:30 AM – 1:00 PM',access:'Tenant Home',contact:'07700 200001',hours:1.5,price:90,notes:'Bring 22mm fittings',priority:'Normal',status:'Pending',created:now-2000,modified:now},
-    {id:uid(),date:TODAY(),address:'8 Park Lane, Birmingham B1 1CC',referrer:'Sarah Smith',trade:'Electrical',engineer:'Dave',description:'Consumer Unit Inspection',timeSlot:'2:00 – 4:00 PM',access:'Landlord Present',contact:'07700 300001',hours:2,price:200,notes:'',priority:'Urgent',status:'In Progress',created:now-1000,modified:now},
-    {id:uid(),date:TODAY(),address:'33 High Street, London N1 1DD',referrer:'John Doe',trade:'General',engineer:'Mike',description:'Door Lock Replacement',timeSlot:'4:30 – 5:30 PM',access:'Key Safe',contact:'Code: 5678 | Front door',hours:1,price:75,notes:'',priority:'Normal',status:'Pending',created:now,modified:now},
-    {id:uid(),date:TODAY(),address:'22 Victoria Rd, London SW1 2EE',referrer:'John Doe',trade:'Gas',engineer:'Dave',description:'Gas Leak — Emergency',timeSlot:'ASAP',access:'Tenant Home',contact:'07700 400001',hours:0,price:0,notes:'Tenant reported smell of gas',priority:'Emergency',status:'Pending',created:now+1,modified:now},
+    {id:uid(),date:TODAY(),address:'12 Main St, London E1 1AA',referrer:'John Doe',trade:'Gas',engineer:'Mike',description:'Annual Gas Safety Check',timeSlot:'9:00 – 11:00 AM',access:'Key Safe',contact:'Code: 1234 | Side gate',hours:2,price:150,notes:'',priority:'Normal',status:STATUS.PENDING,created:now-3000,modified:now},
+    {id:uid(),date:TODAY(),address:'47 Oak Road, Manchester M1 1BB',referrer:'John Doe',trade:'Plumbing',engineer:'Mike',description:'Leaking Tap — Kitchen',timeSlot:'11:30 AM – 1:00 PM',access:'Tenant Home',contact:'07700 200001',hours:1.5,price:90,notes:'Bring 22mm fittings',priority:'Normal',status:STATUS.PENDING,created:now-2000,modified:now},
+    {id:uid(),date:TODAY(),address:'8 Park Lane, Birmingham B1 1CC',referrer:'Sarah Smith',trade:'Electrical',engineer:'Dave',description:'Consumer Unit Inspection',timeSlot:'2:00 – 4:00 PM',access:'Landlord Present',contact:'07700 300001',hours:2,price:200,notes:'',priority:'Urgent',status:STATUS.IN_PROGRESS,created:now-1000,modified:now},
+    {id:uid(),date:TODAY(),address:'33 High Street, London N1 1DD',referrer:'John Doe',trade:'General',engineer:'Mike',description:'Door Lock Replacement',timeSlot:'4:30 – 5:30 PM',access:'Key Safe',contact:'Code: 5678 | Front door',hours:1,price:75,notes:'',priority:'Normal',status:STATUS.PENDING,created:now,modified:now},
+    {id:uid(),date:TODAY(),address:'22 Victoria Rd, London SW1 2EE',referrer:'John Doe',trade:'Gas',engineer:'Dave',description:'Gas Leak — Emergency',timeSlot:'ASAP',access:'Tenant Home',contact:'07700 400001',hours:0,price:0,notes:'Tenant reported smell of gas',priority:'Emergency',status:STATUS.PENDING,created:now+1,modified:now},
   ];
   for(const j of jobs) await dPut('jobs',j);
 
@@ -12290,20 +12081,22 @@ function initDragDrop(){
 //  JOB_COLS drives: header, rows, resize, show/hide, persistence
 // ════════════════════════════════════════════════════════════
 const JOB_COLS = [
-  {key:'status',  label:'Status',      w:90,  min:70,  fixed:true,  protect:true},
-  {key:'jobnum',  label:'Job #',       w:70,  min:52},
-  {key:'address', label:'Address',     w:null,min:180, flex:true,   protect:true},
-  {key:'desc',    label:'Description', w:200, min:90},
-  {key:'contact', label:'Contact',     w:160, min:80},
-  {key:'time',    label:'Time',        w:82,  min:52},
-  {key:'eng',     label:'Engineer',    w:120, min:70},
-  {key:'certs',   label:'Certs',       w:90,  min:50},
-  {key:'price',   label:'£',           w:56,  min:40},
-  {key:'sel',     label:'Change',      w:110, min:90,  fixed:true},
-  {key:'actions', label:'',            w:62,  min:50,  fixed:true},
+  // PERCENTAGE-BASED layout — auto-fits any screen size with zero manual adjustment.
+  // The 20px drag handle + 4px stripe are fixed; remaining width split by pct below.
+  // Address has flex:true so it absorbs rounding remainders and hidden-col space.
+  {key:'jobnum',   label:'Job #',       pct:5,  minPct:3,  protect:true},
+  {key:'address',  label:'Address',     pct:22, minPct:12, flex:true, protect:true},
+  {key:'desc',     label:'Description', pct:18, minPct:8},
+  {key:'access',   label:'Access',      pct:10, minPct:5},
+  {key:'time',     label:'Time',        pct:7,  minPct:4},
+  {key:'eng',      label:'Engineer',    pct:8,  minPct:5},
+  {key:'price',    label:'Amount',      pct:6,  minPct:4},
+  {key:'referrer', label:'Referrer',    pct:10, minPct:5},
+  {key:'sel',      label:'Status',      pct:10, minPct:7,  fixed:true},
+  {key:'actions',  label:'',            pct:4,  minPct:3,  fixed:true},
 ];
 
-// Persist hidden cols + widths
+// Persist hidden cols + column percentages
 let _hiddenCols = [];
 (function _loadColState(){
   try{
@@ -12315,29 +12108,35 @@ let _hiddenCols = [];
     });
   }catch(e){ _hiddenCols = []; }
   try{
-    // Version-guard: if the saved widths count doesn't match JOB_COLS count,
-    // discard them — they're from a different column layout and will misalign
-    const saved = JSON.parse(localStorage.getItem('df_col_widths')||'null');
-    if(saved && Array.isArray(saved) && saved.length === JOB_COLS.length){
-      saved.forEach((w,i)=>{ if(w && JOB_COLS[i]) JOB_COLS[i].w = w; });
+    // Version-guard: if the saved pct count doesn't match JOB_COLS count,
+    // discard them — they're from a different column layout and will misalign.
+    // Also discard old px-based saves (values > 100 are clearly px not %)
+    const saved = JSON.parse(localStorage.getItem('df_col_pcts')||'null');
+    if(saved && Array.isArray(saved) && saved.length === JOB_COLS.length
+       && saved.every(v => v === null || (v > 0 && v <= 100))){
+      saved.forEach((p,i)=>{ if(p && JOB_COLS[i]) JOB_COLS[i].pct = p; });
     } else if(saved){
-      // Stale — clear it so columns use clean defaults
-      localStorage.removeItem('df_col_widths');
+      // Stale or old px values — clear so columns use clean % defaults
+      localStorage.removeItem('df_col_pcts');
+      localStorage.removeItem('df_col_widths'); // remove old px store too
     }
-  }catch(e){}
+  }catch(e){ console.warn('[DeepFlow]', e); }
 })();
 
 function _saveColState(){
   localStorage.setItem('df_hidden_cols', JSON.stringify(_hiddenCols));
-  localStorage.setItem('df_col_widths',  JSON.stringify(JOB_COLS.map(c=>c.w||null)));
+  localStorage.setItem('df_col_pcts',    JSON.stringify(JOB_COLS.map(c=>c.pct||null)));
 }
 
-// Build the CSS grid template string from current state
+// Build the CSS grid template string from current JOB_COLS pct values.
+// 20px = drag handle, 4px = status stripe, then each column as a percentage
+// of the remaining width. Address uses minmax so it absorbs rounding remainders.
+// Hidden columns collapse to 0px — their percentage is redistributed to address flex.
 function getColTemplate(){
   return '20px 4px ' + JOB_COLS.map(c=>{
     if(_hiddenCols.includes(c.key)) return '0px';
-    if(c.flex) return 'minmax('+c.min+'px,1fr)';
-    return Math.max(c.min||40, c.w||80)+'px';
+    if(c.flex) return 'minmax('+c.minPct+'%,1fr)';
+    return 'minmax('+c.minPct+'%,'+c.pct+'%)';
   }).join(' ');
 }
 
@@ -12355,9 +12154,7 @@ function renderJobsHeader(){
     const hidden = _hiddenCols.includes(c.key);
     const isFixed = c.fixed;
     const resizeHandle = !isFixed
-      ? `<div class="col-resize-handle" data-resize-col="${i}" title="Drag to resize"
-           style="position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;z-index:2;border-radius:0 2px 2px 0"
-           onmouseenter="this.style.background='var(--acc)'" onmouseleave="if(!_colResizing)this.style.background=''"></div>`
+      ? `<div class="col-resize-handle" data-resize-col="${i}" title="Drag to resize"></div>`
       : '';
     const extraStyle = c.key==='actions'
       ? 'display:flex;align-items:center;gap:4px;'
@@ -12441,16 +12238,45 @@ function showColMenu(e){
 }
 
 function resetColWidths(){
-  JOB_COLS.forEach(c=>{ if(!c.flex) c.w = undefined; });
+  // Reset each column's pct back to its original default
+  const DEFAULTS = {jobnum:5,address:22,desc:18,access:10,time:7,eng:8,price:6,referrer:10,sel:10,actions:4};
+  JOB_COLS.forEach(c=>{ c.pct = DEFAULTS[c.key] || c.pct; c.flex = (c.key==='address'); });
   _hiddenCols = [];
+  localStorage.removeItem('df_col_pcts');
   _saveColState();
   renderJobsHeader();
   applyColTemplate();
   document.getElementById('col-menu')?.remove();
 }
 
-// ════ Column resize ════
+// ════ Column resize — Excel-style overlay ════
+// FIX: Old system called applyColTemplate() on every mousemove, causing:
+//   1. Full DOM reflow on every pixel — janky, cursor gets ahead of the column edge
+//   2. The flex (address) column absorbed space changes mid-drag, so the handle
+//      visual position jumped — dragging right made the column go left (reverse bug)
+//   3. Reading JOB_COLS[colIdx].w on mousedown gave the stored w, not the rendered
+//      pixel width — flex columns report w=null so startW was wrong from the start
+//
+// New approach: show a fixed vertical drag-line during drag (zero DOM reflow),
+// read the REAL rendered pixel width from getBoundingClientRect on mousedown,
+// apply the final width in ONE shot on mouseup. Exactly how Excel/Sheets does it.
+
 let _colResizing = null, _colResizeStartX = 0, _colResizeStartW = 0;
+let _resizeLine = null;
+
+function _getResizeLine(){
+  if(!_resizeLine){
+    _resizeLine = document.createElement('div');
+    _resizeLine.style.cssText = [
+      'position:fixed','top:0','bottom:0','width:2px',
+      'background:var(--acc)','opacity:.8','z-index:9999',
+      'pointer-events:none','display:none',
+      'box-shadow:0 0 6px rgba(245,166,35,.5)'
+    ].join(';');
+    document.body.appendChild(_resizeLine);
+  }
+  return _resizeLine;
+}
 
 function _bindResizeHandles(){
   const hd = document.getElementById('jobs-col-hd');
@@ -12460,42 +12286,78 @@ function _bindResizeHandles(){
       e.preventDefault(); e.stopPropagation();
       const colIdx = parseInt(handle.dataset.resizeCol);
       if(isNaN(colIdx) || !JOB_COLS[colIdx]) return;
-      _colResizing = colIdx;
+
+      // Read ACTUAL rendered width in px from the header cell
+      const headerCell = handle.closest('[data-hd-col]');
+      const currentW = headerCell
+        ? headerCell.getBoundingClientRect().width
+        : 100;
+
+      // Also read total grid width so we can convert px delta → pct delta on mouseup
+      const gridW = hd.getBoundingClientRect().width - 24; // subtract drag+stripe
+
+      _colResizing    = colIdx;
       _colResizeStartX = e.clientX;
-      _colResizeStartW = JOB_COLS[colIdx].w || JOB_COLS[colIdx].min || 80;
-      document.body.style.cursor = 'col-resize';
+      _colResizeStartW = currentW;
+      _colResizeGridW  = gridW; // store for mouseup conversion
+
+      const line = _getResizeLine();
+      line.style.left    = e.clientX + 'px';
+      line.style.display = 'block';
+
+      document.body.style.cursor     = 'col-resize';
       document.body.style.userSelect = 'none';
-      handle.style.background = 'var(--acc)';
-      handle.style.width = '3px';
+      handle.classList.add('active');
     };
   });
 }
 
+let _colResizeGridW = 0; // total grid width captured on mousedown
+
 document.addEventListener('mousemove', e=>{
   if(_colResizing === null) return;
-  const col = JOB_COLS[_colResizing];
-  if(!col) return;
-  const dx = e.clientX - _colResizeStartX;
-  col.w = Math.max(col.min||40, _colResizeStartW + dx);
+  // Move ONLY the overlay line — no DOM reflow at all during drag
+  const col     = JOB_COLS[_colResizing];
+  const minPx   = _colResizeGridW > 0
+    ? _colResizeGridW * ((col.minPct||3) / 100)
+    : 40;
+  const clampedX = Math.max(_colResizeStartX - _colResizeStartW + minPx, e.clientX);
+  _getResizeLine().style.left = clampedX + 'px';
+});
+
+document.addEventListener('mouseup', e=>{
+  if(_colResizing === null) return;
+
+  const col   = JOB_COLS[_colResizing];
+  const dxPx  = e.clientX - _colResizeStartX;
+  const newPx = Math.max(
+    (_colResizeGridW * (col.minPct||3) / 100),
+    _colResizeStartW + dxPx
+  );
+  // Convert new pixel width back to percentage of total grid width
+  const newPct = _colResizeGridW > 0
+    ? Math.round((newPx / _colResizeGridW) * 100 * 10) / 10  // 1 decimal place
+    : col.pct;
+
+  col.pct  = Math.max(col.minPct || 3, newPct);
+  col.flex = false; // lock flex column to fixed % if user resizes it
+
+  _getResizeLine().style.display = 'none';
+  _colResizing = null;
+  document.body.style.cursor     = '';
+  document.body.style.userSelect = '';
+
+  document.querySelectorAll('[data-resize-col]').forEach(h=>{
+    h.classList.remove('active');
+    h.style.background = '';
+    h.style.width      = '';
+  });
+
   applyColTemplate();
+  _saveColState();
 });
 
-document.addEventListener('mouseup', ()=>{
-  if(_colResizing !== null){
-    _colResizing = null;
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-    _saveColState();
-    // Reset handle colours
-    document.querySelectorAll('[data-resize-col]').forEach(h=>{
-      h.style.background = '';
-      h.style.width = '';
-    });
-  }
-});
 
-// Call renderJobsHeader() after renderJobs() populates the list
-// This is done at end of renderJobs — see patch below
 
 // ════ Row drag — cross-date reorder ════
 let _slDragSrc=null;
@@ -12510,19 +12372,37 @@ function _getDateGroup(el){
 function initScrollListDrag(){
   const scroll=document.getElementById('jobs-list-scroll');
   if(!scroll) return;
+  if(scroll._dragInited) return;
+  scroll._dragInited=true;
 
-  // Insertion indicator line
   if(!_dragIndicator){
     _dragIndicator=document.createElement('div');
-    _dragIndicator.style.cssText='position:fixed;left:0;right:0;height:2px;background:var(--acc);border-radius:1px;pointer-events:none;display:none;z-index:9999;box-shadow:0 0 8px rgba(245,166,35,.7)';
+    _dragIndicator.style.cssText='position:fixed;left:0;right:0;height:2px;background:var(--acc);border-radius:1px;pointer-events:none;display:none;z-index:9999;box-shadow:0 0 8px rgba(245,166,35,.6)';
     document.body.appendChild(_dragIndicator);
+  }
+
+  // Stored drop targets — set during dragover, read at drop time.
+  // Much more reliable than elementFromPoint() which can mis-hit after
+  // DOM style changes during the drop event itself.
+  let _dropTargetRow  = null; // the .jsr3 row the user is hovering
+  let _dropTargetDate = null; // the date string from a date-group header
+  let _insertAfter    = false;
+  let _rafPending     = false;
+  let _lastHovered    = null; // dedup dragover work
+
+  function _clearDragState(){
+    document.querySelectorAll('.jsr3.dragging,.jsr3.drag-over').forEach(r=>r.classList.remove('dragging','drag-over'));
+    document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
+    _dragIndicator.style.display='none';
+    _dropTargetRow=null; _dropTargetDate=null; _insertAfter=false;
+    _lastHovered=null; _rafPending=false;
   }
 
   scroll.addEventListener('dragstart',e=>{
     const row=e.target.closest('.jsr3[data-id]');
     if(!row) return;
     _slDragSrc=row;
-    _dragOverDate=null;
+    _clearDragState();
     setTimeout(()=>row.classList.add('dragging'),0);
     e.dataTransfer.effectAllowed='move';
     e.dataTransfer.setData('text/plain',row.dataset.id);
@@ -12531,99 +12411,127 @@ function initScrollListDrag(){
   scroll.addEventListener('dragover',e=>{
     e.preventDefault();
     e.dataTransfer.dropEffect='move';
-    // Check if hovering date group header
-    const grpHd=e.target.closest('.jsg-hd[data-date-group]');
-    const row=e.target.closest('.jsr3[data-id]');
-    document.querySelectorAll('.jsr3').forEach(r=>r.classList.remove('drag-over'));
-    document.querySelectorAll('.jsg-rows').forEach(r=>r.classList.remove('drag-date-target'));
+    if(_rafPending) return;
+    _rafPending=true;
+    // Capture coordinates NOW before rAF (e properties go stale)
+    const cy=e.clientY;
+    const target=e.target;
+    requestAnimationFrame(()=>{
+      _rafPending=false;
+      if(_lastHovered===target) return; // nothing changed — skip all DOM work
+      _lastHovered=target;
 
-    if(grpHd){
-      _dragOverDate=grpHd.dataset.dateGroup;
-      grpHd.style.background='rgba(245,166,35,.08)';
-      grpHd.dataset.dragTarget='1';
+      const grpHd=target.closest('.jsg-hd[data-date-group]');
+      const row=target.closest('.jsr3[data-id]');
+
+      // Clear previous highlights
+      document.querySelectorAll('.jsr3.drag-over').forEach(r=>r.classList.remove('drag-over'));
+      document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
       _dragIndicator.style.display='none';
-    } else if(row&&row!==_slDragSrc){
-      _dragOverDate=null;
-      grpHd&&(grpHd.style.background='');
-      row.classList.add('drag-over');
-      const rect=row.getBoundingClientRect();
-      const insertAfter=e.clientY>rect.top+rect.height/2;
-      _dragIndicator.style.top=(insertAfter?rect.bottom:rect.top)+'px';
-      _dragIndicator.style.left='12px';
-      _dragIndicator.style.right='12px';
-      _dragIndicator.style.display='block';
-      row.dataset.insertAfter=insertAfter?'1':'0';
-    }
+
+      if(grpHd){
+        // Hovering a date-group header
+        _dropTargetDate=grpHd.dataset.dateGroup;
+        _dropTargetRow=null;
+        grpHd.style.background='rgba(245,166,35,.09)';
+        grpHd.dataset.dragTarget='1';
+      } else if(row && row!==_slDragSrc){
+        // Hovering a job row — this handles BOTH same-day and cross-day drops
+        _dropTargetDate=null;
+        _dropTargetRow=row;
+        row.classList.add('drag-over');
+        const rect=row.getBoundingClientRect();
+        _insertAfter=cy>rect.top+rect.height/2;
+        _dragIndicator.style.top=(_insertAfter?rect.bottom:rect.top)+'px';
+        _dragIndicator.style.left='16px';
+        _dragIndicator.style.right='16px';
+        _dragIndicator.style.display='block';
+      } else {
+        // Hovering gap/padding — keep last known targets
+      }
+    });
   });
 
   scroll.addEventListener('dragleave',e=>{
-    if(!scroll.contains(e.relatedTarget)){
-      document.querySelectorAll('.jsr3').forEach(r=>r.classList.remove('drag-over'));
-      document.querySelectorAll('.jsg-hd').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
-      _dragIndicator.style.display='none';
-      _dragOverDate=null;
-    }
+    if(scroll.contains(e.relatedTarget)) return;
+    _clearDragState();
+    _dragOverDate=null;
   });
 
   scroll.addEventListener('drop',async e=>{
     e.preventDefault();
-    _dragIndicator.style.display='none';
-    document.querySelectorAll('.jsr3').forEach(r=>r.classList.remove('dragging','drag-over'));
-    document.querySelectorAll('.jsg-hd').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
 
-    if(!_slDragSrc){return;}
-    const srcId=_slDragSrc.dataset.id;
-    const src=await dGet('jobs',srcId);
-    if(!src){_slDragSrc=null;return;}
-
-    // CASE A: dropped on a date group header → change date
-    if(_dragOverDate){
-      const newDate=_dragOverDate;
-      if(newDate!==src.date){
-        src.date=newDate;
-        src.modified=Date.now();
-        await dPut('jobs',src);
-        toast(`📅 Job moved to ${newDate}`,'success');
-        renderJobs();
-      }
-      _slDragSrc=null; _dragOverDate=null; return;
-    }
-
-    // CASE B: dropped on another row → reorder within date OR move date
-    const target=e.target.closest('.jsr3[data-id]');
-    if(!target||target===_slDragSrc){_slDragSrc=null;return;}
-    const tgtId=target.dataset.id;
-    if(srcId===tgtId){_slDragSrc=null;return;}
-    const tgt=await dGet('jobs',tgtId);
-    if(!tgt){_slDragSrc=null;return;}
-
-    // If different date, move src to tgt date
-    if(src.date!==tgt.date){
-      src.date=tgt.date;
-      src.modified=Date.now();
-      await dPut('jobs',src);
-      toast(`📅 Job moved to ${tgt.date}`,'success');
-    } else {
-      // Same date — swap sort order
-      const srcOrd=src._sortOrder||src.created||0;
-      const tgtOrd=tgt._sortOrder||tgt.created||0;
-      src._sortOrder=tgtOrd; tgt._sortOrder=srcOrd;
-      await Promise.all([dPut('jobs',src),dPut('jobs',tgt)]);
-      toast('↕ Order saved','success',1200);
-    }
+    const srcId=_slDragSrc?.dataset.id;
     _slDragSrc=null;
+    // Snapshot targets before clearing
+    const dropDate=_dropTargetDate;
+    const dropRow=_dropTargetRow;
+    const insertAfter=_insertAfter;
+    _clearDragState();
+    _dragOverDate=null;
+
+    if(!srcId) return;
+    const src=(_jobCache||[]).find(j=>j.id===srcId);
+    if(!src){ console.warn('[DeepFlow] drop: src not in cache',srcId); return; }
+
+    const now=Date.now();
+
+    // ── CASE A: dropped on a date-group header ──
+    if(dropDate && dropDate!==src.date){
+      src.date=dropDate; src.modified=now;
+      toast(`📅 Moved to ${dropDate}`,'success',2000);
+      renderJobs();
+      _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:dropDate,modified:now},prefer:'return=minimal'})
+        .catch(err=>{console.warn('[DeepFlow] date move failed',err);src.date=src.date;_invalidateJobCache();renderJobs();});
+      return;
+    }
+
+    // ── CASE B: dropped on a job row ──
+    if(!dropRow){ renderJobs(); return; }
+    const tgtId=dropRow.dataset.id;
+    if(!tgtId || tgtId===srcId){ renderJobs(); return; }
+    const tgt=(_jobCache||[]).find(j=>j.id===tgtId);
+    if(!tgt){ console.warn('[DeepFlow] drop: tgt not in cache',tgtId); return; }
+
+    if(src.date!==tgt.date){
+      // Cross-day: move src to tgt's date
+      src.date=tgt.date; src.modified=now;
+      toast(`📅 Moved to ${tgt.date}`,'success',2000);
+      renderJobs();
+      _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:tgt.date,modified:now},prefer:'return=minimal'})
+        .catch(err=>{console.warn('[DeepFlow] cross-day failed',err);_invalidateJobCache();renderJobs();});
+      return;
+    }
+
+    // Same-day reorder — use full date group from cache (not filtered DOM)
+    const fullGroup=(_jobCache||[])
+      .filter(j=>j.date===src.date)
+      .sort((a,b)=>{
+        const ao=a._sortOrder||0,bo=b._sortOrder||0;
+        return (ao||bo)?ao-bo:(a.created||0)-(b.created||0);
+      });
+    const fullIds=fullGroup.map(j=>j.id);
+    const withoutSrc=fullIds.filter(id=>id!==srcId);
+    const tgtPos=withoutSrc.indexOf(tgtId);
+    if(tgtPos===-1){ renderJobs(); return; }
+    withoutSrc.splice(insertAfter?tgtPos+1:tgtPos,0,srcId);
+
+    const cacheMap=(_jobCache||[]).reduce((m,j)=>{m[j.id]=j;return m;},{});
+    const saves=[];
+    withoutSrc.forEach((id,i)=>{
+      const j=cacheMap[id]; if(!j) return;
+      const newOrd=(i+1)*1000;
+      if(j._sortOrder===newOrd) return;
+      j._sortOrder=newOrd; j.modified=now;
+      saves.push(_sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{sortorder:newOrd,modified:now},prefer:'return=minimal'}));
+    });
+    toast('↕ Order saved','success',800);
     renderJobs();
+    Promise.all(saves).catch(err=>{console.warn('[DeepFlow] reorder failed',err);_invalidateJobCache();renderJobs();});
   });
 
-  scroll.addEventListener('dragend',()=>{
-    document.querySelectorAll('.jsr3').forEach(r=>r.classList.remove('dragging','drag-over'));
-    document.querySelectorAll('.jsg-hd').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
-    _dragIndicator.style.display='none';
-    _slDragSrc=null; _dragOverDate=null;
-  });
-
-  // Apply col template after drag-render
-  setTimeout(()=>{ renderJobsHeader(); applyColTemplate(); },50);
+  scroll.addEventListener('dragend',()=>{ _clearDragState(); _slDragSrc=null; _dragOverDate=null; });
+  requestAnimationFrame(()=>{ renderJobsHeader(); applyColTemplate(); });
 }
 
 
@@ -12716,7 +12624,7 @@ function _pushNotif(title,body,icon,action){
     try{
       const bn=new Notification(`DeepFlow: ${title}`,{body,icon:'/favicon.ico',tag:n.id,silent:false});
       bn.onclick=()=>{ window.focus(); if(action) action(); bn.close(); };
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
   }
 }
 
@@ -12755,60 +12663,88 @@ let _pollLastJobMod=0;
 let _pollLastReqTs=0;
 let _pollKnownJobs={};
 
+// ── Live poll ─────────────────────────────────────────────────────────────────
+// ISSUE 1 FIX: Old _pollTick fetched ALL jobs every 15s (full table scan).
+// New approach: poll only a single sentinel row (max modified timestamp + count).
+// If changed → fetch only the delta (new/changed jobs since last known state).
+// Result: 1 tiny query every 15s instead of potentially MBs of data.
+
+let _pollLastModified = 0; // timestamp of last known change
+let _pollJobCount     = 0; // total job count for new-job detection
+
 async function startLivePoll(){
   if(_notifPollInterval) clearInterval(_notifPollInterval);
-  // Seed known state (no notifications for existing data)
+  // Seed initial state — just grab the sentinel, no full fetch
   try{
-    const jobs=await dAll('jobs');
-    jobs.forEach(j=>{ _pollKnownJobs[j.id]=j.status; });
-    const reqs=await _sb('engineer_requests?order=created.desc&limit=1');
-    if(reqs&&reqs[0]) _pollLastReqTs=reqs[0].created||0;
-  }catch(e){}
-  _notifPollInterval=setInterval(_pollTick,15000); // every 15s
+    const sentinel = await _sb('jobs?select=modified,created&order=modified.desc&limit=1');
+    if(sentinel?.[0]) _pollLastModified = sentinel[0].modified || 0;
+    const cnt = await _sb('jobs?select=id');
+    _pollJobCount = cnt?.length || 0;
+    // Seed known jobs map from cache if available (avoids extra fetch)
+    if(_jobCache) _jobCache.forEach(j=>{ _pollKnownJobs[j.id]=j.status; });
+    // Seed last engineer request timestamp
+    const reqs = await _sb('engineer_requests?order=created.desc&limit=1');
+    if(reqs?.[0]) _pollLastReqTs = reqs[0].created || 0;
+  }catch(e){ console.warn('[DeepFlow] poll seed error', e); }
+  _notifPollInterval = setInterval(_pollTick, 15000);
 }
 
 async function _pollTick(){
   try{
-    // 1. Check for job status changes
-    const jobs=await dAll('jobs');
-    jobs.forEach(j=>{
-      const prev=_pollKnownJobs[j.id];
-      if(prev===undefined){ _pollKnownJobs[j.id]=j.status; return; } // new job
-      if(prev!==j.status){
-        _pollKnownJobs[j.id]=j.status;
-        const icon={'Completed':'✅','In Progress':'🔨','Invoiced':'◎','Pending':'⏳','Cancelled':'✕'}[j.status]||'🔔';
-        _pushNotif(`Job updated — ${j.status}`,`${j.jobNum||''} ${j.address}`.trim(),icon,()=>{openJobModal(j.id);showPage('jobs');});
-      }
-    });
-    // New jobs
-    jobs.forEach(j=>{
-      if(_pollKnownJobs[j.id]===undefined){
-        _pollKnownJobs[j.id]=j.status;
-        if(Date.now()-j.created<60000){ // Only notify if created in last 60s
-          _pushNotif('New job added',`${j.jobNum||''} ${j.address}`.trim(),'➕',()=>{openJobModal(j.id);showPage('jobs');});
-        }
-      }
-    });
+    // 1. LIGHTWEIGHT SENTINEL CHECK — one row, two columns
+    const sentinel = await _sb('jobs?select=modified,created&order=modified.desc&limit=1');
+    const latestMod = sentinel?.[0]?.modified || 0;
+    const cnt = await _sb('jobs?select=id');
+    const newCount = cnt?.length || 0;
 
-    // 2. Check for new engineer requests + update badge
+    const hasChanges  = latestMod > _pollLastModified;
+    const hasNewJobs  = newCount  > _pollJobCount;
+
+    if(hasChanges || hasNewJobs){
+      // Only now fetch the actual changed rows — jobs modified since last poll
+      const since = _pollLastModified;
+      const changed = await _sb(`jobs?modified=gt.${since}&select=id,status,jobnum,address,created,modified&order=modified.desc&limit=50`);
+      _pollLastModified = latestMod;
+      _pollJobCount     = newCount;
+
+      (changed || []).forEach(j=>{
+        const jc = _fromDb('jobs', j);
+        const prev = _pollKnownJobs[jc.id];
+        if(prev === undefined){
+          // New job
+          _pollKnownJobs[jc.id] = jc.status;
+          if(Date.now() - (jc.created||0) < 90000){
+            _pushNotif('New job added', `${jc.jobNum||''} ${jc.address||''}`.trim(), '➕', ()=>{ openJobModal(jc.id); showPage('jobs'); });
+          }
+        } else if(prev !== jc.status){
+          // Status changed
+          _pollKnownJobs[jc.id] = jc.status;
+          const icon = {[STATUS.COMPLETED]:'✅',[STATUS.IN_PROGRESS]:'🔨',[STATUS.INVOICED]:'◎',[STATUS.PENDING]:'⏳',[STATUS.CANCELLED]:'✕'}[jc.status]||'🔔';
+          _pushNotif(`Job updated — ${jc.status}`, `${jc.jobNum||''} ${jc.address||''}`.trim(), icon, ()=>{ openJobModal(jc.id); showPage('jobs'); });
+        }
+      });
+      // Invalidate job cache so next render gets fresh data
+      _invalidateJobCache();
+    }
+
+    // 2. Engineer requests — still lightweight (limit 50, newest first)
     try{
-      const reqs=await _sb('engineer_requests?order=created.desc&limit=50');
-      if(reqs&&reqs.length){
-        // Update badge with pending count
-        const pending=reqs.filter(r=>r.status==='pending').length;
-        const badge=document.getElementById('nb-req');
+      const reqs = await _sb('engineer_requests?order=created.desc&limit=50');
+      if(reqs?.length){
+        const pending = reqs.filter(r=>r.status==='pending').length;
+        const badge   = document.getElementById('nb-req');
         if(badge){ badge.textContent=pending; badge.style.display=pending?'inline':'none'; }
-        // Notify on new requests
         reqs.forEach(r=>{
-          if((r.created||0)>_pollLastReqTs){
-            _pollLastReqTs=Math.max(_pollLastReqTs,r.created||0);
-            const typeLabel={overtime:'Overtime',leave:'Leave',other:'Other'}[r.type]||r.type||'request';
-            _pushNotif(`📬 ${r.engineer_name||'Engineer'} — ${typeLabel}`,`${r.notes||''}`.slice(0,80),'🛠',()=>{nav('req');});
+          if((r.created||0) > _pollLastReqTs){
+            _pollLastReqTs = Math.max(_pollLastReqTs, r.created||0);
+            const typeLabel = {overtime:'Overtime',leave:'Leave',other:'Other'}[r.type]||r.type||'request';
+            _pushNotif(`📬 ${r.engineer_name||'Engineer'} — ${typeLabel}`, `${r.notes||''}`.slice(0,80), '🛠', ()=>{ nav('req'); });
           }
         });
       }
-    }catch(e){}
-  }catch(e){}
+    }catch(e){ console.warn('[DeepFlow] poll requests error', e); }
+
+  }catch(e){ console.warn('[DeepFlow] poll tick error', e); }
 }
 
 
@@ -12850,8 +12786,8 @@ async function renderProps(){
     const now=new Date();
     const expCerts=propCerts.filter(c=>{const d=daysDiff(c.expiryDate);return d>=0&&d<=60});
     const overdueCerts=propCerts.filter(c=>daysDiff(c.expiryDate)<0);
-    const openJobs=propJobs.filter(j=>j.status==='Pending'||j.status==='In Progress');
-    const completedJobs=propJobs.filter(j=>j.status==='Completed');
+    const openJobs=propJobs.filter(j=>j.status===STATUS.PENDING||j.status===STATUS.IN_PROGRESS);
+    const completedJobs=propJobs.filter(j=>j.status===STATUS.COMPLETED);
 
     const alertColor=overdueCerts.length?'var(--red)':expCerts.length?'var(--yellow)':'var(--acc)';
     const rowBg=overdueCerts.length?'rgba(224,82,82,.05)':expCerts.length?'rgba(240,192,48,.04)':'';
@@ -12873,7 +12809,7 @@ async function renderProps(){
     const jobLines=openJobs.slice(0,5).map(j=>`
       <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">
         <span style="color:var(--txt1)">${j.description||j.trade||'Job'}</span>
-        <span class="badge ${j.status==='Pending'?'b-pending':'b-progress'}" style="font-size:10px">${j.status}</span>
+        <span class="badge ${j.status===STATUS.PENDING?'b-pending':'b-progress'}" style="font-size:10px">${j.status}</span>
       </div>`).join('');
 
     const popup=`<div class="prop-popup" id="popup-${p.id}" style="display:none;position:fixed;z-index:9999;width:340px;background:var(--s1);border:1px solid var(--border2);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.25);padding:16px;font-family:var(--fb)">
@@ -13751,7 +13687,7 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='engineer_a
     try{
       await navigator.clipboard.writeText(combinedSql);
       if(statusEl) statusEl.innerHTML=`📋 SQL copied to clipboard!<br>Opening Supabase SQL Editor…<br><br>Paste and click Run, then come back and try again.`;
-    }catch(e){}
+    }catch(e){ console.warn('[DeepFlow]', e); }
     setTimeout(()=>window.open('https://supabase.com/dashboard/project/dzqyqpuhxdrrpipbehpk/sql/new','_blank'),400);
   } else {
     if(statusEl) statusEl.innerHTML='✅ All tables exist — ready to go!';
@@ -13809,28 +13745,35 @@ function showTip(e, html, opts={}){
     if(!_tipEl){ _tipEl=document.createElement('div'); _tipEl.className='df-tip'; document.body.appendChild(_tipEl); }
     _tipEl.innerHTML=html;
     _tipEl.style.display='block';
+    // FIX STICKY TOOLTIP: position once on show, then track via per-cell mousemove only
     const x=Math.min(e.clientX+14, window.innerWidth-360);
     const y=Math.min(e.clientY+14, window.innerHeight-200);
     _tipEl.style.left=x+'px'; _tipEl.style.top=y+'px';
   }, opts.delay||400);
 }
-function hideTip(){
-  clearTimeout(_tipTimeout);
-  if(_tipEl) _tipEl.style.display='none';
-}
-document.addEventListener('mousemove', e=>{
+function moveTip(e){
+  // Called only from mousemove on the specific hovered cell — not globally
   if(_tipEl&&_tipEl.style.display!=='none'){
     const x=Math.min(e.clientX+14,window.innerWidth-360);
     const y=Math.min(e.clientY+14,window.innerHeight-200);
     _tipEl.style.left=x+'px'; _tipEl.style.top=y+'px';
   }
-});
+}
+function hideTip(){
+  clearTimeout(_tipTimeout);
+  _tipTimeout=null;
+  if(_tipEl) _tipEl.style.display='none';
+}
+// FIX STICKY TOOLTIP: REMOVED the document-level mousemove listener.
+// That listener moved the tooltip on every mouse movement globally — even after mouseleave fired —
+// causing it to appear stuck and follow the cursor from anywhere on the page.
+// Position tracking now happens only inside per-cell mousemove listeners attached in attachJobTooltips.
 
 // Attach rich tooltips to job rows after render
 function attachJobTooltips(){
   document.querySelectorAll('.jsr3[data-id]').forEach(row=>{
     const jid=row.dataset.id;
-    // Address cell → show certs
+    // Address cell → show certs + access + notes
     const addrCell=row.querySelector('.jsr3-cell-addr');
     if(addrCell){
       addrCell.addEventListener('mouseenter',async e=>{
@@ -13842,11 +13785,12 @@ function attachJobTooltips(){
           ${certs.length?`<div class="df-tip-row"><span class="df-tip-lbl">Certs</span>${certs.join(', ')}</div>`:''}
           ${ll?`<div class="df-tip-row"><span class="df-tip-lbl">Landlord</span>${ll}</div>`:''}
           ${ag?`<div class="df-tip-row"><span class="df-tip-lbl">Agent</span>${ag}</div>`:''}
-          ${j.access?`<div class="df-tip-row"><span class="df-tip-lbl">Access</span>${j.access}</div>`:''}
+          ${j.access?`<div class="df-tip-row"><span class="df-tip-lbl">Access</span>${j.access}${j.contact?' — '+j.contact:''}</div>`:''}
           ${j.notes?`<div class="df-tip-row"><span class="df-tip-lbl">Notes</span>${j.notes}</div>`:''}
         `);
       });
-      addrCell.addEventListener('mouseleave',hideTip);
+      addrCell.addEventListener('mousemove', moveTip);
+      addrCell.addEventListener('mouseleave', hideTip);
     }
     // Desc cell → show full description
     const descCell=row.querySelector('.jsr3-cell-desc');
@@ -13855,7 +13799,8 @@ function attachJobTooltips(){
         const j=await dGet('jobs',jid); if(!j||!j.description) return;
         showTip(e,`<div class="df-tip-title">📝 Description</div><div style="font-size:12px;color:var(--txt2);line-height:1.6;white-space:pre-wrap">${j.description}</div>`,{delay:200});
       });
-      descCell.addEventListener('mouseleave',hideTip);
+      descCell.addEventListener('mousemove', moveTip);
+      descCell.addEventListener('mouseleave', hideTip);
     }
     // Engineer cell → show contact / phone
     const engCell=row.querySelector('.jsr3-cell-eng');
@@ -13869,7 +13814,8 @@ function attachJobTooltips(){
           ${eng?.rate?`<div class="df-tip-row"><span class="df-tip-lbl">Rate</span>£${eng.rate}/hr</div>`:''}
         `,{delay:300});
       });
-      engCell.addEventListener('mouseleave',hideTip);
+      engCell.addEventListener('mousemove', moveTip);
+      engCell.addEventListener('mouseleave', hideTip);
     }
   });
 }
@@ -13879,7 +13825,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCtx()});
 async function duplicateJob(id){
   const j=await dGet('jobs',id);
   if(!j) return;
-  const copy={...j,id:uid(),date:TODAY(),status:'Pending',created:Date.now(),modified:Date.now(),description:'[Copy] '+j.description};
+  const copy={...j,id:uid(),date:TODAY(),status:STATUS.PENDING,created:Date.now(),modified:Date.now(),description:'[Copy] '+j.description};
   await dPut('jobs',copy);
   await logActivity(`Job duplicated: ${j.address}`,'job');
   toast('Job duplicated to today','success');
@@ -13927,7 +13873,7 @@ async function showJobAudit(jobId){
   
   document.getElementById('audit-job-info').innerHTML=`
     <strong>${job.address}</strong> · ${job.description||'—'} · ${job.date}
-    <span class="badge b-${job.status==='Pending'?'pending':job.status==='In Progress'?'progress':job.status==='Completed'?'completed':'invoiced'}" style="margin-left:8px">${job.status}</span>
+    <span class="badge b-${job.status===STATUS.PENDING?'pending':job.status===STATUS.IN_PROGRESS?'progress':job.status===STATUS.COMPLETED?'completed':'invoiced'}" style="margin-left:8px">${job.status}</span>
   `;
   
   document.getElementById('audit-list').innerHTML=jobActs.length?jobActs.map(a=>`
@@ -14133,7 +14079,7 @@ function loadDashNotes(){
 // ════════════════════════════════════════════════════════════════
 async function renderSLAJobs(){
   const allJobs=await dAll('jobs');
-  const urgent=allJobs.filter(j=>(j.priority==='Urgent'||j.priority==='Emergency')&&j.status!=='Completed'&&j.status!=='Cancelled'&&j.status!=='Invoiced');
+  const urgent=allJobs.filter(j=>(j.priority==='Urgent'||j.priority==='Emergency')&&j.status!==STATUS.COMPLETED&&j.status!==STATUS.CANCELLED&&j.status!==STATUS.INVOICED);
   urgent.sort((a,b)=>{
     const p={Emergency:0,Urgent:1};
     return (p[a.priority]||2)-(p[b.priority]||2)||a.date.localeCompare(b.date);
@@ -14897,8 +14843,8 @@ async function saveInvWithJobSync(){
     if(jobPrice) updatedJob.price = jobPrice;
     if(jobDesc && !linkedJob.description) updatedJob.description = jobDesc;
     // Only advance to Invoiced — never regress a status (e.g. don't overwrite Cancelled)
-    if(linkedJob.status === 'Completed' || linkedJob.status === 'Pending' || linkedJob.status === 'In Progress'){
-      updatedJob.status = 'Invoiced';
+    if(linkedJob.status===STATUS.COMPLETED||linkedJob.status===STATUS.PENDING||linkedJob.status===STATUS.IN_PROGRESS){
+      updatedJob.status = STATUS.INVOICED;
       updatedJob.invNumber = invNum;
       updatedJob.linkedInvId = invId;
     }
@@ -15194,7 +15140,7 @@ function showJobsSkeleton(){
           try{
             await loadSettings();
             renderDash();updateBadges();
-          }catch(e){}
+          }catch(e){ console.warn('[DeepFlow]', e); }
         }, 800);
         return;
       } else {
@@ -15795,7 +15741,7 @@ async function cvLoadClient(type, id, name){
     </div>`;
   document.getElementById('cv-kpis').innerHTML =
     kpi(jobs.length, 'Total Jobs', 'var(--acc)') +
-    kpi(jobs.filter(j=>j.status==='Completed'||j.status==='Invoiced').length, 'Completed', 'var(--green)') +
+    kpi(jobs.filter(j=>j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED).length, 'Completed', 'var(--green)') +
     kpi(invs.length, 'Invoices', 'var(--purple)') +
     kpi('£'+totalPaid.toFixed(0), 'Paid', 'var(--green)') +
     kpi(outstanding>0?'£'+outstanding.toFixed(0):'£0', 'Outstanding', outstanding>0?'var(--yellow)':'var(--green)') +
@@ -15831,7 +15777,7 @@ async function cvLoadClient(type, id, name){
           <td style="padding:9px 10px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j.address||'—'}</td>
           <td style="padding:9px 10px">${j.trade||'—'}</td>
           <td style="padding:9px 10px">${j.engineer||'—'}</td>
-          <td style="padding:9px 10px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${j.status==='Completed'?'rgba(37,213,142,.12)':j.status==='Invoiced'?'rgba(168,85,247,.12)':j.status==='Cancelled'?'rgba(100,116,139,.12)':'rgba(245,166,35,.12)'};color:${j.status==='Completed'?'var(--green)':j.status==='Invoiced'?'var(--purple)':j.status==='Cancelled'?'var(--txt3)':'var(--yellow)'};font-weight:700">${j.status||'Pending'}</span></td>
+          <td style="padding:9px 10px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${j.status===STATUS.COMPLETED?'rgba(37,213,142,.12)':j.status===STATUS.INVOICED?'rgba(168,85,247,.12)':j.status===STATUS.CANCELLED?'rgba(100,116,139,.12)':'rgba(245,166,35,.12)'};color:${j.status===STATUS.COMPLETED?'var(--green)':j.status===STATUS.INVOICED?'var(--purple)':j.status===STATUS.CANCELLED?'var(--txt3)':'var(--yellow)'};font-weight:700">${j.status||'Pending'}</span></td>
           <td style="padding:9px 10px;text-align:right;font-family:var(--fm)">${j.price?'£'+Number(j.price).toFixed(2):'—'}</td>
         </tr>`).join('')}
       </tbody>
@@ -15984,22 +15930,13 @@ async function showClientCreditCheck(clientName){
       return;
     }
     
-    // Helper function to calculate invoice total from line items
-    const calcInvTotal = (inv) => {
-      const items = typeof inv.items === 'string' ? JSON.parse(inv.items || '[]') : (inv.items || []);
-      const subtotal = items.reduce((sum, item) => {
-        const qty = parseFloat(item.qty) || 0;
-        const unit = parseFloat(item.unit) || 0;
-        return sum + (qty * unit);
-      }, 0);
-      const vatRate = parseFloat(S.vatRate || 20) / 100;
-      const total = subtotal * (1 + vatRate);
-      return total;
-    };
+    // FIX BUG5: removed shadow calcInvTotal that applied VAT to ALL items regardless of item.vat flag.
+    // The outer calcInvTotal (defined at line 7652) is correct — it respects per-item VAT flags.
+    // Using it directly here so credit check totals match invoice totals shown everywhere else.
     
     const now=new Date();
-    const unpaid=clientInvs.filter(inv=>(inv.status||'Draft')!=='Paid'&&(inv.status||'Draft')!=='Cancelled');
-    const unpaidAmount=unpaid.reduce((sum,inv)=>sum+calcInvTotal(inv),0);
+    const unpaid=clientInvs.filter(inv=>(inv.status||'Draft')!=='Paid'&&(inv.status||'Draft')!==STATUS.CANCELLED);
+    const unpaidAmount=unpaid.reduce((sum,inv)=>sum+calcInvTotal(inv).grand,0);
     const overdue=unpaid.filter(inv=>inv.dueDate&&new Date(inv.dueDate)<now);
     const paid=clientInvs.filter(inv=>(inv.status||'')==='Paid').sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     
@@ -16020,7 +15957,7 @@ async function showClientCreditCheck(clientName){
     else if(overdue.length > 0) stars -= 1; // Some overdue
     
     // Deduct for high unpaid amount RELATIVE to invoice count
-    const avgInvoiceValue = clientInvs.length > 0 ? clientInvs.reduce((sum, inv) => sum + calcInvTotal(inv), 0) / clientInvs.length : 0;
+    const avgInvoiceValue = clientInvs.length > 0 ? clientInvs.reduce((sum, inv) => sum + calcInvTotal(inv).grand, 0) / clientInvs.length : 0;
     if(unpaidAmount > avgInvoiceValue * 5) stars -= 2; // 5x average = problematic
     else if(unpaidAmount > avgInvoiceValue * 3) stars -= 1; // 3x average = concerning
     
@@ -16051,7 +15988,7 @@ async function showClientCreditCheck(clientName){
     // ═══ STATS ═══
     const lastPmt=paid[0];
     const lastPmtDate=lastPmt?new Date(lastPmt.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Never';
-    const lastPmtAmt=lastPmt?calcInvTotal(lastPmt).toFixed(2):'0.00';
+    const lastPmtAmt=lastPmt?calcInvTotal(lastPmt).grand.toFixed(2):'0.00';
     const daysSinceLast=lastPmt?Math.floor((now-new Date(lastPmt.date))/(1000*60*60*24)):9999;
     
     document.getElementById('credit-stats').innerHTML=`
