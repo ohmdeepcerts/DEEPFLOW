@@ -2,244 +2,258 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>DeepFlow Client Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>DeepFlow Portal</title>
 <style>
 :root{
   --bg:#f0f4f8;--s1:#fff;--s2:#f8fafc;--s3:#f1f5f9;
   --border:#e2e8f0;--border2:#cbd5e1;
   --txt:#0f172a;--txt2:#475569;--txt3:#94a3b8;
   --acc:#2563eb;--acc2:#1d4ed8;--acc-soft:#eff6ff;
-  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
-  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
-  --yel:#d97706;--yel-bg:#fffbeb;--yel-bd:#fde68a;
-  --pur:#7c3aed;--pur-bg:#f5f3ff;--pur-bd:#ddd6fe;
-  --r:14px;--r2:10px;--r3:6px;
+  --green:#16a34a;--gbg:#f0fdf4;--gbd:#bbf7d0;
+  --red:#dc2626;--rbg:#fef2f2;--rbd:#fecaca;
+  --yel:#d97706;--ybg:#fffbeb;--ybd:#fde68a;
+  --pur:#7c3aed;--pbg:#f5f3ff;--pbd:#ddd6fe;
+  --r:16px;--r2:10px;--r3:6px;
   --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
   --sh2:0 4px 20px rgba(0,0,0,.10);
-  --sh3:0 8px 32px rgba(0,0,0,.14);
+  --sh3:0 8px 40px rgba(0,0,0,.16);
+  --fnt:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--txt);font-family:var(--fnt);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
 
-/* HDR */
-.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
-.hdr-brand{display:flex;align-items:center;gap:9px}
-.hdr-logo{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900;letter-spacing:-1px;flex-shrink:0}
-.hdr-name{font-size:16px;font-weight:800;letter-spacing:-.4px}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.hdr-badge{background:var(--acc-soft);color:var(--acc);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid #bfdbfe;white-space:nowrap}
-.hdr-client{font-size:12px;color:var(--txt3);font-weight:500;display:none}
-@media(min-width:500px){.hdr-client{display:block}}
+/* HEADER */
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900;letter-spacing:-1px;flex-shrink:0}
+.hdr-co{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.hdr-r{display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:var(--acc-soft);color:var(--acc);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;border:1px solid #bfdbfe;white-space:nowrap}
+.hdr-client{font-size:12px;color:var(--txt3);font-weight:500}
+@media(max-width:480px){.hdr-client{display:none}}
 
 /* NAV */
-.nav{background:var(--s1);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav{background:var(--s1);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:58px;z-index:100}
 .nav::-webkit-scrollbar{display:none}
-.nav-tab{padding:12px 14px;font-size:12px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0;user-select:none;-webkit-tap-highlight-color:transparent}
-.nav-tab:hover{color:var(--txt2)}
-.nav-tab.active{color:var(--acc);border-bottom-color:var(--acc)}
-@media(min-width:600px){.nav-tab{padding:14px 18px;font-size:13px}}
+.tab{padding:13px 16px;font-size:12.5px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt2)}
+.tab.active{color:var(--acc);border-color:var(--acc)}
+@media(min-width:600px){.tab{padding:14px 20px;font-size:13px}}
 
-/* MAIN */
-.main{max-width:960px;margin:0 auto;padding:16px}
+/* LAYOUT */
+.main{max-width:900px;margin:0 auto;padding:16px 14px}
 @media(min-width:600px){.main{padding:24px 20px}}
-@media(min-width:960px){.main{padding:28px 20px}}
 
 /* HERO */
-.hero{background:linear-gradient(135deg,#1e40af 0%,#2563eb 55%,#3b82f6 100%);border-radius:var(--r);padding:22px 20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;right:-20px;top:-20px;width:160px;height:160px;background:rgba(255,255,255,.07);border-radius:50%}
-.hero-badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:10px}
-.hero-title{font-size:20px;font-weight:900;margin-bottom:4px;letter-spacing:-.3px}
-.hero-sub{font-size:13px;opacity:.8}
-.hero-btns{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
-.hbtn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:var(--r2);padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-.hbtn:hover,.hbtn:active{background:rgba(255,255,255,.28)}
-.hbtn.primary{background:#fff;color:var(--acc)}
+.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#60a5fa 100%);border-radius:var(--r);padding:24px 22px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%}
+.hero::after{content:'';position:absolute;right:50px;bottom:-50px;width:130px;height:130px;background:rgba(255,255,255,.04);border-radius:50%}
+.hero-eyebrow{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
+.hero-name{font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:4px}
+.hero-sub{font-size:13px;opacity:.8;line-height:1.5}
+.hero-row{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+.hbtn{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r2);padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.16);color:#fff;transition:.15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;font-family:var(--fnt)}
+.hbtn:hover{background:rgba(255,255,255,.26)}
+.hbtn.primary{background:#fff;color:var(--acc);border-color:transparent}
 .hbtn.primary:hover{background:#f0f9ff}
-@media(min-width:600px){.hero{padding:28px 32px}.hero-title{font-size:24px}}
+@media(min-width:600px){.hero{padding:32px 36px}.hero-name{font-size:26px}}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}}
-.stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px}
-.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.stat-val{font-size:22px;font-weight:900;line-height:1}
-.stat-lbl{font-size:10px;color:var(--txt3);margin-top:2px;font-weight:500}
-.st-blue .stat-icon{background:var(--acc-soft)}.st-blue .stat-val{color:var(--acc)}
-.st-green .stat-icon{background:var(--green-bg)}.st-green .stat-val{color:var(--green)}
-.st-yel .stat-icon{background:var(--yel-bg)}.st-yel .stat-val{color:var(--yel)}
-.st-red .stat-icon{background:var(--red-bg)}.st-red .stat-val{color:var(--red)}
+/* STATS GRID */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+@media(min-width:540px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px}
+.stat-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stat-val{font-size:24px;font-weight:900;line-height:1}
+.stat-lbl{font-size:11px;color:var(--txt3);margin-top:2px;font-weight:500}
+.sa .stat-ic{background:var(--acc-soft)}.sa .stat-val{color:var(--acc)}
+.sb .stat-ic{background:var(--gbg)}.sb .stat-val{color:var(--green)}
+.sc .stat-ic{background:var(--ybg)}.sc .stat-val{color:var(--yel)}
+.sd .stat-ic{background:var(--rbg)}.sd .stat-val{color:var(--red)}
 
-/* CERT EXPIRY DASHBOARD WIDGET */
-.cert-expiry-widget{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:16px;box-shadow:var(--sh)}
+/* CERT EXPIRY WIDGET */
+.cew{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:18px;box-shadow:var(--sh)}
 .cew-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cew-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
-.cew-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.cew-bar{border-radius:var(--r2);padding:12px;text-align:center;cursor:pointer;transition:opacity .15s;-webkit-tap-highlight-color:transparent}
-.cew-bar:hover{opacity:.85}
-.cew-bar:active{opacity:.7}
-.cew-num{font-size:26px;font-weight:900;line-height:1}
-.cew-lbl{font-size:10px;font-weight:600;margin-top:4px}
+.cew-title{font-size:13px;font-weight:800}
+.cew-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cew-box{border-radius:var(--r2);padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+.cew-box:hover{opacity:.85}
+.cew-n{font-size:28px;font-weight:900;line-height:1}
+.cew-l{font-size:10px;font-weight:600;margin-top:4px;line-height:1.3}
+.cew-exp{background:var(--rbg);border:1px solid var(--rbd)}.cew-exp .cew-n{color:var(--red)}.cew-exp .cew-l{color:var(--red)}
+.cew-s30{background:var(--ybg);border:1px solid var(--ybd)}.cew-s30 .cew-n{color:var(--yel)}.cew-s30 .cew-l{color:var(--yel)}
+.cew-ok{background:var(--gbg);border:1px solid var(--gbd)}.cew-ok .cew-n{color:var(--green)}.cew-ok .cew-l{color:var(--green)}
 
 /* SECTION */
-.sec{margin-bottom:20px}
-.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sec-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
-.sec-count{font-size:11px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:10px;padding:2px 8px}
-.sec-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-
-/* SORT BAR */
-.sort-bar{display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.sort-lbl{font-size:11px;color:var(--txt3);font-weight:600;white-space:nowrap}
-.sort-sel{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r3);padding:5px 10px;font-size:12px;color:var(--txt);cursor:pointer;outline:none;font-family:inherit}
-.sort-dir{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r3);padding:5px 10px;font-size:12px;color:var(--txt);cursor:pointer;outline:none;font-family:inherit}
+.sec{margin-bottom:24px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.sec-t{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+.sec-n{font-size:10px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:10px;padding:2px 8px}
 
 /* ALERT */
-.alert{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:var(--r2);margin-bottom:8px;font-size:13px;font-weight:500}
-.al-red{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red)}
-.al-yel{background:var(--yel-bg);border:1px solid var(--yel-bd);color:var(--yel)}
+.alert{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-radius:var(--r2);margin-bottom:8px;font-size:13px;font-weight:500;line-height:1.4}
+.al-r{background:var(--rbg);border:1px solid var(--rbd);color:var(--red)}
+.al-y{background:var(--ybg);border:1px solid var(--ybd);color:var(--yel)}
+
+/* SORT BAR */
+.sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sl{font-size:11px;color:var(--txt3);font-weight:600;white-space:nowrap}
+.ss{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r3);padding:5px 10px;font-size:12px;color:var(--txt);cursor:pointer;outline:none;font-family:var(--fnt)}
 
 /* CERT CARD */
-.cert-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:box-shadow .2s}
-.cert-card:hover{box-shadow:var(--sh2)}
-.cert-icon-wrap{width:42px;height:42px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.cert-body{flex:1;min-width:0}
-.cert-type{font-size:13px;font-weight:700;margin-bottom:2px}
-.cert-addr{font-size:11px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cert-meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.cc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:.2s}
+.cc:hover{box-shadow:var(--sh2)}
+.cc-ic{width:44px;height:44px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cc-body{flex:1;min-width:0}
+.cc-type{font-size:13px;font-weight:700;margin-bottom:2px}
+.cc-addr{font-size:11px;color:var(--txt3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
 .pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.p-valid{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.p-soon{background:var(--yel-bg);color:var(--yel);border:1px solid var(--yel-bd)}
-.p-exp{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
-.cert-dl{display:inline-flex;align-items:center;gap:4px;background:var(--acc);color:#fff;border:none;border-radius:var(--r3);padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.cert-dl:hover{background:var(--acc2)}
-.cert-dl.ghost{background:var(--s2);color:var(--txt3);border:1px solid var(--border)}
+.p-ok{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.p-s{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}
+.p-e{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.p-n{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
+.dl{display:inline-flex;align-items:center;gap:4px;background:var(--acc);color:#fff;border:none;border-radius:var(--r3);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:.15s;font-family:var(--fnt)}
+.dl:hover{background:var(--acc2)}
+.dl.g{background:var(--s2);color:var(--txt2);border:1px solid var(--border)}
+.dl.sm{padding:5px 10px;font-size:11px}
 
 /* JOB CARD */
-.job-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden}
-.job-card-hd{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.job-left{min-width:0;flex:1}
-.job-num{display:inline-block;font-size:10px;font-weight:700;color:var(--acc);font-family:ui-monospace,monospace;background:var(--acc-soft);padding:2px 7px;border-radius:4px;margin-bottom:6px}
-.job-addr{font-size:15px;font-weight:700;margin-bottom:3px;line-height:1.3}
-.job-desc{font-size:12px;color:var(--txt2);line-height:1.5}
-.job-strip{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--s2);border-top:1px solid var(--border);flex-wrap:wrap}
-.jchip{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--txt2);font-weight:500}
-.jchip-sep{color:var(--border2)}
-.job-body{padding:14px 16px;border-top:1px solid var(--border)}
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.b-pend{background:var(--yel-bg);color:var(--yel);border:1px solid var(--yel-bd)}
-.b-prog{background:var(--acc-soft);color:var(--acc);border:1px solid #bfdbfe}
-.b-done{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.b-inv{background:var(--pur-bg);color:var(--pur);border:1px solid var(--pur-bd)}
-.b-can{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
+.jc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden;transition:.2s}
+.jc:hover{box-shadow:var(--sh2)}
+.jc-hd{padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
+.jc-l{flex:1;min-width:0}
+.jc-num{display:inline-block;font-size:10px;font-weight:700;color:var(--acc);font-family:ui-monospace,monospace;background:var(--acc-soft);padding:2px 7px;border-radius:4px;margin-bottom:6px}
+.jc-addr{font-size:15px;font-weight:700;margin-bottom:3px;line-height:1.3}
+.jc-desc{font-size:12px;color:var(--txt2);line-height:1.5}
+.jc-strip{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--s2);border-top:1px solid var(--border);flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--txt2);font-weight:500}
+.chip-dot{color:var(--border2)}
+.jc-body{padding:14px 16px;border-top:1px solid var(--border)}
+.jbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.bp{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}
+.bi{background:var(--acc-soft);color:var(--acc);border:1px solid #bfdbfe}
+.bd{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.bv{background:var(--pbg);color:var(--pur);border:1px solid var(--pbd)}
+.bc{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
 
 /* INVOICE */
-.inv-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:box-shadow .2s}
-.inv-card:hover{box-shadow:var(--sh2)}
-.inv-icon{width:40px;height:40px;background:var(--pur-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.inv-body{flex:1;min-width:0}
-.inv-num{font-size:12px;font-weight:700;font-family:ui-monospace,monospace;margin-bottom:2px}
-.inv-desc{font-size:11px;color:var(--txt3)}
-.inv-right{text-align:right;white-space:nowrap;flex-shrink:0}
-.inv-amt{font-size:18px;font-weight:900}
-.inv-lbl{font-size:9px;color:var(--txt3);margin-top:2px}
+.ic{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:.2s}
+.ic:hover{box-shadow:var(--sh2)}
+.ic-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ic-body{flex:1;min-width:0}
+.ic-num{font-size:12px;font-weight:700;font-family:ui-monospace,monospace;margin-bottom:2px}
+.ic-desc{font-size:11px;color:var(--txt3)}
+.ic-r{text-align:right;flex-shrink:0}
+.ic-amt{font-size:18px;font-weight:900}
+.ic-lbl{font-size:9px;color:var(--txt3);margin-top:1px}
+
+/* BANK CARD */
+.bank-card{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);border-radius:var(--r2);padding:18px;color:#fff;margin-top:16px;position:relative;overflow:hidden}
+.bank-card::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%}
+.bank-title{font-size:10px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.bank-name{font-size:16px;font-weight:700;margin-bottom:6px}
+.bank-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px}
+.bank-field{font-size:12px;opacity:.75}
+.bank-field strong{font-size:13px;color:#fff;opacity:1}
+.bank-link{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:var(--r3);padding:6px 12px;font-size:12px;font-weight:600;color:#fff;margin-top:8px;cursor:pointer;word-break:break-all}
+
+/* REQUEST */
+.rc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:20px;box-shadow:var(--sh)}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fl{font-size:11px;font-weight:600;color:var(--txt2)}
+.fi{background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r2);padding:11px 13px;font-size:14px;color:var(--txt);outline:none;transition:.15s;font-family:var(--fnt);width:100%}
+.fi:focus{border-color:var(--acc);background:#fff}
+textarea.fi{resize:vertical;min-height:80px}
+select.fi{cursor:pointer}
+.fgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+@media(min-width:520px){.fgrid-2{grid-template-columns:1fr 1fr}}
+.fsub{background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:var(--fnt);margin-top:4px;transition:.15s}
+.fsub:hover{background:var(--acc2)}
+.fnote{font-size:11px;color:var(--txt3);text-align:center;margin-top:8px;line-height:1.5}
 
 /* COMING SOON */
-.coming-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.65}
-.coming-icon{width:38px;height:38px;background:var(--s3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.coming-body{flex:1}
-.coming-title{font-size:13px;font-weight:700;margin-bottom:2px}
-.coming-sub{font-size:11px;color:var(--txt3)}
-.coming-tag{font-size:9px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:20px;padding:3px 9px;white-space:nowrap;flex-shrink:0}
+.cs{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.6}
+.cs-ic{width:38px;height:38px;background:var(--s3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cs-body{flex:1}
+.cs-t{font-size:13px;font-weight:700;margin-bottom:2px}
+.cs-s{font-size:11px;color:var(--txt3)}
+.cs-tag{font-size:9px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:20px;padding:3px 9px;white-space:nowrap}
 
-/* FORM */
-.req-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
-.form-grid{display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:540px){.form-grid-2{grid-template-columns:1fr 1fr}}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-lbl{font-size:11px;font-weight:600;color:var(--txt2)}
-.form-inp{background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r2);padding:10px 12px;font-size:14px;color:var(--txt);outline:none;transition:border .15s;font-family:inherit;width:100%}
-.form-inp:focus{border-color:var(--acc);background:#fff}
-textarea.form-inp{resize:vertical;min-height:80px}
-select.form-inp{cursor:pointer}
-.form-submit{background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:6px;transition:background .15s;-webkit-tap-highlight-color:transparent}
-.form-submit:hover{background:var(--acc2)}
-.form-note{font-size:11px;color:var(--txt3);text-align:center;margin-top:8px}
-
-/* PROPERTY GROUP (for agencies/agents) */
-.prop-group{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
-.prop-group-hd{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.prop-group-addr{font-size:14px;font-weight:700}
-.prop-group-count{font-size:11px;color:var(--txt3)}
-.prop-group-body{padding:8px 16px}
+/* PROP GROUP (agencies) */
+.pg{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.pg-hd{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.pg-addr{font-size:13px;font-weight:700}
+.pg-meta{font-size:11px;color:var(--txt3)}
+.pg-body{padding:8px 12px}
 
 /* EMPTY */
-.empty{text-align:center;padding:40px 20px;color:var(--txt3)}
-.empty-icon{font-size:40px;margin-bottom:10px}
-.empty-title{font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:4px}
-.empty-sub{font-size:12px}
+.empty{text-align:center;padding:48px 20px;color:var(--txt3)}
+.ei{font-size:44px;margin-bottom:12px}
+.et{font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:5px}
+.es{font-size:12px;line-height:1.5}
+
+/* PHOTO */
+.pt{width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid var(--border);transition:.2s;flex-shrink:0}
+.pt:hover{transform:scale(1.06)}
+@media(min-width:400px){.pt{width:82px;height:82px}}
 
 /* FOOTER */
-.footer{text-align:center;padding:24px 20px;color:var(--txt3);font-size:11px;border-top:1px solid var(--border);margin-top:12px}
+.footer{text-align:center;padding:24px 16px;color:var(--txt3);font-size:11px;border-top:1px solid var(--border);margin-top:8px}
 
 /* SPINNER */
-.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;margin:80px auto}
-@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite;margin:80px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
 
 /* TOAST */
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh3)}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh3)}
 #toast.show{opacity:1}
 
 /* LIGHTBOX */
-#lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;display:none;align-items:center;justify-content:center}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;display:none;align-items:center;justify-content:center}
 #lb.show{display:flex}
-#lb img{max-width:92vw;max-height:88vh;border-radius:var(--r2);box-shadow:var(--sh3)}
-#lb-close{position:absolute;top:14px;right:18px;color:#fff;font-size:26px;cursor:pointer;font-weight:700;line-height:1}
-
-/* PHOTO */
-.photo-thumb{width:70px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid var(--border);transition:transform .2s;flex-shrink:0}
-.photo-thumb:hover{transform:scale(1.07)}
-@media(min-width:400px){.photo-thumb{width:80px;height:80px}}
+#lb img{max-width:94vw;max-height:90vh;border-radius:var(--r2);box-shadow:var(--sh3)}
+#lb-x{position:absolute;top:16px;right:18px;color:#fff;font-size:28px;cursor:pointer;font-weight:700;line-height:1;z-index:1}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div class="hdr-brand">
-    <div class="hdr-logo">DF</div>
-    <div class="hdr-name" id="hdr-co">DeepFlow</div>
+  <div class="hdr-l">
+    <div class="logo">DF</div>
+    <div class="hdr-co" id="hdr-co">DeepFlow</div>
   </div>
-  <div class="hdr-right">
+  <div class="hdr-r">
     <div class="hdr-client" id="hdr-name"></div>
-    <div class="hdr-badge" id="portal-badge">Portal</div>
+    <div class="badge" id="portal-badge">Portal</div>
   </div>
 </div>
 
 <div class="nav" id="nav" style="display:none">
-  <div class="nav-tab active" data-tab="overview"  onclick="switchTab('overview')">📊 Overview</div>
-  <div class="nav-tab"        data-tab="jobs"       onclick="switchTab('jobs')">🔧 Jobs</div>
-  <div class="nav-tab"        data-tab="certs"      onclick="switchTab('certs')">📋 Certificates</div>
-  <div class="nav-tab"        data-tab="invoices"   onclick="switchTab('invoices')">🧾 Invoices</div>
-  <div class="nav-tab"        data-tab="request"    onclick="switchTab('request')">➕ Request</div>
+  <div class="tab active" data-t="overview"  onclick="go('overview')">📊 Overview</div>
+  <div class="tab"        data-t="jobs"       onclick="go('jobs')">🔧 Jobs</div>
+  <div class="tab"        data-t="certs"      onclick="go('certs')">📋 Certificates</div>
+  <div class="tab"        data-t="invoices"   onclick="go('invoices')">🧾 Invoices</div>
+  <div class="tab"        data-t="payments"   onclick="go('payments')">💳 Payments</div>
+  <div class="tab"        data-t="docs"       onclick="go('docs')">📁 Documents</div>
+  <div class="tab"        data-t="request"    onclick="go('request')">➕ Request</div>
 </div>
 
-<div class="main" id="main-content">
-  <div class="spinner"></div>
-</div>
+<div class="main" id="main-content"><div class="spin"></div></div>
 
 <div class="footer">
-  <div style="font-weight:800;font-size:11px;letter-spacing:.5px">DEEPFLOW</div>
+  <div style="font-weight:900;font-size:12px;letter-spacing:.5px">DEEPFLOW</div>
   <div style="margin-top:4px">Secure Client Portal · <span id="footer-co"></span></div>
 </div>
 
 <div id="lb" onclick="closeLb()">
-  <div id="lb-close" onclick="closeLb()">✕</div>
+  <div id="lb-x" onclick="closeLb()">✕</div>
   <img id="lb-img" src="" alt="">
 </div>
 <div id="toast"></div>
 
 <script>
-// ── CORE ─────────────────────────────────────────────────────
 const SB_URL='https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 
@@ -253,487 +267,543 @@ async function sb(path,opts={}){
   if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function escA(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ea(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 function _fix(j){
   if(!j||typeof j!=='object')return j;
   const M={jobnum:'jobNum',certtypes:'certTypes',timeslot:'timeSlot',
     landlordname:'landlordName',agencyname:'agencyName',agentname:'agentName',
     issuedate:'issueDate',expirydate:'expiryDate',certnum:'certNum',
     noexpiry:'noExpiry',jobid:'jobId',clientname:'clientName',
-    duedate:'dueDate',createdat:'createdAt'};
+    duedate:'dueDate',createdat:'createdAt',bankname:'bankName',
+    bankacc:'bankAcc',banksort:'bankSort',bankref:'bankRef'};
   const r={};for(const[k,v]of Object.entries(j))r[M[k]||k]=v;return r;
 }
-function fmtDate(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}
-function fmtGBP(n){return'£'+(n||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function daysDiff(d){return Math.ceil((new Date(d)-new Date())/86400000)}
 
-// ── STATE ────────────────────────────────────────────────────
-let _d=null; // portal data
-let _certSort='expiry'; let _certDir='asc'; // sort state
+function dd(d){return d?Math.ceil((new Date(d)-new Date())/86400000):null}
+function fd(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}
+function fgbp(n){return'£'+(n||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function calcTotal(inv){const it=typeof inv.items==='string'?JSON.parse(inv.items||'[]'):(inv.items||[]);return it.reduce((s,x)=>s+(x.qty||1)*(x.unit||0),0);}
 
-const params=new URLSearchParams(location.search);
-const token=params.get('id');
-const ptype=params.get('type')||'landlord';
+let _d=null;
+let _cs='expiry',_cd='asc';
+const P=new URLSearchParams(location.search);
+const token=P.get('id'), ptype=P.get('type')||'landlord';
 
 // ── INIT ─────────────────────────────────────────────────────
 async function init(){
-  if(!token){showErr('Invalid Link','This portal link is invalid or has expired. Please contact your service provider.');return;}
+  if(!token){showErr('Invalid Link','This portal link is invalid or has expired.');return;}
   try{
     let entity,jobs=[],attachments=[],certs=[],invoices=[];
 
     if(ptype==='agency'){
       const rows=await sb(`agencies?id=eq.${encodeURIComponent(token)}&select=*`);
-      if(!rows?.length){showErr('Not Found','Link invalid or expired.');return;}
-      entity=rows[0];
-      document.getElementById('portal-badge').textContent='🏢 Agency';
+      if(!rows?.length){showErr('Not Found','This link is invalid or has expired.');return;}
+      entity=_fix(rows[0]);
+      document.getElementById('portal-badge').innerHTML='🏢 Agency';
       document.title=`${entity.name} — Portal`;
       const raw=await sb(`jobs?agencyname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
       jobs=(raw||[]).map(_fix);
+
     } else if(ptype==='agent'){
-      // Agent: look up from agents table, then match jobs by agentname
-      const rows=await sb(`agents?id=eq.${encodeURIComponent(token)}&select=*`);
-      if(!rows?.length){showErr('Not Found','Link invalid or expired.');return;}
-      entity=rows[0];
-      document.getElementById('portal-badge').textContent='👤 Agent';
+      // AGENT: must use a Supabase function or anon-accessible query
+      // The agents table has no anon read policy — we use a special lookup via jobs table
+      // by matching agentname directly. We identify the agent from the token stored in the
+      // agents.id column, but need the name first. We fetch via service-key bypass using
+      // the jobs table directly with agentid matching — but agents has no anon policy.
+      // FIX: Store agent name in the portal URL via a separate lookup approach.
+      // The portal URL is: ?id=AGENT_ID&type=agent
+      // Since agents table blocks anon reads, we need another way.
+      // SOLUTION: Fetch all jobs where the agentid field matches, and extract name from those.
+      // OR: Use the persons table (agent as a role) if stored there.
+      // ACTUAL FIX: Use anon-accessible endpoint — match via persons table if agent is stored there,
+      // OR we create a public view. For now: jobs table is readable (anon policy exists on jobs),
+      // so we can find the agent's name by looking up jobs with this agent's id as a special field.
+      // BEST SOLUTION: Agents portal uses agentname stored in URL param &name=
+      // The office generates link as ?id=AGENT_ID&type=agent&name=John+Smith
+      // Here we use the name param directly to fetch jobs:
+      const agentName=P.get('name');
+      if(!agentName){showErr('Invalid Link','Agent portal link is missing name parameter. Please regenerate the link from the office.');return;}
+      entity={name:decodeURIComponent(agentName),type:'agent',id:token};
+      document.getElementById('portal-badge').innerHTML='👤 Agent';
       document.title=`${entity.name} — Portal`;
       const raw=await sb(`jobs?agentname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
       jobs=(raw||[]).map(_fix);
+
     } else {
-      // Landlord (default)
+      // LANDLORD: persons table has anon read policy
       const rows=await sb(`persons?id=eq.${encodeURIComponent(token)}&select=*`);
-      if(!rows?.length){showErr('Not Found','Link invalid or expired. Contact your service provider.');return;}
-      entity=rows[0];
-      document.getElementById('portal-badge').textContent='🏠 Landlord';
+      if(!rows?.length){showErr('Not Found','This link is invalid or has expired. Contact your service provider.');return;}
+      entity=_fix(rows[0]);
+      document.getElementById('portal-badge').innerHTML='🏠 Landlord';
       document.title=`${entity.name} — Portal`;
       const raw=await sb(`jobs?landlordname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
       jobs=(raw||[]).map(_fix);
     }
 
-    // Parallel fetch for all related data
     if(jobs.length){
-      const idList=jobs.map(j=>`"${j.id}"`).join(',');
-      const nameLower=(entity.name||'').toLowerCase();
-      const [rawAtts,rawCerts,rawInvs]=await Promise.all([
-        sb(`attachments?jobid=in.(${idList})&select=*`).catch(()=>[]),
-        sb(`certs?jobid=in.(${idList})&select=*`).catch(()=>[]),
-        sb(`invoices?select=id,number,status,items,createdat,date,clientname,landlordname,agencyname,agentname`).catch(()=>[]),
+      const idL=jobs.map(j=>`"${j.id}"`).join(',');
+      const nL=(entity.name||'').toLowerCase();
+      const [ra,rc,ri]=await Promise.all([
+        sb(`attachments?jobid=in.(${idL})&select=*`).catch(()=>[]),
+        sb(`certs?jobid=in.(${idL})&select=*`).catch(()=>[]),
+        sb(`invoices?select=id,number,status,items,createdat,date,clientname,landlordname,agencyname,agentname,duedate`).catch(()=>[]),
       ]);
-      attachments=(rawAtts||[]).map(_fix);
-      certs=(rawCerts||[]).map(_fix);
-      invoices=(rawInvs||[]).map(_fix).filter(inv=>{
+      attachments=(ra||[]).map(_fix);
+      certs=(rc||[]).map(_fix);
+      invoices=(ri||[]).map(_fix).filter(inv=>{
         const n=(inv.clientName||inv.landlordName||inv.agencyName||inv.agentName||'').toLowerCase();
-        return n===nameLower||n.includes(nameLower);
+        return n===nL||n.includes(nL);
       });
     }
 
-    // Company name from settings
     let coName='Your Service Provider';
     try{
       const s=await sb(`app_settings?select=value&key=eq.settings`);
-      if(s?.[0]?.value){const sd=typeof s[0].value==='string'?JSON.parse(s[0].value):s[0].value;if(sd.coName)coName=sd.coName;}
-    }catch(e){}
+      if(s?.[0]?.value){const d=typeof s[0].value==='string'?JSON.parse(s[0].value):s[0].value;if(d.coName)coName=d.coName;}
+    }catch(_){}
 
     document.getElementById('hdr-co').textContent=coName;
     document.getElementById('hdr-name').textContent=entity.name;
     document.getElementById('footer-co').textContent=coName;
 
-    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,token,coName};
+    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,token,coName,entity};
     document.getElementById('nav').style.display='flex';
-    switchTab('overview');
+    go('overview');
   }catch(err){
     console.error(err);
-    showErr('Connection Error','Could not load your portal. Please check your connection and try again.');
+    showErr('Connection Error','Could not load your portal. Please check your internet connection and try again.');
   }
 }
 
-// ── TABS ─────────────────────────────────────────────────────
-function switchTab(tab){
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  const fn={overview:renderOverview,jobs:renderJobs,certs:renderCerts,invoices:renderInvoices,request:renderRequest};
-  if(fn[tab])fn[tab](_d);
+// ── TAB ──────────────────────────────────────────────────────
+function go(t){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
+  const fn={overview:vOverview,jobs:vJobs,certs:vCerts,invoices:vInvoices,payments:vPayments,docs:vDocs,request:vRequest};
+  if(fn[t])fn[t](_d);
 }
 
 // ── OVERVIEW ─────────────────────────────────────────────────
-function renderOverview(d){
-  const today=new Date();
+function vOverview(d){
   const done=d.jobs.filter(j=>j.status==='Completed').length;
   const active=d.jobs.filter(j=>j.status==='Pending'||j.status==='In Progress').length;
-  const certs30=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&daysDiff(c.expiryDate)>=0&&daysDiff(c.expiryDate)<=30).length;
-  const certs60=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&daysDiff(c.expiryDate)>30&&daysDiff(c.expiryDate)<=60).length;
-  const certsExp=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&daysDiff(c.expiryDate)<0).length;
+  const cExp=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<0).length;
+  const c30=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)>=0&&dd(c.expiryDate)<=30).length;
+  const c60=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)>30&&dd(c.expiryDate)<=60).length;
+  const cOk=d.certs.filter(c=>c.noExpiry||!c.expiryDate||dd(c.expiryDate)>60).length;
   const outstanding=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
-  const outTotal=outstanding.reduce((s,i)=>s+calcInvTotal(i),0);
+  const outTotal=outstanding.reduce((s,i)=>s+calcTotal(i),0);
 
-  // Expiry alerts
-  const alerts=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&daysDiff(c.expiryDate)<=60)
-    .sort((a,b)=>daysDiff(a.expiryDate)-daysDiff(b.expiryDate)).slice(0,4);
-  const alertsHtml=alerts.map(c=>{
-    const diff=daysDiff(c.expiryDate);
-    const cls=diff<0?'al-red':'al-yel';
-    const txt=diff<0?`Expired ${Math.abs(diff)} day${Math.abs(diff)!==1?'s':''} ago`:`Expires in ${diff} day${diff!==1?'s':''}`;
-    return`<div class="alert ${cls}"><span>⚠️</span><span><strong>${esc(c.type)}</strong> · ${esc(c.address||'Property')} · ${txt}</span></div>`;
-  }).join('');
+  const alerts=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=60)
+    .sort((a,b)=>dd(a.expiryDate)-dd(b.expiryDate)).slice(0,4)
+    .map(c=>{const df=dd(c.expiryDate);const cls=df<0?'al-r':'al-y';
+      return`<div class="alert ${cls}"><span>⚠️</span><div><strong>${e(c.type)}</strong> · ${e(c.address||'Property')} · ${df<0?`Expired ${Math.abs(df)}d ago`:`Expires in ${df}d`}</div></div>`;
+    }).join('');
 
-  // Recent jobs
-  const recentJobs=d.jobs.slice(0,3).map(j=>jobCardHtml(j,d)).join('');
-  const recentCerts=d.certs.slice(0,3).map(c=>certCardHtml(c,d)).join('');
+  const typeLabel=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
+  const eg=d.type==='agency'||d.type==='agent';
+  const bankHtml=bankCard(d.entity);
 
   document.getElementById('main-content').innerHTML=`
     <div class="hero">
-      <div class="hero-badge">✦ SECURE CLIENT PORTAL</div>
-      <div class="hero-title">Welcome, ${esc(d.name)}</div>
-      <div class="hero-sub">Live overview of your properties, jobs &amp; certificates with ${esc(d.coName)}.</div>
-      <div class="hero-btns">
-        <button class="hbtn primary" onclick="switchTab('request')">➕ Request a Job</button>
-        <button class="hbtn" onclick="switchTab('certs')">📋 Certificates</button>
-        <button class="hbtn" onclick="switchTab('invoices')">🧾 Invoices</button>
+      <div class="hero-eyebrow">✦ ${typeLabel} Portal</div>
+      <div class="hero-name">Welcome, ${e(d.name)}</div>
+      <div class="hero-sub">Live overview of all your ${eg?'managed ':''}properties, jobs &amp; certificates with ${e(d.coName)}.</div>
+      <div class="hero-row">
+        <button class="hbtn primary" onclick="go('request')">➕ New Request</button>
+        <button class="hbtn" onclick="go('certs')">📋 Certificates</button>
+        <button class="hbtn" onclick="go('invoices')">🧾 Invoices</button>
+        ${bankHtml?`<button class="hbtn" onclick="go('payments')">💳 Payments</button>`:''}
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat st-blue"><div class="stat-icon">🔧</div><div><div class="stat-val">${d.jobs.length}</div><div class="stat-lbl">Total Jobs</div></div></div>
-      <div class="stat st-green"><div class="stat-icon">✅</div><div><div class="stat-val">${done}</div><div class="stat-lbl">Completed</div></div></div>
-      <div class="stat st-yel"><div class="stat-icon">⏳</div><div><div class="stat-val">${active}</div><div class="stat-lbl">Active</div></div></div>
-      <div class="stat st-red"><div class="stat-icon">⚠️</div><div><div class="stat-val">${certsExp+certs30}</div><div class="stat-lbl">Cert Alerts</div></div></div>
+      <div class="stat sa"><div class="stat-ic">🔧</div><div><div class="stat-val">${d.jobs.length}</div><div class="stat-lbl">Total Jobs</div></div></div>
+      <div class="stat sb"><div class="stat-ic">✅</div><div><div class="stat-val">${done}</div><div class="stat-lbl">Completed</div></div></div>
+      <div class="stat sc"><div class="stat-ic">⏳</div><div><div class="stat-val">${active}</div><div class="stat-lbl">Active</div></div></div>
+      <div class="stat sd"><div class="stat-ic">⚠️</div><div><div class="stat-val">${cExp+c30}</div><div class="stat-lbl">Cert Alerts</div></div></div>
     </div>
 
-    ${(certs30||certs60||certsExp)?`
-    <div class="cert-expiry-widget">
-      <div class="cew-hd">
-        <div class="cew-title">📋 Certificate Expiry</div>
-        <button class="cert-dl ghost" style="padding:5px 10px;font-size:11px" onclick="switchTab('certs')">View all →</button>
-      </div>
-      <div class="cew-bars">
-        <div class="cew-bar" style="background:var(--red-bg);border:1px solid var(--red-bd)" onclick="switchTab('certs')">
-          <div class="cew-num" style="color:var(--red)">${certsExp}</div>
-          <div class="cew-lbl" style="color:var(--red)">Expired</div>
-        </div>
-        <div class="cew-bar" style="background:var(--yel-bg);border:1px solid var(--yel-bd)" onclick="switchTab('certs')">
-          <div class="cew-num" style="color:var(--yel)">${certs30}</div>
-          <div class="cew-lbl" style="color:var(--yel)">Within 30 days</div>
-        </div>
-        <div class="cew-bar" style="background:var(--s2);border:1px solid var(--border)" onclick="switchTab('certs')">
-          <div class="cew-num" style="color:var(--txt2)">${certs60}</div>
-          <div class="cew-lbl" style="color:var(--txt3)">31–60 days</div>
-        </div>
+    ${(cExp||c30||c60)?`
+    <div class="cew">
+      <div class="cew-hd"><div class="cew-title">📋 Certificate Expiry Status</div><button class="dl g sm" onclick="go('certs')">View all →</button></div>
+      <div class="cew-grid">
+        <div class="cew-box cew-exp" onclick="go('certs')"><div class="cew-n">${cExp}</div><div class="cew-l">Expired</div></div>
+        <div class="cew-box cew-s30" onclick="go('certs')"><div class="cew-n">${c30}</div><div class="cew-l">Due within 30 days</div></div>
+        <div class="cew-box cew-ok" onclick="go('certs')"><div class="cew-n">${cOk}</div><div class="cew-l">Valid</div></div>
       </div>
     </div>`:''}
 
-    ${alertsHtml?`<div class="sec">${alertsHtml}</div>`:''}
+    ${alerts?`<div class="sec">${alerts}</div>`:''}
 
     ${outstanding.length?`
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">🧾 Outstanding Balance</div></div>
-      <div class="inv-card" style="cursor:pointer" onclick="switchTab('invoices')">
-        <div class="inv-icon">💷</div>
-        <div class="inv-body"><div class="inv-num">${outstanding.length} invoice${outstanding.length!==1?'s':''} outstanding</div><div class="inv-desc">Tap to view &amp; download</div></div>
-        <div class="inv-right"><div class="inv-amt" style="color:var(--red)">${fmtGBP(outTotal)}</div><div class="inv-lbl">OUTSTANDING</div></div>
+      <div class="sec-hd"><div class="sec-t">🧾 Outstanding Balance</div></div>
+      <div class="ic" style="cursor:pointer" onclick="go('invoices')">
+        <div class="ic-ic" style="background:var(--rbg)">💷</div>
+        <div class="ic-body"><div class="ic-num">${outstanding.length} invoice${outstanding.length!==1?'s':''} outstanding</div><div class="ic-desc">Tap to view details</div></div>
+        <div class="ic-r"><div class="ic-amt" style="color:var(--red)">${fgbp(outTotal)}</div><div class="ic-lbl">OUTSTANDING</div></div>
       </div>
     </div>`:''}
 
     <div class="sec">
       <div class="sec-hd">
-        <div class="sec-title">🔧 Recent Jobs</div>
-        ${d.jobs.length>3?`<button class="cert-dl ghost" style="padding:5px 10px;font-size:11px" onclick="switchTab('jobs')">All ${d.jobs.length} →</button>`:''}
+        <div class="sec-t">🔧 Recent Jobs</div>
+        ${d.jobs.length>3?`<button class="dl g sm" onclick="go('jobs')">All ${d.jobs.length} →</button>`:''}
       </div>
-      ${recentJobs||`<div class="empty"><div class="empty-icon">🔧</div><div class="empty-title">No jobs yet</div></div>`}
+      ${d.jobs.slice(0,3).map(j=>jobCard(j,d)).join('')||emptyHtml('🔧','No jobs yet','Jobs will appear here once scheduled')}
     </div>
 
-    ${recentCerts?`
+    ${d.certs.length?`
     <div class="sec">
       <div class="sec-hd">
-        <div class="sec-title">📋 Certificates</div>
-        ${d.certs.length>3?`<button class="cert-dl ghost" style="padding:5px 10px;font-size:11px" onclick="switchTab('certs')">All ${d.certs.length} →</button>`:''}
+        <div class="sec-t">📋 Certificates</div>
+        ${d.certs.length>3?`<button class="dl g sm" onclick="go('certs')">All ${d.certs.length} →</button>`:''}
       </div>
-      ${recentCerts}
+      ${d.certs.slice(0,3).map(c=>certCard(c,d)).join('')}
     </div>`:''}
   `;
 }
 
 // ── JOBS ─────────────────────────────────────────────────────
-function renderJobs(d){
-  // For agencies/agents: group by property address
-  const isGrouped=(d.type==='agency'||d.type==='agent')&&d.jobs.length>3;
+function vJobs(d){
+  const isGrouped=d.jobs.length>4&&(d.type==='agency'||d.type==='agent');
   let html='';
   if(isGrouped){
-    const byAddr={};
-    d.jobs.forEach(j=>{const k=j.address||'Unknown';if(!byAddr[k])byAddr[k]=[];byAddr[k].push(j);});
-    html=Object.entries(byAddr).map(([addr,jobs])=>`
-      <div class="prop-group">
-        <div class="prop-group-hd" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-          <div class="prop-group-addr">🏠 ${esc(addr)}</div>
-          <div class="prop-group-count">${jobs.length} job${jobs.length!==1?'s':''}</div>
+    const byA={};
+    d.jobs.forEach(j=>{const k=j.address||'?';if(!byA[k])byA[k]=[];byA[k].push(j);});
+    html=Object.entries(byA).map(([addr,js])=>`
+      <div class="pg">
+        <div class="pg-hd" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div class="pg-addr">🏠 ${e(addr)}</div>
+          <div class="pg-meta">${js.length} job${js.length!==1?'s':''} ›</div>
         </div>
-        <div class="prop-group-body">${jobs.map(j=>jobCardHtml(j,d)).join('')}</div>
+        <div class="pg-body">${js.map(j=>jobCard(j,d)).join('')}</div>
       </div>`).join('');
-  } else {
-    html=d.jobs.map(j=>jobCardHtml(j,d)).join('');
+  }else{
+    html=d.jobs.map(j=>jobCard(j,d)).join('');
   }
   document.getElementById('main-content').innerHTML=`
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">🔧 All Jobs <span class="sec-count">${d.jobs.length}</span></div></div>
-      ${html||`<div class="empty"><div class="empty-icon">🔧</div><div class="empty-title">No jobs yet</div><div class="empty-sub">Jobs will appear here once scheduled</div></div>`}
+      <div class="sec-hd"><div class="sec-t">🔧 All Jobs <span class="sec-n">${d.jobs.length}</span></div></div>
+      ${html||emptyHtml('🔧','No jobs yet','Jobs will appear here once scheduled')}
     </div>`;
 }
 
-function jobCardHtml(j,d){
+function jobCard(j,d){
   const atts=d.attachments.filter(a=>a.jobId===j.id);
-  const jcerts=d.certs.filter(c=>c.jobId===j.id);
+  const jc=d.certs.filter(c=>c.jobId===j.id);
   const photos=atts.filter(a=>a.type==='photo'||/\.(jpg|jpeg|png|webp|gif)/i.test(a.url||''));
   const docs=atts.filter(a=>!photos.includes(a));
-  const hasBody=photos.length||jcerts.length||docs.length;
-  const dateStr=fmtDate(j.date);
-  const certTypesStr=(j.certTypes||[]).join(', ');
-  return`<div class="job-card">
-    <div class="job-card-hd">
-      <div class="job-left">
-        <div class="job-num">${esc(j.jobNum||'—')}</div>
-        <div class="job-addr">${esc(j.address||'—')}</div>
-        ${j.description?`<div class="job-desc">${esc(j.description)}</div>`:''}
+  const hasBody=photos.length||jc.length||docs.length;
+  const ds=fd(j.date);
+  return`<div class="jc">
+    <div class="jc-hd">
+      <div class="jc-l">
+        <div class="jc-num">${e(j.jobNum||'—')}</div>
+        <div class="jc-addr">${e(j.address||'—')}</div>
+        ${j.description?`<div class="jc-desc">${e(j.description)}</div>`:''}
       </div>
-      ${statusBadge(j.status)}
+      ${jsBadge(j.status)}
     </div>
-    <div class="job-strip">
-      ${dateStr?`<span class="jchip">📅 ${dateStr}</span>`:''}
-      ${dateStr&&j.engineer?'<span class="jchip-sep">·</span>':''}
-      ${j.engineer?`<span class="jchip">👷 ${esc(j.engineer)}</span>`:''}
-      ${certTypesStr?`<span class="jchip-sep">·</span><span class="jchip">📋 ${esc(certTypesStr)}</span>`:''}
-      ${j.timeSlot?`<span class="jchip-sep">·</span><span class="jchip">🕐 ${esc(j.timeSlot)}</span>`:''}
+    <div class="jc-strip">
+      ${ds?`<span class="chip">📅 ${ds}</span>`:''}
+      ${ds&&j.engineer?'<span class="chip-dot">·</span>':''}
+      ${j.engineer?`<span class="chip">👷 ${e(j.engineer)}</span>`:''}
+      ${(j.certTypes||[]).length?`<span class="chip-dot">·</span><span class="chip">📋 ${e(j.certTypes.join(', '))}</span>`:''}
+      ${j.timeSlot?`<span class="chip-dot">·</span><span class="chip">🕐 ${e(j.timeSlot)}</span>`:''}
     </div>
-    ${hasBody?`<div class="job-body">
-      ${photos.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:${jcerts.length||docs.length?12:0}px">${photos.map(p=>`<img class="photo-thumb" src="${escA(p.url)}" onclick="openLb('${escA(p.url)}')">`).join('')}</div>`:''}
-      ${jcerts.map(c=>{
-        const exp=c.expiryDate&&!c.noExpiry?new Date(c.expiryDate):null;
-        const diff=exp?daysDiff(c.expiryDate):null;
-        const pc=exp?(diff<0?'p-exp':diff<=60?'p-soon':'p-valid'):'p-valid';
-        const et=exp?(diff<0?`Expired ${Math.abs(diff)}d ago`:`Exp. ${new Date(c.expiryDate).toLocaleDateString('en-GB')}`):''
+    ${hasBody?`<div class="jc-body">
+      ${photos.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${photos.map(p=>`<img class="pt" src="${ea(p.url)}" onclick="openLb('${ea(p.url)}')" loading="lazy">`).join('')}</div>`:''}
+      ${jc.map(c=>{const df=!c.noExpiry&&c.expiryDate?dd(c.expiryDate):null;const pc=df===null?'p-n':df<0?'p-e':df<=60?'p-s':'p-ok';
         return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
           <span>📄</span>
-          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">${esc(c.type||'Cert')}</div><div style="font-size:10px;color:var(--txt3)">${et}</div></div>
-          <span class="pill ${pc}">${diff!==null?(diff<0?'Expired':'Valid'):'Valid'}</span>
-          ${c.url?`<a href="${escA(c.url)}" target="_blank" class="cert-dl" style="padding:5px 10px;font-size:11px">⬇</a>`:''}
-        </div>`;
-      }).join('')}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600">${e(c.type||'Certificate')}</div>
+            <div style="font-size:10px;color:var(--txt3)">${df!==null?(df<0?`Expired ${Math.abs(df)}d ago`:`Expires ${new Date(c.expiryDate).toLocaleDateString('en-GB')}`):c.noExpiry?'No expiry':''}</div>
+          </div>
+          <span class="pill ${pc}">${df!==null?(df<0?'Expired':'Valid'):c.noExpiry?'No expiry':'Valid'}</span>
+          ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl sm">⬇</a>`:''}
+        </div>`;}).join('')}
       ${docs.map(doc=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
         <span>📎</span>
-        <div style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(doc.name||'Document')}</div>
-        ${doc.url?`<a href="${escA(doc.url)}" target="_blank" class="cert-dl" style="padding:5px 10px;font-size:11px">⬇</a>`:''}
+        <div style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(doc.name||'Document')}</div>
+        ${doc.url?`<a href="${ea(doc.url)}" target="_blank" class="dl sm">⬇</a>`:''}
       </div>`).join('')}
     </div>`:''}
   </div>`;
 }
 
-// ── CERTS ────────────────────────────────────────────────────
-function renderCerts(d){
-  const SORT_OPTS=[
-    {v:'expiry',l:'Expiry Date'},
-    {v:'type',l:'Cert Type'},
-    {v:'address',l:'Address'},
-    {v:'status',l:'Status'},
-    {v:'certnum',l:'Cert Number'},
-    {v:'issuedate',l:'Issue Date'},
-  ];
+// ── CERTS ─────────────────────────────────────────────────────
+function vCerts(d){
+  const OPTS=[{v:'expiry',l:'Expiry Date'},{v:'status',l:'Status (urgent first)'},{v:'type',l:'Cert Type'},{v:'address',l:'Address'},{v:'certnum',l:'Cert Number'},{v:'issuedate',l:'Issue Date'}];
   const sorted=sortCerts([...d.certs]);
-
   document.getElementById('main-content').innerHTML=`
     <div class="sec">
-      <div class="sec-hd">
-        <div class="sec-title">📋 Certificates <span class="sec-count">${d.certs.length}</span></div>
-      </div>
+      <div class="sec-hd"><div class="sec-t">📋 Certificates <span class="sec-n">${d.certs.length}</span></div></div>
       <div class="sort-bar">
-        <span class="sort-lbl">Sort by:</span>
-        <select class="sort-sel" id="cert-sort-by" onchange="_certSort=this.value;renderCerts(_d)">
-          ${SORT_OPTS.map(o=>`<option value="${o.v}" ${_certSort===o.v?'selected':''}>${o.l}</option>`).join('')}
+        <span class="sl">Sort:</span>
+        <select class="ss" onchange="_cs=this.value;vCerts(_d)">
+          ${OPTS.map(o=>`<option value="${o.v}"${_cs===o.v?' selected':''}>${o.l}</option>`).join('')}
         </select>
-        <select class="sort-dir" id="cert-sort-dir" onchange="_certDir=this.value;renderCerts(_d)">
-          <option value="asc" ${_certDir==='asc'?'selected':''}>↑ Ascending</option>
-          <option value="desc" ${_certDir==='desc'?'selected':''}>↓ Descending</option>
+        <select class="ss" onchange="_cd=this.value;vCerts(_d)">
+          <option value="asc"${_cd==='asc'?' selected':''}>↑ Ascending</option>
+          <option value="desc"${_cd==='desc'?' selected':''}>↓ Descending</option>
         </select>
       </div>
-      ${sorted.length
-        ?sorted.map(c=>certCardHtml(c,d)).join('')
-        :`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No certificates on record</div><div class="empty-sub">Certificates will appear here after inspections are completed</div></div>`
-      }
+      ${sorted.length?sorted.map(c=>certCard(c,d)).join('')
+        :emptyHtml('📋','No certificates','Certificates will appear here after inspections')}
     </div>
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">📥 Coming Soon</div></div>
-      ${comingSoon('📦 Document Archive','All compliance docs in one place','v2')}
-      ${comingSoon('📊 Compliance Report','Full property compliance PDF','v2')}
+      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
+      ${cs('📦','Document Archive','All compliance docs, searchable and downloadable')}
+      ${cs('📊','Compliance Report PDF','Full property compliance overview, auto-generated')}
     </div>`;
 }
 
-function sortCerts(certs){
-  const FAR_FUTURE=new Date('2099-01-01');
-  return certs.sort((a,b)=>{
-    let va,vb;
-    if(_certSort==='expiry'){
-      va=a.noExpiry||!a.expiryDate?FAR_FUTURE:new Date(a.expiryDate);
-      vb=b.noExpiry||!b.expiryDate?FAR_FUTURE:new Date(b.expiryDate);
-      return _certDir==='asc'?va-vb:vb-va;
-    }
-    if(_certSort==='type'){va=(a.type||'').toLowerCase();vb=(b.type||'').toLowerCase();}
-    else if(_certSort==='address'){va=(a.address||'').toLowerCase();vb=(b.address||'').toLowerCase();}
-    else if(_certSort==='certnum'){va=(a.certNum||'').toLowerCase();vb=(b.certNum||'').toLowerCase();}
-    else if(_certSort==='issuedate'){
-      va=a.issueDate?new Date(a.issueDate):new Date(0);
-      vb=b.issueDate?new Date(b.issueDate):new Date(0);
-      return _certDir==='asc'?va-vb:vb-va;
-    }
-    else if(_certSort==='status'){
-      const order={exp:0,soon:1,valid:2,noexp:3};
-      const rankC=c=>{if(!c.expiryDate||c.noExpiry)return 3;const d=daysDiff(c.expiryDate);return d<0?0:d<=60?1:2;};
-      va=rankC(a);vb=rankC(b);
-    }
-    if(va===undefined)return 0;
-    const cmp=va<vb?-1:va>vb?1:0;
-    return _certDir==='asc'?cmp:-cmp;
+function sortCerts(a){
+  const FAR=new Date('2099-01-01');
+  return a.sort((x,y)=>{
+    let vx,vy;
+    if(_cs==='expiry'){vx=x.noExpiry||!x.expiryDate?FAR:new Date(x.expiryDate);vy=y.noExpiry||!y.expiryDate?FAR:new Date(y.expiryDate);return _cd==='asc'?vx-vy:vy-vx;}
+    if(_cs==='type'){vx=(x.type||'').toLowerCase();vy=(y.type||'').toLowerCase();}
+    else if(_cs==='address'){vx=(x.address||'').toLowerCase();vy=(y.address||'').toLowerCase();}
+    else if(_cs==='certnum'){vx=(x.certNum||'').toLowerCase();vy=(y.certNum||'').toLowerCase();}
+    else if(_cs==='issuedate'){vx=x.issueDate?new Date(x.issueDate):new Date(0);vy=y.issueDate?new Date(y.issueDate):new Date(0);return _cd==='asc'?vx-vy:vy-vx;}
+    else if(_cs==='status'){const r=c=>!c.expiryDate||c.noExpiry?3:dd(c.expiryDate)<0?0:dd(c.expiryDate)<=30?1:dd(c.expiryDate)<=60?2:4;vx=r(x);vy=r(y);}
+    if(vx===undefined)return 0;const c=vx<vy?-1:vx>vy?1:0;return _cd==='asc'?c:-c;
   });
 }
 
-function certCardHtml(c,d){
-  const iconMap={Gas:'🔥',EICR:'⚡',PAT:'🔌',EPC:'🏠',Fire:'🚒',Boiler:'🔧',Legionella:'💧',Asbestos:'⚗️'};
-  const icon=Object.entries(iconMap).find(([k])=>(c.type||'').includes(k))?.[1]||'📄';
-  const diff=(!c.noExpiry&&c.expiryDate)?daysDiff(c.expiryDate):null;
-  const isExp=diff!==null&&diff<0;
-  const isSoon=diff!==null&&diff>=0&&diff<=60;
-  const pillCls=isExp?'p-exp':isSoon?'p-soon':'p-valid';
-  const pillTxt=isExp?`Expired ${Math.abs(diff)}d ago`:isSoon?`${diff}d left`:'Valid';
-  const expLine=!c.noExpiry&&c.expiryDate?`Exp. ${new Date(c.expiryDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`:c.noExpiry?'No expiry':'';
-  const jobForCert=d.jobs.find(j=>j.id===c.jobId);
-  return`<div class="cert-card">
-    <div class="cert-icon-wrap">${icon}</div>
-    <div class="cert-body">
-      <div class="cert-type">${esc(c.type||'Certificate')}</div>
-      <div class="cert-addr">${esc(c.address||(jobForCert?.address)||'—')}</div>
-      <div class="cert-meta">
-        <span class="pill ${pillCls}">${pillTxt}</span>
-        ${expLine?`<span style="font-size:10px;color:var(--txt3)">${expLine}</span>`:''}
-        ${c.certNum?`<span style="font-size:10px;color:var(--txt3)">Ref: ${esc(c.certNum)}</span>`:''}
+function certCard(c,d){
+  const IC={Gas:'🔥',EICR:'⚡',PAT:'🔌',EPC:'🏠',Fire:'🚒',Boiler:'🔧',Legionella:'💧',Asbestos:'⚗️'};
+  const ic=Object.entries(IC).find(([k])=>(c.type||'').includes(k))?.[1]||'📄';
+  const df=!c.noExpiry&&c.expiryDate?dd(c.expiryDate):null;
+  const isE=df!==null&&df<0,isS=df!==null&&df>=0&&df<=60;
+  const pc=isE?'p-e':isS?'p-s':df===null?'p-n':'p-ok';
+  const pt=isE?`Exp. ${Math.abs(df)}d ago`:isS?`${df}d left`:c.noExpiry?'No expiry':'Valid';
+  const jf=d.jobs.find(j=>j.id===c.jobId);
+  return`<div class="cc">
+    <div class="cc-ic">${ic}</div>
+    <div class="cc-body">
+      <div class="cc-type">${e(c.type||'Certificate')}</div>
+      <div class="cc-addr">${e(c.address||(jf?.address)||'—')}</div>
+      <div class="cc-meta">
+        <span class="pill ${pc}">${pt}</span>
+        ${!c.noExpiry&&c.expiryDate?`<span style="font-size:10px;color:var(--txt3)">Exp. ${new Date(c.expiryDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>`:''}
+        ${c.certNum?`<span style="font-size:10px;color:var(--txt3)">Ref: ${e(c.certNum)}</span>`:''}
       </div>
     </div>
-    ${c.url?`<a href="${escA(c.url)}" target="_blank" class="cert-dl">⬇ Download</a>`
-      :`<span class="cert-dl ghost" style="cursor:default;opacity:.5">No PDF</span>`}
+    ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl">⬇ Download</a>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
   </div>`;
 }
 
 // ── INVOICES ─────────────────────────────────────────────────
-function renderInvoices(d){
+function vInvoices(d){
   const sorted=[...d.invoices].sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
   const rows=sorted.map(inv=>{
-    const total=calcInvTotal(inv);
-    const isPaid=inv.status==='Paid';
-    const isCan=inv.status==='Cancelled';
-    const bp=isPaid?'p-valid':isCan?'':'p-soon';
-    const bt=isPaid?'Paid':isCan?'Cancelled':'Awaiting';
-    const dateStr=inv.createdAt?fmtDate(inv.createdAt.slice(0,10)):fmtDate(inv.date);
-    return`<div class="inv-card">
-      <div class="inv-icon">🧾</div>
-      <div class="inv-body">
-        <div class="inv-num">${esc(inv.number||inv.id?.slice(0,8)||'—')}</div>
-        <div class="inv-desc">${dateStr} · <span class="pill ${bp}" style="font-size:10px">${bt}</span></div>
+    const t=calcTotal(inv);
+    const paid=inv.status==='Paid',can=inv.status==='Cancelled';
+    const ds=inv.createdAt?fd(inv.createdAt.slice(0,10)):fd(inv.date);
+    const due=inv.dueDate?`Due ${fd(inv.dueDate)}`:'';
+    return`<div class="ic">
+      <div class="ic-ic" style="background:${paid?'var(--gbg)':can?'var(--s3)':'var(--pbg)'}">🧾</div>
+      <div class="ic-body">
+        <div class="ic-num">${e(inv.number||inv.id?.slice(0,8)||'—')}</div>
+        <div class="ic-desc">${ds}${due?' · '+due:''} · <span class="pill ${paid?'p-ok':can?'p-n':'p-s'}" style="font-size:9px">${paid?'Paid':can?'Cancelled':'Awaiting'}</span></div>
       </div>
-      <div class="inv-right">
-        <div class="inv-amt" style="color:${isPaid?'var(--green)':isCan?'var(--txt3)':'var(--red)'}">${fmtGBP(total)}</div>
-        <div class="inv-lbl">${isPaid?'PAID':isCan?'VOID':'DUE'}</div>
+      <div class="ic-r">
+        <div class="ic-amt" style="color:${paid?'var(--green)':can?'var(--txt3)':'var(--red)'}">${fgbp(t)}</div>
+        <div class="ic-lbl">${paid?'PAID':can?'VOID':'DUE'}</div>
       </div>
     </div>`;
   });
   document.getElementById('main-content').innerHTML=`
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">🧾 Invoices <span class="sec-count">${d.invoices.length}</span></div></div>
-      ${rows.length?rows.join('')
-        :`<div class="empty"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div><div class="empty-sub">Invoices will appear here once raised</div></div>`}
+      <div class="sec-hd"><div class="sec-t">🧾 Invoices <span class="sec-n">${d.invoices.length}</span></div></div>
+      ${rows.length?rows.join(''):emptyHtml('🧾','No invoices yet','Invoices will appear here once raised')}
     </div>
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">📥 Coming Soon</div></div>
-      ${comingSoon('⬇ Download PDFs','Download invoice PDFs individually or in bulk','v2')}
-      ${comingSoon('📊 Statement History','Full payment history &amp; statements','v2')}
-      ${comingSoon('💳 Online Payment','Pay invoices securely through the portal','v2')}
+      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
+      ${cs('⬇','Download PDF Invoices','Download individual or bulk invoice PDFs')}
+      ${cs('📊','Statement of Account','Full payment history and statements')}
+    </div>`;
+}
+
+// ── PAYMENTS ─────────────────────────────────────────────────
+function vPayments(d){
+  const bh=bankCard(d.entity);
+  const paid=d.invoices.filter(i=>i.status==='Paid');
+  const owed=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
+  const owedTotal=owed.reduce((s,i)=>s+calcTotal(i),0);
+  const paidTotal=paid.reduce((s,i)=>s+calcTotal(i),0);
+  document.getElementById('main-content').innerHTML=`
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">💳 Payment Summary</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--r2);padding:16px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--green)">${fgbp(paidTotal)}</div>
+          <div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600">Total Paid</div>
+        </div>
+        <div style="background:${owedTotal>0?'var(--rbg)':'var(--gbg)'};border:1px solid ${owedTotal>0?'var(--rbd)':'var(--gbd)'};border-radius:var(--r2);padding:16px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:${owedTotal>0?'var(--red)':'var(--green)'}">${fgbp(owedTotal)}</div>
+          <div style="font-size:11px;color:${owedTotal>0?'var(--red)':'var(--green)'};margin-top:3px;font-weight:600">${owedTotal>0?'Outstanding':'All Clear'}</div>
+        </div>
+      </div>
+      ${bh||''}
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
+      ${cs('💳','Online Payment','Pay invoices securely through the portal')}
+      ${cs('📊','Statement History','Full payment history with CSV export')}
+      ${cs('🔔','Payment Reminders','Automatic reminders before due dates')}
+    </div>`;
+}
+
+function bankCard(entity){
+  if(!entity)return'';
+  const bn=entity.bankName||entity.bank_name||'';
+  const ba=entity.bankAcc||entity.bank_acc||'';
+  const bs=entity.bankSort||entity.bank_sort||'';
+  const br=entity.bankRef||entity.bank_ref||'';
+  if(!bn&&!ba&&!bs&&!br)return'';
+  return`<div class="bank-card">
+    <div class="bank-title">🏦 Payment Details</div>
+    ${bn?`<div class="bank-name">${e(bn)}</div>`:''}
+    <div class="bank-row">
+      ${ba?`<div class="bank-field">Account: <strong>${e(ba)}</strong></div>`:''}
+      ${bs?`<div class="bank-field">Sort Code: <strong>${e(bs)}</strong></div>`:''}
+    </div>
+    ${br?`<div class="bank-link">🔗 ${e(br)}</div>`:''}
+  </div>`;
+}
+
+// ── DOCUMENTS ────────────────────────────────────────────────
+function vDocs(d){
+  const allDocs=d.attachments.filter(a=>a.url&&(a.type!=='photo'&&!/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
+  const allPdfs=d.certs.filter(c=>c.url);
+  document.getElementById('main-content').innerHTML=`
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">📁 Certificates &amp; Documents <span class="sec-n">${allPdfs.length+allDocs.length}</span></div></div>
+      ${allPdfs.length?`<div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📋 Certificates</div>
+        ${allPdfs.map(c=>`<div class="cc" style="margin-bottom:8px">
+          <div class="cc-ic">📄</div>
+          <div class="cc-body">
+            <div class="cc-type">${e(c.type||'Certificate')}</div>
+            <div class="cc-addr">${e(c.address||'—')}</div>
+            ${c.certNum?`<div style="font-size:10px;color:var(--txt3);margin-top:3px">Ref: ${e(c.certNum)}</div>`:''}
+          </div>
+          <a href="${ea(c.url)}" target="_blank" class="dl">⬇ Download</a>
+        </div>`).join('')}
+      </div>`:''}
+      ${allDocs.length?`<div>
+        <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📎 Documents &amp; Reports</div>
+        ${allDocs.map(doc=>`<div class="cc" style="margin-bottom:8px">
+          <div class="cc-ic">📎</div>
+          <div class="cc-body">
+            <div class="cc-type">${e(doc.name||'Document')}</div>
+            <div class="cc-addr">${e(doc.type||'Attachment')}</div>
+          </div>
+          <a href="${ea(doc.url)}" target="_blank" class="dl">⬇ Download</a>
+        </div>`).join('')}
+      </div>`:''}
+      ${!allPdfs.length&&!allDocs.length?emptyHtml('📁','No documents yet','Documents and certificates will appear here once uploaded'):''}
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
+      ${cs('📦','Document Archive','All compliance documents searchable by date and type')}
+      ${cs('🔄','Bulk Download','Download all documents as a single ZIP')}
     </div>`;
 }
 
 // ── REQUEST ──────────────────────────────────────────────────
-function renderRequest(d){
+function vRequest(d){
   const today=new Date().toISOString().slice(0,10);
   document.getElementById('main-content').innerHTML=`
     <div class="sec">
-      <div class="sec-hd"><div class="sec-title">➕ New Service Request</div></div>
-      <div class="req-card">
-        <div style="margin-bottom:18px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Submit a Request</div>
-          <div style="font-size:12px;color:var(--txt2)">${esc(d.coName)} will be in touch within 1 working day to confirm your booking.</div>
+      <div class="sec-hd"><div class="sec-t">➕ New Service Request</div></div>
+      <div class="rc">
+        <div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="font-size:16px;font-weight:800;margin-bottom:5px">Submit a Request</div>
+          <div style="font-size:13px;color:var(--txt2);line-height:1.5">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
         </div>
-        <div id="req-wrap">
-          <div class="form-grid form-grid-2" style="margin-bottom:12px">
-            <div class="form-group">
-              <label class="form-lbl">Property Address *</label>
-              <input class="form-inp" id="rq-addr" placeholder="Full property address">
-            </div>
-            <div class="form-group">
-              <label class="form-lbl">Service Required *</label>
-              <select class="form-inp" id="rq-svc">
+        <div id="rw">
+          <div class="fgrid fgrid-2">
+            <div class="fg"><label class="fl">Property Address *</label><input class="fi" id="ra" placeholder="Full property address"></div>
+            <div class="fg"><label class="fl">Service Required *</label>
+              <select class="fi" id="rs">
                 <option value="">Select a service...</option>
-                <option>Gas Safety Certificate (CP12)</option>
-                <option>Electrical Inspection (EICR)</option>
-                <option>PAT Testing</option>
-                <option>Energy Performance Certificate (EPC)</option>
-                <option>Fire Risk Assessment</option>
-                <option>Boiler Service</option>
-                <option>Boiler Repair</option>
-                <option>Emergency Call-Out</option>
-                <option>General Maintenance</option>
+                <optgroup label="Gas">
+                  <option>Gas Safety Certificate (CP12)</option>
+                  <option>Boiler Service</option>
+                  <option>Boiler Repair</option>
+                </optgroup>
+                <optgroup label="Electrical">
+                  <option>Electrical Inspection (EICR)</option>
+                  <option>PAT Testing</option>
+                  <option>Electrical Fault / Repair</option>
+                </optgroup>
+                <optgroup label="Property">
+                  <option>Energy Performance Certificate (EPC)</option>
+                  <option>Fire Risk Assessment</option>
+                  <option>Legionella Risk Assessment</option>
+                  <option>General Maintenance</option>
+                  <option>Emergency Call-Out</option>
+                </optgroup>
                 <option>Other (describe in notes)</option>
               </select>
             </div>
           </div>
-          <div class="form-grid form-grid-2" style="margin-bottom:12px">
-            <div class="form-group">
-              <label class="form-lbl">Preferred Date</label>
-              <input class="form-inp" type="date" id="rq-date" min="${today}">
-            </div>
-            <div class="form-group">
-              <label class="form-lbl">Access Arrangements</label>
-              <select class="form-inp" id="rq-access">
+          <div class="fgrid fgrid-2" style="margin-top:12px">
+            <div class="fg"><label class="fl">Preferred Date</label><input class="fi" type="date" id="rd" min="${today}"></div>
+            <div class="fg"><label class="fl">Access Arrangements</label>
+              <select class="fi" id="rac">
                 <option value="">Select...</option>
                 <option>Tenant will be home</option>
-                <option>Keys at office</option>
-                <option>Key safe — will provide code</option>
-                <option>Landlord will be present</option>
-                <option>Contact tenant to arrange</option>
+                <option>Keys at your office</option>
+                <option>Key safe — I will provide code</option>
+                <option>I will be present</option>
+                <option>Contact tenant directly to arrange</option>
               </select>
             </div>
           </div>
-          <div class="form-group" style="margin-bottom:12px">
-            <label class="form-lbl">Additional Notes</label>
-            <textarea class="form-inp" id="rq-notes" placeholder="Special requirements, tenant contact details, access codes..."></textarea>
+          <div class="fg" style="margin-top:12px"><label class="fl">Additional Notes</label>
+            <textarea class="fi" id="rn" placeholder="Special requirements, tenant contact number, access codes, parking info..."></textarea>
           </div>
-          <button class="form-submit" id="rq-btn" onclick="submitReq()">📩 Submit Request</button>
-          <div class="form-note">We'll confirm your booking by phone or email within 1 working day</div>
+          <button class="fsub" id="rsb" onclick="submitReq()">📩 Submit Request</button>
+          <div class="fnote">We'll confirm by phone or email within 1 working day · Your reference will be sent on confirmation</div>
         </div>
       </div>
     </div>`;
 }
 
 async function submitReq(){
-  const addr=(document.getElementById('rq-addr')?.value||'').trim();
-  const svc=(document.getElementById('rq-svc')?.value||'').trim();
-  const date=document.getElementById('rq-date')?.value||'';
-  const access=document.getElementById('rq-access')?.value||'';
-  const notes=(document.getElementById('rq-notes')?.value||'').trim();
-  if(!addr||!svc){toast('Please fill in address and service type');return;}
-  const btn=document.getElementById('rq-btn');
+  const addr=(document.getElementById('ra')?.value||'').trim();
+  const svc=(document.getElementById('rs')?.value||'').trim();
+  const date=document.getElementById('rd')?.value||'';
+  const access=document.getElementById('rac')?.value||'';
+  const notes=(document.getElementById('rn')?.value||'').trim();
+  if(!addr){toast('Please enter the property address');return;}
+  if(!svc){toast('Please select a service type');return;}
+  const btn=document.getElementById('rsb');
   if(btn){btn.disabled=true;btn.textContent='Sending...';}
   try{
-    const msg=`📩 Portal request from ${_d.name}\nService: ${svc}\nAddress: ${addr}`
-      +(date?`\nDate: ${date}`:'')+( access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'');
+    const ref='REQ-'+Date.now().toString(36).toUpperCase().slice(-6);
+    const msg=`📩 Portal Request [${ref}]\nFrom: ${_d.name} (${_d.type})\nService: ${svc}\nAddress: ${addr}`
+      +(date?`\nPreferred date: ${date}`:'')+( access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'');
     await sb('activity',{method:'POST',body:{id:'req-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),msg,type:'request',ts:Date.now()},prefer:'return=minimal'});
-    document.getElementById('req-wrap').innerHTML=`
-      <div style="text-align:center;padding:28px 0">
-        <div style="font-size:52px;margin-bottom:12px">✅</div>
-        <div style="font-size:18px;font-weight:800;margin-bottom:6px">Request Submitted!</div>
-        <div style="font-size:13px;color:var(--txt2);max-width:320px;margin:0 auto">${esc(_d.coName)} will be in touch within 1 working day to confirm your booking.</div>
-        <button class="cert-dl" style="margin-top:18px" onclick="switchTab('overview')">← Back to Overview</button>
+    document.getElementById('rw').innerHTML=`
+      <div style="text-align:center;padding:32px 16px">
+        <div style="font-size:56px;margin-bottom:14px">✅</div>
+        <div style="font-size:20px;font-weight:900;margin-bottom:8px">Request Submitted!</div>
+        <div style="font-size:13px;color:var(--txt2);max-width:340px;margin:0 auto 8px;line-height:1.6">
+          Your reference is <strong>${ref}</strong>.<br>
+          ${e(_d.coName)} will be in touch within 1 working day to confirm your booking.
+        </div>
+        <button class="dl" style="margin-top:16px" onclick="go('overview')">← Back to Overview</button>
       </div>`;
   }catch(err){
     if(btn){btn.disabled=false;btn.textContent='📩 Submit Request';}
@@ -742,47 +812,22 @@ async function submitReq(){
 }
 
 // ── HELPERS ──────────────────────────────────────────────────
-function statusBadge(s){
-  const m={'Pending':'<span class="badge b-pend">⏳ Pending</span>',
-    'In Progress':'<span class="badge b-prog">🔄 In Progress</span>',
-    'Completed':'<span class="badge b-done">✅ Completed</span>',
-    'Invoiced':'<span class="badge b-inv">🧾 Invoiced</span>',
-    'Cancelled':'<span class="badge b-can">✕ Cancelled</span>'};
-  return m[s]||`<span class="badge b-can">${esc(s||'—')}</span>`;
+function jsBadge(s){
+  const m={'Pending':'<span class="jbadge bp">⏳ Pending</span>',
+    'In Progress':'<span class="jbadge bi">🔄 In Progress</span>',
+    'Completed':'<span class="jbadge bd">✅ Completed</span>',
+    'Invoiced':'<span class="jbadge bv">🧾 Invoiced</span>',
+    'Cancelled':'<span class="jbadge bc">✕ Cancelled</span>'};
+  return m[s]||`<span class="jbadge bc">${e(s||'—')}</span>`;
 }
-
-function calcInvTotal(inv){
-  const items=typeof inv.items==='string'?JSON.parse(inv.items||'[]'):(inv.items||[]);
-  return items.reduce((s,x)=>s+(x.qty||1)*(x.unit||0),0);
-}
-
-function comingSoon(title,sub,tag){
-  return`<div class="coming-card">
-    <div class="coming-icon">🔮</div>
-    <div class="coming-body"><div class="coming-title">${title}</div><div class="coming-sub">${sub}</div></div>
-    <div class="coming-tag">${tag}</div>
-  </div>`;
-}
-
-function showErr(title,msg){
-  document.getElementById('main-content').innerHTML=`
-    <div class="empty" style="padding:80px 20px">
-      <div class="empty-icon">🔒</div>
-      <div class="empty-title">${esc(title)}</div>
-      <div class="empty-sub">${esc(msg)}</div>
-    </div>`;
-}
-
+function cs(icon,t,sub){return`<div class="cs"><div class="cs-ic">${icon}</div><div class="cs-body"><div class="cs-t">${t}</div><div class="cs-s">${sub}</div></div><div class="cs-tag">v2</div></div>`;}
+function emptyHtml(icon,t,sub){return`<div class="empty"><div class="ei">${icon}</div><div class="et">${t}</div><div class="es">${sub}</div></div>`;}
+function showErr(t,m){document.getElementById('main-content').innerHTML=`<div class="empty" style="padding:80px 20px"><div class="ei">🔒</div><div class="et">${e(t)}</div><div class="es">${e(m)}</div></div>`;}
 function openLb(url){document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('show');}
 function closeLb(){document.getElementById('lb').classList.remove('show');document.getElementById('lb-img').src='';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();});
-
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeLb();});
 let _tt;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.className='show';
-  clearTimeout(_tt);_tt=setTimeout(()=>el.className='',3500);
-}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.className='show';clearTimeout(_tt);_tt=setTimeout(()=>el.className='',3500);}
 
 init();
 </script>
