@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>DeepFlow Portal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Client Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root{
   --bg:#f0f4f8;--s1:#fff;--s2:#f8fafc;--s3:#f1f5f9;
@@ -14,246 +16,166 @@
   --red:#dc2626;--rbg:#fef2f2;--rbd:#fecaca;
   --yel:#d97706;--ybg:#fffbeb;--ybd:#fde68a;
   --pur:#7c3aed;--pbg:#f5f3ff;--pbd:#ddd6fe;
-  --r:16px;--r2:10px;--r3:6px;
+  --r:14px;--r2:10px;--r3:6px;
   --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
-  --sh2:0 4px 20px rgba(0,0,0,.10);
-  --sh3:0 8px 40px rgba(0,0,0,.16);
+  --sh2:0 4px 20px rgba(0,0,0,.1);--sh3:0 8px 40px rgba(0,0,0,.16);
   --fnt:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:var(--fnt);min-height:100vh;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-
 /* HEADER */
-.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
-.hdr-l{display:flex;align-items:center;gap:10px}
-.logo{width:34px;height:34px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900;letter-spacing:-1px;flex-shrink:0}
-.hdr-co{font-size:16px;font-weight:800;letter-spacing:-.3px}
-.hdr-r{display:flex;align-items:center;gap:8px}
-.badge{display:inline-flex;align-items:center;gap:5px;background:var(--acc-soft);color:var(--acc);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;border:1px solid #bfdbfe;white-space:nowrap}
-.hdr-client{font-size:12px;color:var(--txt3);font-weight:500}
-@media(max-width:480px){.hdr-client{display:none}}
-
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
+.hdr-l{display:flex;align-items:center;gap:9px}.logo{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:900;flex-shrink:0}
+.hdr-co{font-size:15px;font-weight:800;letter-spacing:-.3px}.hdr-r{display:flex;align-items:center;gap:8px}
+.hbadge{background:var(--acc-soft);color:var(--acc);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid #bfdbfe;white-space:nowrap}
+.hname{font-size:11px;color:var(--txt3);font-weight:500}
+@media(max-width:480px){.hname{display:none}}
 /* NAV */
-.nav{background:var(--s1);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:58px;z-index:100}
+.nav{background:var(--s1);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:56px;z-index:100}
 .nav::-webkit-scrollbar{display:none}
-.tab{padding:13px 16px;font-size:12.5px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent}
-.tab:hover{color:var(--txt2)}
-.tab.active{color:var(--acc);border-color:var(--acc)}
-@media(min-width:600px){.tab{padding:14px 20px;font-size:13px}}
-
+.tab{padding:12px 14px;font-size:12px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;user-select:none;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt2)}.tab.active{color:var(--acc);border-color:var(--acc)}
+@media(min-width:580px){.tab{padding:13px 18px;font-size:13px}}
 /* LAYOUT */
-.main{max-width:900px;margin:0 auto;padding:16px 14px}
-@media(min-width:600px){.main{padding:24px 20px}}
-
+.main{max-width:900px;margin:0 auto;padding:14px}
+@media(min-width:600px){.main{padding:22px 20px}}
 /* HERO */
-.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#60a5fa 100%);border-radius:var(--r);padding:24px 22px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%}
-.hero::after{content:'';position:absolute;right:50px;bottom:-50px;width:130px;height:130px;background:rgba(255,255,255,.04);border-radius:50%}
-.hero-eyebrow{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
-.hero-name{font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:4px}
-.hero-sub{font-size:13px;opacity:.8;line-height:1.5}
-.hero-row{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
-.hbtn{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r2);padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.16);color:#fff;transition:.15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;font-family:var(--fnt)}
-.hbtn:hover{background:rgba(255,255,255,.26)}
-.hbtn.primary{background:#fff;color:var(--acc);border-color:transparent}
-.hbtn.primary:hover{background:#f0f9ff}
-@media(min-width:600px){.hero{padding:32px 36px}.hero-name{font-size:26px}}
-
-/* STATS GRID */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
-@media(min-width:540px){.stats{grid-template-columns:repeat(4,1fr)}}
-.stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px}
-.stat-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.stat-val{font-size:24px;font-weight:900;line-height:1}
-.stat-lbl{font-size:11px;color:var(--txt3);margin-top:2px;font-weight:500}
-.sa .stat-ic{background:var(--acc-soft)}.sa .stat-val{color:var(--acc)}
-.sb .stat-ic{background:var(--gbg)}.sb .stat-val{color:var(--green)}
-.sc .stat-ic{background:var(--ybg)}.sc .stat-val{color:var(--yel)}
-.sd .stat-ic{background:var(--rbg)}.sd .stat-val{color:var(--red)}
-
+.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#60a5fa 100%);border-radius:var(--r);padding:22px 20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:rgba(255,255,255,.06);border-radius:50%}
+.hero-ey{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:9px}
+.hero-n{font-size:20px;font-weight:900;letter-spacing:-.3px;margin-bottom:4px}
+.hero-s{font-size:12px;opacity:.8;line-height:1.5}
+.hero-row{margin-top:16px;display:flex;gap:7px;flex-wrap:wrap}
+.hbtn{display:inline-flex;align-items:center;gap:4px;border-radius:var(--r2);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;transition:.15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;font-family:var(--fnt)}
+.hbtn:hover{background:rgba(255,255,255,.25)}.hbtn.p{background:#fff;color:var(--acc);border-color:transparent}.hbtn.p:hover{background:#f0f9ff}
+@media(min-width:580px){.hero{padding:28px 32px}.hero-n{font-size:24px}}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:16px}
+@media(min-width:520px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:13px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px}
+.stat-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.stat-v{font-size:22px;font-weight:900;line-height:1}.stat-l{font-size:10px;color:var(--txt3);margin-top:2px;font-weight:500}
+.sa .stat-ic{background:var(--acc-soft)}.sa .stat-v{color:var(--acc)}.sb .stat-ic{background:var(--gbg)}.sb .stat-v{color:var(--green)}
+.sc .stat-ic{background:var(--ybg)}.sc .stat-v{color:var(--yel)}.sd .stat-ic{background:var(--rbg)}.sd .stat-v{color:var(--red)}
 /* CERT EXPIRY WIDGET */
-.cew{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:18px;box-shadow:var(--sh)}
-.cew-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cew-title{font-size:13px;font-weight:800}
-.cew-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.cew-box{border-radius:var(--r2);padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
-.cew-box:hover{opacity:.85}
-.cew-n{font-size:28px;font-weight:900;line-height:1}
-.cew-l{font-size:10px;font-weight:600;margin-top:4px;line-height:1.3}
-.cew-exp{background:var(--rbg);border:1px solid var(--rbd)}.cew-exp .cew-n{color:var(--red)}.cew-exp .cew-l{color:var(--red)}
-.cew-s30{background:var(--ybg);border:1px solid var(--ybd)}.cew-s30 .cew-n{color:var(--yel)}.cew-s30 .cew-l{color:var(--yel)}
-.cew-ok{background:var(--gbg);border:1px solid var(--gbd)}.cew-ok .cew-n{color:var(--green)}.cew-ok .cew-l{color:var(--green)}
-
+.cew{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:16px;box-shadow:var(--sh)}
+.cew-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.cew-t{font-size:13px;font-weight:800}
+.cew-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cew-b{border-radius:var(--r2);padding:12px 8px;text-align:center;cursor:pointer;transition:.15s}
+.cew-b:hover{opacity:.85}.cew-n{font-size:26px;font-weight:900;line-height:1}.cew-l{font-size:10px;font-weight:600;margin-top:3px}
+.cb-e{background:var(--rbg);border:1px solid var(--rbd)}.cb-e .cew-n,.cb-e .cew-l{color:var(--red)}
+.cb-s{background:var(--ybg);border:1px solid var(--ybd)}.cb-s .cew-n,.cb-s .cew-l{color:var(--yel)}
+.cb-o{background:var(--gbg);border:1px solid var(--gbd)}.cb-o .cew-n,.cb-o .cew-l{color:var(--green)}
 /* SECTION */
-.sec{margin-bottom:24px}
-.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
-.sec-t{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
-.sec-n{font-size:10px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:10px;padding:2px 8px}
-
+.sec{margin-bottom:22px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;gap:8px;flex-wrap:wrap}
+.sec-t{font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px}
+.sec-n{font-size:10px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:10px;padding:2px 7px}
 /* ALERT */
-.alert{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-radius:var(--r2);margin-bottom:8px;font-size:13px;font-weight:500;line-height:1.4}
-.al-r{background:var(--rbg);border:1px solid var(--rbd);color:var(--red)}
-.al-y{background:var(--ybg);border:1px solid var(--ybd);color:var(--yel)}
-
-/* SORT BAR */
-.sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.alert{display:flex;align-items:flex-start;gap:8px;padding:10px 13px;border-radius:var(--r2);margin-bottom:7px;font-size:12px;font-weight:500;line-height:1.4}
+.al-r{background:var(--rbg);border:1px solid var(--rbd);color:var(--red)}.al-y{background:var(--ybg);border:1px solid var(--ybd);color:var(--yel)}
+/* SORT */
+.sort-bar{display:flex;align-items:center;gap:7px;margin-bottom:11px;flex-wrap:wrap}
 .sl{font-size:11px;color:var(--txt3);font-weight:600;white-space:nowrap}
-.ss{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r3);padding:5px 10px;font-size:12px;color:var(--txt);cursor:pointer;outline:none;font-family:var(--fnt)}
-
+.ss{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r3);padding:5px 9px;font-size:12px;color:var(--txt);cursor:pointer;outline:none;font-family:var(--fnt)}
 /* CERT CARD */
-.cc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:.2s}
-.cc:hover{box-shadow:var(--sh2)}
-.cc-ic{width:44px;height:44px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.cc-body{flex:1;min-width:0}
-.cc-type{font-size:13px;font-weight:700;margin-bottom:2px}
-.cc-addr{font-size:11px;color:var(--txt3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cc-meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
-.pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.p-ok{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
-.p-s{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}
-.p-e{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
-.p-n{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
-.dl{display:inline-flex;align-items:center;gap:4px;background:var(--acc);color:#fff;border:none;border-radius:var(--r3);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:.15s;font-family:var(--fnt)}
-.dl:hover{background:var(--acc2)}
-.dl.g{background:var(--s2);color:var(--txt2);border:1px solid var(--border)}
-.dl.sm{padding:5px 10px;font-size:11px}
-
+.cc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:13px 15px;margin-bottom:7px;box-shadow:var(--sh);display:flex;align-items:center;gap:11px;transition:.2s}
+.cc:hover{box-shadow:var(--sh2)}.cc-ic{width:42px;height:42px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.cc-body{flex:1;min-width:0}.cc-t{font-size:13px;font-weight:700;margin-bottom:2px}.cc-a{font-size:11px;color:var(--txt3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-m{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
+.pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.p-ok{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}.p-s{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}.p-e{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}.p-n{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
+.dl{display:inline-flex;align-items:center;gap:4px;background:var(--acc);color:#fff;border:none;border-radius:var(--r3);padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:.15s;font-family:var(--fnt)}
+.dl:hover{background:var(--acc2)}.dl.g{background:var(--s2);color:var(--txt2);border:1px solid var(--border)}.dl.g:hover{background:var(--s3)}.dl.sm{padding:5px 9px;font-size:10px}
 /* JOB CARD */
-.jc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden;transition:.2s}
-.jc:hover{box-shadow:var(--sh2)}
-.jc-hd{padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
+.jc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:9px;box-shadow:var(--sh);overflow:hidden;transition:.2s}
+.jc:hover{box-shadow:var(--sh2)}.jc-hd{padding:13px 15px;display:flex;align-items:flex-start;gap:9px}
 .jc-l{flex:1;min-width:0}
-.jc-num{display:inline-block;font-size:10px;font-weight:700;color:var(--acc);font-family:ui-monospace,monospace;background:var(--acc-soft);padding:2px 7px;border-radius:4px;margin-bottom:6px}
-.jc-addr{font-size:15px;font-weight:700;margin-bottom:3px;line-height:1.3}
-.jc-desc{font-size:12px;color:var(--txt2);line-height:1.5}
-.jc-strip{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--s2);border-top:1px solid var(--border);flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--txt2);font-weight:500}
-.chip-dot{color:var(--border2)}
-.jc-body{padding:14px 16px;border-top:1px solid var(--border)}
-.jbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.bp{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}
-.bi{background:var(--acc-soft);color:var(--acc);border:1px solid #bfdbfe}
-.bd{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
-.bv{background:var(--pbg);color:var(--pur);border:1px solid var(--pbd)}
-.bc{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
-
+.jc-num{display:inline-block;font-size:10px;font-weight:700;color:var(--acc);font-family:ui-monospace,monospace;background:var(--acc-soft);padding:2px 6px;border-radius:4px;margin-bottom:5px}
+.jc-addr{font-size:14px;font-weight:700;margin-bottom:2px;line-height:1.3}.jc-desc{font-size:12px;color:var(--txt2);line-height:1.5}
+.jc-strip{display:flex;align-items:center;gap:5px;padding:7px 15px;background:var(--s2);border-top:1px solid var(--border);flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--txt2);font-weight:500}.cdot{color:var(--border2)}
+.jc-body{padding:13px 15px;border-top:1px solid var(--border)}
+.jbadge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.bp{background:var(--ybg);color:var(--yel);border:1px solid var(--ybd)}.bi{background:var(--acc-soft);color:var(--acc);border:1px solid #bfdbfe}
+.bd{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}.bv{background:var(--pbg);color:var(--pur);border:1px solid var(--pbd)}.bc{background:var(--s3);color:var(--txt3);border:1px solid var(--border)}
 /* INVOICE */
-.ic{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;transition:.2s}
-.ic:hover{box-shadow:var(--sh2)}
-.ic-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ic-body{flex:1;min-width:0}
-.ic-num{font-size:12px;font-weight:700;font-family:ui-monospace,monospace;margin-bottom:2px}
-.ic-desc{font-size:11px;color:var(--txt3)}
-.ic-r{text-align:right;flex-shrink:0}
-.ic-amt{font-size:18px;font-weight:900}
-.ic-lbl{font-size:9px;color:var(--txt3);margin-top:1px}
-
+.ic{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:13px 15px;margin-bottom:7px;box-shadow:var(--sh);display:flex;align-items:center;gap:11px;transition:.2s}
+.ic:hover{box-shadow:var(--sh2)}.ic-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ic-body{flex:1;min-width:0}.ic-num{font-size:12px;font-weight:700;font-family:ui-monospace,monospace;margin-bottom:2px}.ic-desc{font-size:11px;color:var(--txt3)}
+.ic-r{text-align:right;flex-shrink:0}.ic-amt{font-size:17px;font-weight:900}.ic-lbl{font-size:9px;color:var(--txt3);margin-top:1px}
 /* BANK CARD */
-.bank-card{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);border-radius:var(--r2);padding:18px;color:#fff;margin-top:16px;position:relative;overflow:hidden}
-.bank-card::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%}
-.bank-title{font-size:10px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
-.bank-name{font-size:16px;font-weight:700;margin-bottom:6px}
-.bank-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px}
-.bank-field{font-size:12px;opacity:.75}
-.bank-field strong{font-size:13px;color:#fff;opacity:1}
-.bank-link{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:var(--r3);padding:6px 12px;font-size:12px;font-weight:600;color:#fff;margin-top:8px;cursor:pointer;word-break:break-all}
-
+.bank-card{background:linear-gradient(135deg,#1e293b,#334155);border-radius:var(--r2);padding:16px;color:#fff;margin-top:14px;position:relative;overflow:hidden}
+.bank-card::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:rgba(255,255,255,.05);border-radius:50%}
+.bank-t{font-size:9px;font-weight:700;opacity:.55;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.bank-n{font-size:15px;font-weight:700;margin-bottom:5px}
+.bank-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:3px}.bank-f{font-size:11px;opacity:.7}
+.bank-f strong{font-size:12px;color:#fff;opacity:1}
+.bank-link{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:var(--r3);padding:5px 11px;font-size:11px;font-weight:600;color:#fff;margin-top:7px;word-break:break-all;cursor:pointer}
+/* STATEMENT */
+.stmt-row{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:12px 15px;margin-bottom:6px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh)}
+.stmt-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+/* DOCS */
+.doc-row{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:12px 15px;margin-bottom:6px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);transition:.2s}
+.doc-row:hover{box-shadow:var(--sh2)}
+/* PROP GROUP */
+.pg{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;box-shadow:var(--sh)}
+.pg-hd{padding:11px 15px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.pg-addr{font-size:13px;font-weight:700}.pg-m{font-size:11px;color:var(--txt3)}.pg-body{padding:7px 10px}
 /* REQUEST */
-.rc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:20px;box-shadow:var(--sh)}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.rc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:18px;box-shadow:var(--sh)}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
 .fl{font-size:11px;font-weight:600;color:var(--txt2)}
-.fi{background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r2);padding:11px 13px;font-size:14px;color:var(--txt);outline:none;transition:.15s;font-family:var(--fnt);width:100%}
+.fi{background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r2);padding:10px 12px;font-size:14px;color:var(--txt);outline:none;transition:.15s;font-family:var(--fnt);width:100%}
 .fi:focus{border-color:var(--acc);background:#fff}
-textarea.fi{resize:vertical;min-height:80px}
-select.fi{cursor:pointer}
-.fgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
-@media(min-width:520px){.fgrid-2{grid-template-columns:1fr 1fr}}
-.fsub{background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:var(--fnt);margin-top:4px;transition:.15s}
-.fsub:hover{background:var(--acc2)}
-.fnote{font-size:11px;color:var(--txt3);text-align:center;margin-top:8px;line-height:1.5}
-
-/* COMING SOON */
-.cs{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.6}
-.cs-ic{width:38px;height:38px;background:var(--s3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.cs-body{flex:1}
-.cs-t{font-size:13px;font-weight:700;margin-bottom:2px}
-.cs-s{font-size:11px;color:var(--txt3)}
-.cs-tag{font-size:9px;font-weight:700;color:var(--txt3);background:var(--s3);border-radius:20px;padding:3px 9px;white-space:nowrap}
-
-/* PROP GROUP (agencies) */
-.pg{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
-.pg-hd{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-.pg-addr{font-size:13px;font-weight:700}
-.pg-meta{font-size:11px;color:var(--txt3)}
-.pg-body{padding:8px 12px}
-
-/* EMPTY */
-.empty{text-align:center;padding:48px 20px;color:var(--txt3)}
-.ei{font-size:44px;margin-bottom:12px}
-.et{font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:5px}
-.es{font-size:12px;line-height:1.5}
-
+textarea.fi{resize:vertical;min-height:78px}select.fi{cursor:pointer}
+.fgrid{display:grid;grid-template-columns:1fr;gap:11px;margin-bottom:11px}
+@media(min-width:500px){.fgrid-2{grid-template-columns:1fr 1fr}}
+.fsub{background:var(--acc);color:#fff;border:none;border-radius:var(--r2);padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:var(--fnt);margin-top:4px;transition:.15s}
+.fsub:hover{background:var(--acc2)}.fnote{font-size:11px;color:var(--txt3);text-align:center;margin-top:7px;line-height:1.5}
 /* PHOTO */
-.pt{width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid var(--border);transition:.2s;flex-shrink:0}
-.pt:hover{transform:scale(1.06)}
-@media(min-width:400px){.pt{width:82px;height:82px}}
-
-/* FOOTER */
-.footer{text-align:center;padding:24px 16px;color:var(--txt3);font-size:11px;border-top:1px solid var(--border);margin-top:8px}
-
-/* SPINNER */
-.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite;margin:80px auto}
-@keyframes sp{to{transform:rotate(360deg)}}
-
+.pt{width:70px;height:70px;object-fit:cover;border-radius:7px;cursor:pointer;border:2px solid var(--border);transition:.2s;flex-shrink:0}
+.pt:hover{transform:scale(1.06)}@media(min-width:380px){.pt{width:78px;height:78px}}
+/* EMPTY/FOOTER/SPINNER */
+.empty{text-align:center;padding:44px 20px;color:var(--txt3)}.ei{font-size:42px;margin-bottom:11px}.et{font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:4px}.es{font-size:12px;line-height:1.5}
+.footer{text-align:center;padding:22px 14px;color:var(--txt3);font-size:11px;border-top:1px solid var(--border);margin-top:8px}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite;margin:80px auto}@keyframes sp{to{transform:rotate(360deg)}}
 /* TOAST */
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh3)}
-#toast.show{opacity:1}
-
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh3)}#toast.show{opacity:1}
 /* LIGHTBOX */
-#lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;display:none;align-items:center;justify-content:center}
-#lb.show{display:flex}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;display:none;align-items:center;justify-content:center}#lb.show{display:flex}
 #lb img{max-width:94vw;max-height:90vh;border-radius:var(--r2);box-shadow:var(--sh3)}
-#lb-x{position:absolute;top:16px;right:18px;color:#fff;font-size:28px;cursor:pointer;font-weight:700;line-height:1;z-index:1}
+#lb-x{position:absolute;top:14px;right:16px;color:#fff;font-size:26px;cursor:pointer;font-weight:700;line-height:1;z-index:1}
+/* LOADING OVERLAY */
+.loading{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt3)}
+.loading::before{content:'';width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--acc);border-radius:50%;animation:sp .6s linear infinite;flex-shrink:0}
 </style>
 </head>
 <body>
-
 <div class="hdr">
-  <div class="hdr-l">
-    <div class="logo">DF</div>
-    <div class="hdr-co" id="hdr-co">DeepFlow</div>
-  </div>
-  <div class="hdr-r">
-    <div class="hdr-client" id="hdr-name"></div>
-    <div class="badge" id="portal-badge">Portal</div>
-  </div>
+  <div class="hdr-l"><div class="logo">DF</div><div class="hdr-co" id="hdr-co">DeepFlow</div></div>
+  <div class="hdr-r"><div class="hname" id="hdr-name"></div><div class="hbadge" id="portal-badge">Portal</div></div>
 </div>
-
 <div class="nav" id="nav" style="display:none">
-  <div class="tab active" data-t="overview"  onclick="go('overview')">📊 Overview</div>
-  <div class="tab"        data-t="jobs"       onclick="go('jobs')">🔧 Jobs</div>
-  <div class="tab"        data-t="certs"      onclick="go('certs')">📋 Certificates</div>
-  <div class="tab"        data-t="invoices"   onclick="go('invoices')">🧾 Invoices</div>
-  <div class="tab"        data-t="payments"   onclick="go('payments')">💳 Payments</div>
-  <div class="tab"        data-t="docs"       onclick="go('docs')">📁 Documents</div>
-  <div class="tab"        data-t="request"    onclick="go('request')">➕ Request</div>
+  <div class="tab active" data-t="overview" onclick="go('overview')">📊 Overview</div>
+  <div class="tab" data-t="jobs"     onclick="go('jobs')">🔧 Jobs</div>
+  <div class="tab" data-t="certs"    onclick="go('certs')">📋 Certificates</div>
+  <div class="tab" data-t="invoices" onclick="go('invoices')">🧾 Invoices</div>
+  <div class="tab" data-t="payments" onclick="go('payments')">💳 Payments</div>
+  <div class="tab" data-t="docs"     onclick="go('docs')">📁 Documents</div>
+  <div class="tab" data-t="request"  onclick="go('request')">➕ Request</div>
 </div>
-
-<div class="main" id="main-content"><div class="spin"></div></div>
-
+<div class="main" id="main"><div class="spin"></div></div>
 <div class="footer">
-  <div style="font-weight:900;font-size:12px;letter-spacing:.5px">DEEPFLOW</div>
-  <div style="margin-top:4px">Secure Client Portal · <span id="footer-co"></span></div>
+  <div style="font-weight:900;font-size:11px;letter-spacing:.5px">DEEPFLOW</div>
+  <div style="margin-top:3px">Secure Client Portal · <span id="footer-co"></span></div>
 </div>
-
-<div id="lb" onclick="closeLb()">
-  <div id="lb-x" onclick="closeLb()">✕</div>
-  <img id="lb-img" src="" alt="">
-</div>
+<div id="lb" onclick="closeLb()"><div id="lb-x" onclick="closeLb()">✕</div><img id="lb-img" src="" alt=""></div>
 <div id="toast"></div>
 
 <script>
+// ── CORE ─────────────────────────────────────────────────────────────────────
 const SB_URL='https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 
@@ -265,106 +187,91 @@ async function sb(path,opts={}){
     body:opts.body!==undefined?JSON.stringify(opts.body):undefined,
   });
   if(!r.ok)throw new Error(await r.text());
-  return r.json();
+  const t=await r.text();return t?JSON.parse(t):null;
 }
 
 function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ea(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 function _fix(j){
   if(!j||typeof j!=='object')return j;
-  const M={jobnum:'jobNum',certtypes:'certTypes',timeslot:'timeSlot',
-    landlordname:'landlordName',agencyname:'agencyName',agentname:'agentName',
-    issuedate:'issueDate',expirydate:'expiryDate',certnum:'certNum',
-    noexpiry:'noExpiry',jobid:'jobId',clientname:'clientName',
-    duedate:'dueDate',createdat:'createdAt',bankname:'bankName',
-    bankacc:'bankAcc',banksort:'bankSort',bankref:'bankRef'};
+  const M={jobnum:'jobNum',certtypes:'certTypes',timeslot:'timeSlot',landlordname:'landlordName',
+    agencyname:'agencyName',agentname:'agentName',issuedate:'issueDate',expirydate:'expiryDate',
+    certnum:'certNum',noexpiry:'noExpiry',jobid:'jobId',clientname:'clientName',duedate:'dueDate',
+    createdat:'createdAt',bankname:'bankName',bankacc:'bankAcc',banksort:'bankSort',bankref:'bankRef',
+    invoicetype:'invoiceType',billtoname:'billToName',billtoaddress:'billToAddress',
+    jobaddress:'jobAddress',agentname:'agentName',propertyaddress:'propertyAddress'};
   const r={};for(const[k,v]of Object.entries(j))r[M[k]||k]=v;return r;
 }
 
 function dd(d){return d?Math.ceil((new Date(d)-new Date())/86400000):null}
 function fd(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}
 function fgbp(n){return'£'+(n||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function calcTotal(inv){const it=typeof inv.items==='string'?JSON.parse(inv.items||'[]'):(inv.items||[]);return it.reduce((s,x)=>s+(x.qty||1)*(x.unit||0),0);}
+function calcTotal(inv){
+  const it=typeof inv.items==='string'?JSON.parse(inv.items||'[]'):(inv.items||[]);
+  let sub=0,vat=0;
+  it.forEach(x=>{const l=(x.qty||1)*(x.unit||0);sub+=l;if(x.vat)vat+=l*(_S.vatRate||20)/100;});
+  return{sub,vat,grand:sub+vat};
+}
 
-let _d=null;
-let _cs='expiry',_cd='asc';
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let _d=null, _S={}, _cs='expiry', _cd='asc';
 const P=new URLSearchParams(location.search);
 const token=P.get('id'), ptype=P.get('type')||'landlord';
 
-// ── INIT ─────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────────
 async function init(){
   if(!token){showErr('Invalid Link','This portal link is invalid or has expired.');return;}
   try{
     let entity,jobs=[],attachments=[],certs=[],invoices=[];
 
+    // Load company settings first (needed for PDF generation)
+    try{
+      const s=await sb(`app_settings?select=value&key=eq.settings`);
+      if(s?.[0]?.value){_S=typeof s[0].value==='string'?JSON.parse(s[0].value):s[0].value;}
+    }catch(_){}
+
     if(ptype==='agency'){
       const rows=await sb(`agencies?id=eq.${encodeURIComponent(token)}&select=*`);
       if(!rows?.length){showErr('Not Found','This link is invalid or has expired.');return;}
       entity=_fix(rows[0]);
-      document.getElementById('portal-badge').innerHTML='🏢 Agency';
+      document.getElementById('portal-badge').textContent='🏢 Agency';
       document.title=`${entity.name} — Portal`;
-      const raw=await sb(`jobs?agencyname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
-      jobs=(raw||[]).map(_fix);
-
+      jobs=await fetchJobs('agencyname',entity.name,entity.id);
     } else if(ptype==='agent'){
-      // AGENT: must use a Supabase function or anon-accessible query
-      // The agents table has no anon read policy — we use a special lookup via jobs table
-      // by matching agentname directly. We identify the agent from the token stored in the
-      // agents.id column, but need the name first. We fetch via service-key bypass using
-      // the jobs table directly with agentid matching — but agents has no anon policy.
-      // FIX: Store agent name in the portal URL via a separate lookup approach.
-      // The portal URL is: ?id=AGENT_ID&type=agent
-      // Since agents table blocks anon reads, we need another way.
-      // SOLUTION: Fetch all jobs where the agentid field matches, and extract name from those.
-      // OR: Use the persons table (agent as a role) if stored there.
-      // ACTUAL FIX: Use anon-accessible endpoint — match via persons table if agent is stored there,
-      // OR we create a public view. For now: jobs table is readable (anon policy exists on jobs),
-      // so we can find the agent's name by looking up jobs with this agent's id as a special field.
-      // BEST SOLUTION: Agents portal uses agentname stored in URL param &name=
-      // The office generates link as ?id=AGENT_ID&type=agent&name=John+Smith
-      // Here we use the name param directly to fetch jobs:
       const agentName=P.get('name');
-      if(!agentName){showErr('Invalid Link','Agent portal link is missing name parameter. Please regenerate the link from the office.');return;}
+      if(!agentName){showErr('Invalid Link','Please regenerate this link from the office.');return;}
       entity={name:decodeURIComponent(agentName),type:'agent',id:token};
-      document.getElementById('portal-badge').innerHTML='👤 Agent';
+      document.getElementById('portal-badge').textContent='👤 Agent';
       document.title=`${entity.name} — Portal`;
-      const raw=await sb(`jobs?agentname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
-      jobs=(raw||[]).map(_fix);
-
+      jobs=await fetchJobs('agentname',entity.name,entity.id);
     } else {
-      // LANDLORD: persons table has anon read policy
       const rows=await sb(`persons?id=eq.${encodeURIComponent(token)}&select=*`);
       if(!rows?.length){showErr('Not Found','This link is invalid or has expired. Contact your service provider.');return;}
       entity=_fix(rows[0]);
-      document.getElementById('portal-badge').innerHTML='🏠 Landlord';
+      document.getElementById('portal-badge').textContent='🏠 Landlord';
       document.title=`${entity.name} — Portal`;
-      const raw=await sb(`jobs?landlordname=ilike.${encodeURIComponent(entity.name)}&order=date.desc&select=*`);
-      jobs=(raw||[]).map(_fix);
+      jobs=await fetchJobs('landlordname',entity.name,entity.id);
     }
 
+    // Fetch certs, attachments, invoices in parallel
     if(jobs.length){
       const idL=jobs.map(j=>`"${j.id}"`).join(',');
       const nL=(entity.name||'').toLowerCase();
       const [ra,rc,ri]=await Promise.all([
         sb(`attachments?jobid=in.(${idL})&select=*`).catch(()=>[]),
         sb(`certs?jobid=in.(${idL})&select=*`).catch(()=>[]),
-        sb(`invoices?select=id,number,status,items,createdat,date,clientname,landlordname,agencyname,agentname,duedate`).catch(()=>[]),
+        sb(`invoices?select=*`).catch(()=>[]),
       ]);
       attachments=(ra||[]).map(_fix);
       certs=(rc||[]).map(_fix);
+      // Filter invoices by entity name
       invoices=(ri||[]).map(_fix).filter(inv=>{
-        const n=(inv.clientName||inv.landlordName||inv.agencyName||inv.agentName||'').toLowerCase();
-        return n===nL||n.includes(nL);
+        const n=(inv.clientName||inv.landlordName||inv.agencyName||inv.agentName||inv.billToName||'').toLowerCase();
+        return n.includes(nL)||nL.includes(n.split(' ')[0]);
       });
     }
 
-    let coName='Your Service Provider';
-    try{
-      const s=await sb(`app_settings?select=value&key=eq.settings`);
-      if(s?.[0]?.value){const d=typeof s[0].value==='string'?JSON.parse(s[0].value):s[0].value;if(d.coName)coName=d.coName;}
-    }catch(_){}
-
+    const coName=_S.coName||'Your Service Provider';
     document.getElementById('hdr-co').textContent=coName;
     document.getElementById('hdr-name').textContent=entity.name;
     document.getElementById('footer-co').textContent=coName;
@@ -374,18 +281,35 @@ async function init(){
     go('overview');
   }catch(err){
     console.error(err);
-    showErr('Connection Error','Could not load your portal. Please check your internet connection and try again.');
+    showErr('Connection Error','Could not load your portal. Please check your connection and try again.');
   }
 }
 
-// ── TAB ──────────────────────────────────────────────────────
+async function fetchJobs(col,name,id){
+  // Try ilike match by name (works if RLS allows anon read)
+  try{
+    const raw=await sb(`jobs?${col}=ilike.${encodeURIComponent(name)}&order=date.desc&select=*`);
+    if(Array.isArray(raw)&&raw.length>0) return raw.map(_fix);
+  }catch(e){console.warn('[Portal] name fetch failed',e);}
+  // Fallback: try client_person_id for landlords
+  if(col==='landlordname'&&id){
+    try{
+      const raw=await sb(`jobs?client_person_id=eq.${encodeURIComponent(id)}&order=date.desc&select=*`);
+      if(Array.isArray(raw)&&raw.length>0) return raw.map(_fix);
+    }catch(e){console.warn('[Portal] id fetch failed',e);}
+  }
+  return [];
+}
+
+// ── TAB ───────────────────────────────────────────────────────────────────────
 function go(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
   const fn={overview:vOverview,jobs:vJobs,certs:vCerts,invoices:vInvoices,payments:vPayments,docs:vDocs,request:vRequest};
   if(fn[t])fn[t](_d);
+  window.scrollTo(0,0);
 }
 
-// ── OVERVIEW ─────────────────────────────────────────────────
+// ── OVERVIEW ──────────────────────────────────────────────────────────────────
 function vOverview(d){
   const done=d.jobs.filter(j=>j.status==='Completed').length;
   const active=d.jobs.filter(j=>j.status==='Pending'||j.status==='In Progress').length;
@@ -393,103 +317,69 @@ function vOverview(d){
   const c30=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)>=0&&dd(c.expiryDate)<=30).length;
   const c60=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)>30&&dd(c.expiryDate)<=60).length;
   const cOk=d.certs.filter(c=>c.noExpiry||!c.expiryDate||dd(c.expiryDate)>60).length;
-  const outstanding=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
-  const outTotal=outstanding.reduce((s,i)=>s+calcTotal(i),0);
-
+  const owed=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
+  const owedT=owed.reduce((s,i)=>s+calcTotal(i).grand,0);
   const alerts=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=60)
     .sort((a,b)=>dd(a.expiryDate)-dd(b.expiryDate)).slice(0,4)
-    .map(c=>{const df=dd(c.expiryDate);const cls=df<0?'al-r':'al-y';
-      return`<div class="alert ${cls}"><span>⚠️</span><div><strong>${e(c.type)}</strong> · ${e(c.address||'Property')} · ${df<0?`Expired ${Math.abs(df)}d ago`:`Expires in ${df}d`}</div></div>`;
-    }).join('');
-
-  const typeLabel=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
-  const eg=d.type==='agency'||d.type==='agent';
-  const bankHtml=bankCard(d.entity);
-
-  document.getElementById('main-content').innerHTML=`
+    .map(c=>{const df=dd(c.expiryDate);return`<div class="alert ${df<0?'al-r':'al-y'}"><span>⚠️</span><div><strong>${e(c.type)}</strong> · ${e(c.address||'Property')} · ${df<0?`Expired ${Math.abs(df)}d ago`:`Expires in ${df} day${df!==1?'s':''}`}</div></div>`;}).join('');
+  const bh=bankCard(d.entity);
+  const label=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
+  document.getElementById('main').innerHTML=`
     <div class="hero">
-      <div class="hero-eyebrow">✦ ${typeLabel} Portal</div>
-      <div class="hero-name">Welcome, ${e(d.name)}</div>
-      <div class="hero-sub">Live overview of all your ${eg?'managed ':''}properties, jobs &amp; certificates with ${e(d.coName)}.</div>
+      <div class="hero-ey">✦ ${label} Portal</div>
+      <div class="hero-n">Welcome, ${e(d.name)}</div>
+      <div class="hero-s">Live overview of your properties, jobs &amp; certificates managed by ${e(d.coName)}.</div>
       <div class="hero-row">
-        <button class="hbtn primary" onclick="go('request')">➕ New Request</button>
+        <button class="hbtn p" onclick="go('request')">➕ New Request</button>
         <button class="hbtn" onclick="go('certs')">📋 Certificates</button>
         <button class="hbtn" onclick="go('invoices')">🧾 Invoices</button>
-        ${bankHtml?`<button class="hbtn" onclick="go('payments')">💳 Payments</button>`:''}
+        ${bh?`<button class="hbtn" onclick="go('payments')">💳 Payments</button>`:''}
       </div>
     </div>
-
     <div class="stats">
-      <div class="stat sa"><div class="stat-ic">🔧</div><div><div class="stat-val">${d.jobs.length}</div><div class="stat-lbl">Total Jobs</div></div></div>
-      <div class="stat sb"><div class="stat-ic">✅</div><div><div class="stat-val">${done}</div><div class="stat-lbl">Completed</div></div></div>
-      <div class="stat sc"><div class="stat-ic">⏳</div><div><div class="stat-val">${active}</div><div class="stat-lbl">Active</div></div></div>
-      <div class="stat sd"><div class="stat-ic">⚠️</div><div><div class="stat-val">${cExp+c30}</div><div class="stat-lbl">Cert Alerts</div></div></div>
+      <div class="stat sa"><div class="stat-ic">🔧</div><div><div class="stat-v">${d.jobs.length}</div><div class="stat-l">Total Jobs</div></div></div>
+      <div class="stat sb"><div class="stat-ic">✅</div><div><div class="stat-v">${done}</div><div class="stat-l">Completed</div></div></div>
+      <div class="stat sc"><div class="stat-ic">⏳</div><div><div class="stat-v">${active}</div><div class="stat-l">Active</div></div></div>
+      <div class="stat sd"><div class="stat-ic">⚠️</div><div><div class="stat-v">${cExp+c30}</div><div class="stat-l">Cert Alerts</div></div></div>
     </div>
-
-    ${(cExp||c30||c60)?`
-    <div class="cew">
-      <div class="cew-hd"><div class="cew-title">📋 Certificate Expiry Status</div><button class="dl g sm" onclick="go('certs')">View all →</button></div>
-      <div class="cew-grid">
-        <div class="cew-box cew-exp" onclick="go('certs')"><div class="cew-n">${cExp}</div><div class="cew-l">Expired</div></div>
-        <div class="cew-box cew-s30" onclick="go('certs')"><div class="cew-n">${c30}</div><div class="cew-l">Due within 30 days</div></div>
-        <div class="cew-box cew-ok" onclick="go('certs')"><div class="cew-n">${cOk}</div><div class="cew-l">Valid</div></div>
+    ${(cExp||c30||c60)?`<div class="cew">
+      <div class="cew-hd"><div class="cew-t">📋 Certificate Expiry Status</div><button class="dl g sm" onclick="go('certs')">View all →</button></div>
+      <div class="cew-g">
+        <div class="cew-b cb-e" onclick="go('certs')"><div class="cew-n">${cExp}</div><div class="cew-l">Expired</div></div>
+        <div class="cew-b cb-s" onclick="go('certs')"><div class="cew-n">${c30}</div><div class="cew-l">Due in 30 days</div></div>
+        <div class="cew-b cb-o" onclick="go('certs')"><div class="cew-n">${cOk}</div><div class="cew-l">Valid</div></div>
       </div>
     </div>`:''}
-
     ${alerts?`<div class="sec">${alerts}</div>`:''}
-
-    ${outstanding.length?`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">🧾 Outstanding Balance</div></div>
+    ${owed.length?`<div class="sec"><div class="sec-hd"><div class="sec-t">🧾 Outstanding Balance</div></div>
       <div class="ic" style="cursor:pointer" onclick="go('invoices')">
         <div class="ic-ic" style="background:var(--rbg)">💷</div>
-        <div class="ic-body"><div class="ic-num">${outstanding.length} invoice${outstanding.length!==1?'s':''} outstanding</div><div class="ic-desc">Tap to view details</div></div>
-        <div class="ic-r"><div class="ic-amt" style="color:var(--red)">${fgbp(outTotal)}</div><div class="ic-lbl">OUTSTANDING</div></div>
+        <div class="ic-body"><div class="ic-num">${owed.length} invoice${owed.length!==1?'s':''} outstanding</div><div class="ic-desc">Tap to view &amp; download</div></div>
+        <div class="ic-r"><div class="ic-amt" style="color:var(--red)">${fgbp(owedT)}</div><div class="ic-lbl">OUTSTANDING</div></div>
       </div>
     </div>`:''}
-
     <div class="sec">
-      <div class="sec-hd">
-        <div class="sec-t">🔧 Recent Jobs</div>
-        ${d.jobs.length>3?`<button class="dl g sm" onclick="go('jobs')">All ${d.jobs.length} →</button>`:''}
-      </div>
-      ${d.jobs.slice(0,3).map(j=>jobCard(j,d)).join('')||emptyHtml('🔧','No jobs yet','Jobs will appear here once scheduled')}
+      <div class="sec-hd"><div class="sec-t">🔧 Recent Jobs</div>${d.jobs.length>3?`<button class="dl g sm" onclick="go('jobs')">All ${d.jobs.length} →</button>`:''}</div>
+      ${d.jobs.slice(0,3).map(j=>jobCard(j,d)).join('')||empty('🔧','No jobs yet','Jobs will appear here once scheduled')}
     </div>
-
-    ${d.certs.length?`
-    <div class="sec">
-      <div class="sec-hd">
-        <div class="sec-t">📋 Certificates</div>
-        ${d.certs.length>3?`<button class="dl g sm" onclick="go('certs')">All ${d.certs.length} →</button>`:''}
-      </div>
+    ${d.certs.length?`<div class="sec">
+      <div class="sec-hd"><div class="sec-t">📋 Certificates</div>${d.certs.length>3?`<button class="dl g sm" onclick="go('certs')">All ${d.certs.length} →</button>`:''}</div>
       ${d.certs.slice(0,3).map(c=>certCard(c,d)).join('')}
-    </div>`:''}
-  `;
+    </div>`:''}`;
 }
 
-// ── JOBS ─────────────────────────────────────────────────────
+// ── JOBS ─────────────────────────────────────────────────────────────────────
 function vJobs(d){
-  const isGrouped=d.jobs.length>4&&(d.type==='agency'||d.type==='agent');
+  const isG=d.jobs.length>4&&(d.type==='agency'||d.type==='agent');
   let html='';
-  if(isGrouped){
-    const byA={};
-    d.jobs.forEach(j=>{const k=j.address||'?';if(!byA[k])byA[k]=[];byA[k].push(j);});
-    html=Object.entries(byA).map(([addr,js])=>`
-      <div class="pg">
-        <div class="pg-hd" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-          <div class="pg-addr">🏠 ${e(addr)}</div>
-          <div class="pg-meta">${js.length} job${js.length!==1?'s':''} ›</div>
-        </div>
-        <div class="pg-body">${js.map(j=>jobCard(j,d)).join('')}</div>
-      </div>`).join('');
-  }else{
-    html=d.jobs.map(j=>jobCard(j,d)).join('');
-  }
-  document.getElementById('main-content').innerHTML=`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">🔧 All Jobs <span class="sec-n">${d.jobs.length}</span></div></div>
-      ${html||emptyHtml('🔧','No jobs yet','Jobs will appear here once scheduled')}
-    </div>`;
+  if(isG){
+    const byA={};d.jobs.forEach(j=>{const k=j.address||'?';if(!byA[k])byA[k]=[];byA[k].push(j);});
+    html=Object.entries(byA).map(([addr,js])=>`<div class="pg">
+      <div class="pg-hd" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <div class="pg-addr">🏠 ${e(addr)}</div><div class="pg-m">${js.length} job${js.length!==1?'s':''} ›</div>
+      </div><div class="pg-body">${js.map(j=>jobCard(j,d)).join('')}</div></div>`).join('');
+  }else html=d.jobs.map(j=>jobCard(j,d)).join('');
+  document.getElementById('main').innerHTML=`<div class="sec"><div class="sec-hd"><div class="sec-t">🔧 All Jobs <span class="sec-n">${d.jobs.length}</span></div></div>${html||empty('🔧','No jobs yet','Jobs will appear here once scheduled')}</div>`;
 }
 
 function jobCard(j,d){
@@ -498,82 +388,62 @@ function jobCard(j,d){
   const photos=atts.filter(a=>a.type==='photo'||/\.(jpg|jpeg|png|webp|gif)/i.test(a.url||''));
   const docs=atts.filter(a=>!photos.includes(a));
   const hasBody=photos.length||jc.length||docs.length;
-  const ds=fd(j.date);
   return`<div class="jc">
-    <div class="jc-hd">
-      <div class="jc-l">
-        <div class="jc-num">${e(j.jobNum||'—')}</div>
-        <div class="jc-addr">${e(j.address||'—')}</div>
-        ${j.description?`<div class="jc-desc">${e(j.description)}</div>`:''}
-      </div>
-      ${jsBadge(j.status)}
-    </div>
+    <div class="jc-hd"><div class="jc-l">
+      <div class="jc-num">${e(j.jobNum||'—')}</div>
+      <div class="jc-addr">${e(j.address||'—')}</div>
+      ${j.description?`<div class="jc-desc">${e(j.description)}</div>`:''}
+    </div>${jsBadge(j.status)}</div>
     <div class="jc-strip">
-      ${ds?`<span class="chip">📅 ${ds}</span>`:''}
-      ${ds&&j.engineer?'<span class="chip-dot">·</span>':''}
+      ${j.date?`<span class="chip">📅 ${fd(j.date)}</span>`:''}
+      ${j.date&&j.engineer?'<span class="cdot">·</span>':''}
       ${j.engineer?`<span class="chip">👷 ${e(j.engineer)}</span>`:''}
-      ${(j.certTypes||[]).length?`<span class="chip-dot">·</span><span class="chip">📋 ${e(j.certTypes.join(', '))}</span>`:''}
-      ${j.timeSlot?`<span class="chip-dot">·</span><span class="chip">🕐 ${e(j.timeSlot)}</span>`:''}
+      ${(j.certTypes||[]).length?`<span class="cdot">·</span><span class="chip">📋 ${e(j.certTypes.join(', '))}</span>`:''}
+      ${j.timeSlot?`<span class="cdot">·</span><span class="chip">🕐 ${e(j.timeSlot)}</span>`:''}
     </div>
     ${hasBody?`<div class="jc-body">
       ${photos.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${photos.map(p=>`<img class="pt" src="${ea(p.url)}" onclick="openLb('${ea(p.url)}')" loading="lazy">`).join('')}</div>`:''}
       ${jc.map(c=>{const df=!c.noExpiry&&c.expiryDate?dd(c.expiryDate):null;const pc=df===null?'p-n':df<0?'p-e':df<=60?'p-s':'p-ok';
         return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-          <span>📄</span>
-          <div style="flex:1;min-width:0">
+          <span>📄</span><div style="flex:1;min-width:0">
             <div style="font-size:12px;font-weight:600">${e(c.type||'Certificate')}</div>
             <div style="font-size:10px;color:var(--txt3)">${df!==null?(df<0?`Expired ${Math.abs(df)}d ago`:`Expires ${new Date(c.expiryDate).toLocaleDateString('en-GB')}`):c.noExpiry?'No expiry':''}</div>
-          </div>
-          <span class="pill ${pc}">${df!==null?(df<0?'Expired':'Valid'):c.noExpiry?'No expiry':'Valid'}</span>
-          ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl sm">⬇</a>`:''}
-        </div>`;}).join('')}
+          </div><span class="pill ${pc}">${df!==null?(df<0?'Expired':'Valid'):c.noExpiry?'No expiry':'Valid'}</span>
+          ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl sm">⬇</a>`:''}</div>`;}).join('')}
       ${docs.map(doc=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-        <span>📎</span>
-        <div style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(doc.name||'Document')}</div>
-        ${doc.url?`<a href="${ea(doc.url)}" target="_blank" class="dl sm">⬇</a>`:''}
-      </div>`).join('')}
+        <span>📎</span><div style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(doc.name||'Document')}</div>
+        ${doc.url?`<a href="${ea(doc.url)}" target="_blank" class="dl sm">⬇</a>`:''}</div>`).join('')}
     </div>`:''}
   </div>`;
 }
 
-// ── CERTS ─────────────────────────────────────────────────────
+// ── CERTS ─────────────────────────────────────────────────────────────────────
 function vCerts(d){
   const OPTS=[{v:'expiry',l:'Expiry Date'},{v:'status',l:'Status (urgent first)'},{v:'type',l:'Cert Type'},{v:'address',l:'Address'},{v:'certnum',l:'Cert Number'},{v:'issuedate',l:'Issue Date'}];
   const sorted=sortCerts([...d.certs]);
-  document.getElementById('main-content').innerHTML=`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📋 Certificates <span class="sec-n">${d.certs.length}</span></div></div>
-      <div class="sort-bar">
-        <span class="sl">Sort:</span>
-        <select class="ss" onchange="_cs=this.value;vCerts(_d)">
-          ${OPTS.map(o=>`<option value="${o.v}"${_cs===o.v?' selected':''}>${o.l}</option>`).join('')}
-        </select>
-        <select class="ss" onchange="_cd=this.value;vCerts(_d)">
-          <option value="asc"${_cd==='asc'?' selected':''}>↑ Ascending</option>
-          <option value="desc"${_cd==='desc'?' selected':''}>↓ Descending</option>
-        </select>
-      </div>
-      ${sorted.length?sorted.map(c=>certCard(c,d)).join('')
-        :emptyHtml('📋','No certificates','Certificates will appear here after inspections')}
+  document.getElementById('main').innerHTML=`<div class="sec">
+    <div class="sec-hd"><div class="sec-t">📋 Certificates <span class="sec-n">${d.certs.length}</span></div></div>
+    <div class="sort-bar">
+      <span class="sl">Sort:</span>
+      <select class="ss" onchange="_cs=this.value;vCerts(_d)">${OPTS.map(o=>`<option value="${o.v}"${_cs===o.v?' selected':''}>${o.l}</option>`).join('')}</select>
+      <select class="ss" onchange="_cd=this.value;vCerts(_d)">
+        <option value="asc"${_cd==='asc'?' selected':''}>↑ Ascending</option>
+        <option value="desc"${_cd==='desc'?' selected':''}>↓ Descending</option>
+      </select>
     </div>
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
-      ${cs('📦','Document Archive','All compliance docs, searchable and downloadable')}
-      ${cs('📊','Compliance Report PDF','Full property compliance overview, auto-generated')}
-    </div>`;
+    ${sorted.length?sorted.map(c=>certCard(c,d)).join(''):empty('📋','No certificates','Certificates will appear here after inspections')}
+  </div>`;
 }
 
 function sortCerts(a){
   const FAR=new Date('2099-01-01');
   return a.sort((x,y)=>{
-    let vx,vy;
-    if(_cs==='expiry'){vx=x.noExpiry||!x.expiryDate?FAR:new Date(x.expiryDate);vy=y.noExpiry||!y.expiryDate?FAR:new Date(y.expiryDate);return _cd==='asc'?vx-vy:vy-vx;}
-    if(_cs==='type'){vx=(x.type||'').toLowerCase();vy=(y.type||'').toLowerCase();}
-    else if(_cs==='address'){vx=(x.address||'').toLowerCase();vy=(y.address||'').toLowerCase();}
-    else if(_cs==='certnum'){vx=(x.certNum||'').toLowerCase();vy=(y.certNum||'').toLowerCase();}
-    else if(_cs==='issuedate'){vx=x.issueDate?new Date(x.issueDate):new Date(0);vy=y.issueDate?new Date(y.issueDate):new Date(0);return _cd==='asc'?vx-vy:vy-vx;}
-    else if(_cs==='status'){const r=c=>!c.expiryDate||c.noExpiry?3:dd(c.expiryDate)<0?0:dd(c.expiryDate)<=30?1:dd(c.expiryDate)<=60?2:4;vx=r(x);vy=r(y);}
-    if(vx===undefined)return 0;const c=vx<vy?-1:vx>vy?1:0;return _cd==='asc'?c:-c;
+    if(_cs==='expiry'){const vx=x.noExpiry||!x.expiryDate?FAR:new Date(x.expiryDate);const vy=y.noExpiry||!y.expiryDate?FAR:new Date(y.expiryDate);return _cd==='asc'?vx-vy:vy-vx;}
+    if(_cs==='issuedate'){const vx=x.issueDate?new Date(x.issueDate):new Date(0);const vy=y.issueDate?new Date(y.issueDate):new Date(0);return _cd==='asc'?vx-vy:vy-vx;}
+    if(_cs==='status'){const r=c=>!c.expiryDate||c.noExpiry?3:dd(c.expiryDate)<0?0:dd(c.expiryDate)<=30?1:dd(c.expiryDate)<=60?2:4;const vx=r(x),vy=r(y);return _cd==='asc'?vx-vy:vy-vx;}
+    const map={type:'type',address:'address',certnum:'certNum'};const fld=map[_cs];
+    if(!fld)return 0;const vx=(x[fld]||'').toLowerCase(),vy=(y[fld]||'').toLowerCase();
+    const c=vx<vy?-1:vx>vy?1:0;return _cd==='asc'?c:-c;
   });
 }
 
@@ -588,9 +458,9 @@ function certCard(c,d){
   return`<div class="cc">
     <div class="cc-ic">${ic}</div>
     <div class="cc-body">
-      <div class="cc-type">${e(c.type||'Certificate')}</div>
-      <div class="cc-addr">${e(c.address||(jf?.address)||'—')}</div>
-      <div class="cc-meta">
+      <div class="cc-t">${e(c.type||'Certificate')}</div>
+      <div class="cc-a">${e(c.address||(jf?.address)||'—')}</div>
+      <div class="cc-m">
         <span class="pill ${pc}">${pt}</span>
         ${!c.noExpiry&&c.expiryDate?`<span style="font-size:10px;color:var(--txt3)">Exp. ${new Date(c.expiryDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>`:''}
         ${c.certNum?`<span style="font-size:10px;color:var(--txt3)">Ref: ${e(c.certNum)}</span>`:''}
@@ -600,135 +470,241 @@ function certCard(c,d){
   </div>`;
 }
 
-// ── INVOICES ─────────────────────────────────────────────────
+// ── INVOICES ─────────────────────────────────────────────────────────────────
 function vInvoices(d){
   const sorted=[...d.invoices].sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
   const rows=sorted.map(inv=>{
-    const t=calcTotal(inv);
-    const paid=inv.status==='Paid',can=inv.status==='Cancelled';
+    const t=calcTotal(inv);const paid=inv.status==='Paid',can=inv.status==='Cancelled';
     const ds=inv.createdAt?fd(inv.createdAt.slice(0,10)):fd(inv.date);
-    const due=inv.dueDate?`Due ${fd(inv.dueDate)}`:'';
     return`<div class="ic">
       <div class="ic-ic" style="background:${paid?'var(--gbg)':can?'var(--s3)':'var(--pbg)'}">🧾</div>
       <div class="ic-body">
         <div class="ic-num">${e(inv.number||inv.id?.slice(0,8)||'—')}</div>
-        <div class="ic-desc">${ds}${due?' · '+due:''} · <span class="pill ${paid?'p-ok':can?'p-n':'p-s'}" style="font-size:9px">${paid?'Paid':can?'Cancelled':'Awaiting'}</span></div>
+        <div class="ic-desc">${ds} · <span class="pill ${paid?'p-ok':can?'p-n':'p-s'}" style="font-size:9px">${paid?'Paid':can?'Cancelled':'Awaiting'}</span>
+        ${inv.dueDate&&!paid?` · Due ${fd(inv.dueDate)}`:''}
+        </div>
       </div>
-      <div class="ic-r">
-        <div class="ic-amt" style="color:${paid?'var(--green)':can?'var(--txt3)':'var(--red)'}">${fgbp(t)}</div>
-        <div class="ic-lbl">${paid?'PAID':can?'VOID':'DUE'}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+        <div class="ic-amt" style="color:${paid?'var(--green)':can?'var(--txt3)':'var(--red)'};font-size:16px;font-weight:900">${fgbp(t.grand)}</div>
+        <button class="dl sm" onclick="downloadInvPDF('${ea(JSON.stringify(inv).replace(/'/g,"&#39;"))}')">⬇ PDF</button>
       </div>
     </div>`;
   });
-  document.getElementById('main-content').innerHTML=`
+  const owedT=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled').reduce((s,i)=>s+calcTotal(i).grand,0);
+  const paidT=d.invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+calcTotal(i).grand,0);
+  document.getElementById('main').innerHTML=`
     <div class="sec">
       <div class="sec-hd"><div class="sec-t">🧾 Invoices <span class="sec-n">${d.invoices.length}</span></div></div>
-      ${rows.length?rows.join(''):emptyHtml('🧾','No invoices yet','Invoices will appear here once raised')}
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
-      ${cs('⬇','Download PDF Invoices','Download individual or bulk invoice PDFs')}
-      ${cs('📊','Statement of Account','Full payment history and statements')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">
+        <div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--r2);padding:13px;text-align:center"><div style="font-size:20px;font-weight:900;color:var(--green)">${fgbp(paidT)}</div><div style="font-size:10px;color:var(--green);margin-top:2px;font-weight:600">Total Paid</div></div>
+        <div style="background:${owedT>0?'var(--rbg)':'var(--gbg)'};border:1px solid ${owedT>0?'var(--rbd)':'var(--gbd)'};border-radius:var(--r2);padding:13px;text-align:center"><div style="font-size:20px;font-weight:900;color:${owedT>0?'var(--red)':'var(--green)'}">${fgbp(owedT)}</div><div style="font-size:10px;color:${owedT>0?'var(--red)':'var(--green)'};margin-top:2px;font-weight:600">${owedT>0?'Outstanding':'All Clear ✓'}</div></div>
+      </div>
+      ${rows.length?rows.join(''):empty('🧾','No invoices yet','Invoices will appear here once raised')}
     </div>`;
 }
 
-// ── PAYMENTS ─────────────────────────────────────────────────
+// ── INVOICE PDF ───────────────────────────────────────────────────────────────
+function downloadInvPDF(invJson){
+  let inv;
+  try{inv=typeof invJson==='string'?JSON.parse(invJson):invJson;}catch(e){toast('Could not parse invoice');return;}
+  if(!window.jspdf){toast('PDF library loading — please wait and try again');return;}
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297,M=18,RW=W-M*2;
+  const accent=[245,166,35],dark=[22,24,35],mid=[80,85,110],light=[245,246,250];
+  const t=calcTotal(inv);
+  const vr=_S.vatRate||20;
+
+  const safeText=(txt,x,y,maxW)=>{if(!txt)return;const lines=doc.splitTextToSize(String(txt),maxW||80);doc.text(lines,x,y);return lines.length;};
+
+  // Top bar
+  doc.setFillColor(...accent);doc.rect(0,0,W,4,'F');
+  // Logo
+  let logoBottom=M;
+  if(_S.logoData){try{doc.addImage(_S.logoData,'PNG',M,M+4,36,18,'','FAST');logoBottom=M+24;}catch(e){}}
+  // Company details
+  let cy=logoBottom+4;
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...dark);
+  doc.text(_S.coName||'Your Company',M,cy);cy+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...mid);
+  if(_S.coAddr){safeText(_S.coAddr,M,cy,70);cy+=4*(_S.coAddr.split(',').length);}
+  if(_S.coPhone){doc.text(_S.coPhone,M,cy);cy+=4;}
+  if(_S.coEmail){doc.text(_S.coEmail,M,cy);cy+=4;}
+  if(_S.coVatNum){doc.text('VAT No: '+_S.coVatNum,M,cy);}
+  // Invoice meta right
+  doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(...accent);
+  doc.text('INVOICE',W-M,M+10,{align:'right'});
+  doc.setFontSize(10);doc.setTextColor(...dark);
+  doc.text(inv.number||'—',W-M,M+20,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mid);
+  doc.text('Issue date: '+(inv.date||'—'),W-M,M+28,{align:'right'});
+  if(inv.dueDate)doc.text('Due date:  '+inv.dueDate,W-M,M+34,{align:'right'});
+  doc.setFont('helvetica','bold');
+  const sc={'Paid':[34,197,94],'Awaiting Payment':[245,166,35],'Cancelled':[200,60,60],'Draft':[120,130,150]}[inv.status]||mid;
+  doc.setTextColor(...sc);doc.text(inv.status||'Draft',W-M,M+42,{align:'right'});
+  // Divider
+  let y=Math.max(cy+6,62);
+  doc.setDrawColor(220,220,230);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;
+  // Bill To
+  const colW=(RW-10)/2;
+  doc.setFillColor(...light);doc.rect(M,y,colW,6,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+  doc.text('BILL TO',M+3,y+4);y+=9;
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...dark);
+  doc.text(inv.billToName||inv.clientName||_d.name||'—',M,y);
+  let cY=y+5;
+  const bAddr=inv.billToAddress||inv.clientAddr||'';
+  if(bAddr){doc.setFontSize(8.5);doc.setTextColor(...mid);const al=doc.splitTextToSize(bAddr,colW);doc.text(al,M,cY);cY+=al.length*4.5;}
+  if(inv.clientEmail){doc.setFontSize(8);doc.setTextColor(...mid);doc.text(inv.clientEmail,M,cY);cY+=5;}
+  y=cY+4;
+  // Line items table
+  doc.setDrawColor(220,220,230);doc.line(M,y,W-M,y);y+=2;
+  doc.setFillColor(...dark);doc.rect(M,y,RW,6.5,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(200,200,220);
+  const cols=[M+2,M+90,M+113,M+133,W-M-2];
+  ['DESCRIPTION','QTY','UNIT PRICE','VAT','TOTAL'].forEach((h,i)=>doc.text(h,cols[i],y+4.5,i===4?{align:'right'}:null));
+  y+=8;
+  (inv.items||[]).forEach((item,ii)=>{
+    const l=(item.qty||1)*(item.unit||0);const v=item.vat?l*vr/100:0;
+    if(y>H-50){doc.addPage();doc.setFillColor(...accent);doc.rect(0,0,W,4,'F');y=14;}
+    if(ii%2===0){doc.setFillColor(249,249,252);doc.rect(M,y-3,RW,7,'F');}
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...dark);
+    const dl=doc.splitTextToSize(String(item.desc||''),82);
+    doc.text(dl[0]+(dl.length>1?'…':''),M+2,y+1);
+    doc.text(String(item.qty||1),cols[1],y+1);
+    doc.text('£'+Number(item.unit||0).toFixed(2),cols[2],y+1);
+    doc.setTextColor(item.vat?100:160,item.vat?120:160,160);
+    doc.text(item.vat?vr+'%':'—',cols[3],y+1);
+    doc.setTextColor(...dark);doc.text('£'+(l+v).toFixed(2),cols[4],y+1,{align:'right'});y+=7;
+  });
+  y+=3;doc.setDrawColor(220,220,230);doc.line(M,y,W-M,y);y+=6;
+  // Totals
+  const tC=W-M-50;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...mid);
+  doc.text('Subtotal:',tC,y);doc.text('£'+t.sub.toFixed(2),W-M,y,{align:'right'});y+=5.5;
+  doc.text(`VAT (${vr}%):`,tC,y);doc.text('£'+t.vat.toFixed(2),W-M,y,{align:'right'});y+=2;
+  doc.setDrawColor(220,220,230);doc.line(tC,y,W-M,y);y+=5;
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...accent);
+  doc.text('TOTAL:',tC,y);doc.text('£'+t.grand.toFixed(2),W-M,y,{align:'right'});y+=8;
+  // Paid watermark
+  if(inv.status==='Paid'){
+    doc.saveGraphicsState();doc.setGState(doc.GState({opacity:.07}));
+    doc.setFont('helvetica','bold');doc.setFontSize(80);doc.setTextColor(34,197,94);
+    doc.text('PAID',W/2,H/2,{align:'center',angle:35});doc.restoreGraphicsState();
+  }
+  // Payment details
+  if(_S.bankName||_S.bankAcc){
+    y+=2;doc.setFillColor(...light);doc.rect(M,y,RW,5.5,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    doc.text('PAYMENT DETAILS',M+3,y+3.8);y+=7;
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...dark);
+    if(_S.bankName)doc.text('Bank: '+_S.bankName,M,y);
+    if(_S.bankAcc)doc.text('Acc: '+_S.bankAcc+(_S.bankSort?' · Sort: '+_S.bankSort:''),M+55,y);y+=5;
+    if(_S.bankIBAN)doc.text('IBAN: '+_S.bankIBAN,M,y);
+  }
+  // Reference box
+  y+=8;
+  doc.setFillColor(254,248,235);doc.setDrawColor(...accent);doc.setLineWidth(0.5);
+  doc.roundedRect(M,y-3,RW,9,2,2,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(100,70,10);
+  doc.text('Please quote reference: '+(inv.number||'—')+' with your payment',M+3,y+2.5);y+=13;
+  // Terms
+  if(_S.payTerms||_S.invNotes){
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    if(_S.payTerms){safeText(_S.payTerms,M,y,RW);y+=5;}
+    if(_S.invNotes){safeText(_S.invNotes,M,y,RW);}
+  }
+  // Footer
+  doc.setDrawColor(220,220,230);doc.line(M,H-14,W-M,H-14);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(170,175,195);
+  doc.text(_S.coName||'',M,H-9);
+  doc.text('Generated by DeepFlow',W-M,H-9,{align:'right'});
+  doc.setFillColor(...accent);doc.rect(0,H-4,W,4,'F');
+  doc.save((inv.number||'invoice')+'.pdf');
+  toast('📄 Invoice downloaded');
+}
+
+// ── PAYMENTS ──────────────────────────────────────────────────────────────────
 function vPayments(d){
-  const bh=bankCard(d.entity);
   const paid=d.invoices.filter(i=>i.status==='Paid');
   const owed=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
-  const owedTotal=owed.reduce((s,i)=>s+calcTotal(i),0);
-  const paidTotal=paid.reduce((s,i)=>s+calcTotal(i),0);
-  document.getElementById('main-content').innerHTML=`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">💳 Payment Summary</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        <div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--r2);padding:16px;text-align:center">
-          <div style="font-size:22px;font-weight:900;color:var(--green)">${fgbp(paidTotal)}</div>
-          <div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600">Total Paid</div>
-        </div>
-        <div style="background:${owedTotal>0?'var(--rbg)':'var(--gbg)'};border:1px solid ${owedTotal>0?'var(--rbd)':'var(--gbd)'};border-radius:var(--r2);padding:16px;text-align:center">
-          <div style="font-size:22px;font-weight:900;color:${owedTotal>0?'var(--red)':'var(--green)'}">${fgbp(owedTotal)}</div>
-          <div style="font-size:11px;color:${owedTotal>0?'var(--red)':'var(--green)'};margin-top:3px;font-weight:600">${owedTotal>0?'Outstanding':'All Clear'}</div>
-        </div>
+  const owedT=owed.reduce((s,i)=>s+calcTotal(i).grand,0);
+  const paidT=paid.reduce((s,i)=>s+calcTotal(i).grand,0);
+  const bh=bankCard(d.entity);
+  const stmtRows=[...d.invoices].sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0))
+    .map(inv=>{
+      const t=calcTotal(inv);const p=inv.status==='Paid',c=inv.status==='Cancelled';
+      return`<div class="stmt-row">
+        <div class="stmt-icon" style="background:${p?'var(--gbg)':c?'var(--s3)':'var(--rbg)'}">${p?'✅':c?'✕':'⏳'}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">${e(inv.number||'—')}</div><div style="font-size:11px;color:var(--txt3)">${inv.createdAt?fd(inv.createdAt.slice(0,10)):fd(inv.date)}</div></div>
+        <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:900;color:${p?'var(--green)':c?'var(--txt3)':'var(--red)'}">${fgbp(t.grand)}</div>
+        <div style="font-size:9px;color:var(--txt3)">${p?'PAID':c?'VOID':'OUTSTANDING'}</div></div>
+      </div>`;}).join('');
+  document.getElementById('main').innerHTML=`
+    <div class="sec"><div class="sec-hd"><div class="sec-t">💳 Payment Summary</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">
+        <div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--r2);padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--green)">${fgbp(paidT)}</div><div style="font-size:10px;color:var(--green);margin-top:3px;font-weight:600">Total Paid</div></div>
+        <div style="background:${owedT>0?'var(--rbg)':'var(--gbg)'};border:1px solid ${owedT>0?'var(--rbd)':'var(--gbd)'};border-radius:var(--r2);padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:${owedT>0?'var(--red)':'var(--green)'}">${fgbp(owedT)}</div><div style="font-size:10px;color:${owedT>0?'var(--red)':'var(--green)'};margin-top:3px;font-weight:600">${owedT>0?'Outstanding':'All Clear ✓'}</div></div>
       </div>
       ${bh||''}
     </div>
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
-      ${cs('💳','Online Payment','Pay invoices securely through the portal')}
-      ${cs('📊','Statement History','Full payment history with CSV export')}
-      ${cs('🔔','Payment Reminders','Automatic reminders before due dates')}
+    <div class="sec"><div class="sec-hd"><div class="sec-t">📊 Statement of Account</div></div>
+      ${stmtRows||empty('📊','No transactions yet','')}
     </div>`;
 }
 
 function bankCard(entity){
   if(!entity)return'';
-  const bn=entity.bankName||entity.bank_name||'';
-  const ba=entity.bankAcc||entity.bank_acc||'';
-  const bs=entity.bankSort||entity.bank_sort||'';
-  const br=entity.bankRef||entity.bank_ref||'';
+  const bn=entity.bankName||'',ba=entity.bankAcc||'',bs=entity.bankSort||'',br=entity.bankRef||'';
   if(!bn&&!ba&&!bs&&!br)return'';
   return`<div class="bank-card">
-    <div class="bank-title">🏦 Payment Details</div>
-    ${bn?`<div class="bank-name">${e(bn)}</div>`:''}
-    <div class="bank-row">
-      ${ba?`<div class="bank-field">Account: <strong>${e(ba)}</strong></div>`:''}
-      ${bs?`<div class="bank-field">Sort Code: <strong>${e(bs)}</strong></div>`:''}
-    </div>
+    <div class="bank-t">🏦 Payment Details</div>
+    ${bn?`<div class="bank-n">${e(bn)}</div>`:''}
+    <div class="bank-row">${ba?`<div class="bank-f">Account: <strong>${e(ba)}</strong></div>`:''}${bs?`<div class="bank-f">Sort Code: <strong>${e(bs)}</strong></div>`:''}</div>
     ${br?`<div class="bank-link">🔗 ${e(br)}</div>`:''}
   </div>`;
 }
 
-// ── DOCUMENTS ────────────────────────────────────────────────
+// ── DOCUMENTS ─────────────────────────────────────────────────────────────────
 function vDocs(d){
-  const allDocs=d.attachments.filter(a=>a.url&&(a.type!=='photo'&&!/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
   const allPdfs=d.certs.filter(c=>c.url);
-  document.getElementById('main-content').innerHTML=`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📁 Certificates &amp; Documents <span class="sec-n">${allPdfs.length+allDocs.length}</span></div></div>
+  const allDocs=d.attachments.filter(a=>a.url&&(a.type!=='photo'&&!/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
+  const photos=d.attachments.filter(a=>a.url&&(a.type==='photo'||/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
+  document.getElementById('main').innerHTML=`
+    <div class="sec"><div class="sec-hd"><div class="sec-t">📁 All Documents <span class="sec-n">${allPdfs.length+allDocs.length+photos.length}</span></div></div>
       ${allPdfs.length?`<div style="margin-bottom:16px">
-        <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📋 Certificates</div>
-        ${allPdfs.map(c=>`<div class="cc" style="margin-bottom:8px">
-          <div class="cc-ic">📄</div>
-          <div class="cc-body">
-            <div class="cc-type">${e(c.type||'Certificate')}</div>
-            <div class="cc-addr">${e(c.address||'—')}</div>
-            ${c.certNum?`<div style="font-size:10px;color:var(--txt3);margin-top:3px">Ref: ${e(c.certNum)}</div>`:''}
-          </div>
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📋 Certificates</div>
+        ${allPdfs.map(c=>`<div class="doc-row">
+          <div class="cc-ic" style="width:36px;height:36px;border-radius:9px;font-size:16px">📄</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${e(c.type||'Certificate')}</div><div style="font-size:11px;color:var(--txt3)">${e(c.address||'—')}${c.certNum?' · Ref: '+e(c.certNum):''}</div></div>
           <a href="${ea(c.url)}" target="_blank" class="dl">⬇ Download</a>
         </div>`).join('')}
       </div>`:''}
-      ${allDocs.length?`<div>
-        <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📎 Documents &amp; Reports</div>
-        ${allDocs.map(doc=>`<div class="cc" style="margin-bottom:8px">
-          <div class="cc-ic">📎</div>
-          <div class="cc-body">
-            <div class="cc-type">${e(doc.name||'Document')}</div>
-            <div class="cc-addr">${e(doc.type||'Attachment')}</div>
-          </div>
+      ${allDocs.length?`<div style="margin-bottom:16px">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📎 Reports &amp; Documents</div>
+        ${allDocs.map(doc=>`<div class="doc-row">
+          <div class="cc-ic" style="width:36px;height:36px;border-radius:9px;font-size:16px">📎</div>
+          <div style="flex:1;min-width:0;overflow:hidden"><div style="font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(doc.name||'Document')}</div><div style="font-size:11px;color:var(--txt3)">${e(doc.type||'Attachment')}</div></div>
           <a href="${ea(doc.url)}" target="_blank" class="dl">⬇ Download</a>
         </div>`).join('')}
       </div>`:''}
-      ${!allPdfs.length&&!allDocs.length?emptyHtml('📁','No documents yet','Documents and certificates will appear here once uploaded'):''}
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">📥 Coming Soon</div></div>
-      ${cs('📦','Document Archive','All compliance documents searchable by date and type')}
-      ${cs('🔄','Bulk Download','Download all documents as a single ZIP')}
+      ${photos.length?`<div>
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📷 Job Photos</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">${photos.map(p=>`<img class="pt" style="width:90px;height:90px" src="${ea(p.url)}" onclick="openLb('${ea(p.url)}')" loading="lazy">`).join('')}</div>
+      </div>`:''}
+      ${!allPdfs.length&&!allDocs.length&&!photos.length?empty('📁','No documents yet','Documents and certificates will appear here once uploaded'):''}
     </div>`;
 }
 
-// ── REQUEST ──────────────────────────────────────────────────
+// ── REQUEST ───────────────────────────────────────────────────────────────────
 function vRequest(d){
   const today=new Date().toISOString().slice(0,10);
-  document.getElementById('main-content').innerHTML=`
-    <div class="sec">
-      <div class="sec-hd"><div class="sec-t">➕ New Service Request</div></div>
+  document.getElementById('main').innerHTML=`
+    <div class="sec"><div class="sec-hd"><div class="sec-t">➕ New Service Request</div></div>
       <div class="rc">
-        <div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-          <div style="font-size:16px;font-weight:800;margin-bottom:5px">Submit a Request</div>
-          <div style="font-size:13px;color:var(--txt2);line-height:1.5">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
+        <div style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Submit a Request</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.5">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
         </div>
         <div id="rw">
           <div class="fgrid fgrid-2">
@@ -736,45 +712,24 @@ function vRequest(d){
             <div class="fg"><label class="fl">Service Required *</label>
               <select class="fi" id="rs">
                 <option value="">Select a service...</option>
-                <optgroup label="Gas">
-                  <option>Gas Safety Certificate (CP12)</option>
-                  <option>Boiler Service</option>
-                  <option>Boiler Repair</option>
-                </optgroup>
-                <optgroup label="Electrical">
-                  <option>Electrical Inspection (EICR)</option>
-                  <option>PAT Testing</option>
-                  <option>Electrical Fault / Repair</option>
-                </optgroup>
-                <optgroup label="Property">
-                  <option>Energy Performance Certificate (EPC)</option>
-                  <option>Fire Risk Assessment</option>
-                  <option>Legionella Risk Assessment</option>
-                  <option>General Maintenance</option>
-                  <option>Emergency Call-Out</option>
-                </optgroup>
+                <optgroup label="🔥 Gas"><option>Gas Safety Certificate (CP12)</option><option>Boiler Service</option><option>Boiler Repair</option></optgroup>
+                <optgroup label="⚡ Electrical"><option>Electrical Inspection (EICR)</option><option>PAT Testing</option><option>Electrical Fault / Repair</option></optgroup>
+                <optgroup label="🏠 Property"><option>Energy Performance Certificate (EPC)</option><option>Fire Risk Assessment</option><option>Legionella Risk Assessment</option><option>General Maintenance</option><option>Emergency Call-Out</option></optgroup>
                 <option>Other (describe in notes)</option>
               </select>
             </div>
           </div>
-          <div class="fgrid fgrid-2" style="margin-top:12px">
+          <div class="fgrid fgrid-2" style="margin-top:11px">
             <div class="fg"><label class="fl">Preferred Date</label><input class="fi" type="date" id="rd" min="${today}"></div>
             <div class="fg"><label class="fl">Access Arrangements</label>
-              <select class="fi" id="rac">
-                <option value="">Select...</option>
-                <option>Tenant will be home</option>
-                <option>Keys at your office</option>
-                <option>Key safe — I will provide code</option>
-                <option>I will be present</option>
-                <option>Contact tenant directly to arrange</option>
-              </select>
+              <select class="fi" id="rac"><option value="">Select...</option><option>Tenant will be home</option><option>Keys at your office</option><option>Key safe — I will provide code</option><option>I will be present</option><option>Contact tenant directly</option></select>
             </div>
           </div>
-          <div class="fg" style="margin-top:12px"><label class="fl">Additional Notes</label>
-            <textarea class="fi" id="rn" placeholder="Special requirements, tenant contact number, access codes, parking info..."></textarea>
+          <div class="fg" style="margin-top:11px"><label class="fl">Additional Notes</label>
+            <textarea class="fi" id="rn" placeholder="Tenant contact number, access codes, parking info, special requirements..."></textarea>
           </div>
           <button class="fsub" id="rsb" onclick="submitReq()">📩 Submit Request</button>
-          <div class="fnote">We'll confirm by phone or email within 1 working day · Your reference will be sent on confirmation</div>
+          <div class="fnote">We'll confirm by phone or email within 1 working day · A reference number will be provided on confirmation</div>
         </div>
       </div>
     </div>`;
@@ -796,14 +751,11 @@ async function submitReq(){
       +(date?`\nPreferred date: ${date}`:'')+( access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'');
     await sb('activity',{method:'POST',body:{id:'req-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),msg,type:'request',ts:Date.now()},prefer:'return=minimal'});
     document.getElementById('rw').innerHTML=`
-      <div style="text-align:center;padding:32px 16px">
-        <div style="font-size:56px;margin-bottom:14px">✅</div>
-        <div style="font-size:20px;font-weight:900;margin-bottom:8px">Request Submitted!</div>
-        <div style="font-size:13px;color:var(--txt2);max-width:340px;margin:0 auto 8px;line-height:1.6">
-          Your reference is <strong>${ref}</strong>.<br>
-          ${e(_d.coName)} will be in touch within 1 working day to confirm your booking.
-        </div>
-        <button class="dl" style="margin-top:16px" onclick="go('overview')">← Back to Overview</button>
+      <div style="text-align:center;padding:32px 14px">
+        <div style="font-size:52px;margin-bottom:12px">✅</div>
+        <div style="font-size:19px;font-weight:900;margin-bottom:7px">Request Submitted!</div>
+        <div style="font-size:13px;color:var(--txt2);max-width:320px;margin:0 auto 6px;line-height:1.6">Your reference is <strong>${ref}</strong>.<br>${e(_d.coName)} will be in touch within 1 working day.</div>
+        <button class="dl" style="margin-top:14px" onclick="go('overview')">← Back to Overview</button>
       </div>`;
   }catch(err){
     if(btn){btn.disabled=false;btn.textContent='📩 Submit Request';}
@@ -811,18 +763,10 @@ async function submitReq(){
   }
 }
 
-// ── HELPERS ──────────────────────────────────────────────────
-function jsBadge(s){
-  const m={'Pending':'<span class="jbadge bp">⏳ Pending</span>',
-    'In Progress':'<span class="jbadge bi">🔄 In Progress</span>',
-    'Completed':'<span class="jbadge bd">✅ Completed</span>',
-    'Invoiced':'<span class="jbadge bv">🧾 Invoiced</span>',
-    'Cancelled':'<span class="jbadge bc">✕ Cancelled</span>'};
-  return m[s]||`<span class="jbadge bc">${e(s||'—')}</span>`;
-}
-function cs(icon,t,sub){return`<div class="cs"><div class="cs-ic">${icon}</div><div class="cs-body"><div class="cs-t">${t}</div><div class="cs-s">${sub}</div></div><div class="cs-tag">v2</div></div>`;}
-function emptyHtml(icon,t,sub){return`<div class="empty"><div class="ei">${icon}</div><div class="et">${t}</div><div class="es">${sub}</div></div>`;}
-function showErr(t,m){document.getElementById('main-content').innerHTML=`<div class="empty" style="padding:80px 20px"><div class="ei">🔒</div><div class="et">${e(t)}</div><div class="es">${e(m)}</div></div>`;}
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function jsBadge(s){const m={'Pending':'<span class="jbadge bp">⏳ Pending</span>','In Progress':'<span class="jbadge bi">🔄 In Progress</span>','Completed':'<span class="jbadge bd">✅ Completed</span>','Invoiced':'<span class="jbadge bv">🧾 Invoiced</span>','Cancelled':'<span class="jbadge bc">✕ Cancelled</span>'};return m[s]||`<span class="jbadge bc">${e(s||'—')}</span>`;}
+function empty(icon,t,sub){return`<div class="empty"><div class="ei">${icon}</div><div class="et">${t}</div><div class="es">${sub}</div></div>`;}
+function showErr(t,m){document.getElementById('main').innerHTML=`<div class="empty" style="padding:80px 20px"><div class="ei">🔒</div><div class="et">${e(t)}</div><div class="es">${e(m)}</div></div>`;}
 function openLb(url){document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('show');}
 function closeLb(){document.getElementById('lb').classList.remove('show');document.getElementById('lb-img').src='';}
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeLb();});
