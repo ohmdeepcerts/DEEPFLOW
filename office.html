@@ -10266,7 +10266,7 @@ async function renderRequests(){
         (filter==='pending'?'🎉 No pending requests':'No requests found')+'</div>';
       return;
     }
-    const typeLabels={overtime:'🕐 Overtime',leave:'🏖 Leave',other:'📝 Other'};
+    const typeLabels={overtime:'🕐 Overtime',leave:'🏖 Leave',other:'📝 Other',portal_request:'🏠 Portal Request'};
     const leaveLabels={annual:'Annual Leave',sick:'Sick Leave',unpaid:'Unpaid',other:'Other'};
     if(list) list.innerHTML=reqs.map(r=>{
       const isPending=r.status==='pending';
