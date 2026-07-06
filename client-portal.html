@@ -224,11 +224,12 @@ async function init(){
   try{
     let entity,jobs=[],attachments=[],certs=[],invoices=[];
 
-    // Load company settings first (needed for PDF generation)
+    // Load company settings — stored under key '__all__' in app_settings
+    // Used for PDF generation (logo, company name, VAT, bank details etc)
     try{
-      const s=await sb(`app_settings?select=value&key=eq.settings`);
+      const s=await sb(`app_settings?select=value&key=eq.__all__`);
       if(s?.[0]?.value){_S=typeof s[0].value==='string'?JSON.parse(s[0].value):s[0].value;}
-    }catch(_){}
+    }catch(e){ console.warn('[Portal] settings load failed',e); }
 
     if(ptype==='agency'){
       const rows=await sb(`agencies?id=eq.${encodeURIComponent(token)}&select=*`);
@@ -260,15 +261,13 @@ async function init(){
       const [ra,rc,ri]=await Promise.all([
         sb(`attachments?jobid=in.(${idL})&select=*`).catch(()=>[]),
         sb(`certs?jobid=in.(${idL})&select=*`).catch(()=>[]),
-        sb(`invoices?select=*`).catch(()=>[]),
+        // Fetch invoices directly filtered by name to avoid RLS issues
+        // Try multiple name columns since invoices can be linked different ways
+        fetchInvoicesByName(nL),
       ]);
       attachments=(ra||[]).map(_fix);
       certs=(rc||[]).map(_fix);
-      // Filter invoices by entity name
-      invoices=(ri||[]).map(_fix).filter(inv=>{
-        const n=(inv.clientName||inv.landlordName||inv.agencyName||inv.agentName||inv.billToName||'').toLowerCase();
-        return n.includes(nL)||nL.includes(n.split(' ')[0]);
-      });
+      invoices=ri||[];
     }
 
     const coName=_S.coName||'Your Service Provider';
@@ -285,7 +284,24 @@ async function init(){
   }
 }
 
-async function fetchJobs(col,name,id){
+async function fetchInvoicesByName(nameLower){
+  // Try fetching invoices by each possible name column
+  // The invoices table links to clients via clientname, landlordname, agencyname, or agentname
+  const results=[];
+  const seen=new Set();
+  const cols=['clientname','landlordname','agencyname','agentname','billtoname'];
+  await Promise.all(cols.map(async col=>{
+    try{
+      // Use ilike for case-insensitive match, also try first word match
+      const firstName=nameLower.split(' ')[0];
+      const raw=await sb(`invoices?${col}=ilike.${encodeURIComponent('%'+nameLower+'%')}&select=*`);
+      if(Array.isArray(raw)){raw.map(_fix).forEach(inv=>{if(!seen.has(inv.id)){seen.add(inv.id);results.push(inv);}});}
+    }catch(e){/* column might not exist or RLS blocks - skip */}
+  }));
+  return results.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
+}
+
+
   // Try ilike match by name (works if RLS allows anon read)
   try{
     const raw=await sb(`jobs?${col}=ilike.${encodeURIComponent(name)}&order=date.desc&select=*`);
@@ -747,9 +763,32 @@ async function submitReq(){
   if(btn){btn.disabled=true;btn.textContent='Sending...';}
   try{
     const ref='REQ-'+Date.now().toString(36).toUpperCase().slice(-6);
-    const msg=`📩 Portal Request [${ref}]\nFrom: ${_d.name} (${_d.type})\nService: ${svc}\nAddress: ${addr}`
+    const detail=`Service: ${svc}\nAddress: ${addr}`
       +(date?`\nPreferred date: ${date}`:'')+( access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'');
-    await sb('activity',{method:'POST',body:{id:'req-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),msg,type:'request',ts:Date.now()},prefer:'return=minimal'});
+
+    // Write to engineer_requests table — this is what the office Requests page reads
+    // type='portal_request' so office can distinguish portal vs engineer requests
+    // engineer_name = client name so it appears correctly in the office list
+    await sb('engineer_requests',{
+      method:'POST',
+      body:{
+        id:'portal-req-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),
+        engineer_name: _d.name + ' (' + (_d.type==='agency'?'Agency':_d.type==='agent'?'Agent':'Landlord') + ')',
+        type:'portal_request',
+        notes: `[${ref}] ${detail}`,
+        status:'pending',
+        created: Math.floor(Date.now()/1000)
+      },
+      prefer:'return=minimal'
+    });
+
+    // Also log to activity for audit trail
+    sb('activity',{method:'POST',body:{
+      id:'req-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),
+      msg:`📩 Portal Request [${ref}] from ${_d.name}\n${detail}`,
+      type:'request',ts:Date.now()
+    },prefer:'return=minimal'}).catch(()=>{});
+
     document.getElementById('rw').innerHTML=`
       <div style="text-align:center;padding:32px 14px">
         <div style="font-size:52px;margin-bottom:12px">✅</div>
@@ -758,6 +797,7 @@ async function submitReq(){
         <button class="dl" style="margin-top:14px" onclick="go('overview')">← Back to Overview</button>
       </div>`;
   }catch(err){
+    console.error(err);
     if(btn){btn.disabled=false;btn.textContent='📩 Submit Request';}
     toast('Could not send. Please call us directly.');
   }
