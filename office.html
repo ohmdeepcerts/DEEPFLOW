@@ -999,7 +999,7 @@ body.density-relaxed .jtable td{font-size:15px}
 #jobs-scroll-layout{flex:1;display:flex;overflow:hidden;min-height:0}
 
 /* LEFT: mini calendar pane */
-#jobs-cal-pane{width:248px;min-width:248px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#jobs-cal-pane{width:248px;min-width:248px;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
 #jobs-cal-pane.cal-hidden{display:none}
 .jcal-hd{padding:14px 14px 10px;border-bottom:1px solid var(--border)}
 .jcal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -1469,29 +1469,10 @@ body.density-relaxed .jtable td{font-size:15px}
       <div class="eng-view-wrap" id="eng-view-wrap"></div>
     </div>
 
-    <!-- SCROLL LIST LAYOUT: calendar pane left + grouped list right -->
+    <!-- SCROLL LIST LAYOUT: grouped list left + smart panel right -->
     <div id="jobs-body-wrap" style="flex:1;display:flex;overflow:hidden;min-height:0">
 
-      <!-- MINI CALENDAR PANE -->
-      <div id="jobs-cal-pane">
-        <div class="jcal-hd">
-          <div class="jcal-nav">
-            <button class="jcal-nav-btn" onclick="jcalShiftMonth(-1)">‹</button>
-            <span class="jcal-month" id="jcal-month-lbl"></span>
-            <button class="jcal-nav-btn" onclick="jcalShiftMonth(1)">›</button>
-          </div>
-          <div class="jcal-grid" id="jcal-grid"></div>
-        </div>
-        <div class="jcal-range">
-          <button class="jcal-range-btn active" id="jrange-btn-all" onclick="setJRange('all')">All Jobs</button>
-          <button class="jcal-range-btn" id="jrange-btn-7" onclick="setJRange('7')">7 days</button>
-          <button class="jcal-range-btn" id="jrange-btn-30" onclick="setJRange('30')">30 days</button>
-          <button class="jcal-range-btn" id="jrange-btn-past" onclick="setJRange('past')">Past</button>
-        </div>
-        <div class="jcal-engs" id="jcal-engs"></div>
-      </div>
-
-      <!-- GROUPED SCROLL LIST -->
+      <!-- GROUPED SCROLL LIST (main area — gets all remaining width) -->
       <div id="jobs-list-pane">
         <!-- Sticky column header with resize handles -->
         <div id="jobs-col-hd" style="display:grid;padding:0 12px;position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid var(--border);margin-bottom:2px;user-select:none;box-sizing:border-box"></div>
@@ -1504,6 +1485,35 @@ body.density-relaxed .jtable td{font-size:15px}
           <div id="future-jobs-count"></div>
           <div id="future-jobs-body"><table><tbody id="future-jtbody"></tbody></table></div>
         </div>
+      </div>
+
+      <!-- RIGHT PANEL: Mini Calendar (top) + Smart Insights (bottom) -->
+      <div id="jobs-cal-pane">
+
+        <!-- MINI CALENDAR -->
+        <div class="jcal-hd">
+          <div class="jcal-nav">
+            <button class="jcal-nav-btn" onclick="jcalShiftMonth(-1)">‹</button>
+            <span class="jcal-month" id="jcal-month-lbl"></span>
+            <button class="jcal-nav-btn" onclick="jcalShiftMonth(1)">›</button>
+          </div>
+          <div class="jcal-grid" id="jcal-grid"></div>
+        </div>
+        <div class="jcal-range">
+          <button class="jcal-range-btn active" id="jrange-btn-all" onclick="setJRange('all')">All</button>
+          <button class="jcal-range-btn" id="jrange-btn-7" onclick="setJRange('7')">7d</button>
+          <button class="jcal-range-btn" id="jrange-btn-30" onclick="setJRange('30')">30d</button>
+          <button class="jcal-range-btn" id="jrange-btn-past" onclick="setJRange('past')">Past</button>
+        </div>
+        <div class="jcal-engs" id="jcal-engs"></div>
+
+        <!-- SMART INSIGHTS PANEL -->
+        <div id="jobs-insights-panel" style="padding:12px 14px;border-top:1px solid var(--border)">
+          <div style="font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Smart Insights</div>
+          <div id="insights-nonotes"></div>
+          <div id="insights-unbooked" style="margin-top:8px"></div>
+        </div>
+
       </div>
 
     </div><!-- /jobs-body-wrap -->
@@ -4979,6 +4989,9 @@ let _jcalJobDates = {};
 let _jobCache = null;        // null = stale/unloaded; array = valid cache
 let _jobCacheTs = 0;         // timestamp of last fetch
 const JOB_CACHE_TTL = 30000; // 30 seconds — refresh if older than this
+// _jobRowData: stores full job objects keyed by id, populated every renderJobs().
+// Used by drag-drop so it NEVER depends on _jobCache (which poll can nullify mid-drag).
+const _jobRowData = {};
 
 
 // ══════════════════════════════════════════════════════════════
@@ -5318,6 +5331,10 @@ async function renderJobs(){
   if(sfVal) jobs = jobs.filter(j=>j.status===sfVal);
   if(pfVal) jobs = jobs.filter(j=>j.priority===pfVal);
 
+  // Populate _jobRowData with every job object — gives drag-drop reliable access
+  // to job data WITHOUT depending on _jobCache (which poll can nullify mid-drag)
+  if(allJobs) allJobs.forEach(j=>{ _jobRowData[j.id]=j; });
+
   // Sort: date → manual sortOrder (user drag order) → timeSlot → created
   // _sortOrder MUST come before timeSlot — otherwise saved drag order is silently undone
   // by timeSlot alphabetical sort. timeSlot is only used as a tiebreaker when no manual order set.
@@ -5405,8 +5422,8 @@ async function renderJobs(){
                         : contact ? contact
                         : accessInfo ? '🔑 '+accessInfo : '';
 
-      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" draggable="true" onclick="openJobModal('${j.id}')" style="cursor:pointer">
-        <div class="jsr-drag-handle" title="Drag" onclick="event.stopPropagation()">⠿</div>
+      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${isEmg?'jsr-emg':''}" data-id="${j.id}" onclick="openJobModal('${j.id}')" style="cursor:pointer">
+        <div class="jsr-drag-handle" title="Drag to reorder" draggable="true" onclick="event.stopPropagation()">⠿</div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
         ${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);const col=palette[idx>=0?idx%palette.length:Math.abs((j.engineer||' ').charCodeAt(0))%palette.length];return j.engineer?'<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+col+';border-radius:0 2px 2px 0"></div>':''})()}
 
@@ -5498,19 +5515,76 @@ async function renderJobs(){
 }
 
 function renderCalEngSummary(allJobs, today){
+  // ── Today's engineers summary ──
   const el = document.getElementById('jcal-engs');
-  if(!el) return;
-  const dayJobs = allJobs.filter(j=>j.date===today);
-  if(!dayJobs.length){ el.innerHTML=''; return; }
-  const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623'];
-  const engColors={};
-  (S.engineers||[]).forEach((e,i)=>{ engColors[e.name]=palette[i%palette.length]; });
-  const byEng={};
-  dayJobs.forEach(j=>{ const k=j.engineer||'Unassigned'; byEng[k]=(byEng[k]||0)+1; });
-  el.innerHTML=`<div class="jcal-eng-hd">Today's Engineers</div>`+
-    Object.entries(byEng).map(([name,count])=>
-      `<div class="jcal-eng-row"><div class="jcal-eng-dot" style="background:${engColors[name]||'#4e6080'}"></div><span class="jcal-eng-name">${name}</span><span class="jcal-eng-count">${count} job${count!==1?'s':''}</span></div>`
-    ).join('');
+  if(el){
+    const dayJobs = allJobs.filter(j=>j.date===today);
+    if(!dayJobs.length){ el.innerHTML=''; }
+    else {
+      const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623'];
+      const engColors={};
+      (S.engineers||[]).forEach((e,i)=>{ engColors[e.name]=palette[i%palette.length]; });
+      const byEng={};
+      dayJobs.forEach(j=>{ const k=j.engineer||'Unassigned'; byEng[k]=(byEng[k]||0)+1; });
+      el.innerHTML=`<div class="jcal-eng-hd">Today's Engineers</div>`+
+        Object.entries(byEng).map(([name,count])=>
+          `<div class="jcal-eng-row"><div class="jcal-eng-dot" style="background:${engColors[name]||'#4e6080'}"></div><span class="jcal-eng-name">${name}</span><span class="jcal-eng-count">${count} job${count!==1?'s':''}</span></div>`
+        ).join('');
+    }
+  }
+
+  // ── Smart Insights Panel ──────────────────────────────────────────
+  const _ins = (id, html) => { const e=document.getElementById(id); if(e) e.innerHTML=html; };
+  const _insHd = (icon, label, count, color) =>
+    `<div style="font-size:10px;font-weight:700;color:${color||'var(--txt2)'};margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+       <span>${icon} ${label}</span>
+       <span style="background:${color||'var(--accent)'}22;color:${color||'var(--txt2)'};border-radius:10px;padding:1px 7px;font-family:var(--fm)">${count}</span>
+     </div>`;
+
+  // 1. Unbooked jobs (no date OR no engineer)
+  const unbooked = allJobs.filter(j=>!j.date||j.date===''||!j.engineer||j.engineer==='');
+  if(document.getElementById('insights-unbooked')){
+    if(!unbooked.length){
+      _ins('insights-unbooked',`<div style="font-size:10px;color:var(--txt3)">✓ All jobs booked & assigned</div>`);
+    } else {
+      const rows = unbooked.slice(0,5).map(j=>{
+        const reason = (!j.date||j.date==='')?'No date':(!j.engineer||j.engineer==='')?'No engineer':'';
+        const addr = (j.address||'No address').slice(0,26);
+        return `<div onclick="df.once('navDone:jobs',()=>openJobModal('${j.id}'));nav('jobs')"
+          style="padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px"
+          onmouseenter="this.style.opacity='.7'" onmouseleave="this.style.opacity='1'">
+          <span style="font-size:11px;color:var(--txt);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${addr}</span>
+          <span style="font-size:9px;color:var(--red);background:var(--red-soft,#fee2e2);border-radius:8px;padding:1px 6px;white-space:nowrap;flex-shrink:0">${reason}</span>
+        </div>`;
+      }).join('');
+      const more = unbooked.length>5?`<div style="font-size:10px;color:var(--txt3);margin-top:4px;text-align:center;cursor:pointer" onclick="toggleUnbooked()">${unbooked.length-5} more →</div>`:'';
+      _ins('insights-unbooked', _insHd('📌','Unbooked',unbooked.length,'var(--red)') + rows + more);
+    }
+  }
+
+  // 2. Active jobs with no notes (Pending or In Progress, no description, no notes)
+  const nonotes = allJobs.filter(j=>
+    (j.status===STATUS.PENDING||j.status===STATUS.IN_PROGRESS) &&
+    (!j.description||j.description.trim()==='') &&
+    (!j.notes||j.notes.trim()==='')
+  );
+  if(document.getElementById('insights-nonotes')){
+    if(!nonotes.length){
+      _ins('insights-nonotes',`<div style="font-size:10px;color:var(--txt3)">✓ All active jobs have notes</div>`);
+    } else {
+      const rows = nonotes.slice(0,4).map(j=>{
+        const addr = (j.address||'No address').slice(0,26);
+        const dateStr = j.date?j.date.slice(5):'—';
+        return `<div onclick="df.once('navDone:jobs',()=>openJobModal('${j.id}'));nav('jobs')"
+          style="padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px"
+          onmouseenter="this.style.opacity='.7'" onmouseleave="this.style.opacity='1'">
+          <span style="font-size:11px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${addr}</span>
+          <span style="font-size:9px;color:var(--txt3);white-space:nowrap">${dateStr}</span>
+        </div>`;
+      }).join('');
+      _ins('insights-nonotes', _insHd('📝','No Notes',nonotes.length,'var(--yellow,#f59e0b)') + rows);
+    }
+  }
 }
 
 
@@ -8016,6 +8090,9 @@ async function renderAgenciesSection(){
       </div>
       ${agentCount?`<div class="agency-agent-count">👔 ${agentCount} agent${agentCount!==1?'s':''}</div>`:''}
       ${a.notes?`<div style="font-size:10px;color:var(--txt2);margin-top:6px">${a.notes}</div>`:''}
+      <div style="margin-top:8px">
+        <button onclick="event.stopPropagation();showPortalLinkModal('${a.id}','${a.name.replace(/'/g,"\\'")}','agency')" style="width:100%;background:rgba(79,143,255,.1);border:1px solid rgba(79,143,255,.3);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;color:var(--acc);cursor:pointer">🔗 Share Portal Link</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -8051,6 +8128,9 @@ async function renderAgentsSection(){
       </div>
       ${agency?`<div class="agent-agency-badge">🏢 ${agency.name}</div>`:''}
       ${ag.wa?`<div style="font-size:10px;color:#25d366;margin-top:4px">📱 ${ag.wa}</div>`:''}
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button onclick="event.stopPropagation();showPortalLinkModal('${ag.id}','${ag.name.replace(/'/g,"\\'")}','agent')" style="flex:1;background:rgba(79,143,255,.1);border:1px solid rgba(79,143,255,.3);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;color:var(--acc);cursor:pointer">🔗 Share Portal</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -12399,6 +12479,13 @@ function initScrollListDrag(){
   }
 
   scroll.addEventListener('dragstart',e=>{
+    // GUARD: only allow drag from the ⠿ handle — not from address/desc/status cells
+    // Without this guard, slow clicks on any cell trigger phantom drags that
+    // corrupt _slDragSrc and break all subsequent real drags until page refresh
+    if(!e.target.closest('.jsr-drag-handle')) {
+      e.preventDefault();
+      return;
+    }
     const row=e.target.closest('.jsr3[data-id]');
     if(!row) return;
     _slDragSrc=row;
@@ -12406,6 +12493,19 @@ function initScrollListDrag(){
     setTimeout(()=>row.classList.add('dragging'),0);
     e.dataTransfer.effectAllowed='move';
     e.dataTransfer.setData('text/plain',row.dataset.id);
+
+    // Custom ghost image — a clean small pill instead of the whole 900px row
+    // The default browser ghost renders the full row as a blurry screenshot
+    // which is the "text sticking to cursor" issue
+    try{
+      const jobNum=row.querySelector('.jsr3-jobnum')?.textContent||'Job';
+      const ghost=document.createElement('div');
+      ghost.textContent='↕ '+jobNum;
+      ghost.style.cssText='position:fixed;top:-999px;left:-999px;padding:4px 10px;background:var(--acc);color:#fff;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--fm);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);pointer-events:none';
+      document.body.appendChild(ghost);
+      e.dataTransfer.setDragImage(ghost,0,0);
+      setTimeout(()=>ghost.remove(),0);
+    }catch(_){ /* fallback to browser default */ }
   });
 
   scroll.addEventListener('dragover',e=>{
@@ -12443,8 +12543,12 @@ function initScrollListDrag(){
         const rect=row.getBoundingClientRect();
         _insertAfter=cy>rect.top+rect.height/2;
         _dragIndicator.style.top=(_insertAfter?rect.bottom:rect.top)+'px';
-        _dragIndicator.style.left='16px';
-        _dragIndicator.style.right='16px';
+        // Constrain indicator to the list pane — not full viewport width
+        const pane=document.getElementById('jobs-list-scroll');
+        const paneRect=pane?pane.getBoundingClientRect():{left:16,right:window.innerWidth-16};
+        _dragIndicator.style.left=(paneRect.left+8)+'px';
+        _dragIndicator.style.right=(window.innerWidth-paneRect.right+8)+'px';
+        _dragIndicator.style.width='auto';
         _dragIndicator.style.display='block';
       } else {
         // Hovering gap/padding — keep last known targets
@@ -12471,14 +12575,16 @@ function initScrollListDrag(){
     _dragOverDate=null;
 
     if(!srcId) return;
-    const src=(_jobCache||[]).find(j=>j.id===srcId);
-    if(!src){ console.warn('[DeepFlow] drop: src not in cache',srcId); return; }
+    // Use _jobRowData (populated every render) not _jobCache (can be null when poll fires mid-drag)
+    const src=_jobRowData[srcId];
+    if(!src){ console.warn('[DeepFlow] drop: job not found',srcId); return; }
 
     const now=Date.now();
 
     // ── CASE A: dropped on a date-group header ──
     if(dropDate && dropDate!==src.date){
       src.date=dropDate; src.modified=now;
+      _jobRowData[srcId]=src; // keep _jobRowData in sync
       toast(`📅 Moved to ${dropDate}`,'success',2000);
       renderJobs();
       _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:dropDate,modified:now},prefer:'return=minimal'})
@@ -12490,12 +12596,13 @@ function initScrollListDrag(){
     if(!dropRow){ renderJobs(); return; }
     const tgtId=dropRow.dataset.id;
     if(!tgtId || tgtId===srcId){ renderJobs(); return; }
-    const tgt=(_jobCache||[]).find(j=>j.id===tgtId);
-    if(!tgt){ console.warn('[DeepFlow] drop: tgt not in cache',tgtId); return; }
+    const tgt=_jobRowData[tgtId];
+    if(!tgt){ console.warn('[DeepFlow] drop: tgt not found',tgtId); return; }
 
     if(src.date!==tgt.date){
       // Cross-day: move src to tgt's date
       src.date=tgt.date; src.modified=now;
+      _jobRowData[srcId]=src; // keep _jobRowData in sync
       toast(`📅 Moved to ${tgt.date}`,'success',2000);
       renderJobs();
       _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:tgt.date,modified:now},prefer:'return=minimal'})
@@ -12504,7 +12611,7 @@ function initScrollListDrag(){
     }
 
     // Same-day reorder — use full date group from cache (not filtered DOM)
-    const fullGroup=(_jobCache||[])
+    const fullGroup=Object.values(_jobRowData)
       .filter(j=>j.date===src.date)
       .sort((a,b)=>{
         const ao=a._sortOrder||0,bo=b._sortOrder||0;
@@ -12516,7 +12623,7 @@ function initScrollListDrag(){
     if(tgtPos===-1){ renderJobs(); return; }
     withoutSrc.splice(insertAfter?tgtPos+1:tgtPos,0,srcId);
 
-    const cacheMap=(_jobCache||[]).reduce((m,j)=>{m[j.id]=j;return m;},{});
+    const cacheMap=_jobRowData; // already keyed by id
     const saves=[];
     withoutSrc.forEach((id,i)=>{
       const j=cacheMap[id]; if(!j) return;
@@ -13737,51 +13844,59 @@ async function ctxCopyAddr(id){
   catch(e){ toast('Copy failed','error'); }
 }
 
-// ── Rich tooltip system ──
+// ── Tooltip system — FIXED position anchored to the cell ─────
+// showTip() now positions relative to the hovered cell, not the cursor.
+// This means the tooltip never moves after appearing and never follows the mouse.
+// moveTip() is removed — no mouse tracking needed.
 let _tipEl=null, _tipTimeout=null;
-function showTip(e, html, opts={}){
+
+function showTip(cellEl, html, opts={}){
   hideTip();
   _tipTimeout=setTimeout(()=>{
-    if(!_tipEl){ _tipEl=document.createElement('div'); _tipEl.className='df-tip'; document.body.appendChild(_tipEl); }
+    if(!_tipEl){
+      _tipEl=document.createElement('div');
+      _tipEl.className='df-tip';
+      document.body.appendChild(_tipEl);
+    }
     _tipEl.innerHTML=html;
     _tipEl.style.display='block';
-    // FIX STICKY TOOLTIP: position once on show, then track via per-cell mousemove only
-    const x=Math.min(e.clientX+14, window.innerWidth-360);
-    const y=Math.min(e.clientY+14, window.innerHeight-200);
-    _tipEl.style.left=x+'px'; _tipEl.style.top=y+'px';
+    _tipEl.style.opacity='0';
+    // Position: below the cell, aligned to its left edge
+    // Falls back to above if too close to bottom of viewport
+    const rect=cellEl.getBoundingClientRect();
+    const tipW=320;
+    let left=rect.left;
+    let top=rect.bottom+6;
+    // Clamp right edge
+    if(left+tipW>window.innerWidth-12) left=window.innerWidth-tipW-12;
+    // Flip above if not enough room below
+    if(top+180>window.innerHeight) top=rect.top-180-6;
+    _tipEl.style.left=Math.max(8,left)+'px';
+    _tipEl.style.top=Math.max(8,top)+'px';
+    _tipEl.style.opacity='1';
   }, opts.delay||400);
 }
-function moveTip(e){
-  // Called only from mousemove on the specific hovered cell — not globally
-  if(_tipEl&&_tipEl.style.display!=='none'){
-    const x=Math.min(e.clientX+14,window.innerWidth-360);
-    const y=Math.min(e.clientY+14,window.innerHeight-200);
-    _tipEl.style.left=x+'px'; _tipEl.style.top=y+'px';
-  }
-}
+
 function hideTip(){
   clearTimeout(_tipTimeout);
   _tipTimeout=null;
   if(_tipEl) _tipEl.style.display='none';
 }
-// FIX STICKY TOOLTIP: REMOVED the document-level mousemove listener.
-// That listener moved the tooltip on every mouse movement globally — even after mouseleave fired —
-// causing it to appear stuck and follow the cursor from anywhere on the page.
-// Position tracking now happens only inside per-cell mousemove listeners attached in attachJobTooltips.
 
 // Attach rich tooltips to job rows after render
 function attachJobTooltips(){
   document.querySelectorAll('.jsr3[data-id]').forEach(row=>{
     const jid=row.dataset.id;
-    // Address cell → show certs + access + notes
+
+    // Address cell → full details panel
     const addrCell=row.querySelector('.jsr3-cell-addr');
     if(addrCell){
-      addrCell.addEventListener('mouseenter',async e=>{
+      addrCell.addEventListener('mouseenter',async ()=>{
         const j=await dGet('jobs',jid); if(!j) return;
         const certs=(j.certTypes||[]).map(id=>{ const ct=(S.certTypes||[]).find(c=>(c.id||c.name)===id)||{name:id}; return ct.name; });
         const ll=[j.landlordName,j.landlordPhone].filter(Boolean).join(' · ');
         const ag=[j.agentName,j.agencyName].filter(Boolean).join(' · ');
-        showTip(e,`<div class="df-tip-title">📍 ${j.address||'—'}</div>
+        showTip(addrCell,`<div class="df-tip-title">📍 ${j.address||'—'}</div>
           ${certs.length?`<div class="df-tip-row"><span class="df-tip-lbl">Certs</span>${certs.join(', ')}</div>`:''}
           ${ll?`<div class="df-tip-row"><span class="df-tip-lbl">Landlord</span>${ll}</div>`:''}
           ${ag?`<div class="df-tip-row"><span class="df-tip-lbl">Agent</span>${ag}</div>`:''}
@@ -13789,32 +13904,31 @@ function attachJobTooltips(){
           ${j.notes?`<div class="df-tip-row"><span class="df-tip-lbl">Notes</span>${j.notes}</div>`:''}
         `);
       });
-      addrCell.addEventListener('mousemove', moveTip);
       addrCell.addEventListener('mouseleave', hideTip);
     }
-    // Desc cell → show full description
+
+    // Desc cell → full description
     const descCell=row.querySelector('.jsr3-cell-desc');
     if(descCell){
-      descCell.addEventListener('mouseenter',async e=>{
+      descCell.addEventListener('mouseenter',async ()=>{
         const j=await dGet('jobs',jid); if(!j||!j.description) return;
-        showTip(e,`<div class="df-tip-title">📝 Description</div><div style="font-size:12px;color:var(--txt2);line-height:1.6;white-space:pre-wrap">${j.description}</div>`,{delay:200});
+        showTip(descCell,`<div class="df-tip-title">📝 Description</div><div style="font-size:12px;color:var(--txt2);line-height:1.6;white-space:pre-wrap">${j.description}</div>`,{delay:200});
       });
-      descCell.addEventListener('mousemove', moveTip);
       descCell.addEventListener('mouseleave', hideTip);
     }
-    // Engineer cell → show contact / phone
+
+    // Engineer cell → engineer details
     const engCell=row.querySelector('.jsr3-cell-eng');
     if(engCell){
-      engCell.addEventListener('mouseenter',async e=>{
+      engCell.addEventListener('mouseenter',async ()=>{
         const j=await dGet('jobs',jid); if(!j||!j.engineer) return;
         const eng=(S.engineers||[]).find(en=>en.name===j.engineer);
-        showTip(e,`<div class="df-tip-title">👷 ${j.engineer}</div>
+        showTip(engCell,`<div class="df-tip-title">👷 ${j.engineer}</div>
           ${eng?.phone?`<div class="df-tip-row"><span class="df-tip-lbl">Phone</span>${eng.phone}</div>`:''}
           ${eng?.trade?`<div class="df-tip-row"><span class="df-tip-lbl">Trade</span>${eng.trade}</div>`:''}
           ${eng?.rate?`<div class="df-tip-row"><span class="df-tip-lbl">Rate</span>£${eng.rate}/hr</div>`:''}
         `,{delay:300});
       });
-      engCell.addEventListener('mousemove', moveTip);
       engCell.addEventListener('mouseleave', hideTip);
     }
   });
