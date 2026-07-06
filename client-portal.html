@@ -301,7 +301,7 @@ async function fetchInvoicesByName(nameLower){
   return results.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
 }
 
-
+async function fetchJobs(col,name,id){
   // Try ilike match by name (works if RLS allows anon read)
   try{
     const raw=await sb(`jobs?${col}=ilike.${encodeURIComponent(name)}&order=date.desc&select=*`);
