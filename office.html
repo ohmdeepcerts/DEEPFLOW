@@ -1233,7 +1233,7 @@ body.density-relaxed .jtable td{font-size:15px}
   <nav>
     <div class="ns">Workspace</div>
     <div class="ni active" data-pg="dash"><span class="ico">◈</span>Dashboard</div>
-    <div class="ni" data-pg="jobs"><span class="ico">⊞</span>Jobs <span class="nbadge" id="nb-jobs" style="display:none">0</span></div>
+    <div class="ni" data-pg="jobs"><span class="ico">🔧</span>Jobs <span class="nbadge" id="nb-jobs" style="display:none">0</span></div>
     <div class="ns">Finance</div>
     <div class="ni" data-pg="inv"><span class="ico">◎</span>Invoices <span class="nbadge yellow" id="nb-inv" style="display:none">0</span></div>
     <div class="ni" data-pg="stmt"><span class="ico">📋</span>Statements</div>
@@ -1242,7 +1242,7 @@ body.density-relaxed .jtable td{font-size:15px}
     <div class="ni" data-pg="dir" id="ni-dir"><span class="ico">◉</span>Directories <span class="nbadge green" id="nb-dir" style="display:none;font-size:9px">▸</span></div>
     <!-- Sub-nav for directories (shown when dir is active) -->
     <div class="ni" data-pg="props"><span class="ico">🏠</span>Properties</div>
-    <div class="ni" data-pg="certs"><span class="ico">◈</span>Certificates <span class="nbadge" id="nb-certs" style="display:none">0</span></div>
+    <div class="ni" data-pg="certs"><span class="ico">📜</span>Certificates <span class="nbadge" id="nb-certs" style="display:none">0</span></div>
     <div class="ni" data-pg="client"><span class="ico">👤</span>Client View</div>
     <div class="ns">Maps & Tracking</div>
     <div class="ni" data-pg="map"><span class="ico">🗺</span>Live Maps</div>
@@ -1510,6 +1510,7 @@ body.density-relaxed .jtable td{font-size:15px}
         <!-- SMART INSIGHTS PANEL -->
         <div id="jobs-insights-panel" style="padding:12px 14px;border-top:1px solid var(--border)">
           <div style="font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Smart Insights</div>
+          <div id="insights-portal-requests" style="margin-bottom:8px"></div>
           <div id="insights-nonotes"></div>
           <div id="insights-unbooked" style="margin-top:8px"></div>
         </div>
@@ -3033,7 +3034,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <!-- COLUMN 1: Job Details -->
     <div class="jm-col">
       <div class="jm-col-hd">
-        <span class="jm-col-icon">⊞</span>
+        <span class="jm-col-icon">🔧</span>
         <span class="jm-col-title">Job Details</span>
         <span class="jm-col-badge job">1</span>
       </div>
@@ -3774,7 +3775,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
 <div id="fab">
   <div id="fab-menu">
-    <div class="fab-item" onclick="closeFab();df.once('navDone:jobs',()=>{openJobModal});nav('jobs')"><span class="fab-ico">⊞</span> New Job</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:jobs',()=>{openJobModal});nav('jobs')"><span class="fab-ico">🔧</span> New Job</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:inv',()=>{openNewInvModal});nav('inv')"><span class="fab-ico">◎</span> New Invoice</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:dir',()=>{openPersonModal()});nav('dir')"><span class="fab-ico">◉</span> Add Person</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:certs',()=>{openCertModal});nav('certs')"><span class="fab-ico">◈</span> Add Certificate</div>
@@ -4243,6 +4244,7 @@ function showPortalLinkModal(id, name, type, agentName) {
 }
 
 function nav(pg){
+  hideTip(); // Always hide tooltip when navigating — prevents it sticking across pages
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('pg-'+pg).classList.add('active');
@@ -5550,6 +5552,42 @@ function renderCalEngSummary(allJobs, today){
           `<div class="jcal-eng-row"><div class="jcal-eng-dot" style="background:${engColors[name]||'#4e6080'}"></div><span class="jcal-eng-name">${name}</span><span class="jcal-eng-count">${count} job${count!==1?'s':''}</span></div>`
         ).join('');
     }
+  }
+
+  // ── Portal Requests (fetched live) ────────────────────────────────────
+  const prEl = document.getElementById('insights-portal-requests');
+  if(prEl){
+    prEl.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--txt3)">🔄 Loading requests…</div>`;
+    _sb('engineer_requests?type=eq.portal_request&status=eq.pending&order=created.desc&limit=10')
+      .then(reqs=>{
+        if(!reqs||!reqs.length){
+          prEl.innerHTML=`<div style="font-size:10px;color:var(--txt3)">✓ No pending portal requests</div>`;
+          return;
+        }
+        const hd=`<div style="font-size:10px;font-weight:700;color:#7c3aed;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+          <span>🏠 Portal Requests</span>
+          <span style="background:#7c3aed22;color:#7c3aed;border-radius:10px;padding:1px 7px;font-family:var(--fm)">${reqs.length}</span>
+        </div>`;
+        const rows=reqs.map(r=>{
+          const lines=(r.notes||'').split('\n');
+          const get=k=>{const l=lines.find(x=>x.toLowerCase().startsWith(k.toLowerCase()+':'));return l?l.slice(k.length+1).trim():'';};
+          const ref=(lines[0]||'').match(/\[([^\]]+)\]/)?.[1]||'';
+          const svc=get('Service')||'—';
+          const addr=get('Address')||'—';
+          const parsedPortal=JSON.stringify({ref,service:svc,address:addr,date:get('Preferred date'),access:get('Access'),extraNotes:get('Notes'),clientName:(r.engineer_name||'').replace(/\s*\([^)]+\)\s*$/,'').trim()});
+          return`<div style="padding:6px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(r.engineer_name||'Client').replace(/\s*\([^)]+\)/,'')}</div>
+            <div style="font-size:10px;color:#7c3aed;font-weight:600;margin-bottom:3px">${svc.slice(0,40)}</div>
+            <div style="font-size:10px;color:var(--txt3);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${addr}</div>
+            <div style="display:flex;gap:5px">
+              <button onclick="createJobFromPortalReq('${r.id}',${JSON.stringify(parsedPortal).replace(/"/g,'&quot;')})" style="flex:1;background:var(--acc);color:#fff;border:none;border-radius:5px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer">➕ Create Job</button>
+              <button onclick="approvePortalReq('${r.id}')" style="flex:1;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;border-radius:5px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer">✓ Ack</button>
+            </div>
+          </div>`;
+        }).join('');
+        prEl.innerHTML=hd+rows+`<div style="margin-top:6px"><button onclick="nav('req')" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:5px;padding:4px;font-size:10px;color:var(--txt3);cursor:pointer">View all in Requests →</button></div>`;
+      })
+      .catch(()=>{ prEl.innerHTML=`<div style="font-size:10px;color:var(--txt3)">✓ No pending portal requests</div>`; });
   }
 
   // ── Smart Insights Panel ──────────────────────────────────────────
@@ -10276,36 +10314,114 @@ async function renderRequests(){
         approved:'<span style="background:rgba(34,197,94,.15);color:#22c55e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">✅ Approved</span>',
         rejected:'<span style="background:rgba(224,82,82,.12);color:#e05252;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">❌ Rejected</span>'};
       const createdDate=r.created?new Date(r.created*1000).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      // Parse portal request notes into structured fields
+      let parsedPortal = null;
+      if(r.type==='portal_request' && r.notes){
+        const lines = r.notes.split('\n');
+        const get = (key) => { const l=lines.find(x=>x.toLowerCase().startsWith(key.toLowerCase()+':')); return l?l.slice(key.length+1).trim():''; };
+        parsedPortal = {
+          ref: (lines[0]||'').match(/\[([^\]]+)\]/)?.[1]||'',
+          service: get('Service'),
+          address: get('Address'),
+          date: get('Preferred date'),
+          access: get('Access'),
+          extraNotes: get('Notes'),
+          clientName: r.engineer_name?.replace(/\s*\([^)]+\)\s*$/,'').trim()||''
+        };
+      }
+
       const detail=r.type==='leave'
         ? `Leave: ${leaveLabels[r.leave_type]||r.leave_type||'—'} · From ${r.leave_from||'?'} to ${r.leave_to||'?'}`
+        : r.type==='portal_request' ? ''
         : `Date: ${r.date||'—'} · ${r.hours||0} hrs @ £${r.rate||0}/hr = £${((r.hours||0)*(r.rate||0)).toFixed(2)}`;
-      return `<div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;border-left:4px solid ${isPending?'var(--acc)':isApproved?'#22c55e':'#e05252'}">
+
+      const borderCol=r.type==='portal_request'?'#7c3aed':isPending?'var(--acc)':isApproved?'#22c55e':'#e05252';
+      return `<div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;border-left:4px solid ${borderCol}">
         <div style="padding:14px 16px;background:${statusColors[r.status]||''}">
           <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
             <div style="flex:1;min-width:200px">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                <span style="font-family:var(--fh);font-size:15px;font-weight:800;color:var(--txt)">${r.engineer_name||'Unknown Engineer'}</span>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                <span style="font-family:var(--fh);font-size:15px;font-weight:800;color:var(--txt)">${r.engineer_name||'Unknown'}</span>
                 ${statusBadge[r.status]||''}
+                ${parsedPortal?.ref?`<span style="font-size:10px;font-weight:700;color:var(--txt3);background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:1px 8px">${parsedPortal.ref}</span>`:''}
                 <span style="margin-left:auto;font-size:11px;color:var(--txt3)">${createdDate}</span>
               </div>
-              <div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px">${typeLabels[r.type]||r.type||'Request'}</div>
-              <div style="font-size:12px;color:var(--txt2);margin-bottom:4px">${detail}</div>
-              ${r.notes?`<div style="font-size:12px;color:var(--txt3);font-style:italic;margin-top:4px">💬 "${r.notes}"</div>`:''}
+              <div style="font-size:13px;font-weight:700;color:${r.type==='portal_request'?'#7c3aed':'var(--acc)'};margin-bottom:6px">${typeLabels[r.type]||r.type||'Request'}</div>
+              ${parsedPortal ? `
+                ${parsedPortal.service?`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:var(--txt3);width:80px;flex-shrink:0">Service:</span><span style="font-size:12px;color:var(--txt);font-weight:600">${parsedPortal.service}</span></div>`:''}
+                ${parsedPortal.address?`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:var(--txt3);width:80px;flex-shrink:0">Address:</span><span style="font-size:12px;color:var(--txt)">${parsedPortal.address}</span></div>`:''}
+                ${parsedPortal.date?`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:var(--txt3);width:80px;flex-shrink:0">Preferred:</span><span style="font-size:12px;color:var(--txt)">${parsedPortal.date}</span></div>`:''}
+                ${parsedPortal.access?`<div style="display:flex;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:var(--txt3);width:80px;flex-shrink:0">Access:</span><span style="font-size:12px;color:var(--txt)">${parsedPortal.access}</span></div>`:''}
+                ${parsedPortal.extraNotes?`<div style="margin-top:5px;font-size:12px;color:var(--txt3);font-style:italic">💬 "${parsedPortal.extraNotes}"</div>`:''}
+              ` : `<div style="font-size:12px;color:var(--txt2);margin-bottom:4px">${detail}</div>
+              ${r.notes?`<div style="font-size:12px;color:var(--txt3);font-style:italic;margin-top:4px">💬 "${r.notes}"</div>`:''}`}
               ${r.job?`<div style="font-size:11px;color:var(--txt3);margin-top:4px">📋 Job ref: ${r.job}</div>`:''}
             </div>
-            ${isPending?`
             <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
-              <button class="btn btn-green btn-sm" onclick="approveRequest('${r.id}')">✅ Approve</button>
-              <button class="btn btn-red btn-sm" onclick="rejectRequest('${r.id}')">❌ Reject</button>
-            </div>`:''}
+              ${parsedPortal && isPending ? `
+                <button class="btn btn-acc btn-sm" onclick="createJobFromPortalReq('${r.id}',${JSON.stringify(JSON.stringify(parsedPortal)).replace(/'/g,'&#39;')})" style="background:var(--acc);color:#fff">➕ Create Job</button>
+                <button class="btn btn-green btn-sm" onclick="approvePortalReq('${r.id}')">✅ Acknowledge</button>
+                <button class="btn btn-red btn-sm" onclick="rejectRequest('${r.id}')">✕ Decline</button>
+              ` : isPending ? `
+                <button class="btn btn-green btn-sm" onclick="approveRequest('${r.id}')">✅ Approve</button>
+                <button class="btn btn-red btn-sm" onclick="rejectRequest('${r.id}')">❌ Reject</button>
+              ` : ''}
+            </div>
           </div>
-          ${r.office_reply?`<div style="margin-top:10px;padding:8px 10px;background:var(--s2);border-radius:8px;font-size:12px;color:var(--txt2)">💼 Office reply: <strong>${r.office_reply}</strong></div>`:''}
+          ${r.office_reply?`<div style="margin-top:10px;padding:8px 10px;background:var(--s2);border-radius:8px;font-size:12px;color:var(--txt2)">💼 Reply: <strong>${r.office_reply}</strong></div>`:''}
         </div>
       </div>`;
     }).join('');
   }catch(e){
     if(list) list.innerHTML=`<div style="text-align:center;padding:40px;color:var(--red)">❌ Failed to load requests: ${e.message}<br><br>Make sure the engineer_requests table exists in Supabase (Settings → Data → SQL Tools).</div>`;
   }
+}
+
+async function approvePortalReq(id){
+  try{
+    await _sb('engineer_requests?id=eq.'+id,{method:'PATCH',body:{status:'approved',office_reply:'Acknowledged — we will be in touch to confirm your booking.'},prefer:'return=minimal'});
+    toast('✅ Request acknowledged','success');
+    renderRequests();
+  }catch(e){ toast('Failed: '+e.message,'error'); }
+}
+
+async function createJobFromPortalReq(id, parsedJson){
+  let p;
+  try{ p = typeof parsedJson==='string' ? JSON.parse(parsedJson) : parsedJson; }
+  catch(e){ toast('Could not parse request data','error'); return; }
+
+  // Pre-fill and open the new job modal with the portal request details
+  // Navigate to jobs page first, then open modal
+  nav('jobs');
+  await new Promise(r=>setTimeout(r,300));
+
+  // Open new job modal
+  openJobModal(null);
+  await new Promise(r=>setTimeout(r,200));
+
+  // Fill in the fields from the portal request
+  const f=id=>document.getElementById(id);
+  if(p.address && f('jf-addr'))   f('jf-addr').value = p.address;
+  if(p.service && f('jf-desc'))   f('jf-desc').value = p.service;
+  if(p.date    && f('jf-date'))   f('jf-date').value = p.date;
+  if(p.access  && f('jf-access')) f('jf-access').value = 'Landlord Present'; // best guess
+  if(p.extraNotes && f('jf-notes')) f('jf-notes').value = p.extraNotes;
+
+  // Set landlord name if we can match it
+  if(p.clientName){
+    const persons = await dAll('persons').catch(()=>[]);
+    const match = persons.find(x=>x.name.toLowerCase()===p.clientName.toLowerCase());
+    if(match){
+      if(f('jf-landlord')) f('jf-landlord').value = match.name;
+    } else {
+      if(f('jf-landlord')) f('jf-landlord').value = p.clientName;
+    }
+  }
+
+  // Mark request as approved now that we're creating the job
+  await _sb('engineer_requests?id=eq.'+id,{method:'PATCH',body:{status:'approved',office_reply:'Job created from portal request.'},prefer:'return=minimal'}).catch(()=>{});
+
+  toast('📋 Job pre-filled from portal request — review and save','info',5000);
 }
 
 async function approveRequest(id){
@@ -13917,6 +14033,10 @@ function hideTip(){
   _tipTimeout=null;
   if(_tipEl) _tipEl.style.display='none';
 }
+
+// Hide tooltip on any click or scroll anywhere — belt and braces
+document.addEventListener('click', hideTip, true);
+document.addEventListener('scroll', hideTip, true);
 
 // Attach rich tooltips to job rows after render
 function attachJobTooltips(){
