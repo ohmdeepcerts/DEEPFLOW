@@ -3213,6 +3213,13 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
   </div>
   <div class="fg"><label class="fl">Billing / Home Address</label><input type="text" id="pf-addr" class="fi"></div>
   <div class="fg"><label class="fl">Notes</label><input type="text" id="pf-notes" class="fi" placeholder="Any relevant notes"></div>
+  <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;padding-top:10px;border-top:1px solid var(--border)">🏦 Bank / Payment Details</div>
+  <div class="fg"><label class="fl">Bank Name</label><input type="text" id="pf-bank-name" class="fi" placeholder="e.g. Barclays"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="fg"><label class="fl">Account Number</label><input type="text" id="pf-bank-acc" class="fi" placeholder="12345678"></div>
+    <div class="fg"><label class="fl">Sort Code</label><input type="text" id="pf-bank-sort" class="fi" placeholder="12-34-56"></div>
+  </div>
+  <div class="fg"><label class="fl">IBAN / Reference Link</label><input type="text" id="pf-bank-ref" class="fi" placeholder="IBAN, payment link or bank transfer reference"></div>
   <div class="fg"><label class="fl">Roles (select all that apply)</label>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
       <label class="fcheck"><input type="checkbox" id="pf-ll"> Landlord</label>
@@ -3255,6 +3262,13 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
   <div class="fg"><label class="fl">Address</label><input type="text" id="agf-addr" class="fi" placeholder="Agency address"></div>
   <div class="fg"><label class="fl">Website</label><input type="text" id="agf-web" class="fi" placeholder="www.agency.co.uk"></div>
   <div class="fg"><label class="fl">Notes</label><textarea id="agf-notes" class="fta" placeholder="Notes, key contacts, account manager etc."></textarea></div>
+  <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;padding-top:10px;border-top:1px solid var(--border)">🏦 Bank / Payment Details</div>
+  <div class="fg"><label class="fl">Bank Name</label><input type="text" id="agf-bank-name" class="fi" placeholder="e.g. NatWest"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="fg"><label class="fl">Account Number</label><input type="text" id="agf-bank-acc" class="fi" placeholder="12345678"></div>
+    <div class="fg"><label class="fl">Sort Code</label><input type="text" id="agf-bank-sort" class="fi" placeholder="12-34-56"></div>
+  </div>
+  <div class="fg"><label class="fl">IBAN / Reference Link</label><input type="text" id="agf-bank-ref" class="fi" placeholder="IBAN, payment link or bank transfer reference"></div>
   <div class="modal-actions">
     <button class="btn btn-red btn-sm" id="btn-del-agency" style="display:none;margin-right:auto" onclick="deleteCurrentAgency()">Delete</button>
     <button class="btn btn-ghost" onclick="closeModal('mo-agency')">Cancel</button>
@@ -4166,12 +4180,15 @@ function _portalBaseUrl() {
   return loc.substring(0, loc.lastIndexOf('/') + 1) + 'client-portal.html';
 }
 
-function _buildPortalUrl(id, type) {
-  return `${_portalBaseUrl()}?id=${id}&type=${type}`;
+function _buildPortalUrl(id, type, name) {
+  const base = `${_portalBaseUrl()}?id=${encodeURIComponent(id)}&type=${type}`;
+  // Agent portals need name in URL — agents table has no anon RLS policy
+  // so the portal can't look up the agent by ID. Name is the lookup key.
+  return name ? base + `&name=${encodeURIComponent(name)}` : base;
 }
 
-function shareClientPortal(id, name, type) {
-  const url = _buildPortalUrl(id, type);
+function shareClientPortal(id, name, type, agentName) {
+  const url = _buildPortalUrl(id, type, agentName);
   if (navigator.share) {
     navigator.share({ title: `${name} — DeepFlow Portal`, url })
       .catch(() => _copyPortalFallback(url, name));
@@ -4180,8 +4197,8 @@ function shareClientPortal(id, name, type) {
   }
 }
 
-function copyClientPortal(id, name, type) {
-  const url = _buildPortalUrl(id, type);
+function copyClientPortal(id, name, type, agentName) {
+  const url = _buildPortalUrl(id, type, agentName);
   _copyPortalFallback(url, name);
 }
 
@@ -4198,8 +4215,8 @@ function _copyPortalFallback(url, name) {
 }
 
 // Show portal link modal with full URL visible + copy + open options
-function showPortalLinkModal(id, name, type) {
-  const url = _buildPortalUrl(id, type);
+function showPortalLinkModal(id, name, type, agentName) {
+  const url = _buildPortalUrl(id, type, agentName);
   const existing = document.getElementById('portal-link-modal');
   if (existing) existing.remove();
 
@@ -8129,7 +8146,7 @@ async function renderAgentsSection(){
       ${agency?`<div class="agent-agency-badge">🏢 ${agency.name}</div>`:''}
       ${ag.wa?`<div style="font-size:10px;color:#25d366;margin-top:4px">📱 ${ag.wa}</div>`:''}
       <div style="margin-top:8px;display:flex;gap:6px">
-        <button onclick="event.stopPropagation();showPortalLinkModal('${ag.id}','${ag.name.replace(/'/g,"\\'")}','agent')" style="flex:1;background:rgba(79,143,255,.1);border:1px solid rgba(79,143,255,.3);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;color:var(--acc);cursor:pointer">🔗 Share Portal</button>
+        <button onclick="event.stopPropagation();showPortalLinkModal('${ag.id}','${ag.name.replace(/'/g,"\\'")}','agent','${ag.name.replace(/'/g,"\\'")}')" style="flex:1;background:rgba(79,143,255,.1);border:1px solid rgba(79,143,255,.3);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;color:var(--acc);cursor:pointer">🔗 Share Portal</button>
       </div>
     </div>`;
   }).join('');
@@ -8573,8 +8590,12 @@ async function openAgencyModal(id){
     document.getElementById('agf-addr').value = a.address||'';
     document.getElementById('agf-web').value = a.website||'';
     document.getElementById('agf-notes').value = a.notes||'';
+    document.getElementById('agf-bank-name').value = a.bankName||'';
+    document.getElementById('agf-bank-acc').value = a.bankAcc||'';
+    document.getElementById('agf-bank-sort').value = a.bankSort||'';
+    document.getElementById('agf-bank-ref').value = a.bankRef||'';
   } else {
-    ['agf-name','agf-phone','agf-email','agf-wa','agf-addr','agf-web','agf-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    ['agf-name','agf-phone','agf-email','agf-wa','agf-addr','agf-web','agf-notes','agf-bank-name','agf-bank-acc','agf-bank-sort','agf-bank-ref'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
   }
   openModal('mo-agency'); setTimeout(()=>wireAutoSave('agencies'),100);
 }
@@ -8591,6 +8612,10 @@ async function saveAgency(silent=false){
     address: document.getElementById('agf-addr').value.trim(),
     website: document.getElementById('agf-web').value.trim(),
     notes: document.getElementById('agf-notes').value.trim(),
+    bankName: document.getElementById('agf-bank-name').value.trim(),
+    bankAcc: document.getElementById('agf-bank-acc').value.trim(),
+    bankSort: document.getElementById('agf-bank-sort').value.trim(),
+    bankRef: document.getElementById('agf-bank-ref').value.trim(),
     modified: Date.now()
   };
   if(!editAgencyId){ a.created = Date.now(); editAgencyId=a.id; }
@@ -8717,6 +8742,10 @@ async function openPersonModal(id){
     document.getElementById('pf-addr').value=p.address||'';
     document.getElementById('pf-notes').value=p.notes||'';
     document.getElementById('pf-rate').value=p.rate||'';
+    if(document.getElementById('pf-bank-name')) document.getElementById('pf-bank-name').value=p.bankName||'';
+    if(document.getElementById('pf-bank-acc'))  document.getElementById('pf-bank-acc').value=p.bankAcc||'';
+    if(document.getElementById('pf-bank-sort')) document.getElementById('pf-bank-sort').value=p.bankSort||'';
+    if(document.getElementById('pf-bank-ref'))  document.getElementById('pf-bank-ref').value=p.bankRef||'';
     document.getElementById('pf-trade').value=p.trade||'';
     document.getElementById('pf-ll').checked=(p.roles||[]).includes('landlord');
     document.getElementById('pf-cl').checked=(p.roles||[]).includes('client');
@@ -8762,6 +8791,10 @@ async function savePerson(silent=false){
     rate:parseFloat(document.getElementById('pf-rate').value)||0,
     trade:document.getElementById('pf-trade').value,
     agencyId:document.getElementById('pf-agency')?.value||'',
+    bankName:document.getElementById('pf-bank-name')?.value.trim()||'',
+    bankAcc:document.getElementById('pf-bank-acc')?.value.trim()||'',
+    bankSort:document.getElementById('pf-bank-sort')?.value.trim()||'',
+    bankRef:document.getElementById('pf-bank-ref')?.value.trim()||'',
     roles
   };
   if(!editPid){ editPid=p.id; }
