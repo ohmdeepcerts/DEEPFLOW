@@ -562,6 +562,9 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
    INVOICES
 ══════════════════════════════════════ */
 #pg-inv{overflow-y:auto}
+.inv-nav-item{padding:8px 14px;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer;border-radius:6px;margin:0 6px 1px;transition:.12s;display:flex;align-items:center;gap:7px;user-select:none}
+.inv-nav-item:hover{background:var(--s2);color:var(--txt)}
+.inv-nav-item.active{background:var(--acc-soft);color:var(--acc);font-weight:700}
 .inv-wrap{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .inv-list-col{}
 .inv-detail-col{}
@@ -1326,7 +1329,7 @@ body.density-relaxed .jtable td{font-size:15px}
           <div class="dash-sub" id="dg-date"></div>
         </div>
         <div class="dash-quick">
-          <button class="btn btn-acc" onclick="df.once('navDone:jobs',()=>{openJobModal});nav('jobs')">+ New Job</button>
+          <button class="btn btn-acc" onclick="df.once('navDone:inv',()=>{openNewInvModal()});nav('inv')">+ New Invoice</button>
           <button class="btn btn-ghost" onclick="df.once('navDone:inv',()=>{openNewInvModal});nav('inv')">+ Invoice</button>
           <button class="btn btn-ghost" onclick="df.once('navDone:dir',()=>{openPersonModal()});nav('dir')">+ Person</button>
         </div>
@@ -1521,62 +1524,95 @@ body.density-relaxed .jtable td{font-size:15px}
   </div>
 
   <!-- INVOICES -->
-  <div class="page" id="pg-inv">
-    <!-- Invoice KPI bar -->
-    <div id="inv-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--border);flex-shrink:0"></div>
+  <div class="page" id="pg-inv" style="flex-direction:row!important;overflow:hidden">
 
-    <!-- Toolbar -->
-    <div style="display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;flex-shrink:0;background:var(--s1)">
-      <select class="fs" id="inv-filter" onchange="renderInvList()" style="width:155px;padding:6px 10px;font-size:12px">
-        <option value="">All Invoices</option>
-        <option value="Draft">📝 Draft</option>
-        <option value="Awaiting Payment">⏳ Unpaid</option>
-        <option value="Paid">✓ Paid</option>
-        <option value="Cancelled">✕ Cancelled</option>
-        <option value="Credit Note">↩ Credit Note</option>
-        <option value="__overdue__">🔴 Overdue</option>
-        <option value="__missed__">⚠ Missed</option>
-      </select>
-      <input type="search" class="fi" id="inv-search" placeholder="🔍 Search…" oninput="renderInvList()" style="max-width:150px;font-size:12px">
-      <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:145px;padding:6px 10px;font-size:12px">
-        <option value="date_desc">📅 Newest first</option>
-        <option value="date_asc">📅 Oldest first</option>
-        <option value="num_desc">🔢 Inv # desc</option>
-        <option value="amount_desc">💷 Amount ↓</option>
-        <option value="amount_asc">💷 Amount ↑</option>
-        <option value="client">👤 Client A–Z</option>
-      </select>
-      <div style="display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
-        <button class="btn btn-ghost btn-sm" id="btn-inv-list" onclick="setInvView('list')" style="border-radius:0;border:none;padding:6px 10px;font-size:12px">☰ List</button>
-        <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:6px 10px;font-size:12px">⊞ Board</button>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="exportInvsCSV()" title="Export filtered invoices to CSV">⬇ Export CSV</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendAllOverdueWA()" title="Send WhatsApp reminders to all overdue clients">📱 Chase All</button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteDuplicateInvoices()" title="Find and remove duplicate invoices" style="color:var(--red)">🗑 Clean Dupes</button>
-        <button class="btn btn-purple btn-sm" onclick="openCreditNoteModal()">↩ Credit Note</button>
-        <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" title="Mark all filtered Awaiting Payment invoices as Paid">✓ Bulk Paid</button>
-        <button class="btn btn-acc btn-sm" onclick="openNewInvModal()">+ New Invoice</button>
+    <!-- SUB-LEFT PANEL -->
+    <div id="inv-subnav" style="width:190px;min-width:190px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0">
+      <div style="padding:14px 14px 8px;font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px">Invoices</div>
+
+      <!-- KPI mini cards -->
+      <div id="inv-subnav-kpis" style="padding:0 10px 10px;display:flex;flex-direction:column;gap:5px"></div>
+
+      <div style="height:1px;background:var(--border);margin:4px 0"></div>
+
+      <!-- Nav items -->
+      <div class="inv-nav-item active" id="invnav-all"      onclick="invNavSelect('all')"      >◎  All Invoices</div>
+      <div class="inv-nav-item"        id="invnav-draft"    onclick="invNavSelect('draft')"    >📝 Draft</div>
+      <div class="inv-nav-item"        id="invnav-unpaid"   onclick="invNavSelect('unpaid')"   >⏳ Awaiting Payment</div>
+      <div class="inv-nav-item"        id="invnav-overdue"  onclick="invNavSelect('overdue')"  >🔴 Overdue</div>
+      <div class="inv-nav-item"        id="invnav-paid"     onclick="invNavSelect('paid')"     >✅ Paid</div>
+      <div class="inv-nav-item"        id="invnav-cancelled"onclick="invNavSelect('cancelled')">✕  Cancelled</div>
+
+      <div style="height:1px;background:var(--border);margin:4px 0"></div>
+
+      <div class="inv-nav-item"        id="invnav-missing"  onclick="invNavSelect('missing')"  >⚠️ Missing Invoices</div>
+      <div class="inv-nav-item"        id="invnav-jobsearch"onclick="invNavSelect('jobsearch')" >🔍 Find by Job No.</div>
+
+      <div style="height:1px;background:var(--border);margin:4px 0"></div>
+
+      <!-- Quick actions -->
+      <div style="padding:8px 10px;display:flex;flex-direction:column;gap:5px">
+        <button class="btn btn-acc btn-sm" style="width:100%;justify-content:flex-start" onclick="openNewInvModal()">+ New Invoice</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start" onclick="openCreditNoteModal()">↩ Credit Note</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start" onclick="exportInvsCSV()">⬇ Export CSV</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start" onclick="bulkDownloadPDFs()">⬇ Bulk PDF</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start" onclick="sendAllOverdueWA()">📱 Chase Overdue</button>
       </div>
     </div>
 
-    <!-- List view -->
-    <div id="inv-list-view" style="flex:1;overflow-y:auto;min-height:0">
-      <div class="inv-wrap">
-        <div class="inv-list-col">
-          <div id="inv-list"></div>
+    <!-- MAIN AREA -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0">
+
+      <!-- Toolbar -->
+      <div style="display:flex;gap:6px;padding:9px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;flex-shrink:0;background:var(--s1)">
+        <input type="search" class="fi" id="inv-search" placeholder="🔍 Search invoices…" oninput="renderInvList()" style="max-width:200px;font-size:12px">
+        <select class="fs" id="inv-filter" onchange="renderInvList()" style="width:150px;padding:6px 10px;font-size:12px;display:none">
+          <option value="">All Invoices</option>
+          <option value="Draft">Draft</option>
+          <option value="Awaiting Payment">Awaiting Payment</option>
+          <option value="Paid">Paid</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="__overdue__">Overdue</option>
+          <option value="__missed__">Missed</option>
+        </select>
+        <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:145px;padding:6px 10px;font-size:12px">
+          <option value="date_desc">📅 Newest first</option>
+          <option value="date_asc">📅 Oldest first</option>
+          <option value="num_desc">🔢 Inv # desc</option>
+          <option value="amount_desc">💷 Amount ↓</option>
+          <option value="amount_asc">💷 Amount ↑</option>
+          <option value="client">👤 Client A–Z</option>
+        </select>
+        <div style="display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-left:auto">
+          <button class="btn btn-ghost btn-sm" id="btn-inv-list" onclick="setInvView('list')" style="border-radius:0;border:none;padding:6px 10px;font-size:12px">☰ List</button>
+          <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:6px 10px;font-size:12px">⊞ Board</button>
         </div>
-        <div class="inv-detail-col">
-          <div id="inv-detail-box">
-            <div class="empty" style="padding:60px 20px"><div class="ei">◎</div><p>Select an invoice to view</p></div>
+        <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" style="font-size:11px">✓ Bulk Paid</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteDuplicateInvoices()" style="color:var(--red);font-size:11px">🗑 Dupes</button>
+      </div>
+
+      <!-- Special views (job search, missing invoices) -->
+      <div id="inv-special-view" style="display:none;flex:1;overflow-y:auto;padding:18px"></div>
+
+      <!-- List view -->
+      <div id="inv-list-view" style="flex:1;overflow-y:auto;min-height:0">
+        <div class="inv-wrap">
+          <div class="inv-list-col">
+            <div id="inv-list"></div>
+          </div>
+          <div class="inv-detail-col">
+            <div id="inv-detail-box">
+              <div class="empty" style="padding:60px 20px"><div class="ei">◎</div><p>Select an invoice to view</p></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Kanban view -->
-    <div id="inv-kanban-view" style="display:none;flex:1;overflow:hidden;flex-direction:column">
-      <div class="kanban-wrap" id="kanban-board"></div>
+      <!-- Kanban view -->
+      <div id="inv-kanban-view" style="display:none;flex:1;overflow:hidden;flex-direction:column">
+        <div class="kanban-wrap" id="kanban-board"></div>
+      </div>
+
     </div>
   </div>
 
@@ -3098,6 +3134,9 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
         <div class="jm-info-row"><span class="jm-info-lbl">WhatsApp</span><span class="jm-info-val" id="jmi-ll-wa">—</span></div>
       </div>
       
+      <!-- ★ CLIENT RATING STRIP — auto-populates when client is matched -->
+      <div id="jm-client-rating" style="margin:4px 0 12px"></div>
+
       <!-- ═══ CLIENT CREDIT CHECK PANEL ═══ -->
       <div id="credit-check-panel" class="credit-check-panel" style="display:none;margin:16px 0;padding:16px;border:2px solid var(--border);border-radius:var(--r2);background:white;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -3775,7 +3814,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
 <div id="fab">
   <div id="fab-menu">
-    <div class="fab-item" onclick="closeFab();df.once('navDone:jobs',()=>{openJobModal});nav('jobs')"><span class="fab-ico">🔧</span> New Job</div>
+    <div class="fab-item" onclick="closeFab();df.once('navDone:inv',()=>{openNewInvModal()});nav('inv')"><span class="fab-ico">◎</span> New Invoice</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:inv',()=>{openNewInvModal});nav('inv')"><span class="fab-ico">◎</span> New Invoice</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:dir',()=>{openPersonModal()});nav('dir')"><span class="fab-ico">◉</span> Add Person</div>
     <div class="fab-item" onclick="closeFab();df.once('navDone:certs',()=>{openCertModal});nav('certs')"><span class="fab-ico">◈</span> Add Certificate</div>
@@ -4255,7 +4294,7 @@ function nav(pg){
   setTopbarActions(pg);
   if(pg==='dash') renderDash();
   if(pg==='jobs') {_invalidateJobCache();renderJobs();renderSavedViews();}
-  if(pg==='inv') { if(invViewMode==='kanban') renderKanban(); else renderInvList(); renderInvKPIs(); }
+  if(pg==='inv') { if(invViewMode==='kanban') renderKanban(); else renderInvList(); renderInvKPIs(); renderInvSubnavKPIs(); }
   if(pg==='stmt') renderStmt();
   if(pg==='exp') renderExpenses();
   if(pg==='ts') renderTS();
@@ -5888,6 +5927,16 @@ async function autoInvoice(j){
     jobId:j.id,
     linkedJobId:j.id,
     jobNum:j.jobNum||'',
+    jobAddress:j.address||'',          // property address — always saved now
+    propertyAddress:j.address||'',
+    jobDate:j.date||'',               // job completion date
+    engineer:j.engineer||'',          // engineer name
+    certTypes:(j.certTypes||[]).join(', '), // cert types done
+    landlordName:j.landlordName||j.referrer||'',
+    agencyName:j.agencyName||'',
+    agentName:j.agentName||'',
+    invoiceType:j.agencyName||j.agentName?'agency':'landlord',
+    billToName:j.agencyName||(j.landlordName||j.referrer||''),
     items,
     status:'Draft',
     created:Date.now(),
@@ -6002,6 +6051,7 @@ function fillLandlordInfoBox(j){
     g('jmi-ll-wa').textContent=j.landlordWA||'—';
     // Show credit check for this landlord
     if(j.landlordName) showClientCreditCheck(j.landlordName);
+    if(j.landlordName) _renderRatingStrip('jm-client-rating', j.landlordName);
   } else {
     // Hide credit check if no landlord
     const creditPanel = document.getElementById('credit-check-panel');
@@ -6165,6 +6215,73 @@ async function saveJob(){
   try{
     await dPut('jobs',j);
     _invalidateJobCache();
+
+    // Reverse sync: if this job has a linked invoice, update invoice description + address too
+    (async()=>{
+      try{
+        const allInvs=await dAll('invoices');
+        const linked=allInvs.find(i=>i.linkedJobId===j.id||i.jobId===j.id);
+        if(linked){
+          const invPatch={};
+          if(j.description&&j.description!==linked.description) invPatch['description']=j.description;
+          if(j.address&&j.address!==linked.jobAddress) invPatch['jobaddress']=j.address;
+          if(j.price&&Math.abs(Number(j.price)-calcInvTotal(linked).sub)>0.01){
+            // Don't auto-update price — let invoice control price
+          }
+          if(Object.keys(invPatch).length>0){
+            await _sb(`invoices?id=eq.${encodeURIComponent(linked.id)}`,{method:'PATCH',body:invPatch,prefer:'return=minimal'});
+            console.info('[DeepFlow] Invoice synced from job save:',linked.number,invPatch);
+          }
+        }
+      }catch(e){console.warn('[DeepFlow] Reverse invoice sync failed',e);}
+    })();
+
+    // AUTO-SAVE to directories: if landlord/agency/agent details were filled in
+    // and the name doesn't already exist in the database, save them automatically.
+    // This runs in the background — job is already saved, this is bonus housekeeping.
+    (async()=>{
+      try{
+        // Auto-save landlord
+        const llName=j.landlordName;
+        if(llName){
+          const persons=await dAll('persons');
+          const exists=persons.find(p=>p.name.toLowerCase()===llName.toLowerCase());
+          if(!exists){
+            await dPut('persons',{id:uid(),name:llName,phone:j.landlordPhone||'',
+              email:j.landlordEmail||'',address:j.landlordAddr||'',
+              wa:j.landlordWA||'',notes:j.landlordNotes||'',
+              roles:['landlord'],created:Date.now()});
+            console.info('[DeepFlow] Auto-saved new landlord:',llName);
+          }
+        }
+        // Auto-save agency
+        const agencyName=j.agencyName;
+        if(agencyName){
+          const agencies=await dAll('agencies');
+          const exists=agencies.find(a=>a.name.toLowerCase()===agencyName.toLowerCase());
+          if(!exists){
+            await dPut('agencies',{id:uid(),name:agencyName,phone:j.agencyPhone||'',
+              email:j.agencyEmail||'',notes:j.agencyNotes||'',created:Date.now()});
+            console.info('[DeepFlow] Auto-saved new agency:',agencyName);
+          }
+        }
+        // Auto-save agent
+        const agentName=j.agentName;
+        if(agentName){
+          const agents=await dAll('agents');
+          const exists=agents.find(a=>a.name.toLowerCase()===agentName.toLowerCase());
+          if(!exists){
+            // Find agency id if agency was also saved
+            const agencies2=await dAll('agencies');
+            const agency2=agencies2.find(a=>a.name.toLowerCase()===(agencyName||'').toLowerCase());
+            await dPut('agents',{id:uid(),name:agentName,phone:j.agentPhone||'',
+              email:j.agentEmail||'',agencyId:agency2?.id||'',created:Date.now()});
+            console.info('[DeepFlow] Auto-saved new agent:',agentName);
+          }
+        }
+      }catch(e){ console.warn('[DeepFlow] Auto-save directory entry failed',e); }
+    })();
+
     if(j.status===STATUS.COMPLETED&&existingJob?.status!==STATUS.COMPLETED) onJobComplete(j);
     try{await logActivity((isNew?'Created':'Updated')+' job: '+j.address+' ('+jobNum+')','job');}catch(_){ /* intentional no-op */ }
     closeModal('mo-job');closeAddrDrop();closeAllAutofillDrops();
@@ -6478,6 +6595,56 @@ async function smartAutofill(type, val, context){
   }
 }
 
+// ── CLIENT STAR RATING — reusable across the whole app ──────────────────────
+async function _calcClientStars(clientName){
+  if(!clientName) return null;
+  const nl=clientName.toLowerCase();
+  const [allInvs]=await Promise.all([dAll('invoices')]);
+  const invs=allInvs.filter(i=>(i.clientName||i.billToName||'').toLowerCase()===nl||(i.landlordName||'').toLowerCase()===nl||(i.agencyName||'').toLowerCase()===nl);
+  if(!invs.length) return null;
+  const now=new Date();
+  const unpaid=invs.filter(i=>i.status!=='Paid'&&i.status!==STATUS.CANCELLED);
+  const overdue=unpaid.filter(i=>i.dueDate&&new Date(i.dueDate)<now);
+  const paid=invs.filter(i=>i.status==='Paid');
+  const veryOverdue=overdue.filter(i=>Math.floor((now-new Date(i.dueDate))/86400000)>60);
+  let stars=5;
+  if(veryOverdue.length>3) stars-=3; else if(veryOverdue.length>0) stars-=2;
+  else if(overdue.length>3) stars-=2; else if(overdue.length>0) stars-=1;
+  const avg=invs.length>0?invs.reduce((s,i)=>s+calcInvTotal(i).grand,0)/invs.length:0;
+  const unpaidAmt=unpaid.reduce((s,i)=>s+calcInvTotal(i).grand,0);
+  if(unpaidAmt>avg*5) stars-=2; else if(unpaidAmt>avg*3) stars-=1;
+  if(paid.length>unpaid.length&&paid.length>3) stars+=1;
+  stars=Math.max(1,Math.min(5,stars));
+  const C={1:'#e05252',2:'#f59e0b',3:'#f0c030',4:'#a3e635',5:'#25d58e'};
+  return{stars,color:C[stars],risk:stars<=2?'HIGH RISK':stars===3?'MEDIUM RISK':'LOW RISK',invCount:invs.length,paid:paid.length,overdue:overdue.length,unpaidAmt};
+}
+
+function _starsHtml(stars,color,risk,compact=false){
+  let h='';const c=color||'#94a3b8';
+  for(let i=1;i<=5;i++) h+=i<=stars?`<span style="color:${c}">★</span>`:'<span style="color:#d1d5db">☆</span>';
+  return compact?`<span style="font-size:14px;letter-spacing:1px">${h}</span>`
+    :`<span style="font-size:14px;letter-spacing:1px">${h}</span><span style="font-size:10px;font-weight:700;color:${c};margin-left:5px">${stars}/5 — ${risk}</span>`;
+}
+
+async function _renderRatingStrip(containerId,clientName){
+  const el=document.getElementById(containerId);
+  if(!el||!clientName)return;
+  el.innerHTML=`<div style="font-size:10px;color:var(--txt3);padding:6px 0">⏳ Loading rating…</div>`;
+  try{
+    const r=await _calcClientStars(clientName);
+    if(!r){el.innerHTML=`<div style="font-size:10px;color:var(--txt3);padding:6px 0">No invoice history yet</div>`;return;}
+    el.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;border:1.5px solid ${r.color}50;background:${r.color}09;${r.stars<=2?`border-left:3px solid ${r.color};`:''}">
+        <div>
+          <div style="font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:.7px;margin-bottom:3px;text-transform:uppercase">Client Rating</div>
+          <div>${_starsHtml(r.stars,r.color,r.risk)}</div>
+          ${r.overdue>0?`<div style="font-size:10px;color:var(--red);margin-top:3px">⚠ ${r.overdue} overdue · £${r.unpaidAmt.toFixed(0)} unpaid</div>`:r.stars>=4?`<div style="font-size:10px;color:var(--green);margin-top:3px">✓ Good payment record</div>`:''}
+        </div>
+        <div style="font-size:10px;color:var(--txt3);text-align:right">${r.invCount} inv<br>${r.paid} paid</div>
+      </div>`;
+  }catch(e){el.innerHTML='';}
+}
+
 function fillLandlordFields(p){
   // Fill referrer field
   const refEl=document.getElementById('jf-ref');
@@ -6501,6 +6668,8 @@ function fillLandlordFields(p){
   }
   const btn=document.getElementById('btn-wa-ll');
   if(btn)btn.style.display=p.wa?'':'none';
+  // Show star rating automatically when a client is matched
+  _renderRatingStrip('jm-client-rating', p.name);
   toast(`Landlord auto-filled: ${p.name}`,'success');
 }
 
@@ -7089,34 +7258,8 @@ async function createInvFromJob(jobId){
   try{
     const j=await dGet('jobs',jobId);
     if(!j){toast('Job not found — try refreshing','error');return;}
-    
-    // ══════════════════════════════════════════════════════════════
-    // DEBUG: Log EVERYTHING about this job
-    // ══════════════════════════════════════════════════════════════
-    console.log('═══════════════════════════════════════════════');
-    console.log('📋 COMPLETE JOB DATA:');
-    console.log(JSON.stringify(j, null, 2));
-    console.log('═══════════════════════════════════════════════');
-    console.log('🔍 Checking specific fields:');
-    console.log('  jobNum:', j.jobNum);
-    console.log('  jobnum:', j.jobnum);
-    console.log('  agentName:', j.agentName);
-    console.log('  agentname:', j.agentname);
-    console.log('  agencyName:', j.agencyName);
-    console.log('  agencyname:', j.agencyname);
-    console.log('  landlordName:', j.landlordName);
-    console.log('  landlordname:', j.landlordname);
-    console.log('  referrer:', j.referrer);
-    console.log('  address:', j.address);
-    console.log('═══════════════════════════════════════════════');
-    
-    const ps=await dAll('persons');
-    const cl=ps.find(p=>p.name===j.referrer)||{};
-    
-    console.log('🏢 Client found:', cl.name);
-    console.log('📍 Client address:', cl.address);
 
-    // Build Labour line from hours × rate
+    // Build line items from job data
     const engObj=(S.engineers||[]).find(e=>e.name===j.engineer);
     const hourlyRate=engObj?.rate||0;
     const hours=parseFloat(j.hours)||0;
@@ -7124,9 +7267,8 @@ async function createInvFromJob(jobId){
 
     if(hours>0&&hourlyRate>0){
       invItems=[{desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h @ £${hourlyRate}/h)`,qty:hours,unit:hourlyRate,vat:true}];
-      if(jobPrice>0&&Math.abs(jobPrice-(hours*hourlyRate))>0.01){
-        invItems.push({desc:`Materials / Additional — ${j.description||j.address}`,qty:1,unit:jobPrice,vat:true});
-      }
+      if(jobPrice>0&&Math.abs(jobPrice-(hours*hourlyRate))>0.01)
+        invItems.push({desc:`Materials — ${j.address}`,qty:1,unit:jobPrice,vat:true});
     } else if(hours>0){
       invItems=[{desc:`Labour — ${j.description||j.trade||'Works'} (${hours}h)`,qty:hours,unit:0,vat:true}];
       if(jobPrice>0) invItems.push({desc:`Works at ${j.address}`,qty:1,unit:jobPrice,vat:true});
@@ -7136,108 +7278,253 @@ async function createInvFromJob(jobId){
 
     editInvId=null;
     window._pendingJobLink=jobId;
-    
-    // ══════════════════════════════════════════════════════════════
-    // PROPER INVOICE DATA STRUCTURE
-    // Saved to DB - NO temporary variables!
-    // ══════════════════════════════════════════════════════════════
-    
-    // Extract all field variations  
-    const jobNumber = j.jobNum || j.jobnum || '';
-    const agentName = (j.agentName || j.agentname || '').trim();
-    const agentEmail = (j.agentEmail || j.agentemail || '').trim();
-    const agencyName = (j.agencyName || j.agencyname || '').trim();
-    const agencyAddr = (j.agencyAddr || j.agencyaddr || '').trim();
-    const landlordName = (j.landlordName || j.landlordname || j.referrer || '').trim();
-    const propertyAddress = (j.address || '').trim();
-    
-    // Determine invoice type
-    const hasAgency = !!(agencyName || agentName);
-    const invoiceType = hasAgency ? 'agency' : 'landlord';
-    
-    console.log('🔍 Detection Results:');
-    console.log('  agencyName:', agencyName, '→', !!agencyName);
-    console.log('  agentName:', agentName, '→', !!agentName);
-    console.log('  hasAgency:', hasAgency);
-    console.log('  invoiceType:', invoiceType);
-    
-    // Build complete invoice data structure
-    window._newInvoiceData = {
-      invoiceType: invoiceType,
-      billToName: hasAgency ? agencyName : landlordName,
-      billToAddress: hasAgency ? (agencyAddr || cl.address || '') : propertyAddress,
-      jobAddress: hasAgency ? propertyAddress : '',
-      agentName: hasAgency ? agentName : '',
-      agentEmail: hasAgency ? agentEmail : '',
-      agencyName: agencyName,
-      agencyAddress: agencyAddr,
-      landlordName: landlordName,
-      propertyAddress: propertyAddress,
-      jobNum: jobNumber
+    window._linkedJobOriginalPrice=jobPrice; // for cross-sync change detection
+
+    // Extract fields — handles both camelCase (JS) and lowercase (DB)
+    const jobNumber    = j.jobNum||'';
+    const agentName    = (j.agentName||'').trim();
+    const agentEmail   = (j.agentEmail||'').trim();
+    const agencyName   = (j.agencyName||'').trim();
+    const landlordName = (j.landlordName||j.referrer||'').trim();
+    const propertyAddr = (j.address||'').trim();
+    const hasAgency    = !!(agencyName||agentName);
+
+    window._newInvoiceData={
+      invoiceType:hasAgency?'agency':'landlord',
+      billToName:hasAgency?agencyName:landlordName,
+      billToAddress:hasAgency?(j.agencyAddr||''):propertyAddr,
+      jobAddress:hasAgency?propertyAddr:'',
+      agentName:hasAgency?agentName:'',
+      agentEmail:hasAgency?agentEmail:'',
+      agencyName,landlordName,propertyAddress:propertyAddr,jobNum:jobNumber
     };
-    
-    console.log('📋 Invoice Type:', invoiceType);
-    console.log('💼 Complete Invoice Data:', window._newInvoiceData);
-    
-    document.getElementById('mo-inv-title').textContent='◎ New Invoice from Job';
+
+    // Find client from persons table
+    const ps=await dAll('persons');
+    const cl=ps.find(p=>p.name===landlordName||p.name===j.referrer)||{};
+
+    document.getElementById('mo-inv-title').textContent=`◎ Invoice for ${j.jobNum||j.address||'Job'}`;
     document.getElementById('if-date').value=j.date||TODAY();
     document.getElementById('if-desc').value=j.description||j.address||'';
     document.getElementById('if-notes').value=S.invNotes||'';
     document.getElementById('if-terms').value=S.payTerms||'';
-    
-    // Set form fields
-    const jobRefField = document.getElementById('if-jobref');
-    if(jobRefField) jobRefField.value = jobNumber;
-    
-    const agentField = document.getElementById('if-agent');
-    if(agentField) agentField.value = hasAgency ? agentName : '';
-    
-    const agentCCField = document.getElementById('if-agent-cc');
-    if(agentCCField) agentCCField.value = hasAgency ? agentEmail : '';
-    
     document.getElementById('if-status').value='Draft';
+    const dd=new Date();dd.setDate(dd.getDate()+(S.dueDays||14));
+    document.getElementById('if-due').value=dd.toISOString().slice(0,10);
+    const jobRefEl=document.getElementById('if-jobref');if(jobRefEl)jobRefEl.value=jobNumber;
+    const agentEl=document.getElementById('if-agent');if(agentEl)agentEl.value=hasAgency?agentName:'';
+    const agentCCEl=document.getElementById('if-agent-cc');if(agentCCEl)agentCCEl.value=hasAgency?agentEmail:'';
+
     await fillInvClientDrop(cl.id);
-    
-    // ═══ SMART ADDRESS FIELDS ═══
-    const clientAddrField = document.getElementById('if-client-addr');
-    const clientAddrLabel = document.getElementById('if-client-addr-label');
-    const jobAddrContainer = document.getElementById('if-job-addr-container');
-    const jobAddrField = document.getElementById('if-job-addr');
-    
-    if(hasAgency) {
-      // AGENCY: Show agency address + job address
-      if(clientAddrLabel) clientAddrLabel.textContent = 'Agency Address';
-      if(clientAddrField) {
-        clientAddrField.value = window._newInvoiceData.billToAddress;
-        clientAddrField.placeholder = 'Agency office address';
-      }
-      if(jobAddrContainer) jobAddrContainer.style.display = '';
-      if(jobAddrField) jobAddrField.value = propertyAddress;
-      console.log('✅ Agency invoice');
-    } else {
-      // LANDLORD: Show property address only
-      if(clientAddrLabel) clientAddrLabel.textContent = 'Property Address';
-      if(clientAddrField) {
-        clientAddrField.value = propertyAddress;
-        clientAddrField.placeholder = 'Property address';
-      }
-      if(jobAddrContainer) jobAddrContainer.style.display = 'none';
-      console.log('✅ Landlord invoice');
+    const clientAddrLbl=document.getElementById('if-client-addr-label');
+    const clientAddrEl=document.getElementById('if-client-addr');
+    const jobAddrWrap=document.getElementById('if-job-addr-container');
+    const jobAddrEl=document.getElementById('if-job-addr');
+    if(hasAgency){
+      if(clientAddrLbl)clientAddrLbl.textContent='Agency Address';
+      if(clientAddrEl){clientAddrEl.value=j.agencyAddr||'';clientAddrEl.placeholder='Agency office address';}
+      if(jobAddrWrap)jobAddrWrap.style.display='';
+      if(jobAddrEl)jobAddrEl.value=propertyAddr;
+    }else{
+      if(clientAddrLbl)clientAddrLbl.textContent='Property Address';
+      if(clientAddrEl){clientAddrEl.value=propertyAddr;clientAddrEl.placeholder='Property address';}
+      if(jobAddrWrap)jobAddrWrap.style.display='none';
     }
-    
+
     renderInvItems();
     document.getElementById('if-vat-pct').textContent=S.vatRate||20;
-
-    // Set due date
-    const dd=new Date();dd.setDate(dd.getDate()+(S.dueDays||14));
-    const dueEl=document.getElementById('if-due');
-    if(dueEl) dueEl.value=dd.toISOString().slice(0,10);
-
+    _showInvJobSyncBanner(j);
     openModal('mo-inv');
   }catch(err){
     toast('❌ Could not open invoice: '+(err.message||'').slice(0,80),'error');
-    console.error('createInvFromJob error:',err);
+    console.error('[DeepFlow] createInvFromJob error:',err);
   }
+}
+
+// ── Invoice ↔ Job cross-sync system ──────────────────────────────────────────
+// Shows a banner inside the invoice modal when it's linked to a job.
+// Overrides updInvTotals to detect amount changes and warn before syncing.
+
+function _showInvJobSyncBanner(j){
+  // Remove any existing banner
+  document.getElementById('_inv-sync-banner')?.remove();
+
+  const wrap=document.getElementById('if-items')?.closest('.modal-body,.modal-scroll,form')||
+             document.getElementById('if-items')?.parentElement;
+  if(!wrap)return;
+
+  const jobTotal=Number(j.price)||0;
+  const banner=document.createElement('div');
+  banner.id='_inv-sync-banner';
+  banner.style.cssText='display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 13px;margin-bottom:12px;font-size:12px;color:#1d4ed8;font-weight:500';
+  banner.innerHTML=`<span style="font-size:16px">🔗</span>
+    <div style="flex:1">
+      <div style="font-weight:700;margin-bottom:2px">Linked to ${j.jobNum||'Job'} — Live Sync Active</div>
+      <div style="opacity:.8">Changes to amounts here will update the job price. Job's current price: <strong>£${jobTotal.toFixed(2)}</strong></div>
+    </div>`;
+
+  // Insert banner at top of modal content (before first field group)
+  const firstFg=document.getElementById('if-date')?.closest('div[style*="margin"],[class*="fg"],[class*="form"]');
+  if(firstFg&&firstFg.parentElement)
+    firstFg.parentElement.insertBefore(banner, firstFg);
+  else
+    document.getElementById('if-items')?.before(banner);
+
+  // Override updInvTotals to intercept changes for the linked job
+  window._invSyncJobId=j.id;
+  window._invSyncOrigPrice=jobTotal;
+  window._invSyncJobNum=j.jobNum||'Job';
+}
+
+// Patched updInvTotals — intercepts amount changes when linked to a job
+function updInvTotals(){
+  const vr=S.vatRate||20;let sub=0,vat=0;
+  invItems.forEach(i=>{const l=(i.qty||1)*(i.unit||0);sub+=l;if(i.vat)vat+=l*vr/100;});
+  document.getElementById('if-sub').textContent='£'+sub.toFixed(2);
+  document.getElementById('if-vat').textContent='£'+vat.toFixed(2);
+  document.getElementById('if-total').textContent='£'+(sub+vat).toFixed(2);
+
+  // Cross-sync: update the linked job badge if amount differs from original
+  if(window._invSyncJobId && Math.abs(sub-window._invSyncOrigPrice)>0.001){
+    let badge=document.getElementById('_inv-sync-diff');
+    if(!badge){
+      badge=document.createElement('div');
+      badge.id='_inv-sync-diff';
+      badge.style.cssText='margin-top:4px;font-size:11px;color:#d97706;font-weight:600';
+      document.getElementById('_inv-sync-banner')?.appendChild(badge);
+    }
+    badge.textContent=`⚠ Job price will update: £${window._invSyncOrigPrice.toFixed(2)} → £${sub.toFixed(2)} on save`;
+  } else {
+    document.getElementById('_inv-sync-diff')?.remove();
+  }
+}
+
+// Called by saveInvWithJobSync — patches the job price when invoice amount changes
+// ── Invoice → Job live sync ───────────────────────────────────────────────────
+// Called after every invoice field save. Finds the linked job and updates the
+// corresponding job field automatically. Price changes still show a popup.
+// No popup for description, address, date — those sync silently.
+
+// Maps invoice DB field name → job DB field name (for silent sync to the JOB record)
+// billToAddress syncs separately to persons/agencies table (see _syncInvoiceFieldToJob)
+const _INV_TO_JOB_FIELD = {
+  description:     'description',   // invoice description ↔ job description
+  jobaddress:      'address',        // property address ↔ job address
+  propertyaddress: 'address',
+  date:            'date',           // invoice date ↔ job date
+  clientname:      'landlordname',   // bill-to name ↔ job landlord
+  billtoname:      'landlordname',
+  agentname:       'agentname',      // agent ↔ job agent
+  agencyname:      'agencyname',
+  // EXCLUDED from job sync (handled separately or invoice-only):
+  // billtoaddress → syncs to persons.address or agencies.address (see _syncBillToAddress)
+  // notes, duedate, clientemail, clientwa, number, status, terms → invoice only
+};
+
+async function _syncInvoiceFieldToJob(invId, dbField, dbVal){
+  const fieldLower = dbField.toLowerCase();
+  const isItemsChange = fieldLower === 'items';
+
+  // billToAddress syncs to the landlord/agency record — not the job
+  if(fieldLower === 'billtoaddress'){
+    _syncBillToAddress(invId, dbVal).catch(()=>{});
+    return;
+  }
+
+  const jobField = _INV_TO_JOB_FIELD[fieldLower];
+  if(!jobField && !isItemsChange) return; // field not mapped — skip
+
+  const inv = await dGet('invoices', invId);
+  if(!inv) return;
+  const linkedJobId = inv.linkedJobId || inv.jobId;
+  if(!linkedJobId) return;
+  const job = await dGet('jobs', linkedJobId);
+  if(!job) return;
+
+  const patchBody = {};
+
+  // Always patch the mapped job field silently — no popup for text fields
+  if(jobField && !isItemsChange && dbVal !== undefined){
+    patchBody[jobField] = dbVal;
+  }
+
+  // Price popup ONLY when line items are what triggered the sync
+  // (not when description/date/name changed — that would be confusing)
+  if(isItemsChange){
+    const newTotal = calcInvTotal(inv).sub;
+    const prevPrice = Number(job.price||0);
+    if(Math.abs(newTotal - prevPrice) > 0.01){
+      const confirmed = await new Promise(res=>{
+        confirm2(
+          '🔗 Sync job price?',
+          `Invoice total is <strong>£${newTotal.toFixed(2)}</strong> but job price is <strong>£${prevPrice.toFixed(2)}</strong>.<br><br>Update the job price to match?`,
+          ()=>res(true), ()=>res(false)
+        );
+      });
+      if(confirmed) patchBody['price'] = newTotal;
+    }
+  }
+
+  if(Object.keys(patchBody).length === 0) return;
+
+  try{
+    await _sb(`jobs?id=eq.${encodeURIComponent(linkedJobId)}`, {
+      method:'PATCH', body:patchBody, prefer:'return=minimal'
+    });
+    _invalidateJobCache();
+    const jobNumStr = job.jobNum||job.jobnum||'';
+    toast(`🔗 Job ${jobNumStr} synced (${Object.keys(patchBody).join(', ')})`,'success',2500);
+  }catch(e){ console.warn('[DeepFlow] job sync failed', e); }
+}
+
+// Sync billToAddress back to the landlord (persons) or agency record
+async function _syncBillToAddress(invId, newAddr){
+  if(!newAddr) return;
+  const inv = await dGet('invoices', invId);
+  if(!inv) return;
+  const isAgency = inv.invoiceType === 'agency';
+  const clientName = inv.billToName || inv.clientName || inv.agencyName || '';
+  if(!clientName) return;
+  try{
+    if(isAgency){
+      const agencies = await dAll('agencies');
+      const agency = agencies.find(a=>(a.name||'').toLowerCase()===clientName.toLowerCase());
+      if(agency){
+        await _sb(`agencies?id=eq.${encodeURIComponent(agency.id)}`,{method:'PATCH',body:{address:newAddr},prefer:'return=minimal'});
+        toast(`🔗 Agency address updated for ${clientName}`,'success',2000);
+      }
+    } else {
+      const persons = await dAll('persons');
+      const person = persons.find(p=>(p.name||'').toLowerCase()===clientName.toLowerCase());
+      if(person){
+        await _sb(`persons?id=eq.${encodeURIComponent(person.id)}`,{method:'PATCH',body:{address:newAddr},prefer:'return=minimal'});
+        toast(`🔗 Landlord address updated for ${clientName}`,'success',2000);
+      }
+    }
+  }catch(e){ console.warn('[DeepFlow] billToAddress sync failed',e); }
+}
+
+async function _syncInvoicePriceToJob(linkedJobId, newTotal, newDesc){
+  // Legacy: called from saveInvWithJobSync (modal workflow)
+  if(!linkedJobId) return;
+  const origPrice=window._invSyncOrigPrice;
+  if(origPrice===undefined||Math.abs(newTotal-origPrice)<0.001) return;
+  const confirmed=await new Promise(res=>{
+    confirm2(
+      '🔗 Sync job price?',
+      `The invoice amount changed from <strong>£${origPrice.toFixed(2)}</strong> to <strong>£${newTotal.toFixed(2)}</strong>.<br><br>Update the linked job's price to match?`,
+      ()=>res(true), ()=>res(false)
+    );
+  });
+  if(!confirmed) return;
+  await _sb(`jobs?id=eq.${encodeURIComponent(linkedJobId)}`,{
+    method:'PATCH',
+    body:{price:newTotal},
+    prefer:'return=minimal'
+  });
+  window._invSyncOrigPrice=newTotal;
+  _invalidateJobCache();
+  toast('🔗 Job price synced to £'+newTotal.toFixed(2),'success',2500);
 }
 
 async function _renderInvPayments(invId, invTotal){
@@ -7466,43 +7753,174 @@ async function sendAllOverdueWA(){
 }
 
 // ── Invoice KPI summary for the header ──
+// ── Invoice sub-nav ──────────────────────────────────────────────────────────
+let _invNavMode='all';
+
+function invNavSelect(mode){
+  _invNavMode=mode;
+  document.querySelectorAll('.inv-nav-item').forEach(el=>{
+    el.classList.toggle('active',el.id==='invnav-'+mode);
+  });
+  const special=document.getElementById('inv-special-view');
+  const listView=document.getElementById('inv-list-view');
+  const kanban=document.getElementById('inv-kanban-view');
+  const filterEl=document.getElementById('inv-filter');
+
+  if(mode==='missing'){
+    special.style.display='block';
+    listView.style.display='none';
+    kanban.style.display='none';
+    renderMissingInvoices();
+    return;
+  }
+  if(mode==='jobsearch'){
+    special.style.display='block';
+    listView.style.display='none';
+    kanban.style.display='none';
+    renderJobNumberSearch();
+    return;
+  }
+  special.style.display='none';
+  listView.style.display='';
+  // Map mode to filter value
+  const modeMap={all:'',draft:'Draft',unpaid:'Awaiting Payment',overdue:'__overdue__',paid:'Paid',cancelled:'Cancelled'};
+  if(filterEl) filterEl.value=modeMap[mode]||'';
+  if(invViewMode==='kanban'){listView.style.display='none';kanban.style.display='';}
+  else{listView.style.display='';kanban.style.display='none';}
+  renderInvList();
+}
+
+async function renderInvSubnavKPIs(){
+  const el=document.getElementById('inv-subnav-kpis');
+  if(!el) return;
+  const invs=await dAll('invoices');
+  const now=new Date();
+  const draft=invs.filter(i=>i.status==='Draft').length;
+  const unpaid=invs.filter(i=>i.status==='Awaiting Payment').length;
+  const overdue=invs.filter(i=>i.status==='Awaiting Payment'&&i.dueDate&&new Date(i.dueDate)<now).length;
+  const paidAmt=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+calcInvTotal(i).grand,0);
+  const unpaidAmt=invs.filter(i=>i.status==='Awaiting Payment').reduce((s,i)=>s+calcInvTotal(i).grand,0);
+  const kpi=(val,lbl,col)=>`<div style="background:${col}15;border:1px solid ${col}30;border-radius:6px;padding:7px 9px;cursor:pointer">
+    <div style="font-size:14px;font-weight:900;color:${col};line-height:1">${val}</div>
+    <div style="font-size:9px;color:var(--txt3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.3px">${lbl}</div>
+  </div>`;
+  el.innerHTML=
+    kpi(draft,'Draft','#94a3b8')+
+    kpi(unpaid,'Unpaid','#f59e0b')+
+    (overdue?kpi(overdue,'Overdue','#e05252'):'')+
+    kpi('£'+paidAmt.toLocaleString('en-GB',{maximumFractionDigits:0}),'Paid','#25d58e')+
+    (unpaidAmt>0?kpi('£'+unpaidAmt.toLocaleString('en-GB',{maximumFractionDigits:0}),'Outstanding','#f59e0b'):'');
+}
+
+async function renderMissingInvoices(){
+  const el=document.getElementById('inv-special-view');
+  el.innerHTML=`<div style="font-size:15px;font-weight:800;margin-bottom:16px">⚠️ Jobs Without Invoices</div><div style="color:var(--txt3);font-size:12px">Scanning…</div>`;
+  const [allJobs,allInvs]=await Promise.all([dAll('jobs'),dAll('invoices')]);
+  const invoicedIds=new Set([
+    ...allInvs.map(i=>i.jobId).filter(Boolean),
+    ...allInvs.map(i=>i.linkedJobId).filter(Boolean),
+    ...allJobs.filter(j=>j.invNumber||j.linkedInvId).map(j=>j.id)
+  ]);
+  const missing=allJobs.filter(j=>
+    (j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED)&&
+    !invoicedIds.has(j.id)
+  ).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  if(!missing.length){
+    el.innerHTML=`<div style="text-align:center;padding:40px 0">
+      <div style="font-size:40px;margin-bottom:10px">✅</div>
+      <div style="font-size:16px;font-weight:700;color:var(--green)">All completed jobs have invoices!</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:15px;font-weight:800">⚠️ Missing Invoices</div>
+        <div style="font-size:12px;color:var(--txt3);margin-top:3px">${missing.length} completed job${missing.length!==1?'s':''} without an invoice</div>
+      </div>
+    </div>
+    ${missing.map(j=>`
+      <div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh)">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <span style="font-size:10px;font-weight:700;color:var(--acc);font-family:ui-monospace,monospace;background:var(--acc-soft);padding:2px 7px;border-radius:4px">${j.jobNum||'—'}</span>
+            <span style="font-size:11px;color:var(--txt3)">${j.date?new Date(j.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}</span>
+            ${j.engineer?`<span style="font-size:11px;color:var(--txt2)">👷 ${j.engineer}</span>`:''}
+          </div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j.address||'—'}</div>
+          <div style="font-size:12px;color:var(--txt2)">${j.description||''}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:3px">${j.landlordName||j.referrer||''} ${j.agencyName?'· '+j.agencyName:''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <span style="font-size:14px;font-weight:900;color:var(--txt)">£${Number(j.price||0).toFixed(2)}</span>
+          <button class="btn btn-acc btn-sm" onclick="createInvFromJob('${j.id}')">+ Create Invoice</button>
+        </div>
+      </div>`).join('')}`;
+}
+
+async function renderJobNumberSearch(){
+  const el=document.getElementById('inv-special-view');
+  el.innerHTML=`
+    <div style="max-width:500px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:6px">🔍 Find Invoice by Job Number</div>
+      <div style="font-size:12px;color:var(--txt3);margin-bottom:16px">Enter a job number to find its invoice or create one</div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <input class="fi" id="job-inv-search-inp" placeholder="e.g. JOB-1082" style="flex:1" onkeydown="if(event.key==='Enter')searchJobForInvoice()">
+        <button class="btn btn-acc" onclick="searchJobForInvoice()">Search</button>
+      </div>
+      <div id="job-inv-search-result"></div>
+    </div>`;
+}
+
+async function searchJobForInvoice(){
+  const val=(document.getElementById('job-inv-search-inp')?.value||'').trim().toUpperCase();
+  const res=document.getElementById('job-inv-search-result');
+  if(!val||!res)return;
+  res.innerHTML=`<div style="color:var(--txt3);font-size:12px">Searching…</div>`;
+  const [allJobs,allInvs]=await Promise.all([dAll('jobs'),dAll('invoices')]);
+  const job=allJobs.find(j=>(j.jobNum||'').toUpperCase()===val||(j.jobNum||'').toUpperCase().includes(val));
+  if(!job){res.innerHTML=`<div style="color:var(--red);font-size:13px;padding:12px 0">❌ No job found matching "${val}"</div>`;return;}
+  const inv=allInvs.find(i=>i.jobId===job.id||i.linkedJobId===job.id||(i.jobNum||'').toUpperCase()===(job.jobNum||'').toUpperCase());
+  res.innerHTML=`
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Job Found</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px">${job.address||'—'}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--txt2);margin-bottom:6px">
+        <span>${job.jobNum||''}</span>
+        <span>${job.date||''}</span>
+        <span>${job.description||''}</span>
+        <span>${job.engineer?'👷 '+job.engineer:''}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:14px;font-weight:700">£${Number(job.price||0).toFixed(2)}</span>
+        <span style="font-size:11px;color:var(--txt3)">${job.landlordName||job.referrer||''}</span>
+      </div>
+    </div>
+    ${inv?`
+    <div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--r2);padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">✅ Invoice Exists</div>
+        <div style="font-size:14px;font-weight:700">${inv.number}</div>
+        <div style="font-size:12px;color:var(--txt2)">Status: ${inv.status} · £${calcInvTotal(inv).grand.toFixed(2)}</div>
+      </div>
+      <button class="btn btn-acc btn-sm" onclick="viewInv('${inv.id}');invNavSelect('all')">Open Invoice</button>
+    </div>`:`
+    <div style="background:var(--ybg);border:1px solid var(--ybd);border-radius:var(--r2);padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--yel);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">⚠️ No Invoice Yet</div>
+        <div style="font-size:12px;color:var(--txt2)">This job has no invoice. Click to create one.</div>
+      </div>
+      <button class="btn btn-acc btn-sm" onclick="createInvFromJob('${job.id}')">Create Invoice</button>
+    </div>`}`;
+}
+
 async function renderInvKPIs(){
-  const kpiEl = document.getElementById('inv-kpis');
-  if(!kpiEl) return;
-  const invs = await dAll('invoices');
-  const pmts = await dAll('payments');
-  const today = TODAY();
-  const thisMonth = today.slice(0,7);
-
-  const monthInvs = invs.filter(i=>i.date?.startsWith(thisMonth));
-  const monthTotal = monthInvs.reduce((s,i)=>s+calcInvTotal(i).grand,0);
-  const outstanding = invs.filter(i=>i.status==='Awaiting Payment'||i.status==='Draft')
-    .reduce((s,i)=>s+Math.max(0,calcInvTotal(i).grand-pmts.filter(p=>p.invId===i.id).reduce((a,p)=>a+p.amount,0)),0);
-  const overdue = invs.filter(i=>i.status==='Awaiting Payment'&&i.dueDate&&i.dueDate<today).length;
-  const paidThisMonth = pmts.filter(p=>p.date?.startsWith(thisMonth)).reduce((s,p)=>s+p.amount,0);
-
-  kpiEl.innerHTML = `
-    <div class="kpi-tile" onclick="document.getElementById('inv-filter').value='';renderInvList()">
-      <div class="kpi-val">£${monthTotal.toFixed(0)}</div>
-      <div class="kpi-lbl">Invoiced this month</div>
-    </div>
-    <div class="kpi-tile" style="border-top-color:var(--green)" onclick="document.getElementById('inv-filter').value='Paid';renderInvList()">
-      <div class="kpi-val" style="color:var(--green)">£${paidThisMonth.toFixed(0)}</div>
-      <div class="kpi-lbl">Collected this month</div>
-    </div>
-    <div class="kpi-tile" style="border-top-color:var(--yellow)" onclick="document.getElementById('inv-filter').value='Awaiting Payment';renderInvList()">
-      <div class="kpi-val" style="color:var(--yellow)">£${outstanding.toFixed(0)}</div>
-      <div class="kpi-lbl">Outstanding</div>
-    </div>
-    <div class="kpi-tile" style="border-top-color:var(--red)" onclick="setInvFilter('overdue')">
-      <div class="kpi-val" style="color:${overdue>0?'var(--red)':'var(--green)'}">${overdue}</div>
-      <div class="kpi-lbl">Overdue invoices</div>
-    </div>
-    <div class="kpi-tile">
-      <div class="kpi-val">${invs.filter(i=>i.status==='Draft').length}</div>
-      <div class="kpi-lbl">Drafts pending</div>
-    </div>
-  `;
+  // Redirect to subnav KPIs (the old flat KPI bar is replaced by subnav)
+  renderInvSubnavKPIs();
+  // Keep old inv-kpis element empty so nothing breaks
+  const el=document.getElementById('inv-kpis');
+  if(el) el.innerHTML='';
 }
 
 function setInvFilter(val){
@@ -7524,85 +7942,268 @@ async function viewInv(id){
   const t=calcInvTotal(inv);
   const vr=S.vatRate||20;
   const box=document.getElementById('inv-detail-box');
-  const logoHtml=S.logoData?`<img src="${S.logoData}" class="inv-logo-img">`:'';
-  const sMap={'Draft':'b-draft','Awaiting Payment':'b-awaiting','Paid':'b-paid','Cancelled':'b-cancelled'};
+  const isPaid=inv.status==='Paid';
+  const logo=S.logoData?`<img src="${S.logoData}" style="height:44px;object-fit:contain;margin-bottom:6px;display:block">`:
+    `<div style="font-size:24px;font-weight:900;color:var(--acc);letter-spacing:-1px">${S.coName||'DF'}</div>`;
+  const statusColors={'Draft':'#94a3b8','Awaiting Payment':'#f59e0b','Paid':'#25d58e','Cancelled':'#e05252','Credit Note':'#7c3aed'};
+  const sc=statusColors[inv.status]||'#94a3b8';
+
+  // Editable field helper — click to edit, blur to save
+  const ef=(field,val,opts={})=>{
+    const tag=opts.multi?'textarea':'input';
+    const style=opts.style||'';
+    const cls=opts.cls||'';
+    return `<${tag} class="inv-live-field ${cls}" data-field="${field}" data-invid="${id}"
+      style="background:transparent;border:none;outline:none;width:100%;font:inherit;color:inherit;resize:none;padding:0;${style}"
+      ${opts.multi?`rows="2"`:`type="${opts.type||'text'}"`}
+      onfocus="this.style.background='#fff8f0';this.style.borderBottom='2px solid var(--acc)';this.style.borderRadius='3px'"
+      onblur="this.style.background='transparent';this.style.borderBottom='';this.style.borderRadius='';_saveInvField(this)"
+      onkeydown="if(!event.shiftKey&&event.key==='Enter'){event.preventDefault();this.blur()}"
+      value="${(val||'').replace(/"/g,'&quot;')}">${opts.multi?(val||''):''}${opts.multi?`</${tag}>`:''}`;
+  };
 
   box.innerHTML=`
-    <div class="inv-detail-hd">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          ${logoHtml}
-          <div class="inv-company">${S.coName||'Your Company'}</div>
-          ${S.coAddr?`<div style="font-size:11px;color:var(--txt2);margin-top:2px">${S.coAddr}</div>`:''}
-          ${S.coPhone?`<div style="font-size:11px;color:var(--txt2)">${S.coPhone}</div>`:''}
-          ${S.coVatNum?`<div style="font-size:11px;color:var(--txt3)">VAT: ${S.coVatNum}</div>`:''}
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:var(--fh);font-size:22px;font-weight:700;color:var(--acc)">${inv.number}</div>
-          <span class="badge ${sMap[inv.status]||''}" style="margin-top:6px;display:inline-flex">${inv.status}</span>
-          <div style="font-size:11px;color:var(--txt2);margin-top:6px">Issued: ${inv.date}</div>
-          ${inv.dueDate?`<div style="font-size:11px;color:var(--txt2)">Due: ${inv.dueDate}</div>`:''}
-        </div>
-      </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:40px">
-        <div><div style="font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;font-family:var(--fh);font-weight:600">Bill To</div>
-          <div style="font-family:var(--fh);font-weight:600">${inv.clientName||'—'}</div>
-          <div style="font-size:11px;color:var(--txt2)">${inv.clientAddr||''}</div>
-          <div style="font-size:11px;color:var(--txt2)">${inv.clientEmail||''}</div>
-        </div>
-        ${(S.bankName||S.bankAcc)?`<div><div style="font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;font-family:var(--fh);font-weight:600">Payment To</div>
-          <div style="font-size:11px;color:var(--txt2)">${S.bankName||''}</div>
-          <div style="font-size:11px;color:var(--txt2)">${S.bankAcc?'Acc: '+S.bankAcc:''} ${S.bankSort?'| Sort: '+S.bankSort:''}</div>
-          ${S.bankIBAN?`<div style="font-size:11px;color:var(--txt2)">IBAN: ${S.bankIBAN}</div>`:''}
-        </div>`:''}
-      </div>
+  <div style="background:#fff;font-family:'Segoe UI',system-ui,sans-serif;padding:0;border-radius:var(--r2);overflow:hidden;box-shadow:0 0 0 1px var(--border)">
+
+    <!-- LIVE EDIT BANNER -->
+    <div style="background:linear-gradient(90deg,var(--acc),#3b82f6);color:#fff;padding:6px 16px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">
+      <span>✏️ Live Preview — click any field to edit · autosaves</span>
+      <span id="inv-save-indicator" style="margin-left:auto;font-size:10px;opacity:.8"></span>
     </div>
-    <div class="inv-detail-body">
-      <table class="inv-table">
-        <thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>VAT</th><th style="text-align:right">Total</th></tr></thead>
-        <tbody>
-          ${(inv.items||[]).map(item=>{
-            const l=(item.qty||1)*(item.unit||0);
-            const v=item.vat?l*vr/100:0;
-            return`<tr><td>${item.desc}</td><td>${item.qty||1}</td><td>£${Number(item.unit||0).toFixed(2)}</td><td>${item.vat?vr+'%':'—'}</td><td style="text-align:right">£${(l+v).toFixed(2)}</td></tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-      <div class="inv-totals">
-        <div class="inv-tr"><span>Subtotal</span><span>£${t.sub.toFixed(2)}</span></div>
-        <div class="inv-tr"><span>VAT (${vr}%)</span><span>£${t.vat.toFixed(2)}</span></div>
-        <div class="inv-tr grand"><span>TOTAL</span><span>£${t.grand.toFixed(2)}</span></div>
+
+    <!-- INVOICE HEADER -->
+    <div style="padding:22px 24px 16px;background:linear-gradient(135deg,#fafafa,#fff);border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start">
+      <div>
+        ${logo}
+        <div style="font-weight:800;font-size:14px;color:#1e293b;margin-bottom:2px">${S.coName||'Your Company'}</div>
+        <div style="font-size:11px;color:#64748b">${S.coAddr||''}</div>
+        <div style="font-size:11px;color:#64748b">${S.coPhone||''} ${S.coEmail?'· '+S.coEmail:''}</div>
+        ${S.coVatNum?`<div style="font-size:10px;color:#94a3b8;margin-top:2px">VAT: ${S.coVatNum}</div>`:''}
       </div>
-      ${(S.payTerms||S.invNotes)?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--txt2)">
-        ${S.payTerms?`<div>${S.payTerms}</div>`:''}
-        ${S.invNotes?`<div style="margin-top:4px">${S.invNotes}</div>`:''}
-      </div>`:''}
-      <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:16px;align-items:center">
-        <div style="font-size:11px;color:var(--acc);font-family:var(--fm);font-weight:600;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);padding:5px 10px;border-radius:var(--r)">
-          💳 Please use invoice number <strong>${inv.number}</strong> as your payment reference
-        </div>
-        <div style="font-size:10px;color:var(--txt3);font-family:var(--fm)">
-          ${inv.jobRef?`Job Ref: ${inv.jobRef}`:''} ${inv.agentName?`· Requested by: ${inv.agentName}`:''}
+      <div style="text-align:right">
+        <div style="font-size:26px;font-weight:900;color:var(--acc);letter-spacing:-1px">${inv.number}</div>
+        <div style="display:inline-block;background:${sc}20;color:${sc};border:1px solid ${sc}40;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;margin-top:4px">${inv.status}</div>
+        <div style="margin-top:8px;font-size:11px;color:#64748b">
+          <div>Issued: ${ef('date',inv.date,{style:'font-size:11px;text-align:right;width:130px',type:'date'})}</div>
+          <div>Due: ${ef('dueDate',inv.dueDate,{style:'font-size:11px;text-align:right;width:130px',type:'date'})}</div>
         </div>
       </div>
     </div>
-    <div class="inv-actions-bar">
-      <button class="btn btn-ghost btn-sm" onclick="editInvModal('${id}')">✎ Edit</button>
+
+    <!-- BILL TO + JOB DETAILS -->
+    <div style="padding:14px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;border-bottom:1px solid #e5e7eb;background:#f8fafc">
+      <div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">BILL TO</div>
+        <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:3px">${ef('clientName',inv.clientName,{style:'font-size:13px;font-weight:700'})}</div>
+        <div style="font-size:11px;color:#64748b">${ef('billToAddress',inv.billToAddress||inv.clientAddr||'',{style:'font-size:11px;color:#64748b',multi:true})}</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:3px">${ef('clientEmail',inv.clientEmail||'',{style:'font-size:11px;color:#64748b'})}</div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">PROPERTY</div>
+        <div style="font-size:12px;font-weight:600;color:#1e293b">${ef('jobAddress',inv.jobAddress||inv.propertyAddress||'',{style:'font-size:12px',multi:true})}</div>
+        ${inv.agentName?`<div style="font-size:11px;color:#64748b;margin-top:4px">Agent: ${ef('agentName',inv.agentName,{style:'font-size:11px'})}</div>`:''}
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">JOB DETAILS</div>
+        <div style="font-size:11px;color:#64748b;line-height:1.8">
+          ${inv.jobNum?`<div>Job No: <strong>${inv.jobNum}</strong></div>`:''}
+          ${inv.jobDate?`<div>Completed: <strong>${new Date(inv.jobDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</strong></div>`:''}
+          ${inv.engineer?`<div>Engineer: <strong>${inv.engineer}</strong></div>`:''}
+          ${inv.certTypes?`<div>Work: <strong>${inv.certTypes}</strong></div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <!-- LINE ITEMS -->
+    <div style="padding:14px 24px;border-bottom:1px solid #e5e7eb" id="inv-live-items-${id}">
+      <div style="display:grid;grid-template-columns:1fr 60px 90px 60px 90px 28px;gap:4px;margin-bottom:6px">
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px">Description</div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;text-align:center">Qty</div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;text-align:right">Unit £</div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;text-align:center">VAT</div>
+        <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;text-align:right">Total</div>
+        <div></div>
+      </div>
+      ${_renderLiveItems(inv,id)}
+      <button onclick="_addLiveItem('${id}')" style="margin-top:8px;background:transparent;border:1px dashed var(--border2);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--txt3);cursor:pointer;width:100%;transition:.15s" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--txt3)'">+ Add line item</button>
+    </div>
+
+    <!-- TOTALS -->
+    <div style="padding:14px 24px;display:flex;justify-content:flex-end;border-bottom:1px solid #e5e7eb">
+      <div style="min-width:220px">
+        <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:#64748b"><span>Subtotal</span><span>£${t.sub.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:#64748b"><span>VAT (${vr}%)</span><span>£${t.vat.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0 3px;font-size:16px;font-weight:900;color:#1e293b;border-top:2px solid #1e293b;margin-top:4px" id="inv-live-total-${id}"><span>TOTAL</span><span>£${t.grand.toFixed(2)}</span></div>
+        ${isPaid?'<div style="text-align:right;color:#25d58e;font-size:11px;font-weight:700;margin-top:4px">✓ PAID</div>':''}
+      </div>
+    </div>
+
+    <!-- INVOICE DESCRIPTION (syncs to job) -->
+    <div style="padding:10px 24px 0;background:#fafafa">
+      <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Invoice Description <span style="font-size:8px;color:#a3e635;font-weight:600">↔ syncs to job</span></div>
+      ${ef('description',inv.description||'',{style:'font-size:12px;color:#1e293b;font-weight:500;line-height:1.5',multi:true})}
+    </div>
+
+    <!-- NOTES / TERMS (invoice only — does not sync to job) -->
+    <div style="padding:8px 24px 12px;border-bottom:1px solid #e5e7eb;background:#fafafa">
+      <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Payment Notes &amp; Terms <span style="font-size:8px;color:#94a3b8;font-weight:600">invoice only</span></div>
+      ${ef('notes',inv.notes||S.invNotes||S.payTerms||'',{style:'font-size:12px;color:#64748b;line-height:1.6',multi:true})}
+    </div>
+
+    <!-- PAYMENT REF -->
+    <div style="padding:10px 24px;background:linear-gradient(90deg,#fffbeb,#fff);border-bottom:1px solid #fde68a;font-size:11px;color:#92400e;font-weight:600">
+      💳 Please use invoice number <strong>${inv.number}</strong> as your payment reference
+    </div>
+
+    <!-- BANKING -->
+    ${S.bankName||S.bankAcc?`<div style="padding:10px 24px;font-size:11px;color:#64748b;border-bottom:1px solid #e5e7eb;display:flex;gap:20px;flex-wrap:wrap">
+      <span>🏦 ${S.bankName||''}</span>
+      ${S.bankAcc?`<span>Acc: ${S.bankAcc}</span>`:''}
+      ${S.bankSort?`<span>Sort: ${S.bankSort}</span>`:''}
+      ${S.bankIBAN?`<span>IBAN: ${S.bankIBAN}</span>`:''}
+    </div>`:''}
+
+    <!-- ACTIONS -->
+    <div style="padding:10px 14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--s2);border-top:2px solid var(--border)">
       ${inv.clientName?`<button class="btn btn-ghost btn-sm" onclick="nav('stmt');setTimeout(()=>{const el=document.getElementById('stmt-landlord');if(el){el.value='${(inv.clientName||'').replace(/'/g,"\\'")}';renderStmt();}},300)">📋 Client Stmt</button>`:''}
-      ${inv.status!=='Paid'?`<button class="btn btn-green btn-sm" onclick="markInvPaid('${id}')">✓ Mark Paid</button>`:''}
-      ${inv.status!=='Paid'?`<button class="btn btn-blue btn-sm" onclick="openPaymentModal('${id}')">💳 Record Payment</button>`:''}
-      ${inv.status==='Paid'?`<button class="btn btn-ghost btn-sm" onclick="markInvUnpaid('${id}')" title="Undo paid status — clears all payments for correction">↩ Mark Unpaid</button>`:''}
+      ${!isPaid?`<button class="btn btn-green btn-sm" onclick="markInvPaid('${id}')">✓ Mark Paid</button>`:''}
+      ${!isPaid?`<button class="btn btn-blue btn-sm" onclick="openPaymentModal('${id}')">💳 Record Payment</button>`:''}
+      ${isPaid?`<button class="btn btn-ghost btn-sm" onclick="markInvUnpaid('${id}')">↩ Unpaid</button>`:''}
       ${inv.status==='Draft'?`<button class="btn btn-ghost btn-sm" onclick="markInvSent('${id}')">Mark Sent</button>`:''}
-      ${inv.status==='Awaiting Payment'?`<button class="btn btn-ghost btn-sm" onclick="sendOverdueWA('${id}')">⚠️ Overdue Reminder</button>`:''}
       <button class="btn btn-wa btn-sm" onclick="openInvSendModal('${id}')">📱 Send / Share</button>
       <button class="btn btn-ghost btn-sm" onclick="downloadInvPDFById('${id}')">⬇ PDF</button>
-      <button class="btn btn-ghost btn-sm" onclick="createRecurringInv('${id}')" title="Copy this invoice to next month as a new draft">↻ Recurring</button>
+      <button class="btn btn-ghost btn-sm" onclick="createRecurringInv('${id}')">↻ Recurring</button>
       <button class="btn btn-red btn-sm" style="margin-left:auto" onclick="deleteInv('${id}')">Delete</button>
     </div>
-  `;
-  // Append payment history section async (doesn't block render)
-  _renderInvPayments(id, t);
-  renderInvList();
+
+    <!-- PAYMENT STATUS -->
+    <div style="padding:12px 18px" id="inv-payment-status-${id}">
+      <div style="font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:6px">PAYMENT STATUS</div>
+    </div>
+  </div>`;
+
+  _renderInvPayments(id,t);
+}
+
+// ── Live invoice editing helpers ──────────────────────────────────────────────
+function _renderLiveItems(inv,id){
+  const vr=S.vatRate||20;
+  return (inv.items||[]).map((item,i)=>{
+    const l=(item.qty||1)*(item.unit||0);
+    const v=item.vat?l*vr/100:0;
+    return`<div style="display:grid;grid-template-columns:1fr 60px 90px 60px 90px 28px;gap:4px;margin-bottom:4px;align-items:center" id="inv-item-row-${id}-${i}">
+      <input class="inv-live-item" data-invid="${id}" data-idx="${i}" data-key="desc"
+        style="font-size:12px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:4px 7px;width:100%"
+        value="${(item.desc||'').replace(/"/g,'&quot;')}"
+        onblur="_saveLiveItem(this)" onkeydown="if(event.key==='Enter')this.blur()">
+      <input class="inv-live-item" data-invid="${id}" data-idx="${i}" data-key="qty" type="number"
+        style="font-size:12px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:4px 5px;text-align:center;width:100%"
+        value="${item.qty||1}" oninput="_updateLiveTotal('${id}')" onblur="_saveLiveItem(this)">
+      <input class="inv-live-item" data-invid="${id}" data-idx="${i}" data-key="unit" type="number" step="0.01"
+        style="font-size:12px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:4px 5px;text-align:right;width:100%"
+        value="${Number(item.unit||0).toFixed(2)}" oninput="_updateLiveTotal('${id}')" onblur="_saveLiveItem(this)">
+      <div style="text-align:center">
+        <input type="checkbox" ${item.vat?'checked':''} class="inv-live-item" data-invid="${id}" data-idx="${i}" data-key="vat"
+          style="accent-color:var(--acc)" onchange="_saveLiveItem(this);_updateLiveTotal('${id}')">
+      </div>
+      <div style="font-size:12px;font-weight:700;text-align:right;color:#1e293b" id="inv-item-total-${id}-${i}">£${(l+v).toFixed(2)}</div>
+      <button onclick="_removeLiveItem('${id}',${i})" style="background:transparent;border:none;color:#e05252;cursor:pointer;font-size:14px;padding:0;line-height:1" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+}
+
+let _invSaveTimer={};
+
+async function _saveInvField(el){
+  const field=el.dataset.field;
+  const invId=el.dataset.invid;
+  if(!field||!invId)return;
+  const val=el.type==='checkbox'?el.checked:(el.value||'');
+  const ind=document.getElementById('inv-save-indicator');
+  if(ind)ind.textContent='Saving…';
+  clearTimeout(_invSaveTimer[invId]);
+  _invSaveTimer[invId]=setTimeout(async()=>{
+    try{
+      // Map camelCase field name to Supabase lowercase column name
+      const _dbField=(_TO_DB.invoices||{})[field]||field;
+      const _body={[_dbField]:val};
+      await _sb(`invoices?id=eq.${encodeURIComponent(invId)}`,{method:'PATCH',body:_body,prefer:'return=minimal'});
+      _invalidateCache('invoices');
+      if(ind)ind.textContent='✓ Saved';
+      setTimeout(()=>{if(ind)ind.textContent='';},2000);
+      // Sync field change to linked job (silently for text, popup for price)
+      _syncInvoiceFieldToJob(invId, _dbField, val).catch(()=>{});
+    }catch(e){if(ind)ind.textContent='⚠ Save failed';console.warn('[DeepFlow]',e);}
+  },600);
+}
+
+async function _saveLiveItem(el){
+  const invId=el.dataset.invid;
+  const idx=parseInt(el.dataset.idx);
+  const key=el.dataset.key;
+  const inv=await dGet('invoices',invId);
+  if(!inv)return;
+  const items=JSON.parse(JSON.stringify(inv.items||[]));
+  if(!items[idx])return;
+  if(key==='vat') items[idx].vat=el.checked;
+  else if(key==='qty') items[idx].qty=parseFloat(el.value)||1;
+  else if(key==='unit') items[idx].unit=parseFloat(el.value)||0;
+  else items[idx][key]=el.value;
+  const ind=document.getElementById('inv-save-indicator');
+  if(ind)ind.textContent='Saving…';
+  clearTimeout(_invSaveTimer[invId+'items']);
+  _invSaveTimer[invId+'items']=setTimeout(async()=>{
+    try{
+      await _sb(`invoices?id=eq.${encodeURIComponent(invId)}`,{method:'PATCH',body:{items},prefer:'return=minimal'});
+      _invalidateCache('invoices');
+      if(ind)ind.textContent='✓ Saved';
+      setTimeout(()=>{if(ind)ind.textContent='';},2000);
+      // Sync price change to linked job
+      _syncInvoiceFieldToJob(invId, 'items', items).catch(()=>{});
+    }catch(e){if(ind)ind.textContent='⚠ Save failed';console.warn('[DeepFlow]',e);}
+  },600);
+}
+
+function _updateLiveTotal(invId){
+  // Recalculate totals from current DOM inputs without saving
+  const vr=S.vatRate||20;
+  let sub=0,vat=0;
+  document.querySelectorAll(`.inv-live-item[data-invid="${invId}"]`).forEach(el=>{
+    const idx=parseInt(el.dataset.idx);
+    const rowQty=parseFloat(document.querySelector(`.inv-live-item[data-invid="${invId}"][data-idx="${idx}"][data-key="qty"]`)?.value||1);
+    const rowUnit=parseFloat(document.querySelector(`.inv-live-item[data-invid="${invId}"][data-idx="${idx}"][data-key="unit"]`)?.value||0);
+    const rowVat=document.querySelector(`.inv-live-item[data-invid="${invId}"][data-idx="${idx}"][data-key="vat"]`)?.checked;
+    const l=rowQty*rowUnit;
+    const v=rowVat?l*vr/100:0;
+    sub+=l; vat+=v;
+    const totEl=document.getElementById(`inv-item-total-${invId}-${idx}`);
+    if(totEl) totEl.textContent='£'+(l+v).toFixed(2);
+  });
+  const grandEl=document.getElementById(`inv-live-total-${invId}`);
+  if(grandEl) grandEl.querySelector('span:last-child').textContent='£'+(sub+vat).toFixed(2);
+}
+
+async function _addLiveItem(invId){
+  const inv=await dGet('invoices',invId);
+  if(!inv)return;
+  const items=[...(inv.items||[]),{desc:'',qty:1,unit:0,vat:true}];
+  await _sb(`invoices?id=eq.${encodeURIComponent(invId)}`,{method:'PATCH',body:{items},prefer:'return=minimal'});
+  _invalidateCache('invoices');
+  viewInv(invId);
+}
+
+async function _removeLiveItem(invId,idx){
+  const inv=await dGet('invoices',invId);
+  if(!inv)return;
+  const items=(inv.items||[]).filter((_,i)=>i!==idx);
+  await _sb(`invoices?id=eq.${encodeURIComponent(invId)}`,{method:'PATCH',body:{items},prefer:'return=minimal'});
+  _invalidateCache('invoices');
+  viewInv(invId);
+}
+
+function _invalidateCache(store){
+  if(typeof _cacheInvalidate==='function') _cacheInvalidate(store);
+  if(store==='invoices'&&typeof _invalidateJobCache==='function') _invalidateJobCache();
 }
 
 async function openInvSendModal(id){
@@ -7763,20 +8364,64 @@ async function downloadInvPDFById(id){
     doc.text(inv.clientEmail,M,clientY);clientY+=5;
   }
   
-  // JOB ADDRESS section (only for agencies)
+  // PROPERTY ADDRESS — always show regardless of invoice type
+  const propAddr = inv.propertyAddress || inv.jobAddress || inv.jobAddr || '';
+  if(propAddr && propAddr.trim()){
+    // For landlord invoices, property IS the billing address so show separately
+    // For agency invoices, property is already shown as JOB ADDRESS below Bill To
+    if(!isAgency){
+      clientY += 4;
+      doc.setFillColor(...light);doc.rect(M,clientY-2,colW,6,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+      doc.text('PROPERTY ADDRESS',M+3,clientY+2);
+      clientY += 7;
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...dark);
+      const propLines=doc.splitTextToSize(propAddr,colW);
+      doc.text(propLines,M,clientY);clientY+=propLines.length*4.5;
+    }
+  }
+
+  // JOB ADDRESS section for agencies
   if(isAgency && inv.jobAddress && inv.jobAddress.trim()){
-    clientY += 6;
+    clientY += 4;
     doc.setFillColor(...light);doc.rect(M,clientY-2,colW,6,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
-    doc.text('JOB ADDRESS',M+3,clientY+2);
+    doc.text('PROPERTY ADDRESS',M+3,clientY+2);
     clientY += 7;
     doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mid);
     const jobAddrLines=doc.splitTextToSize(inv.jobAddress,colW);
-    doc.text(jobAddrLines,M,clientY);
-    clientY+=jobAddrLines.length*4.5;
+    doc.text(jobAddrLines,M,clientY);clientY+=jobAddrLines.length*4.5;
   }
-  
-  y=clientY+4;
+
+  // JOB DETAILS (right column — alongside Bill To)
+  const detailX = M + colW + 10;
+  const detailW = colW;
+  let detailY = y - (clientY - y) - 6; // align top with Bill To
+  detailY = Math.max(y, detailY);
+
+  // Job details block (right column)
+  doc.setFillColor(...light);doc.rect(detailX,y-9,detailW,6,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+  doc.text('JOB DETAILS',detailX+3,y-9+4);
+  let djY = y - 1;
+
+  const djRow=(lbl,val)=>{
+    if(!val) return;
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...mid);
+    doc.text(lbl,detailX,djY);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...dark);
+    const vLines=doc.splitTextToSize(String(val),detailW-22);
+    doc.text(vLines,detailX+22,djY);
+    djY+=vLines.length*4.5+1;
+  };
+
+  djRow('Job No:',   inv.jobNum||inv.jobRef||'');
+  djRow('Date:',     inv.jobDate?new Date(inv.jobDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'');
+  djRow('Engineer:', inv.engineer||'');
+  djRow('Work done:',inv.certTypes||inv.description||'');
+  if(inv.agentName&&isAgency) djRow('Agent:',inv.agentName);
+
+  y = clientY + 4;
 
   // ── LINE ITEMS TABLE ──
   doc.setDrawColor(220,220,230);doc.line(M,y,W-M,y);y+=2;
@@ -7986,14 +8631,6 @@ function renderInvItems(){
     </div>`).join('');
   updInvTotals();
 }
-function updInvTotals(){
-  const vr=S.vatRate||20;let sub=0,vat=0;
-  invItems.forEach(i=>{const l=(i.qty||1)*(i.unit||0);sub+=l;if(i.vat)vat+=l*vr/100});
-  document.getElementById('if-sub').textContent='£'+sub.toFixed(2);
-  document.getElementById('if-vat').textContent='£'+vat.toFixed(2);
-  document.getElementById('if-total').textContent='£'+(sub+vat).toFixed(2);
-}
-
 async function saveInv(){
   return saveInvWithJobSync();
 }
@@ -8387,6 +9024,10 @@ function buildPersonCard(p, invs, topColor){
   const owed=invs.filter(i=>i.clientId===p.id&&i.status==='Awaiting Payment').reduce((s,i)=>s+calcInvTotal(i).grand,0);
   const isLandlord = (p.roles||[]).includes('landlord');
   const isAgency   = false; // agencies have separate cards
+  const ratingId='dir-rating-'+p.id;
+  // Render rating asynchronously after card is inserted
+  setTimeout(()=>_renderRatingStrip(ratingId, p.name), 0);
+
   return`<div class="dir-card" onclick="openPersonModal('${p.id}')" style="cursor:pointer;position:relative">
     <div class="dir-card-accent" style="background:${topColor}"></div>
     <button onclick="event.stopPropagation();openPersonModal('${p.id}')" style="position:absolute;top:8px;right:8px;background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--txt2);cursor:pointer;font-weight:600">✎ Edit</button>
@@ -8394,7 +9035,8 @@ function buildPersonCard(p, invs, topColor){
     <div class="dir-card-name">${p.name}</div>
     <div class="dir-card-meta">${p.phone?`<a href="tel:${p.phone}" onclick="event.stopPropagation()" style="color:var(--acc);text-decoration:none">📞 ${p.phone}</a>`:''} ${p.email?`· <a href="mailto:${p.email}" onclick="event.stopPropagation()" style="color:var(--acc);text-decoration:none">✉ ${p.email}</a>`:''}</div>
     <div class="dir-tags">${tags}</div>
-    ${p.address?`<div style="font-size:10px;color:var(--txt3);margin-top:6px">📍 ${p.address}</div>`:''}
+    <div id="${ratingId}" style="margin-top:8px"></div>
+    ${p.address?`<div style="font-size:10px;color:var(--txt3);margin-top:4px">📍 ${p.address}</div>`:''}
     ${p.notes?`<div style="font-size:10px;color:var(--txt2);margin-top:4px">${p.notes}</div>`:''}
     ${p.wa?`<div style="font-size:10px;color:#25d366;margin-top:4px">📱 ${p.wa}</div>`:''}
     ${isLandlord?`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:flex;gap:6px">
@@ -14039,15 +14681,23 @@ document.addEventListener('click', hideTip, true);
 document.addEventListener('scroll', hideTip, true);
 
 // Attach rich tooltips to job rows after render
+// Track which cell the mouse is currently over — prevents async dGet from
+// showing a tooltip after the mouse has already left the cell.
+const _tipHover = new Set();
+
 function attachJobTooltips(){
   document.querySelectorAll('.jsr3[data-id]').forEach(row=>{
     const jid=row.dataset.id;
 
-    // Address cell → full details panel
+    // Address cell
     const addrCell=row.querySelector('.jsr3-cell-addr');
     if(addrCell){
+      const hk=jid+'_addr';
       addrCell.addEventListener('mouseenter',async ()=>{
-        const j=await dGet('jobs',jid); if(!j) return;
+        _tipHover.add(hk);
+        const j=await dGet('jobs',jid);
+        if(!_tipHover.has(hk)) return; // left cell before data arrived
+        if(!j) return;
         const certs=(j.certTypes||[]).map(id=>{ const ct=(S.certTypes||[]).find(c=>(c.id||c.name)===id)||{name:id}; return ct.name; });
         const ll=[j.landlordName,j.landlordPhone].filter(Boolean).join(' · ');
         const ag=[j.agentName,j.agencyName].filter(Boolean).join(' · ');
@@ -14059,24 +14709,32 @@ function attachJobTooltips(){
           ${j.notes?`<div class="df-tip-row"><span class="df-tip-lbl">Notes</span>${j.notes}</div>`:''}
         `);
       });
-      addrCell.addEventListener('mouseleave', hideTip);
+      addrCell.addEventListener('mouseleave',()=>{ _tipHover.delete(jid+'_addr'); hideTip(); });
     }
 
-    // Desc cell → full description
+    // Description cell
     const descCell=row.querySelector('.jsr3-cell-desc');
     if(descCell){
+      const hk=jid+'_desc';
       descCell.addEventListener('mouseenter',async ()=>{
-        const j=await dGet('jobs',jid); if(!j||!j.description) return;
+        _tipHover.add(hk);
+        const j=await dGet('jobs',jid);
+        if(!_tipHover.has(hk)) return;
+        if(!j||!j.description) return;
         showTip(descCell,`<div class="df-tip-title">📝 Description</div><div style="font-size:12px;color:var(--txt2);line-height:1.6;white-space:pre-wrap">${j.description}</div>`,{delay:200});
       });
-      descCell.addEventListener('mouseleave', hideTip);
+      descCell.addEventListener('mouseleave',()=>{ _tipHover.delete(jid+'_desc'); hideTip(); });
     }
 
-    // Engineer cell → engineer details
+    // Engineer cell
     const engCell=row.querySelector('.jsr3-cell-eng');
     if(engCell){
+      const hk=jid+'_eng';
       engCell.addEventListener('mouseenter',async ()=>{
-        const j=await dGet('jobs',jid); if(!j||!j.engineer) return;
+        _tipHover.add(hk);
+        const j=await dGet('jobs',jid);
+        if(!_tipHover.has(hk)) return;
+        if(!j||!j.engineer) return;
         const eng=(S.engineers||[]).find(en=>en.name===j.engineer);
         showTip(engCell,`<div class="df-tip-title">👷 ${j.engineer}</div>
           ${eng?.phone?`<div class="df-tip-row"><span class="df-tip-lbl">Phone</span>${eng.phone}</div>`:''}
@@ -14084,7 +14742,7 @@ function attachJobTooltips(){
           ${eng?.rate?`<div class="df-tip-row"><span class="df-tip-lbl">Rate</span>£${eng.rate}/hr</div>`:''}
         `,{delay:300});
       });
-      engCell.addEventListener('mouseleave', hideTip);
+      engCell.addEventListener('mouseleave',()=>{ _tipHover.delete(jid+'_eng'); hideTip(); });
     }
   });
 }
@@ -15067,6 +15725,15 @@ async function saveInvWithJobSync(){
   
   await dPut('invoices', inv);
 
+  // Cross-sync: if amount changed on a job-linked invoice, offer to update the job
+  if(inv.linkedJobId||window._pendingJobLink){
+    const linkedId=inv.linkedJobId||window._pendingJobLink;
+    const invSubtotal=inv.items.reduce((s,i)=>s+(i.qty||1)*(i.unit||0),0);
+    await _syncInvoicePriceToJob(linkedId,invSubtotal,inv.description);
+  }
+  window._invSyncJobId=null; window._invSyncOrigPrice=undefined;
+  document.getElementById('_inv-sync-banner')?.remove();
+
   // Auto-create or update linked job
   const jobDate = inv.date || TODAY();
   const firstItem = inv.items?.[0];
@@ -15998,9 +16665,12 @@ async function cvLoadClient(type, id, name){
       <div style="flex:1;min-width:0">
         <div style="font-family:var(--fh);font-size:20px;font-weight:800;color:var(--txt)">${name}</div>
         <div style="font-size:11px;color:var(--txt3);margin-top:3px">${type==='agency'?'🏢 Agency':'👤 Person / Landlord'}</div>
+        <div id="cv-rating-strip" style="margin-top:8px"></div>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="renderClientPicker()">← Back</button>
     </div>`;
+  // Load rating asynchronously so hero renders immediately
+  _renderRatingStrip('cv-rating-strip', name);
 
   // ── KPIs ──
   const kpi = (val, lbl, col) => `
