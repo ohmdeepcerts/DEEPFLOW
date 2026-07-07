@@ -167,6 +167,66 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .hbtn.p:hover{background:#f8fafc;transform:translateY(-1px)}
 @media(max-width:520px){.hero{padding:28px 20px}.hero-n{font-size:22px}}
 
+/* ── ELECTRICIAN CARD BACKGROUND EFFECTS ── */
+@keyframes circuitPulse{
+  0%,100%{opacity:0.03;stroke-dashoffset:0}
+  50%{opacity:0.08;stroke-dashoffset:-20}
+}
+@keyframes sparkFlicker{
+  0%,100%{opacity:0}
+  20%{opacity:0.6}
+  22%{opacity:0}
+  40%{opacity:0.4}
+  42%{opacity:0}
+  60%{opacity:0.8}
+  62%{opacity:0}
+  80%{opacity:0.3}
+  82%{opacity:0}
+}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(79,70,229,0)}
+  50%{box-shadow:0 0 20px 4px rgba(79,70,229,0.08)}
+}
+@keyframes borderShimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.cc,.ic,.jc,.stat,.pg,.cew-b,.doc-row,.stmt-row,.rc{
+  position:relative;overflow:hidden;
+}
+.cc::before,.ic::before,.jc::before,.stat::before,.pg::before,.cew-b::before,.doc-row::before,.stmt-row::before,.rc::before{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M10 10 L30 10 L30 30 L50 30 L50 50 L70 50 L70 70 L90 70 L90 90 L110 90' fill='none' stroke='%234f46e5' stroke-width='0.5' stroke-dasharray='4 8' opacity='0.04'/%3E%3Cpath d='M110 20 L90 20 L90 40 L70 40 L70 60 L50 60 L50 80 L30 80 L30 100 L10 100' fill='none' stroke='%23f59e0b' stroke-width='0.5' stroke-dasharray='3 6' opacity='0.03'/%3E%3Ccircle cx='30' cy='10' r='1.5' fill='%234f46e5' opacity='0.06'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%234f46e5' opacity='0.06'/%3E%3Ccircle cx='70' cy='50' r='1.5' fill='%234f46e5' opacity='0.06'/%3E%3Ccircle cx='90' cy='70' r='1.5' fill='%234f46e5' opacity='0.06'/%3E%3Ccircle cx='90' cy='20' r='1.5' fill='%23f59e0b' opacity='0.04'/%3E%3Ccircle cx='70' cy='40' r='1.5' fill='%23f59e0b' opacity='0.04'/%3E%3Ccircle cx='50' cy='60' r='1.5' fill='%23f59e0b' opacity='0.04'/%3E%3Ccircle cx='30' cy='80' r='1.5' fill='%23f59e0b' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-size:120px 120px;
+  pointer-events:none;z-index:0;
+  opacity:0;
+  transition:opacity 0.4s ease;
+}
+.cc:hover::before,.ic:hover::before,.jc:hover::before,.stat:hover::before,.pg:hover::before,.cew-b:hover::before,.doc-row:hover::before,.stmt-row:hover::before,.rc:hover::before{
+  opacity:1;
+  animation:circuitPulse 3s linear infinite;
+}
+.cc:hover,.ic:hover,.jc:hover,.stat:hover,.pg:hover,.cew-b:hover,.doc-row:hover,.stmt-row:hover,.rc:hover{
+  animation:glowPulse 2s ease-in-out infinite;
+}
+.cc > *,.ic > *,.jc > *,.stat > *,.pg > *,.cew-b > *,.doc-row > *,.stmt-row > *,.rc > *{
+  position:relative;z-index:1;
+}
+/* Spark particles on hover */
+.cc::after,.ic::after,.jc::after,.stat::after{
+  content:'';position:absolute;width:3px;height:3px;border-radius:50%;
+  background:radial-gradient(circle,#fbbf24 0%,transparent 70%);
+  top:20%;left:15%;opacity:0;pointer-events:none;z-index:0;
+}
+.cc:hover::after,.ic:hover::after,.jc:hover::after,.stat:hover::after{
+  animation:sparkFlicker 2s ease-in-out infinite;
+}
+.cc:hover::after{animation-delay:0s}
+.ic:hover::after{animation-delay:0.3s}
+.jc:hover::after{animation-delay:0.6s}
+.stat:hover::after{animation-delay:0.9s}
+
 /* ── STATS (BENTO) ── */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px}
 @media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
@@ -532,6 +592,7 @@ select.fi{cursor:pointer}
   border-radius:50%;animation:sp 0.6s linear infinite;flex-shrink:0;
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -548,13 +609,13 @@ select.fi{cursor:pointer}
 </div>
 
 <div class="nav-wrap"><div class="nav" id="nav" style="display:none">
-  <div class="tab active" data-t="overview"><i data-lucide="layout-dashboard" style="width:14px;height:14px"></i> <span>Overview</span></div>
-  <div class="tab" data-t="jobs"><i data-lucide="wrench" style="width:14px;height:14px"></i> <span>Jobs</span></div>
-  <div class="tab" data-t="certs"><i data-lucide="file-check" style="width:14px;height:14px"></i> <span>Certs</span></div>
-  <div class="tab" data-t="invoices"><i data-lucide="receipt" style="width:14px;height:14px"></i> <span>Invoices</span></div>
-  <div class="tab" data-t="payments"><i data-lucide="credit-card" style="width:14px;height:14px"></i> <span>Payments</span></div>
-  <div class="tab" data-t="docs"><i data-lucide="folder-open" style="width:14px;height:14px"></i> <span>Docs</span></div>
-  <div class="tab" data-t="request"><i data-lucide="plus-circle" style="width:14px;height:14px"></i> <span>Request</span></div>
+  <div class="tab active" data-t="overview" onclick="go('overview')"><i data-lucide="layout-dashboard" style="width:14px;height:14px"></i> <span>Overview</span></div>
+  <div class="tab" data-t="jobs" onclick="go('jobs')"><i data-lucide="wrench" style="width:14px;height:14px"></i> <span>Jobs</span></div>
+  <div class="tab" data-t="certs" onclick="go('certs')"><i data-lucide="file-check" style="width:14px;height:14px"></i> <span>Certs</span></div>
+  <div class="tab" data-t="invoices" onclick="go('invoices')"><i data-lucide="receipt" style="width:14px;height:14px"></i> <span>Invoices</span></div>
+  <div class="tab" data-t="payments" onclick="go('payments')"><i data-lucide="credit-card" style="width:14px;height:14px"></i> <span>Payments</span></div>
+  <div class="tab" data-t="docs" onclick="go('docs')"><i data-lucide="folder-open" style="width:14px;height:14px"></i> <span>Docs</span></div>
+  <div class="tab" data-t="request" onclick="go('request')"><i data-lucide="plus-circle" style="width:14px;height:14px"></i> <span>Request</span></div>
 </div></div>
 
 <div class="main" id="main">
@@ -686,6 +747,19 @@ async function init(){
       attachments=(ra||[]).map(_fix);
       certs=(rc||[]).map(_fix);
       invoices=ri||[];
+      // Tag jobs with payment status
+      jobs.forEach(j=>{
+        const rel=invoices.filter(inv=>{
+          const a=(inv.jobAddress||inv.billToAddress||'').toLowerCase().trim();
+          return a===(j.address||'').toLowerCase().trim();
+        });
+        if(rel.length){
+          const allPaid=rel.every(i=>i.status==='Paid');
+          const anyInvoiced=rel.some(i=>i.status==='Awaiting Payment'||i.status==='Draft');
+          if(allPaid)j.paid=true;
+          else if(anyInvoiced)j.invoiced=true;
+        }
+      });
     }
 
     // Store invoices safely (Bug fix #1)
@@ -705,6 +779,10 @@ async function init(){
 
     _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,token,coName,entity};
     document.getElementById('nav').style.display='flex';
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click',()=>go(tab.dataset.t));
+    });
+    updateGreeting();
     go('overview');
   }catch(err){
     console.error(err);
@@ -766,6 +844,18 @@ function showSkeleton(t){
   document.getElementById('main').innerHTML=h;
 }
 
+// ── GREETING ──────────────────────────────────────────────────────────────────
+function updateGreeting(){
+  const h=new Date().getHours();
+  let g='Welcome';
+  if(h>=5&&h<12)g='Good morning';
+  else if(h>=12&&h<17)g='Good afternoon';
+  else if(h>=17&&h<22)g='Good evening';
+  else g='Good night';
+  const el=document.getElementById('hero-greeting');
+  if(el&&_d)el.textContent=g+', '+_d.name;
+}
+
 // ── OVERVIEW ──────────────────────────────────────────────────────────────────
 function vOverview(d){
   const done=d.jobs.filter(j=>j.status==='Completed').length;
@@ -785,7 +875,7 @@ function vOverview(d){
     <div class="hero">
       <div class="hero-inner">
         <div class="hero-ey">✦ ${label} Portal</div>
-        <div class="hero-n">Welcome, ${e(d.name)}</div>
+        <div class="hero-n" id="hero-greeting">Welcome, ${e(d.name)}</div>
         <div class="hero-s">Live overview of your properties, jobs &amp; certificates managed by ${e(d.coName)}.</div>
         <div class="hero-row">
           <button class="hbtn p" data-action="go" data-target="request"><i data-lucide="plus" style="width:14px;height:14px"></i> New Request</button>
@@ -827,16 +917,38 @@ function vOverview(d){
     </div>`:''}`;
 }
 
+// ── PROPERTY PAY BADGE ────────────────────────────────────────────────────────
+function getPropertyPayBadge(addr,invoices){
+  const rel=invoices.filter(inv=>{
+    const a=(inv.jobAddress||inv.billToAddress||'').toLowerCase().trim();
+    return a===(addr||'').toLowerCase().trim();
+  });
+  if(!rel.length)return'';
+  const owed=rel.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
+  const paid=rel.filter(i=>i.status==='Paid');
+  if(owed.length&&paid.length)return`<span class="pill p-s" style="margin-left:auto;flex-shrink:0;font-size:10px">Part Paid</span>`;
+  if(owed.length)return`<span class="pill p-s" style="margin-left:auto;flex-shrink:0;font-size:10px">Outstanding</span>`;
+  if(paid.length)return`<span class="pill p-ok" style="margin-left:auto;flex-shrink:0;font-size:10px">Paid</span>`;
+  return'';
+}
+
 // ── JOBS ─────────────────────────────────────────────────────────────────────
 function vJobs(d){
   const isG=d.jobs.length>4&&(d.type==='agency'||d.type==='agent');
   let html='';
   if(isG){
     const byA={};d.jobs.forEach(j=>{const k=j.address||'?';if(!byA[k])byA[k]=[];byA[k].push(j);});
-    html=Object.entries(byA).map(([addr,js])=>`<div class="pg">
+    html=Object.entries(byA).map(([addr,js])=>{
+      const payBadge=getPropertyPayBadge(addr,d.invoices);
+      return `<div class="pg">
       <div class="pg-hd" data-action="toggle-group">
-        <div class="pg-addr"><i data-lucide="map-pin" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:6px"></i>${e(addr)}</div><div class="pg-m">${js.length} job${js.length!==1?'s':''} ›</div>
-      </div><div class="pg-body">${js.map(j=>jobCard(j,d)).join('')}</div></div>`).join('');
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="pg-addr"><i data-lucide="map-pin" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:6px"></i>${e(addr)}</div>
+          <div class="pg-m">${js.length} job${js.length!==1?'s':''} ›</div>
+        </div>
+        ${payBadge}
+      </div><div class="pg-body">${js.map(j=>jobCard(j,d)).join('')}</div></div>`;
+    }).join('');
   }else html=d.jobs.map(j=>jobCard(j,d)).join('');
   document.getElementById('main').innerHTML=`<div class="sec"><div class="sec-hd"><div class="sec-t">All Jobs <span class="sec-n">${d.jobs.length}</span></div></div>${html||empty('wrench','No jobs yet','Jobs will appear here once scheduled')}</div>`;
 }
@@ -869,6 +981,7 @@ function jobCard(j,d){
       ${j.engineer?`<span class="chip"><i data-lucide="user" style="width:12px;height:12px"></i> ${e(j.engineer)}</span>`:''}
       ${(j.certTypes||[]).length?`<span style="color:var(--border)">·</span><span class="chip"><i data-lucide="file-check" style="width:12px;height:12px"></i> ${e(j.certTypes.join(', '))}</span>`:''}
       ${j.timeSlot?`<span style="color:var(--border)">·</span><span class="chip"><i data-lucide="clock" style="width:12px;height:12px"></i> ${e(j.timeSlot)}</span>`:''}
+      ${j.paid?`<span style="color:var(--border)">·</span><span class="chip" style="background:var(--success-light);color:var(--success);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700"><i data-lucide="check-circle-2" style="width:10px;height:10px"></i> Paid</span>`:j.invoiced?`<span style="color:var(--border)">·</span><span class="chip" style="background:var(--warning-light);color:var(--warning);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700"><i data-lucide="receipt" style="width:10px;height:10px"></i> Invoiced</span>`:''}
     </div>
     ${hasBody?`<div class="jc-body">
       ${photos.length?`<div class="jc-photos">${photos.map((p,idx)=>`<img class="pt" src="${ea(p.url)}" data-photo-url="${ea(p.url)}" loading="lazy">`).join('')}</div>`:''}
