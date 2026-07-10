@@ -1312,6 +1312,7 @@ body.density-relaxed .jtable td{font-size:15px}
     <div class="ni" data-pg="map"><span class="ico">🗺</span>Live Maps</div>
     <div class="ns">Workforce</div>
     <div class="ni" data-pg="engrep"><span class="ico">👷</span>Engineer Reports</div>
+    <div class="ni" data-pg="audit"><span class="ico">🔍</span>Audit Log <span style="font-size:9px;background:rgba(185,28,28,.15);color:#b91c1c;padding:1px 5px;border-radius:6px;margin-left:4px;font-weight:700">Admin</span></div>
     <div id="sidebar-user-badge"></div>
   </nav>
   <div class="sidebar-foot">
@@ -1624,6 +1625,29 @@ body.density-relaxed .jtable td{font-size:15px}
       <div style="text-align:center;padding:60px;color:var(--txt3)">Loading…</div>
     </div>
   </div>
+  <!-- AUDIT LOG — Admin only -->
+  <div class="page" id="pg-audit" style="flex-direction:column;overflow:hidden">
+    <div style="padding:16px 24px;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:18px;font-weight:800">🔍 Audit Log</div>
+        <div style="font-size:12px;color:var(--txt3);margin-top:2px">Job deletions and invoice changes by staff</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <select class="fs" id="audit-filter-user" onchange="renderAuditLog()" style="padding:5px 10px;font-size:12px;width:150px"><option value="">All Staff</option></select>
+        <select class="fs" id="audit-filter-type" onchange="renderAuditLog()" style="padding:5px 10px;font-size:12px;width:150px">
+          <option value="">All Actions</option>
+          <option value="job_delete">Job Deleted</option>
+          <option value="inv_amount">Invoice Amount Changed</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="renderAuditLog()">↺ Refresh</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportAuditLog()">⬇ Export</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px 24px" id="audit-body">
+      <div style="text-align:center;padding:60px;color:var(--txt3)">Loading…</div>
+    </div>
+  </div>
+
   <div class="page" id="pg-inv" style="flex-direction:column!important;overflow:hidden">
 
     <!-- ══ SUB-TOP BAR — always visible ══ -->
@@ -4388,7 +4412,11 @@ async function loadSettings(){
 
       // Office users: rebuild entirely from Supabase, preserve local permission overrides
       const localUsers=JSON.parse(localStorage.getItem('df_setting_users')||'[]');
-      S.users=sbOffice.map(su=>{
+      // Managers cannot see Admin accounts
+    const visibleUsers = (_appUser?.role==='Manager')
+      ? sbOffice.filter(su=>su.role!=='admin' && !PROTECTED_ADMINS.includes((su.email||'').toLowerCase()))
+      : sbOffice;
+    S.users=visibleUsers.map(su=>{
         const local=localUsers.find(u=>u._sbId===su.id||u.name===su.name)||{};
         const isProtected=PROTECTED_ADMINS.includes((su.email||'').toLowerCase());
         // Protected admins are ALWAYS Admin regardless of what's in DB or local cache
@@ -4483,7 +4511,7 @@ async function logActivity(msg, type='info', refs={}){
 // ════════════════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════════════════
-const PTITLES={dash:'Dashboard',jobs:'Job Management',inv:'Invoices',stmt:'Statements',exp:'Expenses & Materials',ts:'Timesheets',rep:'Reports',req:'Engineer Requests',dir:'Directories',props:'Properties',certs:'Certificates',client:'Client View',set:'Settings',map:'Live Maps & Engineer Tracking',team:'Team',engrep:'Engineer Reports'};
+const PTITLES={dash:'Dashboard',jobs:'Job Management',inv:'Invoices',stmt:'Statements',exp:'Expenses & Materials',ts:'Timesheets',rep:'Reports',req:'Job Requests',dir:'Directories',props:'Properties',certs:'Certificates',client:'Client View',set:'Settings',map:'Live Maps & Engineer Tracking',team:'Team',engrep:'Engineer Reports',audit:'Audit Log'};
 let curPg='dash';
 
 
@@ -4578,9 +4606,28 @@ function nav(pg){
   if(pg==='exp') renderExpenses();
   if(pg==='ts') renderTS();
   if(pg==='rep') renderReports();
+  if(pg==='engrep') initEngReport();
+  if(pg==='audit'){ if(_appUser?.role==='Admin') initAuditLog(); else { toast('❌ Admin only','error'); return; } }
   // SECURITY: Block non-admins from Settings entirely
-  if(pg==='set' && _appUser?.role !== 'Admin'){
-    toast('❌ Settings is restricted to Admins only','error');
+  if(pg==='set' && _appUser?.role !== 'Admin' && _appUser?.role !== 'Manager' && _appUser?.role !== 'Finance'){
+    toast('❌ Settings is restricted','error');
+    return;
+  }
+  // Finance: read-only jobs
+  if(pg==='jobs' && _appUser?.role==='Finance'){
+    // Allow but will be read-only — handled in applyUserPermissions
+  }
+  // Block pages not in role's allowed list
+  const rolePages={
+    Admin: null, // null = all pages allowed
+    Manager: ['dash','jobs','inv','stmt','rep','req','dir','props','certs','client','set','map'],
+    Finance: ['dash','inv','stmt','rep','jobs','dir','props','set'],
+    Finance: ['dash','jobs','inv','stmt','rep','dir','props','set'],
+    Staff:   ['dash','jobs','inv','stmt','req','dir','props','certs','client'],
+  };
+  const allowed=rolePages[_appUser?.role];
+  if(allowed && !allowed.includes(pg)){
+    toast('❌ You do not have access to this page','error');
     return;
   }
   if(pg==='req') renderRequests();
@@ -4617,7 +4664,7 @@ document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
 
 
 // ── Column resize ──
-let _resizing = null;
+
 document.addEventListener('mousedown', e=>{
   const handle = e.target.closest('.col-resize-handle');
   if(!handle) return;
@@ -4647,8 +4694,8 @@ document.addEventListener('mouseup', ()=>{
 // ════════════════════════════════════════════════════════════════
 //  DESCRIPTION TOOLTIP (hover popup)
 // ════════════════════════════════════════════════════════════════
-let _descTipEl = null;
-let _descTipTimer = null;
+
+
 
 function showDescTip(e, el){
   // Read from data-desc attribute — 100% safe against quotes, apostrophes, backticks, any special chars
@@ -4688,7 +4735,7 @@ function hideDescTip(){
 // ════════════════════════════════════════════════════════════════
 //  JOB COMMENTS (per-job threaded notes)
 // ════════════════════════════════════════════════════════════════
-let _openCommentJobId = null;
+
 
 function toggleJobComments(jobId, cellEl){
   const tr = cellEl.closest('tr');
@@ -4942,7 +4989,35 @@ document.addEventListener('keydown',e=>{
 // ════════════════════════════════════════════════════════════════
 //  ADMIN LOGIN SYSTEM
 // ════════════════════════════════════════════════════════════════
-let _appUser = null; // { name, pin, role, canEdit, canDelete, canInvoice, canFinance, seeLandlord, seeLandlordPhone, seeAgent, seeContact, seePrice }
+let _appUser = null;
+// ── All globals at top to prevent TDZ "before initialization" errors ──
+let _tipEl=null,_tipTimeout=null;
+let _jobCache=null,_jobCacheTs=0;
+let _invType='all',_invNavMode='dashboard',_invSaveTimer={};
+let _certTab='dash';
+let _reqType='all',_selectedReqId=null;
+let _mapEngineers=[],_mapEngineersLoadedAt=0;
+let _hiddenCols=[];
+let _pendingSaves=0;
+let _lastOpenedJob=null;
+
+let editJid=null,selJobs=new Set(),allProps=[],pendGasJob=null,_jobSortCol='created';
+let _jRange='all',_jcalMonth=null,_jcalJobDates={};
+let _calPaneVisible=true,_jUnbookedOnly=false,_jUnconfirmedOnly=false;
+let _pendCertQueue=[],_pendCertJob=null,_jobNumLock=false,_jobCertTypes=[];
+let _dupCheckTimer=null;
+let editInvId=null,invItems=[],curInvId=null;
+let editPid=null,curDirSection='landlords';
+let _matchTimers={},_autoSaveTimers={};
+let editAgencyId=null,editAgentId=null;
+let _ctPage=1,_ctblHidden=[];
+let _editCertId=null,_selCertTypes=new Set();
+let _cremMode='email',_cremEmailLink='';
+
+let _resizing=null;
+let _descTipEl=null,_descTipTimer=null;
+let _openCommentJobId=null;
+let _origUpdateBulkBar=null;
 
 function filterLoginUsers(val){
   const users=S.users||[];
@@ -5000,6 +5075,9 @@ async function doLogin(){
     const authUser = authData.user;
     if(!authUser){_loginMsg('❌ Login failed — no user returned');return;}
 
+    // EMERGENCY ADMINS defined globally above
+    const isEmergencyAdmin = EMERGENCY_ADMINS.includes(email);
+
     // Step 2: Load profile from our users table using auth UID
     let profile = null;
     try{
@@ -5011,11 +5089,47 @@ async function doLogin(){
       try{
         const rows = await _sb(`users?email=eq.${encodeURIComponent(email)}&select=*`);
         profile = rows?.[0] || null;
-        // Backfill auth_id
         if(profile){
           _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:authUser.id},prefer:'return=minimal'}).catch(()=>{});
         }
       }catch(e){ console.warn('[DeepFlow]', e); }
+    }
+
+    // EMERGENCY FALLBACK — if no profile found but email is a protected admin
+    // create a temporary in-memory admin profile and log them in
+    let emergencyMode = false;
+    if(!profile && isEmergencyAdmin){
+      emergencyMode = true;
+      profile = {
+        id: authUser.id,
+        auth_id: authUser.id,
+        name: 'Mandeep',
+        email: email,
+        role: 'admin',
+        active: true,
+        can_edit: true, can_delete: true, can_invoice: true, can_finance: true,
+        see_landlord: true, see_landlord_phone: true, see_agent: true,
+        see_contact: true, see_price: true
+      };
+      // Try to restore the profile row in Supabase automatically
+      _sb('users',{method:'POST',body:{
+        auth_id: authUser.id,
+        name: 'Mandeep',
+        email: email,
+        role: 'admin',
+        active: true,
+        can_edit: true, can_delete: true, can_invoice: true, can_finance: true,
+        see_landlord: true, see_landlord_phone: true, see_agent: true,
+        see_contact: true, see_price: true
+      },prefer:'return=minimal'}).catch(()=>{});
+    }
+
+    // If profile found but role was changed — force admin for protected emails
+    if(profile && isEmergencyAdmin && profile.role !== 'admin'){
+      emergencyMode = true;
+      profile.role = 'admin';
+      // Restore correct role in Supabase
+      _sb(`users?email=eq.${encodeURIComponent(email)}`,{method:'PATCH',body:{role:'admin',active:true},prefer:'return=minimal'}).catch(()=>{});
     }
 
     if(!profile){
@@ -5032,7 +5146,7 @@ async function doLogin(){
     }
 
     // Build _appUser from profile
-    const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'};
+    const roleMap={admin:'Admin',manager:'Manager',finance:'Finance',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
     const role=roleMap[profile.role]||'Staff';
     const isAdmin=role==='Admin';
     const isMgr=role==='Manager';
@@ -5060,7 +5174,11 @@ async function doLogin(){
     const overlay=document.getElementById('pin-overlay');
     if(overlay)overlay.style.display='none';
     applyUserPermissions();
-    toast(`👋 Welcome, ${_appUser.name}!`,'success');
+    if(emergencyMode){
+      setTimeout(()=>toast('⚠️ Emergency admin access used — profile auto-restored. Check Settings → Team.','warn',8000),1000);
+    } else {
+      toast(`👋 Welcome, ${_appUser.name}!`,'success');
+    }
     // NOW reload settings from Supabase — user is authenticated, RLS passes
     // This makes every computer always get the latest settings on login
     _loadSettingsFromDb().then(loaded=>{
@@ -5100,86 +5218,118 @@ async function doResetPassword(){
 }
 
 function applyUserPermissions(){
-  if(!_appUser)return;
-  // Make sure app is visible
+  if(!_appUser) return;
   const appEl=document.getElementById('app');
-  if(appEl)appEl.style.display='';
+  if(appEl) appEl.style.display='';
   const u=_appUser;
-  const isAdmin   = u.role==='Admin';
-  const isManager = u.role==='Manager';
-  const isStaff   = u.role==='Staff';
-  const isViewer  = u.role==='Viewer';
-  const canOperate = isAdmin||isManager; // jobs + finance access
+  const role=u.role; // Admin | Manager | Finance | Staff | Engineer
 
-  // ── Sidebar nav visibility ──
-  // Invoices: Admin/Manager always, Staff/Viewer by permission
-  if(!canOperate && !u.canInvoice)
-    document.querySelectorAll('.ni[data-pg="inv"]').forEach(el=>el.style.display='none');
-  // Finance (statements/expenses/timesheets/reports): Admin/Manager always, others never
-  if(!canOperate)
-    document.querySelectorAll('.ni[data-pg="stmt"],.ni[data-pg="exp"],.ni[data-pg="ts"],.ni[data-pg="rep"]').forEach(el=>el.style.display='none');
-  // Settings: ADMIN ONLY — Managers cannot access Settings
-  document.querySelectorAll('.ni[data-pg="set"]').forEach(el=>el.style.display=isAdmin?'':'none');
+  const isAdmin   = role==='Admin';
+  const isManager = role==='Manager';
+  const isFinance = role==='Finance';
+  const isStaff   = role==='Staff';
 
-  // ── Settings tab visibility (for Admin) ──
-  // Managers can see Settings if they somehow navigate there — but Users & Access tab is hidden
-  const usersTab=document.querySelector('.set-tab[data-tab="users"]');
-  if(usersTab) usersTab.style.display=isAdmin?'':'none';
+  // ── ENGINEER: immediate block ──────────────────────────────────────────────
+  if(role==='Engineer'){
+    doLogout();
+    setTimeout(()=>{
+      _loginMsg('⚠️ Engineer accounts use the Engineer Portal — not this app.\n\nAsk your manager for the Engineer Portal link.');
+    },200);
+    return;
+  }
 
-  // ── Viewer: everything read-only ──
-  if(isViewer){
-    // Disable all edit/add/delete buttons
-    document.querySelectorAll('.btn-acc,.btn-red,.btn-green').forEach(el=>{
-      if(!el.id?.includes('login')&&!el.closest('#pin-overlay')&&!el.classList.contains('btn-logout'))
-        el.style.pointerEvents='none', el.style.opacity='0.4';
+  // ── Helper: show/hide nav items ───────────────────────────────────────────
+  const showNav=(pgs,show)=>pgs.forEach(pg=>
+    document.querySelectorAll(`.ni[data-pg="${pg}"]`).forEach(el=>el.style.display=show?'':'none')
+  );
+
+  // Hide ALL nav items first, then show only what this role can see
+  const ALL_PAGES=['dash','jobs','inv','stmt','exp','ts','rep','req','dir','props','certs','client','set','map','engrep','audit','team'];
+  showNav(ALL_PAGES, false);
+
+  // ── Per-role nav visibility ───────────────────────────────────────────────
+  if(isAdmin){
+    showNav(ALL_PAGES, true);
+  } else if(isManager){
+    showNav(['dash','jobs','inv','stmt','rep','req','dir','props','certs','client','set','map'], true);
+  } else if(isFinance){
+    showNav(['dash','inv','stmt','rep','jobs','dir','props','set'], true);
+  } else if(isStaff){
+    showNav(['dash','jobs','inv','stmt','req','dir','props','certs','client'], true);
+  }
+
+  // ── Settings tab visibility per role ─────────────────────────────────────
+  // Admin: all tabs
+  // Manager: Appearance, WhatsApp, Trades, Job Controls, Invoicing only
+  // Finance: Invoicing only
+  // Staff: no settings at all
+  const setTabs={
+    company:      isAdmin,
+    appearance:   isAdmin||isManager,
+    team:         isAdmin||isManager,
+    trades:       isAdmin||isManager,
+    invoicing:    isAdmin||isManager||isFinance,
+    whatsapp:     isAdmin||isManager,
+    jobs:         isAdmin||isManager,
+    notifications:isAdmin,
+    data:         isAdmin,
+    guide:        isAdmin,
+  };
+  Object.entries(setTabs).forEach(([tab,show])=>{
+    document.querySelectorAll(`.set-tab[data-tab="${tab}"]`).forEach(el=>el.style.display=show?'':'none');
+  });
+
+  // ── Manager: hide Admin accounts in Team tab ──────────────────────────────
+  // Done in loadTeam() — managers only see non-admin users
+
+  // ── Finance: Jobs page is read-only ──────────────────────────────────────
+  if(isFinance){
+    // Disable New Job button, edit/delete buttons — applied after page renders
+    document.querySelectorAll('#btn-new-job,.jsr-btn[onclick*="openJobModal"],.jsr-btn[onclick*="deleteJob"]').forEach(el=>{
+      el.style.display='none';
     });
   }
 
-  // ── Top-right user pill (topbar) ──
-  const roleIcon={Admin:'👑',Manager:'🏢',Staff:'📋',Viewer:'👁'}[u.role]||'👤';
-  const roleColor={Admin:'var(--acc)',Manager:'#4f8fff',Staff:'#22c55e',Viewer:'#a855f7'}[u.role]||'var(--border)';
-  const avatarBg={Admin:'var(--acc)',Manager:'#4f8fff',Staff:'#22c55e',Viewer:'#a855f7'}[u.role]||'var(--border)';
-  const avatarColor={Admin:'#1a1a1a',Manager:'#fff',Staff:'#fff',Viewer:'#fff'}[u.role]||'#fff';
-  // Avatar: role icon + first initial
+  // ── Staff: no Settings nav item at all ───────────────────────────────────
+  if(isStaff){
+    document.querySelectorAll('.ni[data-pg="set"]').forEach(el=>el.style.display='none');
+  }
+
+  // ── Top-right user pill ───────────────────────────────────────────────────
+  const roleIcon ={Admin:'👑',Manager:'🏢',Finance:'💰',Staff:'📋',Engineer:'🔧'}[role]||'👤';
+  const roleColor={Admin:'var(--acc)',Manager:'#4f8fff',Finance:'#22c55e',Staff:'#f59e0b',Engineer:'#a855f7'}[role]||'var(--txt3)';
   const avatar=document.getElementById('user-pill-avatar');
-  if(avatar){ avatar.textContent=roleIcon; avatar.style.background=avatarBg+'33'; avatar.style.border='2px solid '+avatarBg; avatar.style.color=avatarBg; }
+  if(avatar){avatar.textContent=roleIcon;avatar.style.background=roleColor+'22';avatar.style.border='2px solid '+roleColor;avatar.style.color=roleColor;}
   const pillName=document.getElementById('user-pill-name');
   const pillRole=document.getElementById('user-pill-role');
   const umName=document.getElementById('um-name');
   const umRole=document.getElementById('um-role');
-  if(pillName){ pillName.textContent=u.name; }
-  if(pillRole){ pillRole.textContent=u.role; pillRole.style.color=roleColor; }
+  if(pillName) pillName.textContent=u.name;
+  if(pillRole){pillRole.textContent=role;pillRole.style.color=roleColor;}
   if(umName) umName.textContent=u.name;
-  if(umRole){ umRole.textContent=u.role; umRole.style.color=roleColor; }
+  if(umRole){umRole.textContent=role;umRole.style.color=roleColor;}
 
-  // ── Sidebar user badge ──
-  const badge=document.getElementById('sidebar-user-badge');
-  if(badge) badge.innerHTML=''; // user info shown in top-right pill instead
-
-  // ── Storage dashboard: admin only ──
+  // ── Storage dashboard: admin only ─────────────────────────────────────────
   const storagePanelWrap=document.getElementById('storage-dashboard-wrap');
-  if(storagePanelWrap)storagePanelWrap.style.display=isAdmin?'':'none';
+  if(storagePanelWrap) storagePanelWrap.style.display=isAdmin?'':'none';
+
+  // ── Hook Settings sub-tabs on click ───────────────────────────────────────
   if(isAdmin){
     const dataTab=document.querySelector('.set-tab[data-tab="data"]');
-    if(dataTab&&!dataTab._storageHooked){
-      dataTab._storageHooked=true;
-      dataTab.addEventListener('click',()=>{setTimeout(loadStorageDashboard,300);});
-    }
-    // Auto-load team when Team tab opens
+    if(dataTab&&!dataTab._storageHooked){dataTab._storageHooked=true;dataTab.addEventListener('click',()=>{setTimeout(loadStorageDashboard,300);});}
+  }
+  if(isAdmin||isManager){
     const teamTab=document.querySelector('.set-tab[data-tab="team"]');
-    if(teamTab&&!teamTab._teamHooked){
-      teamTab._teamHooked=true;
-      teamTab.addEventListener('click',()=>{setTimeout(loadTeam,200);});
-    }
+    if(teamTab&&!teamTab._teamHooked){teamTab._teamHooked=true;teamTab.addEventListener('click',()=>{setTimeout(loadTeam,200);});}
   }
 
-  // ── Write last_seen to Supabase so online panel is accurate ──
+  // ── Write last_seen ───────────────────────────────────────────────────────
   if(u._sbId){
     _sb('users?id=eq.'+u._sbId,{method:'PATCH',body:{last_seen:Math.floor(Date.now()/1000)},prefer:'return=minimal'}).catch(()=>{});
   }
-  // Update online count after short delay
   setTimeout(updateOnlinePanel,800);
 }
+
 
 function doLogout(){
   _appUser = null;
@@ -5281,11 +5431,11 @@ function getUserPerm(perm){
 }
 
 let jDate=TODAY();
-let editJid=null;
-let selJobs=new Set();
-let allProps=[];
-let pendGasJob=null;
-let _jobSortCol='created';
+
+
+
+
+
 let _jobSortDir=1; // 1=asc -1=desc
 
 function sortJobs(col){
@@ -5316,13 +5466,12 @@ const tradeColor=(t)=>{const f=(S.trades||[]).find(x=>x.name===t);return f?f.col
 // ════════════════════════════════════════════════════════════════
 //  SCROLL LIST JOBS VIEW
 // ════════════════════════════════════════════════════════════════
-let _jRange = 'all';
-let _jcalMonth = null;
-let _jcalJobDates = {};
+
+
+
 
 // ── In-memory job cache — avoids a Supabase round-trip on every filter/search/render ──
-let _jobCache = null;        // null = stale/unloaded; array = valid cache
-let _jobCacheTs = 0;         // timestamp of last fetch
+
 const JOB_CACHE_TTL = 30000; // 30 seconds — refresh if older than this
 // _jobRowData: stores full job objects keyed by id, populated every renderJobs().
 // Used by drag-drop so it NEVER depends on _jobCache (which poll can nullify mid-drag).
@@ -5498,7 +5647,7 @@ function _pickFromList(title, options){
 }
 
 // ── Keep bulk count in sync ──
-let _origUpdateBulkBar = null; // Initialize to null first
+
 function updateBulkBar(){
   const countEl = document.getElementById('bulk-count');
   if(countEl) countEl.textContent = selJobs.size > 0 ? `${selJobs.size} selected` : '';
@@ -5528,7 +5677,7 @@ function _invalidateJobCache(){
   _jobCache = null;
   _jobCacheTs = 0;
 }
-let _calPaneVisible = true;
+
 
 function toggleCalPane(){
   _calPaneVisible = !_calPaneVisible;
@@ -5550,8 +5699,8 @@ function setJRange(r){
   renderJobs();
 }
 
-let _jUnbookedOnly = false;
-let _jUnconfirmedOnly = false;
+
+
 function toggleUnassignedView(){
   if(!_jUnbookedOnly&&!_jUnconfirmedOnly){ _jUnbookedOnly=true; _jUnconfirmedOnly=false; }
   else if(_jUnbookedOnly){ _jUnbookedOnly=false; _jUnconfirmedOnly=true; }
@@ -6017,8 +6166,8 @@ async function quickStatus(id,status){
 }
 
 // ── Pending cert queue for expiry date prompts after job complete ──
-let _pendCertQueue=[];
-let _pendCertJob=null;
+
+
 
 function onJobComplete(j){
   const allCertTypes=S.certTypes||[];
@@ -6141,7 +6290,7 @@ async function createCertEntry(ct,expiry,certNum,issueDate){
 
 
 // Mutex to prevent concurrent nextJobNum calls producing duplicate numbers
-let _jobNumLock = false;
+
 
 async function nextJobNum(){
   // Spin-wait if another call is in progress (simple mutex for async)
@@ -6519,6 +6668,101 @@ function showAllEngJobs(engName){
   renderEngReport();
 }
 
+// ══════════════════════════════════════════════════════
+//  AUDIT LOG
+// ══════════════════════════════════════════════════════
+async function logAudit(type, details){
+  // type: 'job_delete' | 'inv_amount'
+  // details: {jobId, jobNum, address, invId, invNum, oldVal, newVal, note}
+  if(!_appUser) return;
+  try{
+    await _sb('audit_log',{method:'POST',body:{
+      type,
+      staff_name: _appUser.name,
+      staff_email: _appUser.email||'',
+      staff_role: _appUser.role,
+      details: JSON.stringify(details),
+      created_at: new Date().toISOString()
+    },prefer:'return=minimal'});
+  }catch(e){ console.warn('[Audit]', e); }
+}
+
+async function renderAuditLog(){
+  // Admin only
+  if(_appUser?.role !== 'Admin'){ toast('❌ Admin only','error'); return; }
+  const body=document.getElementById('audit-body');
+  if(!body) return;
+  body.innerHTML='<div style="text-align:center;padding:40px;color:var(--txt3);font-size:12px">Loading…</div>';
+
+  try{
+    let url='audit_log?order=created_at.desc&limit=500';
+    const userFilter=document.getElementById('audit-filter-user')?.value;
+    const typeFilter=document.getElementById('audit-filter-type')?.value;
+    if(userFilter) url+=`&staff_name=eq.${encodeURIComponent(userFilter)}`;
+    if(typeFilter) url+=`&type=eq.${typeFilter}`;
+    const logs=await _sb(url)||[];
+
+    // Populate user filter
+    const sel=document.getElementById('audit-filter-user');
+    if(sel&&sel.options.length<=1){
+      const names=[...new Set(logs.map(l=>l.staff_name).filter(Boolean))];
+      names.forEach(n=>{ const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o); });
+    }
+
+    if(!logs.length){
+      body.innerHTML='<div style="text-align:center;padding:60px;color:var(--txt3)">No audit entries found.</div>';
+      return;
+    }
+
+    const typeLabel={job_delete:'🗑 Job Deleted',inv_amount:'💰 Invoice Amount Changed'};
+    const typeColor={job_delete:'#b91c1c',inv_amount:'#d97706'};
+
+    body.innerHTML=`
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:140px 120px 120px 1fr 200px;gap:0;border-bottom:1px solid var(--border);padding:8px 14px;font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">
+        <span>Date/Time</span><span>Staff</span><span>Role</span><span>Action & Details</span><span>Change</span>
+      </div>
+      ${logs.map(l=>{
+        let details={};
+        try{details=JSON.parse(l.details||'{}');}catch(e){}
+        const dt=l.created_at?new Date(l.created_at).toLocaleString('en-GB',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+        const col=typeColor[l.type]||'var(--txt3)';
+        const lbl=typeLabel[l.type]||l.type;
+        const change=l.type==='inv_amount'&&details.oldVal&&details.newVal
+          ?`<span style="color:#b91c1c;text-decoration:line-through">£${details.oldVal}</span> → <span style="color:#15803d;font-weight:700">£${details.newVal}</span>`
+          :'—';
+        const desc=details.address||details.invNum||details.jobNum||details.note||'—';
+        return`<div style="display:grid;grid-template-columns:140px 120px 120px 1fr 200px;gap:0;padding:9px 14px;border-bottom:1px solid var(--border);font-size:11px;align-items:center">
+          <span style="color:var(--txt3)">${dt}</span>
+          <span style="font-weight:600;color:var(--txt)">${l.staff_name||'—'}</span>
+          <span style="font-size:10px;color:var(--txt3)">${l.staff_role||'—'}</span>
+          <div><div style="font-size:10px;font-weight:700;color:${col};margin-bottom:2px">${lbl}</div><div style="color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${desc}</div></div>
+          <span>${change}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }catch(e){
+    body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--red);font-size:12px">❌ Failed to load audit log.<br>Make sure the audit_log table exists in Supabase (Settings → Guide & SQL).</div>`;
+  }
+}
+
+async function exportAuditLog(){
+  const logs=await _sb('audit_log?order=created_at.desc&limit=5000')||[];
+  const rows=[['Date','Staff','Role','Type','Details']];
+  logs.forEach(l=>{
+    let d={};try{d=JSON.parse(l.details||'{}');}catch(e){}
+    rows.push([l.created_at,l.staff_name,l.staff_role,l.type,JSON.stringify(d)]);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`audit-log-${TODAY()}.csv`;
+  a.click();
+  toast('📄 Audit log exported','success');
+}
+
+async function initAuditLog(){ await renderAuditLog(); }
+
 async function renderEngReportIfActive(){
   if(document.getElementById('pg-engrep')?.classList.contains('active')) await initEngReport();
 }
@@ -6637,7 +6881,7 @@ function fillJobDropdowns(){
 }
 
 // Selected cert types for current job (array of cert type IDs)
-let _jobCertTypes=[];
+
 
 function renderCertChips(preSelected){
   if(preSelected!==undefined) _jobCertTypes=[...preSelected];
@@ -7216,7 +7460,7 @@ async function autoFillLandlordByName(name){
 // ════════════════════════════════════════════════════════════════
 //  DUPLICATE PHONE DETECTION
 // ════════════════════════════════════════════════════════════════
-let _dupCheckTimer = null;
+
 async function checkDuplicatePhone(val, context){
   clearTimeout(_dupCheckTimer);
   if(!val || val.replace(/\D/g,'').length < 7) return;
@@ -7582,9 +7826,9 @@ function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
 // ════════════════════════════════════════════════════════════════
 //  INVOICES
 // ════════════════════════════════════════════════════════════════
-let editInvId=null;
-let invItems=[];
-let curInvId=null;
+
+
+
 
 async function renderInvList(){
   renderInvKPIs();
@@ -8540,8 +8784,8 @@ async function _syncJobToInvoice(j){
     toast('⚠ Job saved but invoice sync failed — check console','warn',5000);
   }
 }
-let _invNavMode='dashboard';
-let _invType='all'; // 'all' | 'agency' | 'landlord'
+
+
 
 // ── Invoice type toggle ───────────────────────────────────────────────────────
 function setInvType(type){
@@ -9094,7 +9338,7 @@ function _renderLiveItems(inv,id){
   }).join('');
 }
 
-let _invSaveTimer={};
+
 
 async function _saveInvField(el){
   const field=el.dataset.field;
@@ -9699,12 +9943,12 @@ async function saveGasCert(){
 // ════════════════════════════════════════════════════════════════
 //  DIRECTORIES
 // ════════════════════════════════════════════════════════════════
-let editPid=null;
+
 
 // ════════════════════════════════════════════════════════════════
 //  DIRECTORY SECTIONS — Sub-nav switching
 // ════════════════════════════════════════════════════════════════
-let curDirSection = 'landlords';
+
 
 function switchDirSection(section){
   curDirSection = section;
@@ -10122,7 +10366,7 @@ function _matchScore(a, b){
   return Math.round(score);
 }
 
-let _matchTimers = {};
+
 async function matchDir(store, field, val, targetId, excludeId){
   clearTimeout(_matchTimers[targetId]);
   const el = document.getElementById(targetId);
@@ -10223,7 +10467,7 @@ async function fillFromMatch(store, id){
 }
 
 // ── Auto-save: fires 1.2s after last keystroke on any field ──
-let _autoSaveTimers = {};
+
 function scheduleAutoSave(store, delay=1200){
   clearTimeout(_autoSaveTimers[store]);
   _autoSaveTimers[store] = setTimeout(()=>_autoSaveStore(store), delay);
@@ -10274,7 +10518,7 @@ function wireAutoSave(store){
 
 //  AGENCY CRUD
 // ════════════════════════════════════════════════════════════════
-let editAgencyId = null;
+
 async function openAgencyModal(id){
   editAgencyId = id||null;
   document.getElementById('mo-agency-title').textContent = id ? '✎ Edit Agency' : '🏢 Add Agency';
@@ -10350,7 +10594,7 @@ async function deleteCurrentAgency(){
 // ════════════════════════════════════════════════════════════════
 //  AGENT CRUD
 // ════════════════════════════════════════════════════════════════
-let editAgentId = null;
+
 async function openAgentModal(id){
   editAgentId = id||null;
   document.getElementById('mo-agent-title').textContent = id ? '✎ Edit Agent' : '👔 Add Agent';
@@ -10555,7 +10799,7 @@ function openImportModal(){toast('CSV import: paste person data as Name,Phone,Em
 // ════════════════════════════════════════════════════════════════
 //  CERTIFICATES DASHBOARD
 // ════════════════════════════════════════════════════════════════
-let _certTab='dash';
+
 
 function switchCertTab(tab){
   _certTab=tab;
@@ -10590,8 +10834,8 @@ function filterCerts(status){
 // ════════════════════════════════════════════════════════════════
 //  CERT TABLE  (◈ Certificates tab)
 // ════════════════════════════════════════════════════════════════
-let _ctPage=1;
-let _ctblHidden=JSON.parse(localStorage.getItem('ctblHidden')||'[]');
+
+
 
 function calcCertStatus(c){
   if(c.notResponding) return{label:'NO RESPONSE',cls:'cpill-nr'};
@@ -10792,8 +11036,8 @@ async function editCertRecord(id){
 // ════════════════════════════════════════════════════════════════
 //  CERT FORM (Add / Edit tab)
 // ════════════════════════════════════════════════════════════════
-let _editCertId=null;
-let _selCertTypes=new Set();
+
+
 
 function openCertForm(existing){
   _editCertId=existing?.id||null;
@@ -11107,8 +11351,8 @@ async function renderCertStats(){
 // ════════════════════════════════════════════════════════════════
 //  REMINDERS (📣 Reminders tab)
 // ════════════════════════════════════════════════════════════════
-let _cremMode='email';
-let _cremEmailLink='';
+
+
 
 async function initCertReminders(){
   const all=await dAll('certs');
@@ -11946,8 +12190,7 @@ function waTimesheetSummary(){
 //  ENGINEER REQUESTS
 // ════════════════════════════════════════════════════════════════
 // ── Job Requests — type state ─────────────────────────────────────────────────
-let _reqType = 'all'; // 'all' | 'portal' | 'eng'
-let _selectedReqId = null;
+
 
 function setReqType(type){
   _reqType = type;
@@ -12294,7 +12537,7 @@ async function exportReportPDF(){
 async function renderDash(){
   const h=new Date().getHours();
   const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  document.getElementById('dg-greet').innerHTML=`${greet}, <span id="dg-name">${S.owner||'Boss'}</span>`;
+  document.getElementById('dg-greet').innerHTML=`${greet}, <span id="dg-name">${_appUser?.name||S.owner||'Boss'}</span>`;
   document.getElementById('dg-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
   // ISSUE 2 FIX: Show skeleton placeholders immediately so the page feels responsive
@@ -12548,6 +12791,7 @@ function renderSettings(){
       <select class="fs" style="padding:4px 6px;font-size:12px" onchange="changeUserRole(${i},this.value)" ${!isCurrentAdmin||isProtectedAdmin?'disabled title="'+(isProtectedAdmin?'Protected admin — cannot be changed':'Only Admins can change roles')+'"':u.name===_appUser?.name&&u.role==='Admin'?'disabled title="Cannot change your own admin role"':''}>
         <option ${u.role==='Admin'?'selected':''} value="Admin">👑 Admin</option>
         <option ${u.role==='Manager'?'selected':''} value="Manager">🏢 Manager</option>
+        <option ${u.role==='Finance'?'selected':''} value="Finance">💰 Finance</option>
         <option ${u.role==='Staff'?'selected':''} value="Staff">📋 Staff</option>
         <option ${u.role==='Viewer'?'selected':''} value="Viewer">👁 Viewer</option>
         <option ${u.role==='Engineer'?'selected':''} value="Engineer">🔧 Engineer</option>
@@ -12873,10 +13117,11 @@ function addPropRow(){S.properties=S.properties||[];S.properties.push({id:uid(),
 // Immediately delete a user from Supabase and S.users
 // Protected admin emails — these can NEVER be removed or demoted
 const PROTECTED_ADMINS = ['mandeep@gbelectricals.co.uk', 'mandeepdynamics@gmail.com'];
+const EMERGENCY_ADMINS = ['mandeepdynamics@gmail.com', 'mandeep@gbelectricals.co.uk'];
 
 async function changeUserRole(i, newRole){
-  if(_appUser?.role !== 'Admin'){
-    toast('❌ Only Admins can change roles','error');
+  if(_appUser?.role !== 'Admin' && _appUser?.role !== 'Manager'){
+    toast('❌ Only Admins or Managers can change roles','error');
     renderSettings(); return;
   }
   const u = S.users[i];
@@ -13000,7 +13245,7 @@ async function syncOfficeUsers(){
 // ════════════════════════════════════════════════════════════════
 
 let _mapGeoCache = {};  // address → {lat,lng}
-let _mapEngineers = [];
+
 
 function onMapViewChange() {
   const v = document.getElementById('map-view-sel')?.value;
@@ -13042,7 +13287,7 @@ async function renderMapPage() {
   }
 }
 
-let _mapEngineersLoadedAt = 0; // timestamp of last fetch
+
 
 async function _loadEngineerList() {
   // FIX 8: Previously this returned immediately if _mapEngineers had any data,
@@ -14155,7 +14400,7 @@ const JOB_COLS = [
 ];
 
 // Persist hidden cols + column percentages
-let _hiddenCols = [];
+
 (function _loadColState(){
   try{
     const raw = JSON.parse(localStorage.getItem('df_hidden_cols')||'[]');
@@ -14798,7 +15043,7 @@ window.addEventListener('online',  ()=>{ _setSynced(); toast('Connection restore
 window.addEventListener('offline', ()=>{ _setOffline(); toast('No internet — changes may not save','error',6000); });
 
 // Warn on tab close if any pending saves
-let _pendingSaves = 0;
+
 window.addEventListener('beforeunload', e=>{
   if(_pendingSaves > 0){
     e.preventDefault();
@@ -15888,7 +16133,6 @@ async function ctxCopyAddr(id){
 // showTip() now positions relative to the hovered cell, not the cursor.
 // This means the tooltip never moves after appearing and never follows the mouse.
 // moveTip() is removed — no mouse tracking needed.
-let _tipEl=null, _tipTimeout=null;
 
 async function _copyJobDesc(jobId){
   const j=await dGet('jobs',jobId);
@@ -17326,40 +17570,48 @@ function showJobsSkeleton(){
   try{
     const {data:{session}} = await _supaAuth.auth.getSession();
     if(session?.user){
-      // Valid session — load profile and enter app
+      const email=(session.user.email||'').toLowerCase();
+      const isEmergencyAdmin=EMERGENCY_ADMINS.includes(email);
+
+      // Load profile — no active filter (was blocking valid users)
       let profile=null;
-      const r1=await _sb(`users?auth_id=eq.${session.user.id}&active=eq.true&select=*`).catch(()=>[]);
+      const r1=await _sb(`users?auth_id=eq.${session.user.id}&select=*`).catch(()=>[]);
       profile=r1?.[0]||null;
       if(!profile){
-        const r2=await _sb(`users?email=eq.${encodeURIComponent(session.user.email)}&active=eq.true&select=*`).catch(()=>[]);
+        const r2=await _sb(`users?email=eq.${encodeURIComponent(email)}&select=*`).catch(()=>[]);
         profile=r2?.[0]||null;
         if(profile){
           _sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:session.user.id},prefer:'return=minimal'}).catch(()=>{});
         }
       }
+
+      // Emergency admin fallback — always get in even if profile missing
+      if(!profile && isEmergencyAdmin){
+        profile={id:session.user.id,auth_id:session.user.id,name:'Mandeep',email,role:'admin',active:true,can_edit:true,can_delete:true,can_invoice:true,can_finance:true,see_landlord:true,see_landlord_phone:true,see_agent:true,see_contact:true,see_price:true};
+        _sb('users',{method:'POST',body:{auth_id:session.user.id,name:'Mandeep',email,role:'admin',active:true,can_edit:true,can_delete:true,can_invoice:true,can_finance:true,see_landlord:true,see_landlord_phone:true,see_agent:true,see_contact:true,see_price:true},prefer:'return=minimal'}).catch(()=>{});
+      }
+      // Force correct role for protected admins
+      if(profile && isEmergencyAdmin && profile.role!=='admin'){
+        profile.role='admin';
+        _sb(`users?email=eq.${encodeURIComponent(email)}`,{method:'PATCH',body:{role:'admin',active:true},prefer:'return=minimal'}).catch(()=>{});
+      }
+
       if(profile){
-        // Block engineers from the office app
-        if(profile.role === 'engineer'){
+        if(profile.role==='engineer'){
           await _supaAuth.auth.signOut();
           if(overlay)overlay.style.display='flex';
           setTimeout(()=>{
             const errEl=document.getElementById('login-err');
-            if(errEl){
-              errEl.style.display='block';
-              errEl.style.background='rgba(245,166,35,.1)';
-              errEl.style.border='1px solid rgba(245,166,35,.3)';
-              errEl.style.color='#f5a623';
-              errEl.textContent='⚠️ Engineer accounts use the Engineer Portal. Ask your office manager for the link.';
-            }
-          }, 100);
+            if(errEl){errEl.style.display='block';errEl.style.background='rgba(245,166,35,.1)';errEl.style.border='1px solid rgba(245,166,35,.3)';errEl.style.color='#f5a623';errEl.textContent='⚠️ Engineer accounts use the Engineer Portal. Ask your office manager for the link.';}
+          },100);
           init().catch(()=>{});
           return;
         }
-        const roleMap={admin:'Admin',manager:'Manager',staff:'Staff',viewer:'Viewer'};
+        const roleMap={admin:'Admin',manager:'Manager',finance:'Finance',staff:'Staff',viewer:'Viewer',engineer:'Engineer'};
         const role=roleMap[profile.role]||'Staff';
         const isAdmin=role==='Admin',isMgr=role==='Manager';
         _appUser={
-          name:profile.name||session.user.email,email:session.user.email,role,
+          name:profile.name||session.user.email,email,role,
           _sbId:profile.id,_authId:session.user.id,
           canEdit:profile.can_edit!==false,canDelete:isAdmin||(profile.can_delete===true),
           canInvoice:profile.can_invoice!==false,canFinance:isAdmin||isMgr||(profile.can_finance===true),
@@ -17369,17 +17621,11 @@ function showJobsSkeleton(){
         if(overlay)overlay.style.display='none';
         await init();
         applyUserPermissions();
-        // Re-run team sync after init to ensure engineers/users are fresh
-        // (init may have run before session was fully available)
         setTimeout(async()=>{
-          try{
-            await loadSettings();
-            renderDash();updateBadges();
-          }catch(e){ console.warn('[DeepFlow]', e); }
-        }, 800);
+          try{await loadSettings();renderDash();updateBadges();}catch(e){console.warn('[DeepFlow]',e);}
+        },800);
         return;
       } else {
-        // Auth session but no profile — sign out
         await _supaAuth.auth.signOut();
       }
     }
