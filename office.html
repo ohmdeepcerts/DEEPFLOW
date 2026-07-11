@@ -4608,7 +4608,7 @@ function _copyPortalFallback(url, name) {
   });
 }
 
-// Show portal link modal with full URL visible + copy + open options
+// ── CLIENT PORTAL — PERMANENT LINK + QR CODE ─────────────────────────────
 function showPortalLinkModal(id, name, type, agentName) {
   const url = _buildPortalUrl(id, type, agentName);
   const existing = document.getElementById('portal-link-modal');
@@ -4616,22 +4616,94 @@ function showPortalLinkModal(id, name, type, agentName) {
 
   const div = document.createElement('div');
   div.id = 'portal-link-modal';
-  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+
   div.innerHTML = `
-    <div style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.4)">
-      <div style="font-size:18px;font-weight:800;margin-bottom:4px">🔗 Client Portal Link</div>
-      <div style="font-size:12px;color:var(--txt3);margin-bottom:16px">${name}</div>
-      <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;font-family:monospace;word-break:break-all;color:var(--acc);margin-bottom:14px;line-height:1.5">${url}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button onclick="navigator.clipboard.writeText('${url}').then(()=>toast('Copied!','success'));document.getElementById('portal-link-modal').remove()" style="flex:1;background:var(--acc);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:13px">📋 Copy Link</button>
-        <button onclick="window.open('${url}','_blank');document.getElementById('portal-link-modal').remove()" style="flex:1;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:13px">🔗 Open Portal</button>
-        <button onclick="if(navigator.share)navigator.share({title:'${name} Portal',url:'${url}'}).catch(()=>{});document.getElementById('portal-link-modal').remove()" style="background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:10px;cursor:pointer;font-size:16px" title="Share via phone">📤</button>
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:28px;max-width:500px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.5);position:relative">
+
+      <button onclick="document.getElementById('portal-link-modal').remove()" style="position:absolute;top:14px;right:14px;background:var(--s3);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;color:var(--txt3);display:flex;align-items:center;justify-content:center">✕</button>
+
+      <div style="font-size:18px;font-weight:800;margin-bottom:2px">🔗 Client Portal</div>
+      <div style="font-size:12px;color:var(--txt3);margin-bottom:20px">${name} &nbsp;·&nbsp; <span style="text-transform:capitalize">${type}</span></div>
+
+      <!-- QR Code -->
+      <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:20px">
+        <div id="qr-wrap" style="flex-shrink:0;width:130px;height:130px;background:#fff;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden">
+          <div style="font-size:11px;color:#999;text-align:center">Generating<br>QR...</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Permanent Link</div>
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:10px;font-family:monospace;word-break:break-all;color:var(--acc);line-height:1.6;margin-bottom:10px;user-select:all">${url}</div>
+          <div style="font-size:10px;color:var(--txt3);line-height:1.6">✅ This link never expires<br>📱 Works on any phone or computer<br>🔒 Only shows ${name}'s data</div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--txt3);margin-top:12px;text-align:center">Send this link to ${name} — they can view their jobs, certificates and invoices</div>
-      <button onclick="document.getElementById('portal-link-modal').remove()" style="width:100%;margin-top:10px;background:none;border:1px solid var(--border);color:var(--txt3);border-radius:8px;padding:8px;cursor:pointer;font-size:12px">Close</button>
+
+      <!-- Action buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <button onclick="_copyPortalLink('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)" style="background:var(--acc);color:#fff;border:none;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">📋 Copy Link</button>
+        <button onclick="_waPortalShare('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)" style="background:#25d366;color:#fff;border:none;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">💬 WhatsApp</button>
+        <button onclick="_emailPortalShare('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)" style="background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">✉️ Email</button>
+        <button onclick="_downloadQR('${name.replace(/'/g,"\\'")}',this)" style="background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:10px;padding:11px;font-weight:700;cursor:pointer;font-size:13px">⬇️ Save QR</button>
+      </div>
+      <button onclick="window.open('${url.replace(/'/g,"\\'")}','_blank')" style="width:100%;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:10px;padding:10px;font-weight:700;cursor:pointer;font-size:12px;margin-bottom:10px">🔗 Open Portal Now</button>
+
+      <div style="font-size:10px;color:var(--txt3);text-align:center">Send the link or QR code to ${name} — they can view jobs, certificates and invoices any time</div>
     </div>`;
+
   div.addEventListener('click', e => { if (e.target === div) div.remove(); });
   document.body.appendChild(div);
+
+  // Generate QR code after modal is in DOM
+  setTimeout(() => _generateQR(url), 100);
+}
+
+function _generateQR(url) {
+  const wrap = document.getElementById('qr-wrap');
+  if (!wrap) return;
+
+  // Build QR using Google Charts API (no library needed)
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=1e3a5f&qzone=1`;
+  const img = document.createElement('img');
+  img.src = qrUrl;
+  img.style.cssText = 'width:130px;height:130px;border-radius:12px';
+  img.onload = () => { wrap.innerHTML = ''; wrap.appendChild(img); };
+  img.onerror = () => { wrap.innerHTML = '<div style="font-size:10px;color:#999;text-align:center;padding:10px">QR unavailable<br>(offline?)</div>'; };
+}
+
+function _downloadQR(name) {
+  const img = document.querySelector('#qr-wrap img');
+  if (!img) { toast('QR not ready yet', 'warn'); return; }
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = `${name.replace(/[^a-z0-9]/gi, '_')}_portal_qr.png`;
+  a.target = '_blank';
+  a.click();
+  toast('📥 QR code downloading...', 'success');
+}
+
+function _copyPortalLink(url, name, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+    toast(`📋 Portal link copied for ${name}`, 'success', 3000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    toast(`📋 Portal link copied for ${name}`, 'success', 3000);
+  });
+}
+
+function _waPortalShare(url, name, btn) {
+  const text = `Hi ${name},\n\nHere is your secure portal link to view your jobs, certificates and invoices:\n\n${url}\n\nThis link is permanent — you can bookmark it and use it any time.`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+function _emailPortalShare(url, name, btn) {
+  const subject = `Your ${_S?.coName || 'DeepFlow'} Client Portal`;
+  const body = `Dear ${name},\n\nPlease use the link below to access your secure client portal where you can view your jobs, certificates and invoices:\n\n${url}\n\nThis link is permanent — please bookmark it for easy access.\n\nKind regards,\n${_S?.coName || 'Your Service Provider'}`;
+  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 function nav(pg){
