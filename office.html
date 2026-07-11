@@ -166,7 +166,7 @@ body{font-family:var(--fm),'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoj
 .logo-ver{font-size:11px;color:var(--txt3);letter-spacing:3px;text-transform:uppercase;margin-top:2px}
 nav{flex:1;padding:10px 0;overflow-y:auto}
 .ns{padding:10px 16px 4px;font-size:11px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase}
-.ni{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;color:var(--txt2);font-size:var(--fs-sm);font-family:var(--fh);font-weight:500;border-left:2px solid transparent;transition:all .15s;position:relative}
+.ni{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;color:var(--txt2);font-size:var(--fs-sm);font-family:var(--fh);font-weight:500;border-left:2px solid transparent;transition:color .15s,background .15s,border-color .15s;position:relative}
 .ni:hover{color:var(--txt);background:var(--s3)}
 .ni.active{color:var(--acc);border-left-color:var(--acc);background:var(--acc-soft)}
 .ni .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
@@ -274,7 +274,7 @@ th.resizing .col-resize-handle::after,.col-resize-handle:hover::after,.col-resiz
 .tb-actions{display:flex;gap:8px;align-items:center}
 
 /* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fh);font-size:var(--fs-sm);font-weight:600;transition:all .15s;white-space:nowrap;text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fh);font-size:var(--fs-sm);font-weight:600;transition:background .15s,transform .15s,border-color .15s,color .15s;white-space:nowrap;text-decoration:none}
 .btn-acc{background:var(--acc);color:#fff}
 .btn-acc:hover{background:#155f96;transform:translateY(-1px)}
 .btn-ghost{background:var(--s3);color:var(--txt2);border:1px solid var(--border)}
@@ -498,7 +498,7 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
 .dash-sub{color:var(--txt2);font-size:13px;margin-top:4px}
 .dash-quick{display:flex;gap:8px;flex-wrap:wrap}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:18px;cursor:pointer;transition:border-color .2s,transform .2s;position:relative;overflow:hidden}
 .kpi:hover{border-color:var(--border2);transform:translateY(-1px)}
 .kpi::after{content:'';position:absolute;inset:0;opacity:.04;pointer-events:none}
 .kpi.acc::after{background:var(--acc)}
@@ -547,7 +547,12 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
    JOBS
 ══════════════════════════════════════ */
 #pg-jobs{overflow:hidden;flex-direction:column}
-.jobs-ctrl{padding:8px 12px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:nowrap;overflow-x:auto}
+.jobs-ctrl{padding:6px 12px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;min-height:40px}
+/* Day nav button active feedback */
+.day-nav-btn{position:relative;overflow:hidden}
+.day-nav-btn:active{transform:scale(.92);background:var(--s3)!important}
+.day-nav-btn::after{content:'';position:absolute;inset:0;background:rgba(245,166,35,.15);opacity:0;transition:opacity .15s}
+.day-nav-btn:active::after{opacity:1}
 .date-nav{display:flex;align-items:center;gap:6px}
 .date-nav button{background:var(--s2);border:1px solid var(--border);color:var(--txt2);border-radius:var(--r);padding:5px 10px;cursor:pointer;font-size:13px;transition:all .15s}
 .date-nav button:hover{color:var(--txt);border-color:var(--border2)}
@@ -1082,7 +1087,7 @@ body.density-relaxed .jtable td{font-size:15px}
 #jobs-list-scroll{flex:1;display:flex;flex-direction:column}
 
 /* date group header */
-.jsg-hd{display:flex;align-items:center;gap:8px;padding:5px 12px 3px;position:sticky;top:26px;background:var(--bg);z-index:3;border-top:1px solid var(--border)}
+.jsg-hd{display:flex;align-items:center;gap:8px;padding:3px 12px 2px;position:sticky;top:26px;background:var(--bg);z-index:3;border-top:1px solid var(--border)}
 .jsg-hd-label{font-family:var(--fh);font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
 .jsg-hd.today-group .jsg-hd-label{color:var(--acc)}
 .jsg-hd-line{flex:1;height:1px;background:var(--border)}
@@ -1118,7 +1123,7 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr-right{display:none}
 .jsr-price{display:none}
 .jsr-actions{display:flex;gap:3px}
-.jsr-btn{background:transparent;border:none;border-radius:3px;color:var(--txt3);padding:2px 4px;cursor:pointer;font-size:11px;transition:all .1s;line-height:1;flex-shrink:0;white-space:nowrap}
+.jsr-btn{background:transparent;border:none;border-radius:3px;color:var(--txt3);padding:1px 3px;cursor:pointer;font-size:10px;transition:all .1s;line-height:1;flex-shrink:0;white-space:nowrap}
 .jsr-btn:hover{background:var(--s3);color:var(--txt)}
 .jsr-btn:hover{color:var(--txt);border-color:var(--border2)}
 /* detail expand */
@@ -1129,7 +1134,7 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr-detail-lbl{color:var(--txt3);font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.5px;line-height:1.7}
 
 /* quick-status select in scroll view */
-.jsr-sel{background:transparent;border:none;border-radius:4px;color:var(--txt);font-family:var(--fh);font-size:11px;font-weight:600;padding:2px 2px;outline:none;cursor:pointer;width:auto;max-width:100%}
+.jsr-sel{background:transparent;border:none;border-radius:4px;color:var(--txt);font-family:var(--fh);font-size:10px;font-weight:600;padding:1px;outline:none;cursor:pointer;width:auto;max-width:100%}
 
 /* add job row */
 .jsg-add{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1.5px dashed var(--border);border-radius:10px;color:var(--txt3);font-family:var(--fh);font-size:12px;cursor:pointer;margin:0 12px 4px;transition:all .15s}
@@ -1138,53 +1143,84 @@ body.density-relaxed .jtable td{font-size:15px}
 /* ── Job row: fixed-column table-like grid ─────────────────── */
 /* Layout: [drag 18px][stripe 3px][status 80px][job# 54px][address flex][desc 200px][contact 160px][time 80px][eng 110px][certs 90px][price 52px][sel 90px][actions 58px] */
 /* ── Job rows — compact flat design (Outlook-style) ── */
-.jsr3{display:grid;align-items:center;background:var(--s1);border:none;border-bottom:1px solid var(--border);border-radius:0;overflow:hidden;cursor:default;transition:background .1s;position:relative;min-height:0;box-sizing:border-box}
+.jsr3{display:grid;align-items:center;background:var(--s1);border:none;border-bottom:1px solid var(--border);border-radius:0;overflow:hidden;cursor:default;transition:background .4s ease,border-left-color .4s ease,box-shadow .4s ease,opacity .3s ease,transform .3s ease;position:relative;min-height:32px;max-height:36px;box-sizing:border-box;font-size:12px}
 .jsr3:hover{background:var(--s2)}
 .jsg-rows{padding:0;display:flex;flex-direction:column;gap:0}
-.jsr3.jsr-emg{background:#fccaca}
-.jsr3.jsr-urg{background:#e4d4ff}
-.jsr3.jsr-cert{background:#cce8d4}
-.jsr3.jsr-repair{background:#ffe0c2}
+.jsr3.jsr-emg{background:rgba(230,95,0,.22);border-left:4px solid #e65f00}
+.jsr3.jsr-urg{background:rgba(140,60,220,.20);border-left:4px solid #8c3cdc}
+.jsr3.jsr-cert{background:rgba(20,170,70,.20);border-left:4px solid #14aa46}
+.jsr3.jsr-repair{background:rgba(180,45,45,.24);border-left:4px solid #b42d2d}
 .jsr3:hover{border-color:var(--border2);box-shadow:0 1px 8px rgba(0,0,0,.07)}
-.jsr3.jsr-past{opacity:1}/* FIX: removed opacity fade for past jobs — all jobs display at full opacity regardless of date */
-.jsr3.jsr-emg{background:#fccaca}
-.jsr3.jsr-urg{background:#e4d4ff}
-.jsr3.jsr-cert{background:#cce8d4}
-.jsr3.jsr-repair{background:#ffe0c2}
-.jsr3.jsr-normal{background:#f0f4ff}
-.jsr3.jsr-low{background:#f8f8f8}
+.jsr3.jsr-past{opacity:1}/* FIX: removed opacity fade for past jobs */
+.jsr3.jsr-normal{background:rgba(60,120,230,.16);border-left:4px solid #3c78e6}
+.jsr3.jsr-low{background:#f0f0f0;border-left:4px solid var(--border2)}
+
+/* ── Priority dot toolbar ── */
+.pri-dots{display:flex;align-items:center;gap:4px;margin:0 4px;flex-shrink:0}
+.pri-dot{width:16px;height:16px;border-radius:50%;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent;flex-shrink:0}
+.pri-dot:hover{transform:scale(1.2);box-shadow:0 0 8px rgba(0,0,0,.25)}
+.pri-dot.on{border-color:var(--txt);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--txt)}
+.pri-dot-cert{background:#22c55e}
+.pri-dot-repair{background:#e05252}
+.pri-dot-urg{background:#a855f7}
+.pri-dot-emg{background:#f97316}
+.pri-dot-norm{background:#4f8fff}
+.pri-dot-txt{font-size:9px;color:var(--txt3);font-weight:700;margin-left:2px;white-space:nowrap}
+
+/* ── Multi-select on job rows ── */
+.jsr3.jsr-selected{border:2px solid var(--acc);box-shadow:0 0 0 1px rgba(245,166,35,.2)}
+.jsr3.jsr-selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc);z-index:2}
+
+/* ── Smooth drag ── */
+.jsr3.dragging{opacity:.6;box-shadow:0 4px 20px rgba(0,0,0,.15);transform:scale(1.01);z-index:10}
+.jsr3.drag-over{position:relative}
+.jsr3.drag-over::after{content:'';position:absolute;left:20px;right:0;bottom:0;height:2px;background:var(--acc);border-radius:1px;box-shadow:0 0 6px rgba(245,166,35,.5)}
+
+/* ── Row selection checkbox ── */
+.jsr3:hover .jsr-sel-check,.jsr3.jsr-selected .jsr-sel-check{opacity:1!important}
+.jsr-sel-check .jsr-checked{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff;font-size:10px}
+
+/* ── Drag ghost for multi-drag ── */
+.jsr3-ghost{position:fixed;pointer-events:none;z-index:9999;background:var(--s1);border:1px solid var(--acc);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--txt);box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;opacity:.9}
+
+/* ── Auto-scroll indicator zones ── */
+.jsr-scroll-zone{position:fixed;left:0;right:0;height:40px;pointer-events:none;z-index:5;display:none}
+.jsr-scroll-zone.up{top:120px;background:linear-gradient(to bottom,rgba(245,166,35,.06),transparent)}
+.jsr-scroll-zone.down{bottom:0;background:linear-gradient(to top,rgba(245,166,35,.06),transparent)}
+.jsr-scroll-zone.active{display:block}
 
 
 
 .jsr-unconfirmed{font-size:9px;font-weight:700;background:rgba(251,191,36,.12);color:#92400e;padding:1px 5px;border-radius:6px;border:1px solid rgba(251,191,36,.25);white-space:nowrap}
-.jsr3.drag-over{border-color:var(--acc)!important;box-shadow:0 0 0 2px rgba(245,166,35,.3)!important}
-.jsr3.dragging{opacity:.4}
+/* drag styles replaced by smooth DnD CSS above */
 /* drag handle */
-.jsr-drag-handle{display:flex;align-items:center;justify-content:center;height:100%;color:var(--border2);font-size:11px;cursor:grab;user-select:none;transition:color .15s}
+.jsr-drag-handle{display:flex;align-items:center;justify-content:center;height:100%;color:var(--border2);font-size:10px;cursor:grab;user-select:none;transition:color .15s;width:18px;flex-shrink:0}
 .jsr-drag-handle:hover{color:var(--txt3)}
 .jsr-drag-handle:hover{color:var(--acc)}
 .jsr-drag-handle:active{cursor:grabbing}
 /* status stripe */
 .jsr-stripe{width:3px;height:100%;align-self:stretch}
 /* each cell */
-.jsr3-cell{padding:3px 5px;min-width:0;max-width:100%;overflow:hidden;font-size:11px;white-space:nowrap;text-overflow:ellipsis;line-height:1.2;box-sizing:border-box;display:flex;align-items:center;gap:3px}
+.jsr3-cell{padding:2px 4px;min-width:0;max-width:100%;overflow:hidden;font-size:11px;white-space:nowrap;text-overflow:ellipsis;line-height:1.2;box-sizing:border-box;display:flex;align-items:center;gap:3px}
 /* Resize handle visible stripe on right edge of header cells */
-.col-resize-handle{position:absolute;right:0;top:20%;bottom:20%;width:3px;border-radius:2px;background:var(--border2);cursor:col-resize;transition:background .15s,width .1s;z-index:3}
-.col-resize-handle:hover,.col-resize-handle.active{background:var(--acc);width:3px}
-.jsr3-cell-status{padding:4px 6px;display:flex;align-items:center}
-.jsr3-cell-addr{font-family:var(--fh);font-size:12px;font-weight:600;color:var(--txt);padding:3px 6px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Resize handle: 8px wide grab area with 2px visual line (::after) — see lines 234-237 */
+.jsr3-cell-status{padding:2px 4px;display:flex;align-items:center}
+.jsr3-cell-addr{font-family:var(--fh);font-size:11px;font-weight:600;color:var(--txt);padding:2px 4px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jsr3-cell-addr:hover{color:var(--acc)}
-.jsr3-cell-access{font-size:11px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jsr3-cell-referrer{font-size:11px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jsr3-cell-desc{font-size:11px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 5px;cursor:default;font-style:normal}
-.jsr3-cell-contact{font-size:10.5px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 6px}
-.jsr3-cell-time{font-size:11px;color:#1d6fad;font-weight:600;padding:3px 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jsr3-cell-eng{font-size:11px;color:#a855f7;font-weight:600;padding:3px 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jsr3-cell-certs{padding:4px 4px;display:flex;gap:3px;align-items:center;overflow:hidden}
-.jsr3-cell-price{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--txt);padding:3px 4px;text-align:right;white-space:nowrap}
-.jsr3-cell-sel{padding:2px 3px}
-.jsr3-cell-actions{padding:2px 4px;display:flex;gap:1px;align-items:center;flex-wrap:nowrap;overflow:hidden;flex-shrink:0;justify-content:flex-start}
-.jsr3-jobnum{font-size:10px;color:var(--txt3);font-weight:600;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.jsr3-cell-access{font-size:11px;color:var(--txt);padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jsr3-cell-referrer{font-size:11px;color:var(--txt);padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jsr3-cell-desc{font-size:11px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 4px;cursor:default;font-style:normal}
+.jsr3-cell-contact{font-size:10.5px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 4px}
+.jsr3-cell-time{font-size:11px;color:#1d6fad;font-weight:600;padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jsr3-cell-eng{font-size:11px;color:#a855f7;font-weight:600;padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jsr3-cell-certs{padding:2px 4px;display:flex;gap:3px;align-items:center;overflow:hidden}
+.jsr3-cell-price{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--txt);padding:2px 4px;text-align:right;white-space:nowrap}
+.jsr3-cell-sel{padding:2px 4px}
+/* Fixed-width action slots so buttons stay aligned across all rows */
+.jsr3-cell-actions{padding:2px 4px;display:grid;grid-template-columns:28px 28px 28px 28px 28px;gap:1px;align-items:center;flex-shrink:0;overflow:hidden}
+.jsr-act-slot{display:flex;align-items:center;justify-content:center;width:28px;height:20px;flex-shrink:0}
+/* Consistent job number badge — all prefixes look the same */
+.jsr3-jobnum{font-size:9px;font-weight:700;padding:1px 4px;border-radius:4px;background:var(--s2);color:var(--txt2);border:1px solid var(--border);display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.2}
 .jsg-add:hover{border-color:var(--acc);color:var(--acc)}
 /* Rich tooltip */
 .df-tip{position:fixed;z-index:9000;background:var(--s1);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--txt);box-shadow:var(--sh2);max-width:360px;pointer-events:auto;animation:mIn .1s ease;line-height:1.5}
@@ -1194,11 +1230,12 @@ body.density-relaxed .jtable td{font-size:15px}
 /* Sidebar collapsed: handled above */
 
 /* cal toggle button */
-#btn-cal-toggle{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--s2);color:var(--txt2);font-family:var(--fh);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+#btn-cal-toggle{padding:7px;border-radius:var(--r);border:1px solid var(--border);background:var(--s3);color:var(--txt2);cursor:pointer;transition:all .15s;font-size:15px}
 #btn-cal-toggle:hover,#btn-cal-toggle.active{border-color:var(--acc);color:var(--acc);background:rgba(245,166,35,.08)}
 </style>
 <!-- Supabase JS client for Auth -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<base target="_blank">
 </head>
 <body>
 <!-- ═══ PIN LOGIN OVERLAY ═══ -->
@@ -1409,7 +1446,7 @@ body.density-relaxed .jtable td{font-size:15px}
       <span class="live-badge-dot" id="live-dot" style="background:#15803d"></span>
       <span id="live-badge-text">Live</span>
     </div>
-    <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" title="Toggle Day/Night" style="font-size:18px;margin-left:6px">🌿</button>
+    <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" title="Toggle Day/Night" style="font-size:18px;margin-left:6px"><span id="theme-icon">🌙</span></button>
     <div id="user-pill" style="display:flex;align-items:center;gap:7px;margin-left:6px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px 4px 6px;font-family:var(--fh);font-size:12px;cursor:pointer" onclick="toggleUserMenu()">
       <div id="user-pill-avatar" style="width:26px;height:26px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:800;color:#1a1a1a">?</div>
       <div style="display:flex;flex-direction:column;line-height:1.2">
@@ -1442,7 +1479,7 @@ body.density-relaxed .jtable td{font-size:15px}
         </div>
         <div class="dash-quick">
           <button class="btn btn-acc" onclick="df.once('navDone:inv',()=>{openNewInvModal()});nav('inv')">+ New Invoice</button>
-          <button class="btn btn-ghost" onclick="df.once('navDone:inv',()=>{openNewInvModal});nav('inv')">+ Invoice</button>
+          <button class="btn btn-ghost" onclick="df.once('navDone:inv',()=>{openNewInvModal()});nav('inv')">+ Invoice</button>
           <button class="btn btn-ghost" onclick="df.once('navDone:dir',()=>{openPersonModal()});nav('dir')">+ Person</button>
         </div>
       </div>
@@ -1532,52 +1569,60 @@ body.density-relaxed .jtable td{font-size:15px}
     </div>
     <!-- Toolbar -->
     <div class="jobs-ctrl">
-      <button id="btn-cal-toggle" onclick="toggleCalPane()" title="Toggle calendar">📅</button>
       <!-- Day nav -->
-      <button class="btn btn-ghost btn-sm" onclick="shiftDay(-1)" title="Previous day (←)">◀</button>
-      <button class="btn btn-ghost btn-sm" onclick="jPickDate(TODAY());renderJobs()" style="font-weight:700;min-width:52px" title="Jump to today">Today</button>
-      <button class="btn btn-ghost btn-sm" onclick="shiftDay(1)" title="Next day (→)">▶</button>
-      <input type="search" class="fi" id="j-search" placeholder="🔍  Search jobs, addresses, engineers…" oninput="renderJobs()" style="max-width:220px">
-      <select class="fs" id="j-eng-filter" onchange="renderJobs()" style="width:130px;padding:5px 8px">
-        <option value="">All Engineers</option>
+      <button class="btn btn-ghost btn-sm day-nav-btn" onclick="shiftDay(-1)" title="Previous day (←)">◀</button>
+      <button class="btn btn-ghost btn-sm day-nav-btn" onclick="setJRange('all');jPickDate(TODAY());renderJobs()" style="font-weight:700;min-width:52px" title="Jump to today">Today</button>
+      <button class="btn btn-ghost btn-sm day-nav-btn" onclick="shiftDay(1)" title="Next day (→)">▶</button>
+      <button id="btn-cal-toggle" class="btn-icon btn-sm" onclick="toggleCalPane()" title="Toggle calendar">📅</button>
+
+      <!-- Priority colour dots -->
+      <div class="pri-dots" id="pri-dots-bar">
+        <div class="pri-dot pri-dot-cert" title="Certificate" onclick="handlePriDotClick('Certificate')" data-pri="Certificate"></div>
+        <div class="pri-dot pri-dot-repair" title="Repair" onclick="handlePriDotClick('Repair')" data-pri="Repair"></div>
+        <div class="pri-dot pri-dot-urg" title="Urgent" onclick="handlePriDotClick('Urgent')" data-pri="Urgent"></div>
+        <div class="pri-dot pri-dot-emg" title="Emergency" onclick="handlePriDotClick('Emergency')" data-pri="Emergency"></div>
+        <div class="pri-dot pri-dot-norm" title="Normal" onclick="handlePriDotClick('Normal')" data-pri="Normal"></div>
+        <button class="btn btn-ghost btn-sm" onclick="setPriFilter('')" style="font-size:9px;padding:1px 5px;margin-left:2px" title="Clear filter">✕</button>
+      </div>
+
+      <input type="search" class="fi" id="j-search" placeholder="🔍 Search…" oninput="debounceRenderJobs()" style="max-width:160px;font-size:11px;padding:4px 8px">
+
+      <select class="fs" id="j-eng-filter" onchange="renderJobs()" style="width:110px;padding:4px 6px;font-size:11px">
+        <option value="">Engineer</option>
       </select>
-      <select class="fs" id="j-status-filter" onchange="renderJobs()" style="width:130px;padding:5px 8px">
-        <option value="">All Statuses</option>
+      <select class="fs" id="j-status-filter" onchange="renderJobs()" style="width:110px;padding:4px 6px;font-size:11px">
+        <option value="">Status</option>
         <option>Pending</option><option>In Progress</option><option>Completed</option><option>Invoiced</option><option>Cancelled</option><option>Cannot Access</option>
       </select>
-      <select class="fs" id="j-priority-filter" onchange="renderJobs()" style="width:130px;padding:5px 8px">
-        <option value="">All Types</option>
-        <option value="Emergency">🚨 Emergency</option>
-        <option value="Urgent">🔥 Urgent</option>
-        <option value="Certificate">📋 Certificate</option>
-        <option value="Repair">🔧 Repair</option>
-        <option value="Normal">Normal</option>
-        <option value="Low">Low</option>
-      </select>
+
+      <!-- Settings menu (hidden options) -->
+      <div style="position:relative;display:inline-flex" id="jobs-more-menu">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('jobs-more-dd').style.display=document.getElementById('jobs-more-dd').style.display==='block'?'none':'block';event.stopPropagation()" title="More options">☰</button>
+        <div id="jobs-more-dd" style="display:none;position:absolute;top:100%;right:0;z-index:5000;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r2);box-shadow:var(--sh2);min-width:180px;padding:4px 0;margin-top:2px">
+          <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="toggleUnassignedView();document.getElementById('jobs-more-dd').style.display='none'">📋 Unbooked Jobs</div>
+          <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="setJobsView('engineer');document.getElementById('jobs-more-dd').style.display='none'">👷 View by Engineer</div>
+          <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="setJobsView('list');document.getElementById('jobs-more-dd').style.display='none'">☰ List View</div>
+          <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+          <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="showWaPanel();document.getElementById('jobs-more-dd').style.display='none'">📱 Send to Engineer</div>
+          <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="toggleColPicker();document.getElementById('jobs-more-dd').style.display='none'">⊞ Choose Columns</div>
+        </div>
+      </div>
+
+      <div id="j-bulk" style="display:none;gap:6px;align-items:center">
+        <span id="bulk-count" style="font-size:11px;font-weight:700;color:var(--txt2)"></span>
+        <button class="btn btn-wa btn-sm" onclick="waJobsSelected()">📱 WA</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkAssignEngineer()" title="Assign">👷 Assign</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkReschedule()" title="Reschedule">📅 Move</button>
+        <button class="btn btn-ghost btn-sm" onclick="bulkCopyToDate()" title="Copy">⧉ Copy</button>
+        <button class="btn btn-ghost btn-sm" onclick="mergeJobsInvoice()">◎ Merge</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearSel()">✕</button>
+      </div>
+
+      <button class="btn btn-acc btn-sm" onclick="openJobModal()" style="margin-left:auto;flex-shrink:0">+ New Job</button>
+
       <!-- hidden date fields kept for backward compat with all existing JS -->
       <input type="date" id="j-datepick" style="display:none" onchange="jPickDate(this.value)">
       <div class="date-lbl" id="j-date-lbl" style="display:none"></div>
-      <div id="j-bulk" style="display:none;gap:6px">
-        <span id="bulk-count" style="font-size:11px;font-weight:700;color:var(--txt2)"></span>
-        <button class="btn btn-wa btn-sm" onclick="waJobsSelected()">📱 WA Send</button>
-        <button class="btn btn-ghost btn-sm" onclick="bulkAssignEngineer()" title="Assign all selected to one engineer">👷 Assign Engineer</button>
-        <div style="position:relative;display:inline-flex" id="reschedule-wrap">
-          <button class="btn btn-ghost btn-sm" onclick="bulkReschedule()" style="border-radius:var(--r) 0 0 var(--r)" title="Move all selected to another date">📅 Reschedule</button>
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('reschedule-dd').style.display=document.getElementById('reschedule-dd').style.display==='block'?'none':'block';event.stopPropagation()" style="border-radius:0 var(--r) var(--r) 0;border-left:1px solid var(--border);padding:4px 6px">▾</button>
-          <div id="reschedule-dd" style="display:none;position:absolute;top:100%;left:0;z-index:200;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r2);box-shadow:var(--sh2);min-width:160px;padding:4px 0;margin-top:2px">
-            <div style="padding:8px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="bulkCopyToDate();document.getElementById('reschedule-dd').style.display='none'">⧉ Copy to Date (keep original)</div>
-          </div>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="mergeJobsInvoice()">◎ Merge Invoice</button>
-        <button class="btn btn-ghost btn-sm" onclick="clearSel()">✕ Clear</button>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:nowrap">
-        <button class="btn btn-ghost btn-sm" id="btn-unassigned" onclick="toggleUnassignedView()" title="Unbooked jobs (no date/engineer) or Unconfirmed">📋 Unbooked</button>
-        <button class="btn btn-ghost btn-sm" id="btn-view-eng" onclick="setJobsView('engineer')" title="Engineer columns view">👷 By Engineer</button>
-        <button class="btn btn-ghost btn-sm" id="btn-view-list" onclick="setJobsView('list')" title="Back to list view" style="display:none">☰ List View</button>
-        <button class="btn btn-ghost btn-sm" onclick="showWaPanel()" id="btn-wa-panel">📱 Send to Engineer</button>
-        <button class="btn btn-acc btn-sm" onclick="openJobModal()">+ New Job</button>
-      </div>
     </div>
 
     <!-- WhatsApp panel -->
@@ -1649,7 +1694,7 @@ body.density-relaxed .jtable td{font-size:15px}
       </div>
       <div style="display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap">
         <select class="fs" id="engrep-eng" onchange="renderEngReport()" style="width:160px;padding:6px 10px;font-size:12px">
-          <option value="">All Engineers</option>
+          <option value="">Engineer</option>
         </select>
         <select class="fs" id="engrep-period" onchange="renderEngReport()" style="width:140px;padding:6px 10px;font-size:12px">
           <option value="all">All Time</option>
@@ -1758,7 +1803,7 @@ body.density-relaxed .jtable td{font-size:15px}
             <button class="btn btn-ghost btn-sm" id="btn-inv-list"   onclick="setInvView('list')"   style="border-radius:0;border:none;padding:5px 9px;font-size:12px">☰ List</button>
             <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:5px 9px;font-size:12px">⊞ Board</button>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" style="font-size:11px;margin-left:auto">✓ Bulk Paid</button>
+          <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" style="font-size:11px;margin-left:auto;display:none" id="btn-bulk-paid">✓ Bulk Paid</button>
         </div>
 
         <!-- Special / Dashboard view -->
@@ -1857,7 +1902,7 @@ body.density-relaxed .jtable td{font-size:15px}
           <option value="">All Jobs</option>
         </select>
         <select class="fs" id="exp-filter-eng" onchange="renderExpenses()" style="width:150px;padding:6px 10px">
-          <option value="">All Engineers</option>
+          <option value="">Engineer</option>
         </select>
         <button class="btn btn-acc btn-sm" onclick="openExpenseModal()" style="margin-left:auto">+ Log Expense</button>
         <button class="btn btn-ghost btn-sm" onclick="exportExpensesCSV()">⬇ Export CSV</button>
@@ -2137,7 +2182,7 @@ body.density-relaxed .jtable td{font-size:15px}
               <div class="cdash-ph-title">🏠 Properties — Cert Status at a Glance</div>
               <div style="display:flex;gap:12px;align-items:center">
                 <span style="font-size:11px;color:var(--txt3)"><span style="color:var(--red)">●</span> Expired &nbsp;<span style="color:var(--yellow)">●</span> Expiring &nbsp;<span style="color:var(--green)">●</span> OK</span>
-                <a onclick="nav('pg-props')">All Properties →</a>
+                <a onclick="nav('props')">All Properties →</a>
               </div>
             </div>
             <div id="cd-prop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;padding:12px 16px"></div>
@@ -2394,7 +2439,7 @@ body.density-relaxed .jtable td{font-size:15px}
       <div id="map-eng-filter" style="display:none;align-items:center;gap:8px">
         <label style="font-size:12px;color:var(--txt3);font-weight:600">Engineer:</label>
         <select id="map-eng-sel" class="fs" style="padding:6px 10px;font-size:12px;width:160px" onchange="renderMapPage()">
-          <option value="">All Engineers</option>
+          <option value="">Engineer</option>
         </select>
       </div>
       <div id="map-date-filter" style="display:none;align-items:center;gap:8px">
@@ -3401,7 +3446,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
 <!-- Job Modal — 3-column side-by-side layout -->
 <div class="overlay" id="mo-job">
-<div class="modal" style="max-width:1120px;padding:24px 28px 24px">
+<div class="modal" style="max-width:1120px;padding:24px 28px 24px;position:relative">
   <div class="modal-title" id="mo-job-title">📋 New Job</div>
   <div id="mo-job-cr-banner" style="display:none;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.25);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;color:#0ea5e9;margin-bottom:12px;align-items:center;gap:6px"></div>
 
@@ -3474,8 +3519,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
         <div class="jm-info-row"><span class="jm-info-lbl">WhatsApp</span><span class="jm-info-val" id="jmi-ll-wa">—</span></div>
       </div>
       
-      <!-- ★ CLIENT RATING STRIP — auto-populates when client is matched -->
-      <div id="jm-client-rating" style="margin:4px 0 12px"></div>
+      <!-- Client rating moved to right-side panel -->
 
       <!-- ═══ CLIENT CREDIT CHECK PANEL ═══ -->
       <div id="credit-check-panel" class="credit-check-panel" style="display:none;margin:16px 0;padding:16px;border:2px solid var(--border);border-radius:var(--r2);background:white;">
@@ -3559,6 +3603,11 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
   </div><!-- /jm-3col -->
 
+  <!-- ★ CLIENT RATING PANEL — appears on the right side when client is matched -->
+  <div id="jm-client-rating-wrap" style="position:absolute;right:12px;top:80px;width:240px;z-index:10;display:none;">
+    <div id="jm-client-rating"></div>
+  </div>
+
   <!-- PHOTOS & FILES — loaded from Supabase when editing existing job -->
   <div id="jm-photos-panel" style="display:none;margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -3572,7 +3621,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 
   <div class="modal-actions">
     <button class="btn btn-red btn-sm" id="btn-delete-job" style="display:none;margin-right:auto" onclick="deleteCurrentJob()">Delete Job</button>
-    <button class="btn btn-ghost" onclick="closeModal('mo-job')">Cancel</button>
+    <button class="btn btn-ghost" onclick="closeModal('mo-job');localStorage.removeItem('df_job_draft')">Cancel</button>
     <button class="btn btn-wa btn-sm" id="btn-wa-this-job" style="display:none" onclick="waSingleJob()">📱 WhatsApp</button>
     <button class="btn btn-acc" onclick="saveJob()">Save Job</button>
   </div>
@@ -4117,7 +4166,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <div style="margin-bottom:12px">
       <label style="font-size:11px;font-weight:700;color:var(--txt3);display:block;margin-bottom:5px">TARGET</label>
       <select class="fs" id="bc-target" style="width:100%;padding:8px 10px">
-        <option value="all">All Engineers</option>
+        <option value="all">Engineer</option>
       </select>
     </div>
     <div style="margin-bottom:12px">
@@ -4183,6 +4232,7 @@ window.onerror = (msg, src, line) => {
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
+if(!_supaAuth){console.error('[DeepFlow] Supabase client failed to load. Check internet connection.');}
 
 // ── STATUS CONSTANTS ─────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -4269,6 +4319,17 @@ const df=(()=>{
   function once(ev,fn){on(ev,fn,{once:true});}
   return{on,off,emit,once};
 })();
+
+// Auto-save job form draft every 5 seconds
+setInterval(()=>{
+  const mo=document.getElementById('mo-job');
+  if(mo&&mo.classList.contains('open')){
+    const d={};
+    const ids=['jf-addr','jf-ref','jf-desc','jf-time','jf-eng','jf-date','jf-access','jf-contact','jf-hours','jf-price','jf-priority','jf-status','jf-notes','jf-ll-name','jf-ll-phone','jf-ll-email','jf-ll-addr','jf-ll-wa','jf-agency','jf-agent'];
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value;});
+    localStorage.setItem('df_job_draft',JSON.stringify(d));
+  }
+},5000);
 
 // These stores live in localStorage — no network calls
 // FIX BUG1: payments, expenses, overtime all moved to Supabase.
@@ -4724,7 +4785,7 @@ function nav(pg){
   if(pg==='exp') renderExpenses();
   if(pg==='ts') renderTS();
   if(pg==='rep') renderReports();
-  if(pg==='engrep') initEngReport();
+  if(pg==='engrep'){initEngReport();renderEngReport();}
   if(pg==='audit'){ if(_appUser?.role==='Admin') initAuditLog(); else { toast('❌ Admin only','error'); return; } }
   // SECURITY: Block non-admins from Settings entirely
   if(pg==='set' && _appUser?.role !== 'Admin' && _appUser?.role !== 'Manager' && _appUser?.role !== 'Finance'){
@@ -4739,7 +4800,6 @@ function nav(pg){
   const rolePages={
     Admin: null, // null = all pages allowed
     Manager: ['dash','jobs','inv','stmt','rep','req','dir','props','certs','client','set','map'],
-    Finance: ['dash','inv','stmt','rep','jobs','dir','props','set'],
     Finance: ['dash','jobs','inv','stmt','rep','dir','props','set'],
     Staff:   ['dash','jobs','inv','stmt','req','dir','props','certs','client'],
   };
@@ -5101,6 +5161,29 @@ document.addEventListener('keydown',e=>{
 });
 
 // ════════════════════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ════════════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  // Don't trigger when typing in inputs
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.key==='Escape'){closeAllModals();return;}
+  if(e.ctrlKey||e.metaKey){
+    if(e.key==='k'){e.preventDefault();openCmd();return;}
+    if(e.key==='d'){e.preventDefault();nav('dash');return;}
+    if(e.key==='j'){e.preventDefault();nav('jobs');return;}
+    if(e.key==='i'){e.preventDefault();nav('inv');return;}
+    if(e.key==='f'){e.preventDefault();document.getElementById('j-search')?.focus();return;}
+    return;
+  }
+  if(curPg==='jobs'){
+    if(e.key==='n'){e.preventDefault();openJobModal();return;}
+    if(e.key==='t'){e.preventDefault();setJRange('all');jPickDate(TODAY());renderJobs();return;}
+    if(e.key==='ArrowLeft'){e.preventDefault();shiftDay(-1);return;}
+    if(e.key==='ArrowRight'){e.preventDefault();shiftDay(1);return;}
+  }
+});
+
+// ════════════════════════════════════════════════════════════════
 //  JOBS
 // ════════════════════════════════════════════════════════════════
 
@@ -5220,6 +5303,8 @@ function initLoginCanvas(){
   }
 
   function draw(){
+    // If overlay is hidden, stop animating
+    if(document.getElementById('pin-overlay').style.display==='none'){raf=null;return;}
     ctx.fillStyle=canvas._bg;ctx.fillRect(0,0,W,H);
 
     // Edges
@@ -5508,6 +5593,8 @@ async function doLogin(){
     // Step 5: Close overlay and enter app
     const overlay=document.getElementById('pin-overlay');
     if(overlay)overlay.style.display='none';
+    // Stop login canvas animation to save CPU
+    if(window._loginCanvasStop)window._loginCanvasStop();
     applyUserPermissions();
     if(emergencyMode){
       setTimeout(()=>toast('⚠️ Emergency admin access used — profile auto-restored. Check Settings → Team.','warn',8000),1000);
@@ -5527,6 +5614,8 @@ async function doLogin(){
     }).catch(()=>{});
     // Sync users list in background
     setTimeout(forceSyncUsers,1500);
+    // Start real-time sync for multi-user collaboration
+    startRealtimeSync();
 
   }catch(e){
     _loginMsg('⚠️ Connection error — check internet');
@@ -5991,6 +6080,121 @@ function updateBulkBar(){
   }
 }
 
+// ── Selection helpers ──
+function clearSel(){
+  document.querySelectorAll('.jsr3.jsr-selected').forEach(r=>r.classList.remove('jsr-selected'));
+  selJobs.clear();
+  _lastSelId=null;
+  updateBulkBar();
+  updatePriDotsVisibility();
+  // Also clear checkboxes
+  document.querySelectorAll('.jsr-sel-check div').forEach(d=>{
+    d.style.cssText='width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border2);background:transparent;';
+    d.innerHTML='&nbsp;';
+  });
+}
+
+function toggleSelRow(id,el){
+  const div=el.querySelector('div');
+  if(selJobs.has(id)){
+    selJobs.delete(id);
+    div.style.cssText='width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border2);background:transparent;';
+    div.innerHTML='&nbsp;';
+    el.closest('.jsr3').classList.remove('jsr-selected');
+  }else{
+    selJobs.add(id);
+    div.style.cssText='width:14px;height:14px;border-radius:3px;border:1.5px solid var(--acc);background:var(--acc);color:#fff;';
+    div.innerHTML='✓';
+    el.closest('.jsr3').classList.add('jsr-selected');
+  }
+  _lastSelId=id;updateBulkBar();updatePriDotsVisibility();
+}
+
+// ── Multi-Select Job Rows (Ctrl+click, Shift+click) ──
+let _lastSelId=null;
+
+function initJobMultiSelect(){
+  const scroll=document.getElementById('jobs-list-scroll');
+  if(!scroll||scroll._msInited)return;
+  scroll._msInited=true;
+  scroll.addEventListener('click',e=>{
+    const row=e.target.closest('.jsr3[data-id]');
+    if(!row)return;
+    // Don't trigger if clicking buttons, selects, drag handle, or editable fields
+    if(e.target.closest('button')||e.target.closest('select')||e.target.closest('.jsr-drag-handle')||e.target.closest('[onclick]'))return;
+    const id=row.dataset.id;
+    if(!id)return;
+    if(e.ctrlKey||e.metaKey){
+      e.preventDefault();e.stopPropagation();
+      if(selJobs.has(id)){selJobs.delete(id);row.classList.remove('jsr-selected');}
+      else{selJobs.add(id);row.classList.add('jsr-selected');_lastSelId=id;}
+      updateBulkBar();updatePriDotsVisibility();return;
+    }
+    if(e.shiftKey&&_lastSelId){
+      e.preventDefault();e.stopPropagation();
+      const allRows=[...scroll.querySelectorAll('.jsr3[data-id]')];
+      const idxFrom=allRows.findIndex(r=>r.dataset.id===_lastSelId);
+      const idxTo=allRows.findIndex(r=>r.dataset.id===id);
+      if(idxFrom>=0&&idxTo>=0){
+        const [start,end]=idxFrom<idxTo?[idxFrom,idxTo]:[idxTo,idxFrom];
+        for(let i=start;i<=end;i++){
+          const rid=allRows[i].dataset.id;
+          if(rid){selJobs.add(rid);allRows[i].classList.add('jsr-selected');}
+        }
+      }
+      updateBulkBar();updatePriDotsVisibility();return;
+    }
+    // Normal click (no modifier) — if clicking an unselected row, clear others first
+    if(!selJobs.has(id)){
+      clearSel();
+    }
+  });
+}
+
+// ── Priority Dot Toolbar ──
+let _priFilter='';
+function updatePriDotsVisibility(){
+  const bar=document.getElementById('pri-dots-bar');
+  if(!bar)return;
+  bar.style.display='flex';
+  const label=bar.querySelector('.pri-dot-txt');
+  if(label)label.textContent=selJobs.size>0?'Set Priority ('+selJobs.size+'):':'Filter:';
+}
+
+function handlePriDotClick(priority){
+  if(selJobs.size>0){
+    bulkSetPriority(priority);
+  }else{
+    setPriFilter(priority);
+  }
+}
+
+function setPriFilter(priority){
+  _priFilter=priority||'';
+  renderJobs();
+  document.querySelectorAll('.pri-dot').forEach(d=>d.classList.toggle('on',d.dataset.pri===priority));
+}
+
+function priClass(p){
+  return{'Certificate':'cert','Repair':'repair','Urgent':'urg','Emergency':'emg','Normal':'normal'}[p]||'';
+}
+
+async function bulkSetPriority(priority){
+  const ids=[...selJobs];
+  if(!ids.length){toast('Select jobs first','error');return;}
+  // Optimistic UI: change colour immediately
+  ids.forEach(id=>{
+    const row=document.querySelector('.jsr3[data-id="'+id+'"]');
+    if(row){row.classList.remove('jsr-cert','jsr-repair','jsr-urg','jsr-emg','jsr-normal');row.classList.add('jsr-'+priClass(priority));}
+  });
+  toast('Setting '+ids.length+' job'+(ids.length!==1?'s':'')+' to '+priority+'...','success',1500);
+  let done=0;
+  const saves=ids.map(id=>_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{priority:priority,modified:Date.now()},prefer:'return=minimal'}).then(()=>done++).catch(e=>console.warn(e)));
+  await Promise.all(saves);
+  toast('Done: '+done+' job'+(done!==1?'s':'')+' set to '+priority,'success');
+  clearSel();renderJobs();
+}
+
 async function forceSyncUsers(){
   // Placeholder function - can be implemented later for user sync
   console.log('Force sync users called');
@@ -6082,7 +6286,7 @@ function renderMiniCal(){
     const statusColors = {Pending:'#f5a623','In Progress':'#4f8fff',Completed:'#22c55e',Invoiced:'#a855f7',Emergency:'#e05252'};
     const dotSet = [...new Set(jobs.map(j=>j.status).slice(0,3))];
     const dots = dotSet.map(s=>`<div class="jcal-dot" style="background:${statusColors[s]||'#4e6080'}"></div>`).join('');
-    html += `<div class="${cls}" onclick="jCalPickDate('${iso}')" title="${iso}">${d}${dots ? `<div class="jcal-dots">${dots}</div>` : ''}</div>`;
+    html += `<div class="${cls}" onclick="jCalPickDate('${iso}');${jobs.length ? `setJRange('all');renderJobs();` : ''}" title="${iso}" style="${jobs.length ? 'cursor:pointer' : ''}">${d}${dots ? `<div class="jcal-dots">${dots}</div>` : ''}</div>`;
   }
   grid.innerHTML = html;
 }
@@ -6097,6 +6301,10 @@ function jCalPickDate(iso){
   }, 80);
 }
 
+// Debounced render for search performance
+let _rjTimer;
+function debounceRenderJobs(){clearTimeout(_rjTimer);_rjTimer=setTimeout(renderJobs,200);}
+
 async function renderJobs(){
   const lbl = document.getElementById('j-date-lbl');
   if(lbl) lbl.textContent = fmtD(jDate);
@@ -6105,12 +6313,12 @@ async function renderJobs(){
 
   const ef = document.getElementById('j-eng-filter');
   const curEf = ef ? ef.value : '';
-  if(ef) ef.innerHTML = '<option value="">All Engineers</option>'+(S.engineers||[]).map(e=>`<option ${e.name===curEf?'selected':''}>${e.name}</option>`).join('');
+  if(ef) ef.innerHTML = '<option value="">Engineer</option>'+(S.engineers||[]).map(e=>`<option ${e.name===curEf?'selected':''}>${e.name}</option>`).join('');
 
   const search = (document.getElementById('j-search')?.value||'').toLowerCase().trim();
   const efVal  = ef ? ef.value : '';
   const sfVal  = document.getElementById('j-status-filter')?.value||'';
-  const pfVal  = document.getElementById('j-priority-filter')?.value||'';
+  const pfVal  = _priFilter||''; // set by priority dot toolbar (dropdown removed)
 
   let allJobs;
   try{
@@ -6250,30 +6458,34 @@ async function renderJobs(){
       const isUnconfirmed = j.confirmed===false;
       const isNormal = j.priority==='Normal'||!j.priority;
       const isLow = j.priority==='Low';
-      const rowPriClass = isEmg?'jsr-emg':isUrg?'jsr-urg':isCert?'jsr-cert':isRepair?'jsr-repair':isLow?'jsr-low':'';
-      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${rowPriClass}" data-id="${j.id}" onclick="openJobModal('${j.id}')" style="cursor:pointer">
+      const rowPriClass = isEmg?'jsr-emg':isUrg?'jsr-urg':isCert?'jsr-cert':isRepair?'jsr-repair':isNormal?'jsr-normal':isLow?'jsr-low':'';
+      const isSelected = selJobs.has(j.id);
+      html += `<div class="jsr3 ${isPastJob&&!isToday?'jsr-past':''} ${rowPriClass}${isSelected?' jsr-selected':''}" data-id="${j.id}" onclick="openJobModal('${j.id}')" style="cursor:pointer;position:relative">
         <div class="jsr-drag-handle" title="Drag to reorder" draggable="true" onclick="event.stopPropagation()">⠿</div>
+        <div class="jsr-sel-check" onclick="event.stopPropagation();toggleSelRow('${j.id}',this)" style="display:flex;align-items:center;justify-content:center;width:16px;flex-shrink:0;cursor:pointer;opacity:${isSelected?1:0};transition:opacity .15s">
+          <div style="width:14px;height:14px;border-radius:3px;border:1.5px solid ${isSelected?'var(--acc)':'var(--border2)'};display:flex;align-items:center;justify-content:center;transition:all .15s;${isSelected?'background:var(--acc);color:#fff;':''}">${isSelected?'✓':'&nbsp;'}</div>
+        </div>
         <div class="jsr-stripe ${stripeClass(isEmg?'Emergency':j.status)}"></div>
         ${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);const col=palette[idx>=0?idx%palette.length:Math.abs((j.engineer||' ').charCodeAt(0))%palette.length];return j.engineer?'<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+col+';border-radius:0 2px 2px 0"></div>':''})()}
 
         <!-- COL 1: Job # + priority pill -->
-        <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
-          ${j.jobNum?`<span class="jsr3-jobnum" style="${(j.jobNum||'').startsWith('CR-')?'color:#0ea5e9;background:rgba(14,165,233,.1);':''}">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
+        <div class="jsr3-cell" data-col="jobnum" style="padding:5px 6px" onclick="event.stopPropagation()">
+          ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
           ${isUnconfirmed?`<span class="jsr-unconfirmed">⏳ Unconfirmed</span>`:''}
         </div>
 
         <!-- COL 2: Address -->
-        <div class="jsr3-cell jsr3-cell-addr">${j.address
+        <div class="jsr3-cell jsr3-cell-addr" data-col="address">${j.address
           ? j.address
           : `<em style="color:var(--txt3);font-size:10px;font-style:normal">No address</em>`
         }</div>
 
         <!-- COL 3: Description -->
-        <div class="jsr3-cell jsr3-cell-desc">${descShort||'—'}</div>
+        <div class="jsr3-cell jsr3-cell-desc" data-col="desc">${descShort||'—'}</div>
 
         <!-- COL 4: Access — Keys info / Tenant info / both with slash -->
-        <div class="jsr3-cell jsr3-cell-access">${(()=>{
+        <div class="jsr3-cell jsr3-cell-access" data-col="access">${(()=>{
           const aType = j.access||'';
           const aDetail = j.contact||'';
           if(!aType && !aDetail) return '<span style="color:var(--txt3);font-size:10px">—</span>';
@@ -6292,20 +6504,20 @@ async function renderJobs(){
         })()}</div>
 
         <!-- COL 5: Time slot -->
-        <div class="jsr3-cell jsr3-cell-time" onclick="event.stopPropagation()" title="Click to edit time slot">
+        <div class="jsr3-cell jsr3-cell-time" data-col="time" onclick="event.stopPropagation()" title="Click to edit time slot">
           <span onclick="quickEditTime('${j.id}','${j.timeSlot||''}',this)" style="cursor:text;min-width:40px;display:inline-block">${j.timeSlot||'—'}</span>
         </div>
 
         <!-- COL 6: Engineer -->
-        <div class="jsr3-cell jsr3-cell-eng">${j.engineer?`<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);return palette[idx>=0?idx%palette.length:Math.abs(j.engineer.charCodeAt(0))%palette.length];})()};flex-shrink:0"></span>${j.engineer}</span>`:'—'}</div>
+        <div class="jsr3-cell jsr3-cell-eng" data-col="eng">${j.engineer?`<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${(()=>{const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];const engs=(S.engineers||[]);const idx=engs.findIndex(e=>e.name===j.engineer);return palette[idx>=0?idx%palette.length:Math.abs(j.engineer.charCodeAt(0))%palette.length];})()};flex-shrink:0"></span>${j.engineer}</span>`:'—'}</div>
 
         <!-- COL 7: Amount -->
-        <div class="jsr3-cell jsr3-cell-price" onclick="event.stopPropagation()" title="Click to edit price">
+        <div class="jsr3-cell jsr3-cell-price" data-col="price" onclick="event.stopPropagation()" title="Click to edit price">
           <span onclick="quickEditPrice('${j.id}','${j.price||0}',this)" style="cursor:text;min-width:32px;display:inline-block">${priceStr||'—'}</span>
         </div>
 
         <!-- COL 8: Referrer — landlord > agent > agency > referrer field -->
-        <div class="jsr3-cell jsr3-cell-referrer">${(()=>{
+        <div class="jsr3-cell jsr3-cell-referrer" data-col="referrer">${(()=>{
           if(j.landlordName) return '🏠 '+j.landlordName;
           if(j.agentName)    return '👤 '+j.agentName;
           if(j.agencyName)   return '🏢 '+j.agencyName;
@@ -6314,21 +6526,22 @@ async function renderJobs(){
         })()}</div>
 
         <!-- COL 9: Status dropdown -->
-        <div class="jsr3-cell jsr3-cell-sel" onclick="event.stopPropagation()">${statusSel(j.id,j.status)}</div>
+        <div class="jsr3-cell jsr3-cell-sel" data-col="sel" onclick="event.stopPropagation()">${statusSel(j.id,j.status)}</div>
 
-        <!-- COL 10: Actions (edit · copy · sla · invoice · whatsapp) -->
-        <div class="jsr3-cell jsr3-cell-actions" onclick="event.stopPropagation()">
+        <!-- COL 10: Actions — fixed 5-slot grid so buttons never shift position -->
+        <div class="jsr3-cell jsr3-cell-actions" data-col="actions" onclick="event.stopPropagation()">
           ${(()=>{
             const slaDays=j.status==='Pending'&&j.created?Math.floor((Date.now()-j.created)/86400000):0;
             const slaColor=slaDays>=7?'#b91c1c':slaDays>=3?'#d97706':'';
-            const slaBadge=slaDays>=3?`<span style="font-size:9px;font-weight:700;color:${slaColor};background:${slaDays>=7?'rgba(185,28,28,.1)':'rgba(217,119,6,.1)'};padding:1px 4px;border-radius:3px;white-space:nowrap">${slaDays}d</span>`:'';
+            const hasSLA=slaDays>=3;
+            const slaHTML=hasSLA?`<span style="font-size:9px;font-weight:700;color:${slaColor};background:${slaDays>=7?'rgba(185,28,28,.1)':'rgba(217,119,6,.1)'};padding:1px 4px;border-radius:3px;white-space:nowrap">${slaDays}d</span>`:'<span style="width:1px"></span>';
             const noInv=(j.status===STATUS.COMPLETED)&&!(j.linkedInvId||j.invNumber);
-            const invBtn=noInv?`<button class="jsr-btn" onclick="createInvFromJob('${j.id}')" style="color:var(--green)" title="Create invoice">◎</button>`:'';
-            return slaBadge+invBtn;
+            const invHTML=noInv?`<button class="jsr-btn" onclick="createInvFromJob('${j.id}')" style="color:var(--green)" title="Create invoice">◎</button>`:'';
+            return `<div class="jsr-act-slot">${slaHTML}</div><div class="jsr-act-slot">${invHTML}</div>`;
           })()}
-          <button class="jsr-btn" title="Edit" onclick="openJobModal('${j.id}')">✎</button>
-          <button class="jsr-btn" title="Copy to next day" onclick="copyJobToNextDay('${j.id}')">⧉</button>
-          <button class="jsr-btn" title="WhatsApp" onclick="waSingleJobById('${j.id}')">📱</button>
+          <div class="jsr-act-slot"><button class="jsr-btn" title="Edit" onclick="openJobModal('${j.id}')">✎</button></div>
+          <div class="jsr-act-slot"><button class="jsr-btn" title="Copy to next day" onclick="copyJobToNextDay('${j.id}')">⧉</button></div>
+          <div class="jsr-act-slot"><button class="jsr-btn" title="WhatsApp" onclick="waSingleJobById('${j.id}')">📱</button></div>
         </div>
       </div>`;
     });
@@ -6348,7 +6561,9 @@ async function renderJobs(){
   // Apply template to all newly rendered rows
   applyColTemplate();
   initScrollListDrag();
+  initJobMultiSelect();
   updateBulkBar();
+  updatePriDotsVisibility();
   setTimeout(attachJobTooltips,100);
 }
 
@@ -7107,6 +7322,41 @@ async function openJobModal(id){
   fillJobDropdowns();
   switchJobTab('details');
   const f=v=>document.getElementById(v);
+  // Restore draft if exists (only for new jobs)
+  if(!id){
+    const draft=localStorage.getItem('df_job_draft');
+    if(draft){try{const d=JSON.parse(draft);
+      if(d['jf-addr'])f('jf-addr').value=d['jf-addr'];
+      if(d['jf-ref'])f('jf-ref').value=d['jf-ref'];
+      if(d['jf-desc'])f('jf-desc').value=d['jf-desc'];
+      if(d['jf-time'])f('jf-time').value=d['jf-time'];
+      if(d['jf-eng'])f('jf-eng').value=d['jf-eng'];
+      if(d['jf-date'])f('jf-date').value=d['jf-date'];
+      if(d['jf-access'])f('jf-access').value=d['jf-access'];
+      if(d['jf-contact'])f('jf-contact').value=d['jf-contact'];
+      if(d['jf-hours'])f('jf-hours').value=d['jf-hours'];
+      if(d['jf-price'])f('jf-price').value=d['jf-price'];
+      if(d['jf-priority'])f('jf-priority').value=d['jf-priority'];
+      if(d['jf-status'])f('jf-status').value=d['jf-status'];
+      if(d['jf-notes'])f('jf-notes').value=d['jf-notes'];
+      if(d['jf-ll-name'])f('jf-ll-name').value=d['jf-ll-name'];
+      if(d['jf-ll-phone'])f('jf-ll-phone').value=d['jf-ll-phone'];
+      if(d['jf-ll-email'])f('jf-ll-email').value=d['jf-ll-email'];
+      if(d['jf-ll-addr'])f('jf-ll-addr').value=d['jf-ll-addr'];
+      if(d['jf-ll-wa'])f('jf-ll-wa').value=d['jf-ll-wa'];
+      if(d['jf-agency'])f('jf-agency').value=d['jf-agency'];
+      if(d['jf-agent'])f('jf-agent').value=d['jf-agent'];
+    }catch(e){}}
+    // Smart defaults
+    const now=new Date();
+    const hour=now.getHours();
+    const tomorrow=new Date(now);tomorrow.setDate(tomorrow.getDate()+1);
+    f('jf-date').value = hour>=16 ? tomorrow.toISOString().slice(0,10) : TODAY();
+    f('jf-status').value='Pending';
+    f('jf-priority').value='Normal';
+    // Default time slot from settings
+    f('jf-time').value=S.defTimeSlot||'9:00 AM – 5:00 PM';
+  }
   // Show CR banner if pre-filled from portal request
   const crBanner=document.getElementById('mo-job-cr-banner');
   if(!id && window._pendingCRNum){
@@ -7116,6 +7366,9 @@ async function openJobModal(id){
   } else {
     document.getElementById('mo-job-title').textContent=id?'✎ Edit Job':'+ New Job';
     if(crBanner) crBanner.style.display='none';
+    // Hide client rating panel for new jobs
+    const ratWrap=document.getElementById('jm-client-rating-wrap');
+    if(ratWrap){ratWrap.style.display='none';document.getElementById('jm-client-rating').innerHTML='';}
   }
   if(id){
     dGet('jobs',id).then(j=>{
@@ -7409,6 +7662,7 @@ async function saveJob(){
     if(j.status===STATUS.COMPLETED&&existingJob?.status!==STATUS.COMPLETED) onJobComplete(j);
     try{await logActivity((isNew?'Created':'Updated')+' job: '+j.address+' ('+jobNum+')','job');}catch(_){ /* intentional no-op */ }
     closeModal('mo-job');closeAddrDrop();closeAllAutofillDrops();
+    localStorage.removeItem('df_job_draft');
     renderJobs();updateBadges();
     toast((isNew?'Job saved · ':'Job updated · ')+jobNum,'success');
   }catch(err){
@@ -7792,7 +8046,9 @@ function fillLandlordFields(p){
   }
   const btn=document.getElementById('btn-wa-ll');
   if(btn)btn.style.display=p.wa?'':'none';
-  // Show star rating automatically when a client is matched
+  // Show star rating on the right-side panel when a client is matched
+  const ratWrap=document.getElementById('jm-client-rating-wrap');
+  if(ratWrap)ratWrap.style.display='block';
   _renderRatingStrip('jm-client-rating', p.name);
   toast(`Landlord auto-filled: ${p.name}`,'success');
 }
@@ -8055,11 +8311,11 @@ function buildJobWAMsg(jobs, engName){
 async function showWaPanel(){
   const panel=document.getElementById('wa-panel');
   const btn=document.getElementById('btn-wa-panel');
-  if(panel.style.display!=='none'){panel.style.display='none';btn.textContent='📱 Send to Engineer';return}
-  btn.textContent='✕ Close Panel';
+  if(panel.style.display!=='none'){panel.style.display='none';if(btn)btn.textContent='📱 Send to Engineer';return}
+  if(btn)btn.textContent='✕ Close Panel';
 
   const jobs=(await dAll('jobs')).filter(j=>j.date===jDate);
-  if(!jobs.length){toast('No jobs for this date','warn');panel.style.display='none';btn.textContent='📱 Send to Engineer';return}
+  if(!jobs.length){toast('No jobs for this date','warn');panel.style.display='none';if(btn)btn.textContent='📱 Send to Engineer';return}
 
   // Group by engineer
   const byEng={};
@@ -8315,7 +8571,7 @@ async function renderInvList(){
               🧾 Create Invoice${issues.length?' (as draft)':''}
             </button>
             <button class="btn btn-ghost btn-sm" onclick="openJobModal('${j.id}');event.stopPropagation()">✎ Open Job to Fix</button>
-            ${client?`<button class="btn btn-ghost btn-sm" onclick="nav('pg-persons');event.stopPropagation()">👤 View Client in Contacts</button>`:''}
+            ${client?`<button class="btn btn-ghost btn-sm" onclick="nav('dir');event.stopPropagation()">👤 View Client in Contacts</button>`:''}
           </div>
         </div>`;
       }).join('')}`;
@@ -12157,7 +12413,7 @@ async function renderCertDash(){
       const openJobs=(allJobsDb||[]).filter(j=>j.address&&j.address.toLowerCase().includes(key)&&(j.status===STATUS.PENDING||j.status===STATUS.IN_PROGRESS));
       // Next expiry
       const nextExp=pc.filter(c=>c.expiryDate&&daysDiff(c.expiryDate)>=0).sort((a,b)=>new Date(a.expiryDate)-new Date(b.expiryDate))[0];
-      return`<div onclick="nav('pg-props')" style="background:var(--s1);border:1px solid ${statusCol==='var(--txt3)'?'var(--border)':statusCol+'55'};border-left:3px solid ${statusCol};border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s1)'">
+      return`<div onclick="nav('props')" style="background:var(--s1);border:1px solid ${statusCol==='var(--txt3)'?'var(--border)':statusCol+'55'};border-left:3px solid ${statusCol};border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s1)'">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:6px">
           <div style="font-size:12px;font-weight:700;color:var(--txt1);line-height:1.3">${p.address||'—'}</div>
           <span style="font-size:14px;flex-shrink:0">${statusIco}</span>
@@ -13676,7 +13932,7 @@ async function _loadEngineerList() {
     const sel = document.getElementById('map-eng-sel');
     if (sel && _mapEngineers.length) {
       const cur = sel.value;
-      sel.innerHTML = '<option value="">All Engineers</option>' +
+      sel.innerHTML = '<option value="">Engineer</option>' +
         _mapEngineers.map(u => `<option value="${u.name}" ${u.name===cur?'selected':''}>${u.name}</option>`).join('');
     }
   } catch(e) { console.warn('Engineer list:', e); }
@@ -14243,10 +14499,10 @@ async function renderCmd(q){
 
   // Commands
   const cmds=[
-    {ico:'⊞',title:'New Job',sub:'Create a new job',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:jobs',()=>{openJobModal});nav('jobs')}},
-    {ico:'◎',title:'New Invoice',sub:'Create a new invoice',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openNewInvModal});nav('inv')}},
-    {ico:'↩',title:'Credit Note',sub:'Issue a credit note',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openCreditNoteModal});nav('inv')}},
-    {ico:'🧾',title:'Log Expense',sub:'Track material / fuel cost',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:exp',()=>{openExpenseModal});nav('exp')}},
+    {ico:'⊞',title:'New Job',sub:'Create a new job',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:jobs',()=>{openJobModal()});nav('jobs')}},
+    {ico:'◎',title:'New Invoice',sub:'Create a new invoice',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openNewInvModal()});nav('inv')}},
+    {ico:'↩',title:'Credit Note',sub:'Issue a credit note',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:inv',()=>{openCreditNoteModal()});nav('inv')}},
+    {ico:'🧾',title:'Log Expense',sub:'Track material / fuel cost',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:exp',()=>{openExpenseModal()});nav('exp')}},
     {ico:'◉',title:'Add Person',sub:'Add to directories',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:dir',()=>{openPersonModal()});nav('dir')}},
     {ico:'◈',title:'Add Certificate',sub:'Log a certificate',type:'Action',fn:()=>{closeModal('cmd-overlay');df.once('navDone:certs',()=>{openCertModal});nav('certs')}},
     {ico:'◈',title:'Dashboard',sub:'Go to dashboard',type:'Navigate',fn:()=>{closeModal('cmd-overlay');nav('dash')}},
@@ -14555,6 +14811,11 @@ document.addEventListener('click',e=>{
     const m=document.getElementById('user-menu');
     if(m) m.style.display='none';
   }
+  // Close jobs more menu when clicking outside
+  if(!e.target.closest('#jobs-more-menu')){
+    const dd=document.getElementById('jobs-more-dd');
+    if(dd)dd.style.display='none';
+  }
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -14813,25 +15074,47 @@ function _saveColState(){
 }
 
 // Build the CSS grid template string from current JOB_COLS pct values.
-// 20px = drag handle, 4px = status stripe, then each column as a percentage
-// of the remaining width. Address uses minmax so it absorbs rounding remainders.
-// Hidden columns collapse to 0px — their percentage is redistributed to address flex.
-function getColTemplate(){
-  return '20px 4px ' + JOB_COLS.map(c=>{
-    if(_hiddenCols.includes(c.key)) return '0px';
-    if(c.flex) return 'minmax('+c.minPct+'%,1fr)';
-    return 'minmax('+c.minPct+'%,'+c.pct+'%)';
-  }).join(' ');
+// prefix = header prefix ('20px 4px' for header, '18px 16px 3px' for rows)
+// Hidden columns collapse to 0px — their percentage is redistributed proportionally
+// to visible columns so the total always fills 100%.
+function getColTemplate(prefix){
+  prefix = prefix || '20px 4px';
+  const visible = JOB_COLS.filter(c => !_hiddenCols.includes(c.key));
+  const hasFlex = visible.some(c => c.flex);
+
+  // Calculate total pct of visible non-flex columns
+  const visibleNonFlexPct = visible.filter(c => !c.flex).reduce((s, c) => s + (c.pct || 0), 0);
+  const hiddenNonFlexPct = JOB_COLS.filter(c => _hiddenCols.includes(c.key) && !c.flex).reduce((s, c) => s + (c.pct || 0), 0);
+
+  // Scale factor: if columns are hidden, scale up remaining non-flex columns proportionally
+  // so they still fill the intended percentage of the remaining space
+  const scale = (visibleNonFlexPct > 0 && hiddenNonFlexPct > 0) ? (visibleNonFlexPct + hiddenNonFlexPct) / visibleNonFlexPct : 1;
+
+  let html = prefix + ' ';
+  JOB_COLS.forEach(c => {
+    if(_hiddenCols.includes(c.key)){ html += '0px '; return; }
+    if(c.flex && hasFlex){
+      // Flex column: minmax with minPct% lower bound, 1fr upper bound — absorbs hidden space
+      html += 'minmax(40px, 1fr) ';
+    }else{
+      // Scale the pct proportionally if columns were hidden, then cap with minmax
+      const scaledPct = Math.round(((c.pct || 0) * scale) * 10) / 10;
+      const finalPct = Math.max(c.minPct || 3, scaledPct);
+      html += 'minmax(40px, ' + finalPct + '%) ';
+    }
+  });
+  return html.trim();
 }
 
 // Rebuild the sticky header from scratch so it always matches JOB_COLS exactly
 function renderJobsHeader(){
   const hd = document.getElementById('jobs-col-hd');
   if(!hd) return;
-  const t = getColTemplate();
+  // Header prefix: 34px (drag+sel combined) + 3px (stripe) = 37px, same as row prefix
+  const t = getColTemplate('34px 3px');
   hd.style.gridTemplateColumns = t;
 
-  // Drag handle + stripe placeholders
+  // Drag+sel combined placeholder + stripe placeholder
   let html = '<div></div><div></div>';
 
   JOB_COLS.forEach((c, i) => {
@@ -14862,22 +15145,25 @@ function renderJobsHeader(){
 }
 
 // Apply template + visibility to all rows without rebuilding header
+// Header uses '20px 4px' prefix (drag placeholder + stripe placeholder)
+// Rows use '18px 16px 3px' prefix (drag handle + sel-check + stripe)
 function applyColTemplate(){
-  const t = getColTemplate();
+  const hdT = getColTemplate('34px 3px');   // header: drag+sel combined (34px) + stripe (3px) = 37px
+  const rowT = getColTemplate('18px 16px 3px'); // rows: drag (18px) + sel-check (16px) + stripe (3px) = 37px
+
   // Header
   const hd = document.getElementById('jobs-col-hd');
   if(hd){
-    hd.style.gridTemplateColumns = t;
+    hd.style.gridTemplateColumns = hdT;
     hd.querySelectorAll('[data-hd-col]').forEach(cell=>{
       cell.style.display = _hiddenCols.includes(cell.dataset.hdCol) ? 'none' : 'flex';
     });
   }
-  // Rows
+  // Rows — use data-col attributes for robust cell lookup
   document.querySelectorAll('.jsr3').forEach(row=>{
-    row.style.gridTemplateColumns = t;
-    JOB_COLS.forEach((c,i)=>{
-      const cell = row.children[i+3]; // offset by drag handle + stripe + engineer bar
-      if(cell) cell.style.display = _hiddenCols.includes(c.key) ? 'none' : '';
+    row.style.gridTemplateColumns = rowT;
+    row.querySelectorAll('[data-col]').forEach(cell=>{
+      cell.style.display = _hiddenCols.includes(cell.dataset.col) ? 'none' : '';
     });
   });
 }
@@ -14918,7 +15204,25 @@ function showColMenu(e){
   menu.style.left = Math.max(4, r.right - 200)+'px';
   menu.style.top  = (r.bottom + 4)+'px';
   document.body.appendChild(menu);
-  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),50);
+  // Close on click outside, NOT on clicks inside the menu (so checkboxes work)
+  setTimeout(()=>{
+    const closeMenu = (ev)=>{
+      if(!menu.contains(ev.target)){
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      }
+    };
+    document.addEventListener('click', closeMenu);
+  },50);
+}
+
+// Wrapper called from the "⊞ Choose Columns" ☰ dropdown item
+function toggleColPicker(){
+  // Find the ☰ menu button as the anchor (since we're calling from the dropdown)
+  const menuBtn = document.querySelector('#jobs-more-menu > button');
+  if(menuBtn){
+    showColMenu({target: menuBtn, stopPropagation: ()=>{}, clientX: 0, clientY: 0});
+  }
 }
 
 function resetColWidths(){
@@ -15065,184 +15369,216 @@ function initScrollListDrag(){
     document.body.appendChild(_dragIndicator);
   }
 
+  // Auto-scroll zones
+  let _scrollZoneUp=null,_scrollZoneDown=null,_scrollInterval=null,_scrollSpeed=0;
+  function _ensureScrollZones(){
+    if(_scrollZoneUp)return;
+    _scrollZoneUp=document.createElement('div');_scrollZoneUp.className='jsr-scroll-zone up';
+    _scrollZoneDown=document.createElement('div');_scrollZoneDown.className='jsr-scroll-zone down';
+    document.body.appendChild(_scrollZoneUp);document.body.appendChild(_scrollZoneDown);
+  }
+  function _startAutoScroll(direction,speed){
+    _stopAutoScroll();
+    _scrollInterval=setInterval(()=>{
+      const pane=document.getElementById('jobs-list-pane');
+      if(pane)pane.scrollTop+=direction*speed;
+    },16);
+  }
+  function _stopAutoScroll(){if(_scrollInterval){clearInterval(_scrollInterval);_scrollInterval=null;}}
+  function _updateScrollZones(cy){
+    _ensureScrollZones();
+    const pane=document.getElementById('jobs-list-pane');
+    if(!pane)return;
+    const rect=pane.getBoundingClientRect();
+    const zone=60;
+    if(cy<rect.top+zone&&cy>rect.top){
+      _scrollZoneUp.classList.add('active');_scrollZoneDown.classList.remove('active');
+      const speed=Math.max(3,Math.round((rect.top+zone-cy)/4));
+      if(_scrollSpeed!==-speed){_scrollSpeed=-speed;_startAutoScroll(-1,speed);}
+    }else if(cy>rect.bottom-zone&&cy<rect.bottom){
+      _scrollZoneUp.classList.remove('active');_scrollZoneDown.classList.add('active');
+      const speed=Math.max(3,Math.round((cy-(rect.bottom-zone))/4));
+      if(_scrollSpeed!==speed){_scrollSpeed=speed;_startAutoScroll(1,speed);}
+    }else{
+      _scrollZoneUp.classList.remove('active');_scrollZoneDown.classList.remove('active');
+      _stopAutoScroll();_scrollSpeed=0;
+    }
+  }
+
   // Stored drop targets — set during dragover, read at drop time.
-  // Much more reliable than elementFromPoint() which can mis-hit after
-  // DOM style changes during the drop event itself.
-  let _dropTargetRow  = null; // the .jsr3 row the user is hovering
-  let _dropTargetDate = null; // the date string from a date-group header
-  let _insertAfter    = false;
-  let _rafPending     = false;
-  let _lastHovered    = null; // dedup dragover work
+  let _dropTargetRow=null,_dropTargetDate=null,_insertAfter=false,_rafPending=false,_lastHovered=null;
 
   function _clearDragState(){
     document.querySelectorAll('.jsr3.dragging,.jsr3.drag-over').forEach(r=>r.classList.remove('dragging','drag-over'));
     document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
-    _dragIndicator.style.display='none';
-    _dropTargetRow=null; _dropTargetDate=null; _insertAfter=false;
-    _lastHovered=null; _rafPending=false;
+    if(_dragIndicator)_dragIndicator.style.display='none';
+    _dropTargetRow=null;_dropTargetDate=null;_insertAfter=false;_lastHovered=null;_rafPending=false;
+    _stopAutoScroll();_scrollSpeed=0;
+    if(_scrollZoneUp)_scrollZoneUp.classList.remove('active');
+    if(_scrollZoneDown)_scrollZoneDown.classList.remove('active');
   }
 
   scroll.addEventListener('dragstart',e=>{
-    // GUARD: only allow drag from the ⠿ handle — not from address/desc/status cells
-    // Without this guard, slow clicks on any cell trigger phantom drags that
-    // corrupt _slDragSrc and break all subsequent real drags until page refresh
-    if(!e.target.closest('.jsr-drag-handle')) {
-      e.preventDefault();
-      return;
-    }
+    if(!e.target.closest('.jsr-drag-handle')){e.preventDefault();return;}
     const row=e.target.closest('.jsr3[data-id]');
-    if(!row) return;
+    if(!row)return;
     _slDragSrc=row;
     _clearDragState();
     setTimeout(()=>row.classList.add('dragging'),0);
     e.dataTransfer.effectAllowed='move';
     e.dataTransfer.setData('text/plain',row.dataset.id);
 
-    // Custom ghost image — a clean small pill instead of the whole 900px row
-    // The default browser ghost renders the full row as a blurry screenshot
-    // which is the "text sticking to cursor" issue
+    // Multi-drag: if this row is selected along with others, drag them all
+    const selCount=selJobs.size;
+    const isMulti=selCount>1&&selJobs.has(row.dataset.id);
     try{
       const jobNum=row.querySelector('.jsr3-jobnum')?.textContent||'Job';
       const ghost=document.createElement('div');
-      ghost.textContent='↕ '+jobNum;
-      ghost.style.cssText='position:fixed;top:-999px;left:-999px;padding:4px 10px;background:var(--acc);color:#fff;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--fm);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);pointer-events:none';
+      ghost.className='jsr3-ghost';
+      ghost.textContent=isMulti?'↕ Moving '+selCount+' jobs':'↕ '+jobNum;
       document.body.appendChild(ghost);
       e.dataTransfer.setDragImage(ghost,0,0);
       setTimeout(()=>ghost.remove(),0);
-    }catch(_){ /* fallback to browser default */ }
+    }catch(_){}
   });
 
   scroll.addEventListener('dragover',e=>{
     e.preventDefault();
     e.dataTransfer.dropEffect='move';
-    if(_rafPending) return;
+    if(_rafPending)return;
     _rafPending=true;
-    // Capture coordinates NOW before rAF (e properties go stale)
-    const cy=e.clientY;
-    const target=e.target;
+    const cy=e.clientY,target=e.target;
     requestAnimationFrame(()=>{
       _rafPending=false;
-      if(_lastHovered===target) return; // nothing changed — skip all DOM work
+      if(_lastHovered===target)return;
       _lastHovered=target;
+
+      // Auto-scroll check
+      _updateScrollZones(cy);
 
       const grpHd=target.closest('.jsg-hd[data-date-group]');
       const row=target.closest('.jsr3[data-id]');
 
-      // Clear previous highlights
       document.querySelectorAll('.jsr3.drag-over').forEach(r=>r.classList.remove('drag-over'));
       document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
-      _dragIndicator.style.display='none';
+      if(_dragIndicator)_dragIndicator.style.display='none';
 
       if(grpHd){
-        // Hovering a date-group header
-        _dropTargetDate=grpHd.dataset.dateGroup;
-        _dropTargetRow=null;
-        grpHd.style.background='rgba(245,166,35,.09)';
-        grpHd.dataset.dragTarget='1';
-      } else if(row && row!==_slDragSrc){
-        // Hovering a job row — this handles BOTH same-day and cross-day drops
-        _dropTargetDate=null;
-        _dropTargetRow=row;
+        _dropTargetDate=grpHd.dataset.dateGroup;_dropTargetRow=null;
+        grpHd.style.background='rgba(245,166,35,.09)';grpHd.dataset.dragTarget='1';
+      }else if(row&&row!==_slDragSrc){
+        _dropTargetDate=null;_dropTargetRow=row;
         row.classList.add('drag-over');
         const rect=row.getBoundingClientRect();
         _insertAfter=cy>rect.top+rect.height/2;
-        _dragIndicator.style.top=(_insertAfter?rect.bottom:rect.top)+'px';
-        // Constrain indicator to the list pane — not full viewport width
-        const pane=document.getElementById('jobs-list-scroll');
-        const paneRect=pane?pane.getBoundingClientRect():{left:16,right:window.innerWidth-16};
-        _dragIndicator.style.left=(paneRect.left+8)+'px';
-        _dragIndicator.style.right=(window.innerWidth-paneRect.right+8)+'px';
-        _dragIndicator.style.width='auto';
-        _dragIndicator.style.display='block';
-      } else {
-        // Hovering gap/padding — keep last known targets
+        if(_dragIndicator){
+          _dragIndicator.style.top=(_insertAfter?rect.bottom:rect.top)+'px';
+          const pane=document.getElementById('jobs-list-scroll');
+          const paneRect=pane?pane.getBoundingClientRect():{left:16,right:window.innerWidth-16};
+          _dragIndicator.style.left=(paneRect.left+8)+'px';
+          _dragIndicator.style.right=(window.innerWidth-paneRect.right+8)+'px';
+          _dragIndicator.style.width='auto';_dragIndicator.style.display='block';
+        }
       }
     });
   });
 
   scroll.addEventListener('dragleave',e=>{
-    if(scroll.contains(e.relatedTarget)) return;
+    if(scroll.contains(e.relatedTarget))return;
     _clearDragState();
-    _dragOverDate=null;
   });
 
   scroll.addEventListener('drop',async e=>{
     e.preventDefault();
-
+    _stopAutoScroll();
     const srcId=_slDragSrc?.dataset.id;
+    const isMultiDrag=selJobs.size>1&&selJobs.has(srcId);
     _slDragSrc=null;
-    // Snapshot targets before clearing
-    const dropDate=_dropTargetDate;
-    const dropRow=_dropTargetRow;
-    const insertAfter=_insertAfter;
+    const dropDate=_dropTargetDate,dropRow=_dropTargetRow,insertAfter=_insertAfter;
     _clearDragState();
-    _dragOverDate=null;
+    if(!srcId)return;
 
-    if(!srcId) return;
-    // Use _jobRowData (populated every render) not _jobCache (can be null when poll fires mid-drag)
-    const src=_jobRowData[srcId];
-    if(!src){ console.warn('[DeepFlow] drop: job not found',srcId); return; }
-
-    const now=Date.now();
-
-    // ── CASE A: dropped on a date-group header ──
-    if(dropDate && dropDate!==src.date){
-      src.date=dropDate; src.modified=now;
-      _jobRowData[srcId]=src; // keep _jobRowData in sync
-      toast(`📅 Moved to ${dropDate}`,'success',2000);
-      renderJobs();
-      _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:dropDate,modified:now},prefer:'return=minimal'})
-        .catch(err=>{console.warn('[DeepFlow] date move failed',err);src.date=src.date;_invalidateJobCache();renderJobs();});
-      return;
-    }
-
-    // ── CASE B: dropped on a job row ──
-    if(!dropRow){ renderJobs(); return; }
-    const tgtId=dropRow.dataset.id;
-    if(!tgtId || tgtId===srcId){ renderJobs(); return; }
-    const tgt=_jobRowData[tgtId];
-    if(!tgt){ console.warn('[DeepFlow] drop: tgt not found',tgtId); return; }
-
-    if(src.date!==tgt.date){
-      // Cross-day: move src to tgt's date
-      src.date=tgt.date; src.modified=now;
-      _jobRowData[srcId]=src; // keep _jobRowData in sync
-      toast(`📅 Moved to ${tgt.date}`,'success',2000);
-      renderJobs();
-      _sb(`jobs?id=eq.${encodeURIComponent(srcId)}`,{method:'PATCH',body:{date:tgt.date,modified:now},prefer:'return=minimal'})
-        .catch(err=>{console.warn('[DeepFlow] cross-day failed',err);_invalidateJobCache();renderJobs();});
-      return;
-    }
-
-    // Same-day reorder — use full date group from cache (not filtered DOM)
-    const fullGroup=Object.values(_jobRowData)
-      .filter(j=>j.date===src.date)
-      .sort((a,b)=>{
+    // Multi-drop: move all selected jobs
+    if(isMultiDrag){
+      const ids=[...selJobs];
+      if(dropDate){
+        ids.forEach(id=>{const j=_jobRowData[id];if(j){j.date=dropDate;j.modified=Date.now();}});
+        toast('📅 Moved '+ids.length+' jobs to '+dropDate,'success',2000);
+        renderJobs();
+        Promise.all(ids.map(id=>_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{date:dropDate,modified:Date.now()},prefer:'return=minimal'}))).catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
+        clearSel();return;
+      }
+      if(!dropRow)return;
+      const tgtId=dropRow.dataset.id;
+      if(!tgtId||tgtId===srcId){renderJobs();return;}
+      const tgt=_jobRowData[tgtId];
+      if(!tgt){renderJobs();return;}
+      // Cross-day multi-drop
+      const src=_jobRowData[srcId];
+      if(src&&src.date!==tgt.date){
+        ids.forEach(id=>{const j=_jobRowData[id];if(j){j.date=tgt.date;j.modified=Date.now();}});
+        toast('📅 Moved '+ids.length+' jobs to '+tgt.date,'success',2000);
+        renderJobs();
+        Promise.all(ids.map(id=>_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{date:tgt.date,modified:Date.now()},prefer:'return=minimal'}))).catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
+        clearSel();return;
+      }
+      // Same-day multi-reorder
+      const fullGroup=Object.values(_jobRowData).filter(j=>j.date===tgt.date).sort((a,b)=>{
         const ao=a._sortOrder||0,bo=b._sortOrder||0;
-        return (ao||bo)?ao-bo:(a.created||0)-(b.created||0);
+        return(ao||bo)?ao-bo:(a.created||0)-(b.created||0);
       });
+      const blockIds=ids.filter(id=>_jobRowData[id]&&_jobRowData[id].date===tgt.date);
+      const otherIds=fullGroup.map(j=>j.id).filter(id=>!blockIds.includes(id));
+      const tgtPos=otherIds.indexOf(tgtId);
+      if(tgtPos===-1){renderJobs();return;}
+      otherIds.splice(insertAfter?tgtPos+1:tgtPos,0,...blockIds);
+      const saves=[];
+      otherIds.forEach((id,i)=>{const j=_jobRowData[id];if(!j)return;const newOrd=(i+1)*1000;if(j._sortOrder===newOrd)return;j._sortOrder=newOrd;j.modified=Date.now();saves.push(_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{sortorder:newOrd,modified:Date.now()},prefer:'return=minimal'}));});
+      toast('↕ Reordered '+ids.length+' jobs','success',1500);
+      renderJobs();Promise.all(saves).catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
+      clearSel();return;
+    }
+
+    // Single drop (original logic)
+    const src=_jobRowData[srcId];
+    if(!src){console.warn('[DeepFlow] drop: job not found',srcId);return;}
+    const now=Date.now();
+    if(dropDate&&dropDate!==src.date){
+      src.date=dropDate;src.modified=now;_jobRowData[srcId]=src;
+      toast('📅 Moved to '+dropDate,'success',2000);renderJobs();
+      _sb('jobs?id=eq.'+encodeURIComponent(srcId),{method:'PATCH',body:{date:dropDate,modified:now},prefer:'return=minimal'})
+        .catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
+      return;
+    }
+    if(!dropRow){renderJobs();return;}
+    const tgtId=dropRow.dataset.id;
+    if(!tgtId||tgtId===srcId){renderJobs();return;}
+    const tgt=_jobRowData[tgtId];
+    if(!tgt){console.warn('[DeepFlow] drop: tgt not found',tgtId);return;}
+    if(src.date!==tgt.date){
+      src.date=tgt.date;src.modified=now;_jobRowData[srcId]=src;
+      toast('📅 Moved to '+tgt.date,'success',2000);renderJobs();
+      _sb('jobs?id=eq.'+encodeURIComponent(srcId),{method:'PATCH',body:{date:tgt.date,modified:now},prefer:'return=minimal'})
+        .catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
+      return;
+    }
+    const fullGroup=Object.values(_jobRowData).filter(j=>j.date===src.date).sort((a,b)=>{
+      const ao=a._sortOrder||0,bo=b._sortOrder||0;
+      return(ao||bo)?ao-bo:(a.created||0)-(b.created||0);
+    });
     const fullIds=fullGroup.map(j=>j.id);
     const withoutSrc=fullIds.filter(id=>id!==srcId);
     const tgtPos=withoutSrc.indexOf(tgtId);
-    if(tgtPos===-1){ renderJobs(); return; }
+    if(tgtPos===-1){renderJobs();return;}
     withoutSrc.splice(insertAfter?tgtPos+1:tgtPos,0,srcId);
-
-    const cacheMap=_jobRowData; // already keyed by id
     const saves=[];
-    withoutSrc.forEach((id,i)=>{
-      const j=cacheMap[id]; if(!j) return;
-      const newOrd=(i+1)*1000;
-      if(j._sortOrder===newOrd) return;
-      j._sortOrder=newOrd; j.modified=now;
-      saves.push(_sb(`jobs?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',body:{sortorder:newOrd,modified:now},prefer:'return=minimal'}));
-    });
-    toast('↕ Order saved','success',800);
-    renderJobs();
-    Promise.all(saves).catch(err=>{console.warn('[DeepFlow] reorder failed',err);_invalidateJobCache();renderJobs();});
+    withoutSrc.forEach((id,i)=>{const j=_jobRowData[id];if(!j)return;const newOrd=(i+1)*1000;if(j._sortOrder===newOrd)return;j._sortOrder=newOrd;j.modified=now;saves.push(_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{sortorder:newOrd,modified:now},prefer:'return=minimal'}));});
+    toast('↕ Order saved','success',800);renderJobs();
+    Promise.all(saves).catch(err=>{console.warn(err);_invalidateJobCache();renderJobs();});
   });
 
-  scroll.addEventListener('dragend',()=>{ _clearDragState(); _slDragSrc=null; _dragOverDate=null; });
-  requestAnimationFrame(()=>{ renderJobsHeader(); applyColTemplate(); });
+  scroll.addEventListener('dragend',()=>{_stopAutoScroll();_clearDragState();_slDragSrc=null;});
+  requestAnimationFrame(()=>{renderJobsHeader();applyColTemplate();});
 }
 
 
@@ -15426,6 +15762,7 @@ window.addEventListener('beforeunload', e=>{
 });
 
 async function startLivePoll(){
+  if(_rtConnected) return; // Realtime is active — no need to poll
   if(_notifPollInterval) clearInterval(_notifPollInterval);
   // Seed initial state — just grab the sentinel, no full fetch
   try{
@@ -15443,6 +15780,7 @@ async function startLivePoll(){
 }
 
 async function _pollTick(){
+  if(_rtConnected) return; // Realtime handles updates
   if(!navigator.onLine){ _setOffline(); return; }
   _setSyncing();
   try{
@@ -15506,6 +15844,206 @@ async function _pollTick(){
     else _setLiveBadge('offline','Sync error — retrying');
   }
 }
+
+// ══════════════════════════════════════════════════════════════
+//  SUPABASE REALTIME — live sync for multi-user collaboration
+//  Replaces polling with WebSocket for sub-second updates
+// ══════════════════════════════════════════════════════════════
+let _rtChannel = null;
+let _rtConnected = false;
+let _rtReconnectTimer = null;
+
+// Start Realtime (call this after login)
+function startRealtimeSync(){
+  if(!_supaAuth) return;
+  if(_rtChannel) { try{_rtChannel.unsubscribe();}catch(e){} }
+
+  _rtChannel = _supaAuth
+    .channel('jobs-realtime')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'jobs'
+    }, payload => {
+      handleRealtimeChange(payload);
+    })
+    .subscribe((status, err) => {
+      if(status === 'SUBSCRIBED') {
+        _rtConnected = true;
+        _setLiveBadge('live','Real-time');
+        console.log('[DeepFlow] Realtime connected');
+        // Stop polling — Realtime is active
+        if(_notifPollInterval) { clearInterval(_notifPollInterval); _notifPollInterval = null; }
+      } else if(status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+        _rtConnected = false;
+        console.warn('[DeepFlow] Realtime disconnected:', err);
+        _setLiveBadge('offline','Reconnecting…');
+        // Fall back to polling
+        startLivePoll();
+        // Try to reconnect in 10 seconds
+        if(_rtReconnectTimer) clearTimeout(_rtReconnectTimer);
+        _rtReconnectTimer = setTimeout(startRealtimeSync, 10000);
+      }
+    });
+}
+
+// Handle incoming real-time changes
+async function handleRealtimeChange(payload){
+  const { eventType, new: newRow, old: oldRow } = payload;
+
+  if(eventType === 'INSERT') {
+    const job = _fix(newRow);
+    _jobRowData[job.id] = job;
+    // Add to cache
+    if(_jobCache) { _jobCache.push(job); _pollKnownJobs[job.id] = job.status; }
+    _pushNotif('New job added', `${job.jobNum||''} ${job.address||''}`.trim(), '\u2795', ()=>{ openJobModal(job.id); showPage('jobs'); });
+    // Only re-render if we're on the jobs page and the date range includes this job
+    const jobsPage = document.getElementById('pg-jobs');
+    if(jobsPage && jobsPage.classList.contains('active')) {
+      renderJobs();
+    }
+    return;
+  }
+
+  if(eventType === 'DELETE') {
+    const id = oldRow?.id;
+    if(!id) return;
+    delete _jobRowData[id];
+    if(_jobCache) _jobCache = _jobCache.filter(j => j.id !== id);
+    delete _pollKnownJobs[id];
+    // Remove from DOM with animation
+    const row = document.querySelector(`.jsr3[data-id="${id}"]`);
+    if(row) {
+      row.style.transition = 'all .3s ease';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(-20px)';
+      setTimeout(() => row.remove(), 300);
+    }
+    return;
+  }
+
+  if(eventType === 'UPDATE') {
+    const id = newRow?.id;
+    if(!id) return;
+    const job = _fix(newRow);
+    const prev = _jobRowData[id];
+    _jobRowData[id] = job;
+    if(_jobCache) {
+      const idx = _jobCache.findIndex(j => j.id === id);
+      if(idx >= 0) _jobCache[idx] = job;
+    }
+    _pollKnownJobs[id] = job.status;
+
+    // Conflict detection: someone else updated a job we're editing
+    if(editJid === id) {
+      toast('\u26a0\ufe0f This job was updated by another user. Save carefully to avoid overwriting their changes.', 'warn', 8000);
+      // Flash the modal border
+      const mo = document.getElementById('mo-job');
+      if(mo) { mo.style.boxShadow = '0 0 0 3px rgba(245,166,35,.5)'; setTimeout(()=>mo.style.boxShadow='',3000); }
+      return;
+    }
+
+    // Smart in-place DOM update — only re-render the changed row
+    const updatedFields = getChangedFields(prev, job);
+    if(updatedFields.length === 0) return; // nothing visual changed
+
+    const row = document.querySelector(`.jsr3[data-id="${id}"]`);
+    if(row && updatedFields.length <= 3) {
+      // Small change — update in-place without full re-render
+      updateRowInPlace(row, prev, job, updatedFields);
+    } else {
+      // Big change (date moved, etc.) — need full re-render
+      const jobsPage = document.getElementById('pg-jobs');
+      if(jobsPage && jobsPage.classList.contains('active')) {
+        // Preserve scroll position
+        const pane = document.getElementById('jobs-list-pane');
+        const scrollTop = pane ? pane.scrollTop : 0;
+        renderJobs();
+        if(pane) pane.scrollTop = scrollTop;
+      }
+    }
+
+    // Notification for status changes
+    if(prev && prev.status !== job.status) {
+      const icon = {[STATUS.COMPLETED]:'\u2705',[STATUS.IN_PROGRESS]:'\ud83d\udd28',[STATUS.INVOICED]:'\u25ce',[STATUS.PENDING]:'\u23f3'}[job.status]||'\ud83d\udd14';
+      _pushNotif(`Job updated — ${job.status}`, `${job.jobNum||''} ${job.address||''}`.trim(), icon, ()=>{ openJobModal(job.id); showPage('jobs'); });
+    }
+
+    // Notification for priority changes
+    if(prev && prev.priority !== job.priority) {
+      _pushNotif(`Priority changed — ${job.priority||'Normal'}`, `${job.jobNum||''} ${job.address||''}`.trim(), '\ud83d\udd14', ()=>{ openJobModal(job.id); showPage('jobs'); });
+    }
+  }
+}
+
+// Compare two job objects and return list of changed field names
+function getChangedFields(prev, curr){
+  if(!prev || !curr) return ['all'];
+  const fields = ['status','priority','date','engineer','timeSlot','address','price','description','jobNum'];
+  return fields.filter(f => prev[f] !== curr[f]);
+}
+
+// Update a single row in-place without re-rendering the entire list
+function updateRowInPlace(row, prev, job, changedFields){
+  // Priority change — update CSS class with smooth transition
+  if(changedFields.includes('priority')) {
+    row.classList.remove('jsr-cert','jsr-repair','jsr-urg','jsr-emg','jsr-normal','jsr-low');
+    const priMap = {'Certificate':'jsr-cert','Repair':'jsr-repair','Urgent':'jsr-urg','Emergency':'jsr-emg','Normal':'jsr-normal','Low':'jsr-low'};
+    if(priMap[job.priority||'Normal']) row.classList.add(priMap[job.priority||'Normal']);
+    row.style.transition = 'background .4s ease, border-left-color .4s ease';
+    // Brief flash to draw attention
+    row.style.boxShadow = 'inset 0 0 20px rgba(245,166,35,.15)';
+    setTimeout(() => row.style.boxShadow = '', 1500);
+  }
+
+  // Status change — update status stripe + dropdown
+  if(changedFields.includes('status')) {
+    const stripe = row.querySelector('.jsr-stripe');
+    if(stripe) {
+      stripe.className = 'jsr-stripe';
+      const sc = {'Pending':'jsr-stripe-pending','In Progress':'jsr-stripe-progress','Completed':'jsr-stripe-done','Invoiced':'jsr-stripe-invoiced','Cannot Access':'jsr-stripe-noaccess','Cancelled':'jsr-stripe-cancelled','Emergency':'jsr-stripe-emg'}[job.status]||'jsr-stripe-pending';
+      stripe.classList.add(sc);
+    }
+    // Update status dropdown
+    const sel = row.querySelector('.jsr-sel');
+    if(sel) sel.value = job.status;
+  }
+
+  // Engineer change — update engineer cell + colour bar
+  if(changedFields.includes('engineer')) {
+    const engCell = row.querySelector('.jsr3-cell-eng');
+    if(engCell) {
+      const palette=['#a855f7','#14b8a6','#f97316','#4f8fff','#22c55e','#e05252','#f5a623','#ec4899','#06b6d4'];
+      const engs=(S.engineers||[]);
+      const idx=engs.findIndex(e=>e.name===job.engineer);
+      const col=palette[idx>=0?idx%palette.length:Math.abs((job.engineer||' ').charCodeAt(0))%palette.length];
+      engCell.innerHTML = job.engineer ? `<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0"></span>${job.engineer}</span>` : '\u2014';
+    }
+  }
+
+  // Time slot change
+  if(changedFields.includes('timeSlot')) {
+    const timeCell = row.querySelector('.jsr3-cell-time span');
+    if(timeCell) timeCell.textContent = job.timeSlot || '\u2014';
+  }
+
+  // Price change
+  if(changedFields.includes('price')) {
+    const priceCell = row.querySelector('.jsr3-cell-price span');
+    if(priceCell) priceCell.textContent = job.price ? `\u00a3${Number(job.price).toFixed(0)}` : '\u2014';
+  }
+}
+
+// Refresh when returning to tab after being away
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden && _rtConnected) {
+    // Quick cache refresh to catch any missed updates
+    _invalidateJobCache();
+    if(document.getElementById('pg-jobs')?.classList.contains('active')) {
+      renderJobs();
+    }
+  }
+});
 
 
 let editPropId=null;
@@ -15599,8 +16137,8 @@ async function renderProps(){
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">
         <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openPropModal('${p.id}');hidePropPopup()">✎ Edit Property</button>
-        <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="nav('pg-jobs');hidePropPopup()">⊞ View All Jobs</button>
-        <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="nav('pg-certs');hidePropPopup()">📋 View Certs</button>
+        <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="nav('jobs');hidePropPopup()">⊞ View All Jobs</button>
+        <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="nav('certs');hidePropPopup()">📋 View Certs</button>
         <button class="btn btn-acc btn-sm" style="font-size:11px" onclick="openJobModal();hidePropPopup()">+ Add Job</button>
       </div>
     </div>`;
@@ -16174,7 +16712,7 @@ async function openBroadcast(){
   // Populate engineer targets
   const sel=document.getElementById('bc-target');
   if(sel){
-    sel.innerHTML='<option value="all">All Engineers</option>'+
+    sel.innerHTML='<option value="all">Engineer</option>'+
       (S.engineers||[]).map(e=>`<option value="${e.name}">${e.name}</option>`).join('');
   }
   document.getElementById('bc-title').value='';
@@ -17464,7 +18002,7 @@ async function renderExpenses(){
   const engSel = document.getElementById('exp-filter-eng');
   if(engSel){
     const cv = engSel.value;
-    engSel.innerHTML = '<option value="">All Engineers</option>' + (S.engineers||[]).map(e=>`<option ${e.name===cv?'selected':''}>${e.name}</option>`).join('');
+    engSel.innerHTML = '<option value="">Engineer</option>' + (S.engineers||[]).map(e=>`<option ${e.name===cv?'selected':''}>${e.name}</option>`).join('');
   }
 
   let exps = await dAll('expenses');
@@ -17769,6 +18307,7 @@ function toggleTheme() {
   S.theme = next;
   saveSetting('theme', next);
   applyTheme(next);
+  document.getElementById('theme-icon').textContent = document.body.classList.contains('theme-dark') ? '☀️' : '🌙';
 }
 
 function setTheme(t) {
@@ -17999,6 +18538,7 @@ function showJobsSkeleton(){
         if(overlay)overlay.style.display='none';
         await init();
         applyUserPermissions();
+        startRealtimeSync();
         setTimeout(async()=>{
           try{await loadSettings();renderDash();updateBadges();}catch(e){console.warn('[DeepFlow]',e);}
         },800);
@@ -18883,15 +19423,4 @@ async function showClientCreditCheck(clientName){
       if(overdue.length>0)warnings.push(`${overdue.length} invoice${overdue.length>1?'s':''} overdue`);
       if(daysSinceLast>90)warnings.push(`No payment for ${daysSinceLast} days`);
       document.getElementById('credit-warning').style.display='block';
-      document.getElementById('credit-warning').innerHTML=`⚠️ WARNING: ${warnings.join(', ')}. Contact finance team before proceeding.`;
-    }else{
-      document.getElementById('credit-warning').style.display='none';
-    }
-  }catch(err){
-    console.error('Credit check error:',err);
-  }
-}
-
-</script>
-</body>
-</html>
+   
