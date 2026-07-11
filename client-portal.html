@@ -1562,8 +1562,7 @@ function vRequest(d){
             <input class="fi" id="ra" placeholder=" " required value="${_renewalData?.address||''}">
             <label class="fl">Property Address <span style="color:var(--danger)">*</span></label>
           </div>
-          <div class="fgrid fgrid-2">
-            <div class="fg">
+          <div class="fg">
               <select class="fi" id="rs" required>
                 <option value="" disabled selected></option>
                 <optgroup label="Gas">
@@ -1583,16 +1582,6 @@ function vRequest(d){
                 <option>Other (describe below)</option>
               </select>
               <label class="fl">Job Type <span style="color:var(--danger)">*</span></label>
-            </div>
-            <div class="fg">
-              <select class="fi" id="rp">
-                <option>Normal — Standard</option>
-                <option>Low — Routine</option>
-                <option>High — Urgent</option>
-                <option>Emergency — Same day</option>
-              </select>
-              <label class="fl">Priority</label>
-            </div>
           </div>
           <div class="fgrid fgrid-2">
             <div class="fg">
