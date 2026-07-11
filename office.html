@@ -6258,6 +6258,7 @@ async function renderJobs(){
         <!-- COL 1: Job # + priority pill -->
         <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
           ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
+          ${(()=>{const m=(j.notes||'').match(/Portal Request: (CR-\d+)/);return m?`<span style="font-size:8px;font-weight:700;color:#0ea5e9;background:rgba(14,165,233,.12);padding:1px 5px;border-radius:4px;display:block;margin-top:2px;font-family:monospace">${m[1]}</span>`:''})()}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
           ${isUnconfirmed?`<span class="jsr-unconfirmed">⏳ Unconfirmed</span>`:''}
         </div>
@@ -12611,11 +12612,15 @@ function _renderReqCard(r){
   const isPending = r.status==='pending';
   const isRejected = r.status==='rejected';
   const isJobCreated = r.status==='job_created';
-  const statusCol={pending:'#f59e0b',approved:'#15803d',rejected:'#b91c1c',job_created:'#a855f7'}[r.status]||'#94a3b8';
-  const statusLabel={pending:'⏳ Pending',approved:'✅ Approved',rejected:'❌ Rejected',job_created:'📋 Job Created'}[r.status]||r.status;
-  const typeLabel = isPortal ? '🏠 Client Portal Request' : r.type==='overtime'?'🕐 Overtime':r.type==='leave'?'🏖 Leave':'📝 Engineer Request';
-  const dt = r.created?new Date(r.created*1000).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+  const statusCol={pending:'#f59e0b',approved:'#15803d',rejected:'#b91c1c',job_created:'#a855f7',acknowledged:'#0ea5e9'}[r.status]||'#94a3b8';
+  const statusLabel={pending:'⏳ Pending',approved:'✅ Approved',rejected:'❌ Rejected',job_created:'🔧 Job Created',acknowledged:'👀 Seen'}[r.status]||r.status;
+  const typeLabel = isPortal ? '🏠 Client Portal' : r.type==='overtime'?'🕐 Overtime':r.type==='leave'?'🏖 Leave':'📝 Engineer';
+  const dt = r.created?new Date(r.created*1000).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):''
   const isSelected = _selectedReqId===r.id;
+
+  // Extract CR number from notes
+  const crMatch = (r.notes||'').match(/\[(CR-\d+)\]/);
+  const crNum = crMatch ? crMatch[1] : null;
 
   // Parse portal notes
   let parsed={};
@@ -12626,7 +12631,8 @@ function _renderReqCard(r){
   }
 
   return`<div onclick="_showReqDetail(${JSON.stringify(r).replace(/"/g,'&quot;')})" style="border:1px solid ${isSelected?'var(--acc)':isPending?'rgba(245,158,11,.3)':'var(--border)'};border-left:3px solid ${statusCol};border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;background:${isSelected?'var(--acc-soft)':'var(--s1)'};transition:.12s">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+      ${crNum?`<span style="font-size:10px;font-weight:800;color:var(--acc);background:var(--acc-soft);padding:1px 8px;border-radius:6px;font-family:monospace">${crNum}</span>`:''}
       <span style="font-size:11px;font-weight:700;color:var(--txt)">${r.engineer_name||'Unknown'}</span>
       <span style="font-size:9px;font-weight:700;color:${statusCol};background:${statusCol}18;padding:1px 6px;border-radius:6px">${statusLabel}</span>
       ${isPending?`<span style="font-size:9px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,.1);padding:1px 6px;border-radius:6px;animation:pulse 2s infinite">● ACTION NEEDED</span>`:''}
@@ -12639,7 +12645,6 @@ function _renderReqCard(r){
     ${r.office_reply?`<div style="font-size:10px;color:var(--txt3);margin-top:4px">💼 ${r.office_reply}</div>`:''}
   </div>`;
 }
-
 function _showReqDetail(r){
   if(typeof r==='string') try{r=JSON.parse(r)}catch(e){return}
   _selectedReqId=r.id;
@@ -12732,22 +12737,29 @@ function _showReqDetail(r){
 // ── Request actions ───────────────────────────────────────────────────────────
 async function _reqCreateJob(id, parsedEnc, clientName){
   let p; try{p=JSON.parse(decodeURIComponent(parsedEnc));}catch(e){p={};}
+
+  // Get CR number from the request notes
+  const reqRows=await _sb(`engineer_requests?id=eq.${id}&select=notes`).catch(()=>[]);
+  const crMatch=(reqRows?.[0]?.notes||'').match(/\[(CR-\d+)\]/);
+  const crNum=crMatch?crMatch[1]:null;
+
   await _sb('engineer_requests?id=eq.'+id,{method:'PATCH',body:{status:'job_created',office_reply:'Job booked — your engineer is confirmed. We will contact you with details shortly.'},prefer:'return=minimal'});
   nav('jobs');
   await new Promise(r=>setTimeout(r,350));
   openJobModal(null);
   await new Promise(r=>setTimeout(r,200));
   const f=id=>document.getElementById(id);
-  if(p.address&&f('jf-addr'))    f('jf-addr').value=p.address;
-  if(p.service&&f('jf-desc'))    f('jf-desc').value=p.service;
-  if(p.notes&&f('jf-notes'))     f('jf-notes').value=p.notes;
-  if(p.access&&f('jf-access'))   f('jf-access').value='Landlord Present';
+  if(p.address&&f('jf-addr'))  f('jf-addr').value=p.address;
+  if(p.service&&f('jf-desc'))  f('jf-desc').value=p.service;
+  // Put CR number at top of notes so job is clearly linked to portal request
+  const noteLines=[crNum?`Portal Request: ${crNum}`:'',p.access?`Access: ${p.access}`:'',p.notes||''].filter(Boolean);
+  if(noteLines.length&&f('jf-notes')) f('jf-notes').value=noteLines.join('\n');
   if(clientName){
     const persons=await dAll('persons').catch(()=>[]);
     const match=persons.find(x=>x.name.toLowerCase()===clientName.toLowerCase());
     if(f('jf-landlord')) f('jf-landlord').value=match?match.name:clientName;
   }
-  toast('📋 Job pre-filled from portal request — review and save','info',5000);
+  toast(`📋 Job pre-filled from ${crNum||'portal request'} — review and save`,'info',5000);
 }
 
 async function _reqAcknowledge(id){
