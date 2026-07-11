@@ -1557,29 +1557,22 @@ function vRequest(d){
           <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
         </div>
 
-        <!-- FORM — single page, no steps -->
         <div style="display:flex;flex-direction:column;gap:16px">
-
-          <!-- Property Address — mandatory -->
           <div class="fg">
             <input class="fi" id="ra" placeholder=" " required value="${_renewalData?.address||''}">
             <label class="fl">Property Address <span style="color:var(--danger)">*</span></label>
           </div>
-
-          <!-- Service + Priority side by side -->
           <div class="fgrid fgrid-2">
             <div class="fg">
               <select class="fi" id="rs" required>
                 <option value="" disabled selected></option>
                 <optgroup label="Gas">
                   <option ${(_renewalData?.type||'').includes('Gas')?'selected':''}>Gas Safety Certificate (CP12)</option>
-                  <option>Boiler Service</option>
-                  <option>Boiler Repair</option>
+                  <option>Boiler Service</option><option>Boiler Repair</option>
                 </optgroup>
                 <optgroup label="Electrical">
                   <option ${(_renewalData?.type||'').includes('EICR')?'selected':''}>Electrical Inspection (EICR)</option>
-                  <option>PAT Testing</option>
-                  <option>Electrical Fault / Repair</option>
+                  <option>PAT Testing</option><option>Electrical Fault / Repair</option>
                 </optgroup>
                 <optgroup label="Property">
                   <option>Energy Performance Certificate (EPC)</option>
@@ -1601,8 +1594,6 @@ function vRequest(d){
               <label class="fl">Priority</label>
             </div>
           </div>
-
-          <!-- Preferred Date + Access -->
           <div class="fgrid fgrid-2">
             <div class="fg">
               <input class="fi" type="date" id="rd" min="${today}" placeholder=" ">
@@ -1620,14 +1611,10 @@ function vRequest(d){
               <label class="fl">Access Arrangements</label>
             </div>
           </div>
-
-          <!-- Description -->
           <div class="fg">
             <textarea class="fi" id="rn" rows="3" placeholder=" " style="resize:vertical;min-height:80px"></textarea>
             <label class="fl">Description / Additional Notes</label>
           </div>
-
-          <!-- File upload -->
           <div>
             <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">Documents / Photos <span style="font-weight:400;font-size:11px">(optional)</span></div>
             <div class="dropzone" id="rdz" onclick="document.getElementById('rfile').click()" style="padding:20px;border-radius:10px">
@@ -1638,55 +1625,100 @@ function vRequest(d){
               <div id="rfile-list" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
             </div>
           </div>
-
-          <!-- Mandatory note -->
           <div style="font-size:11px;color:var(--text-tertiary);padding:10px 12px;background:var(--border-subtle);border-radius:8px">
-            <span style="color:var(--danger)">*</span> Required fields — Property Address and Job Type must be filled before submitting.
+            <span style="color:var(--danger)">*</span> Property Address and Job Type are required.
           </div>
-
-          <!-- Submit button -->
           <button class="fsub" id="rsb" onclick="submitReq()" style="margin-top:4px">
             <i data-lucide="send" style="width:16px;height:16px"></i> Submit Request
           </button>
-
-          <div class="fnote" style="text-align:center">We'll confirm by phone or email within 1 working day · A reference number will appear on screen after submission</div>
-
+          <div class="fnote" style="text-align:center">We'll confirm within 1 working day · Your request number will appear after submission</div>
         </div>
+      </div>
+    </div>
 
-        <!-- Track existing request -->
-        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border)">
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📋 Track an existing request</div>
-          <div style="display:flex;gap:8px">
-            <input class="fi" id="track-ref" placeholder="Enter reference number e.g. REQ-A1B2C3" style="flex:1;margin-bottom:0">
-            <button class="dl" onclick="trackRequest()" style="flex-shrink:0;white-space:nowrap">Track →</button>
-          </div>
-          <div id="track-result" style="margin-top:10px;font-size:12px;display:none"></div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px">
-            Your reference number is shown after submitting a request. You can also call us to check status.
-          </div>
-        </div>
-
+    <!-- Past Requests -->
+    <div class="sec" style="margin-top:0">
+      <div class="sec-hd"><div class="sec-t">Your Request History</div></div>
+      <div id="past-requests-list">
+        <div style="text-align:center;padding:20px;color:var(--text-tertiary);font-size:13px">Loading your requests...</div>
       </div>
     </div>`;
   refreshIcons();
   if(_renewalData){ _renewalData=null; }
+  // Load past requests
+  loadPastRequests(d);
 }
 
-function trackRequest(){
-  const ref=(document.getElementById('track-ref')?.value||'').trim().toUpperCase();
-  const res=document.getElementById('track-result');
-  if(!ref){toast('Please enter a reference number');return;}
-  if(!res)return;
-  res.style.display='block';
-  res.innerHTML=`<div style="padding:12px;background:var(--accent-light);border:1px solid rgba(29,111,173,.2);border-radius:8px;color:var(--accent)">
-    🔍 Reference <strong>${e(ref)}</strong> — your request has been received and is being processed by ${e(_d.coName)}.<br>
-    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">For urgent queries please call your service provider directly.</span>
-  </div>`;
+async function loadPastRequests(d){
+  const el=document.getElementById('past-requests-list');
+  if(!el)return;
+  try{
+    const nameQ=encodeURIComponent('%'+(d.name||'')+'%');
+    const rows=await sb(`engineer_requests?engineer_name=ilike.${nameQ}&type=eq.portal_request&order=created.desc&limit=50`).catch(()=>[]);
+    if(!rows||!rows.length){
+      el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--text-tertiary);font-size:13px">No previous requests found.</div>`;
+      return;
+    }
+    const statusStyle={
+      pending:'background:#fefce8;color:#854d0e;border:1px solid #fef08a',
+      approved:'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0',
+      job_created:'background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe',
+      rejected:'background:#fef2f2;color:#991b1b;border:1px solid #fecaca',
+      acknowledged:'background:#f0f9ff;color:#075985;border:1px solid #bae6fd',
+    };
+    const statusLabel={
+      pending:'⏳ Pending',
+      approved:'✅ Confirmed',
+      job_created:'🔧 Job Booked',
+      rejected:'❌ Declined',
+      acknowledged:'👀 Seen',
+    };
+    el.innerHTML=rows.map(r=>{
+      const refMatch=(r.notes||'').match(/\[(CR-\d+)\]/);
+      const ref=refMatch?refMatch[1]:'—';
+      const svcMatch=(r.notes||'').match(/Service: ([^\n]+)/);
+      const addrMatch=(r.notes||'').match(/Address: ([^\n]+)/);
+      const dateMatch=(r.notes||'').match(/Preferred date: ([^\n]+)/);
+      const svc=svcMatch?svcMatch[1]:'Service Request';
+      const addr=addrMatch?addrMatch[1]:'';
+      const pref=dateMatch?dateMatch[1]:'';
+      const st=r.status||'pending';
+      const stStyle=statusStyle[st]||statusStyle.pending;
+      const stLabel=statusLabel[st]||st;
+      const created=r.created?new Date(r.created*1000).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+      const reply=r.office_reply||'';
+      return`<div style="border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.15s" onclick="toggleReqDetail(this)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <span style="font-size:13px;font-weight:800;color:var(--accent);font-family:monospace">${e(ref)}</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;${stStyle}">${stLabel}</span>
+            </div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${e(svc)}</div>
+            ${addr?`<div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">📍 ${e(addr)}</div>`:''}
+            <div style="font-size:11px;color:var(--text-tertiary)">${created}${pref?' · Preferred: '+e(pref):''}</div>
+          </div>
+          <div style="font-size:16px;color:var(--text-tertiary);flex-shrink:0">›</div>
+        </div>
+        <div class="req-detail" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          ${reply?`<div style="background:var(--accent-light);border:1px solid rgba(29,111,173,.15);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--accent);margin-bottom:8px">
+            <strong>Response from ${e(d.coName)}:</strong><br>${e(reply)}
+          </div>`:'<div style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px">Awaiting response from '+e(d.coName)+'...</div>'}
+          <div style="font-size:11px;color:var(--text-tertiary);white-space:pre-line;line-height:1.7">${e((r.notes||'').replace(/\[CR-\d+\]\s*/,''))}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-tertiary);font-size:12px">Could not load request history.</div>`;
+  }
 }
 
-function renderWizard(d){ vRequest(d); } // legacy alias
+function toggleReqDetail(el){
+  const d=el.querySelector('.req-detail');
+  if(d) d.style.display=d.style.display==='none'?'block':'none';
+}
 
-
+function renderWizard(d){ vRequest(d); }
 
 let _reqFiles=[];
 function handleFiles(input){
@@ -1708,7 +1740,17 @@ async function submitReq(){
   const btn=document.getElementById('rsb');
   if(btn){btn.disabled=true;btn.innerHTML='<div class="loading">Sending...</div>';}
   try{
-    const ref='REQ-'+Date.now().toString(36).toUpperCase().slice(-6);
+    // Generate proper CR- number (Client Request) matching office app job numbering style
+    let ref='CR-0001';
+    try{
+      const existing=await sb('engineer_requests?type=eq.portal_request&order=created.desc&limit=500&select=notes');
+      let maxN=0;
+      (existing||[]).forEach(r=>{
+        const m=(r.notes||'').match(/\[CR-(\d+)\]/);
+        if(m){const n=parseInt(m[1],10);if(n>maxN)maxN=n;}
+      });
+      ref='CR-'+String(maxN+1).padStart(4,'0');
+    }catch(e){ ref='CR-'+String(Date.now()).slice(-4); }
     const detail=`Service: ${svc}\nPriority: ${priority}\nAddress: ${addr}`+(date?`\nPreferred date: ${date}`:'')+(access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'')+(_reqFiles.length?`\nAttachments: ${_reqFiles.length} file(s)`:'');
 
     await sb('engineer_requests',{
