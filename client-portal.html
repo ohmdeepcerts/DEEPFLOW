@@ -1546,78 +1546,147 @@ function vDocs(d){
 // ── REQUEST WIZARD ────────────────────────────────────────────────────────────
 let _renewalData=null;
 function vRequest(d){
-  _wizardStep=1;
-  renderWizard(d);
-}
-
-function renderWizard(d){
   const today=new Date().toISOString().slice(0,10);
-  const step1=_wizardStep===1?`<div class="fgrid fgrid-2">
-      <div class="fg"><input class="fi" id="ra" placeholder=" " required value="${_renewalData?.address||''}"><label class="fl">Property Address *</label></div>
-      <div class="fg"><select class="fi" id="rs" required><option value="" disabled ${_renewalData?'':'selected'}></option>
-        <optgroup label="Gas"><option ${(_renewalData?.type||'').includes('Gas')?'selected':''}>Gas Safety Certificate (CP12)</option><option>Boiler Service</option><option>Boiler Repair</option></optgroup>
-        <optgroup label="Electrical"><option ${(_renewalData?.type||'').includes('EICR')?'selected':''}>Electrical Inspection (EICR)</option><option>PAT Testing</option><option>Electrical Fault / Repair</option></optgroup>
-        <optgroup label="Property"><option>Energy Performance Certificate (EPC)</option><option>Fire Risk Assessment</option><option>Legionella Risk Assessment</option><option>General Maintenance</option><option>Emergency Call-Out</option></optgroup>
-        <option>Other (describe in notes)</option>
-      </select><label class="fl">Service Required *</label></div>
-    </div>
-    <div class="fg" style="margin-top:16px"><select class="fi" id="rp"><option value="" disabled selected></option><option>Low — Routine</option><option selected>Normal — Standard</option><option>High — Urgent</option><option>Emergency — Same day</option></select><label class="fl">Priority</label></div>`:'';
-
-  const step2=_wizardStep===2?`<div class="fgrid fgrid-2">
-      <div class="fg"><input class="fi" type="date" id="rd" min="${today}" placeholder=" "><label class="fl">Preferred Date</label></div>
-      <div class="fg"><select class="fi" id="rac" placeholder=" "><option value="" disabled selected></option>
-        <option>Tenant will be home</option><option>Keys at your office</option><option>Key safe — I will provide code</option><option>I will be present</option><option>Contact tenant directly</option>
-      </select><label class="fl">Access Arrangements</label></div>
-    </div>
-    <div class="fg" style="margin-top:16px"><textarea class="fi" id="rn" placeholder=" "></textarea><label class="fl">Additional Notes</label></div>`:'';
-
-  const step3=_wizardStep===3?`<div class="dropzone" id="rdz" onclick="document.getElementById('rfile').click()">
-      <input type="file" id="rfile" style="display:none" multiple onchange="handleFiles(this)">
-      <i data-lucide="upload-cloud" style="width:28px;height:28px"></i>
-      <p>Drop files here or click to upload</p>
-      <p style="font-size:11px;margin-top:4px;opacity:0.7">Photos, documents, or previous certificates</p>
-      <div id="rfile-list" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
-    </div>`:'';
-
-  const step4=_wizardStep===4?`<div style="text-align:center;padding:20px">
-      <div class="success-check"><i data-lucide="check" style="width:32px;height:32px"></i></div>
-      <div style="font-size:18px;font-weight:800;margin-bottom:8px">Ready to Submit</div>
-      <div style="font-size:13px;color:var(--text-secondary);max-width:320px;margin:0 auto;line-height:1.6">Please review your details above, then click Submit.</div>
-    </div>`:'';
-
-  const navSteps=[1,2,3,4].map((s,i)=>`<div class="w-step ${s===_wizardStep?'active':s<_wizardStep?'done':''}">Step ${s}</div>`).join('');
-
-  const btnPrev=_wizardStep>1?`<button class="dl g" style="flex:1" onclick="prevStep()">← Back</button>`:'';
-  const btnNext=_wizardStep<4?`<button class="dl" style="flex:2" onclick="nextStep()">Continue →</button>`:`<button class="fsub" style="flex:2;margin-top:0" id="rsb" onclick="submitReq()"><i data-lucide="send" style="width:16px;height:16px"></i> Submit Request</button>`;
-
   document.getElementById('main').innerHTML=`
-    <div class="sec"><div class="sec-hd"><div class="sec-t">New Service Request</div></div>
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">New Service Request</div></div>
       <div class="rc">
+
         <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-          <div style="font-size:17px;font-weight:800;margin-bottom:6px">Submit a Request</div>
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px">Submit a Request</div>
           <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
         </div>
-        <div class="wizard-steps">${navSteps}</div>
-        <div id="rw">
-          ${step1}${step2}${step3}${step4}
-          <div style="display:flex;gap:10px;margin-top:20px">${btnPrev}${btnNext}</div>
-          <div class="fnote">We'll confirm by phone or email within 1 working day · A reference number will be provided on confirmation</div>
+
+        <!-- FORM — single page, no steps -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Property Address — mandatory -->
+          <div class="fg">
+            <input class="fi" id="ra" placeholder=" " required value="${_renewalData?.address||''}">
+            <label class="fl">Property Address <span style="color:var(--danger)">*</span></label>
+          </div>
+
+          <!-- Service + Priority side by side -->
+          <div class="fgrid fgrid-2">
+            <div class="fg">
+              <select class="fi" id="rs" required>
+                <option value="" disabled selected></option>
+                <optgroup label="Gas">
+                  <option ${(_renewalData?.type||'').includes('Gas')?'selected':''}>Gas Safety Certificate (CP12)</option>
+                  <option>Boiler Service</option>
+                  <option>Boiler Repair</option>
+                </optgroup>
+                <optgroup label="Electrical">
+                  <option ${(_renewalData?.type||'').includes('EICR')?'selected':''}>Electrical Inspection (EICR)</option>
+                  <option>PAT Testing</option>
+                  <option>Electrical Fault / Repair</option>
+                </optgroup>
+                <optgroup label="Property">
+                  <option>Energy Performance Certificate (EPC)</option>
+                  <option>Fire Risk Assessment</option>
+                  <option>General Maintenance</option>
+                  <option>Emergency Call-Out</option>
+                </optgroup>
+                <option>Other (describe below)</option>
+              </select>
+              <label class="fl">Job Type <span style="color:var(--danger)">*</span></label>
+            </div>
+            <div class="fg">
+              <select class="fi" id="rp">
+                <option>Normal — Standard</option>
+                <option>Low — Routine</option>
+                <option>High — Urgent</option>
+                <option>Emergency — Same day</option>
+              </select>
+              <label class="fl">Priority</label>
+            </div>
+          </div>
+
+          <!-- Preferred Date + Access -->
+          <div class="fgrid fgrid-2">
+            <div class="fg">
+              <input class="fi" type="date" id="rd" min="${today}" placeholder=" ">
+              <label class="fl">Preferred Date</label>
+            </div>
+            <div class="fg">
+              <select class="fi" id="rac">
+                <option value="" disabled selected></option>
+                <option>Tenant will be home</option>
+                <option>Keys at your office</option>
+                <option>Key safe — I will provide code</option>
+                <option>I will be present</option>
+                <option>Contact tenant directly</option>
+              </select>
+              <label class="fl">Access Arrangements</label>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="fg">
+            <textarea class="fi" id="rn" rows="3" placeholder=" " style="resize:vertical;min-height:80px"></textarea>
+            <label class="fl">Description / Additional Notes</label>
+          </div>
+
+          <!-- File upload -->
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">Documents / Photos <span style="font-weight:400;font-size:11px">(optional)</span></div>
+            <div class="dropzone" id="rdz" onclick="document.getElementById('rfile').click()" style="padding:20px;border-radius:10px">
+              <input type="file" id="rfile" style="display:none" multiple onchange="handleFiles(this)">
+              <i data-lucide="upload-cloud" style="width:22px;height:22px"></i>
+              <p style="font-size:13px;margin-top:6px">Click to upload photos or documents</p>
+              <p style="font-size:11px;margin-top:2px;opacity:0.6">Previous certificates, photos of the issue, etc.</p>
+              <div id="rfile-list" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
+            </div>
+          </div>
+
+          <!-- Mandatory note -->
+          <div style="font-size:11px;color:var(--text-tertiary);padding:10px 12px;background:var(--border-subtle);border-radius:8px">
+            <span style="color:var(--danger)">*</span> Required fields — Property Address and Job Type must be filled before submitting.
+          </div>
+
+          <!-- Submit button -->
+          <button class="fsub" id="rsb" onclick="submitReq()" style="margin-top:4px">
+            <i data-lucide="send" style="width:16px;height:16px"></i> Submit Request
+          </button>
+
+          <div class="fnote" style="text-align:center">We'll confirm by phone or email within 1 working day · A reference number will appear on screen after submission</div>
+
         </div>
+
+        <!-- Track existing request -->
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📋 Track an existing request</div>
+          <div style="display:flex;gap:8px">
+            <input class="fi" id="track-ref" placeholder="Enter reference number e.g. REQ-A1B2C3" style="flex:1;margin-bottom:0">
+            <button class="dl" onclick="trackRequest()" style="flex-shrink:0;white-space:nowrap">Track →</button>
+          </div>
+          <div id="track-result" style="margin-top:10px;font-size:12px;display:none"></div>
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px">
+            Your reference number is shown after submitting a request. You can also call us to check status.
+          </div>
+        </div>
+
       </div>
     </div>`;
   refreshIcons();
+  if(_renewalData){ _renewalData=null; }
 }
 
-function nextStep(){
-  if(_wizardStep===1){
-    const addr=(document.getElementById('ra')?.value||'').trim();
-    const svc=(document.getElementById('rs')?.value||'').trim();
-    if(!addr){toast('Please enter the property address');return;}
-    if(!svc){toast('Please select a service type');return;}
-  }
-  _wizardStep++;renderWizard(_d);
+function trackRequest(){
+  const ref=(document.getElementById('track-ref')?.value||'').trim().toUpperCase();
+  const res=document.getElementById('track-result');
+  if(!ref){toast('Please enter a reference number');return;}
+  if(!res)return;
+  res.style.display='block';
+  res.innerHTML=`<div style="padding:12px;background:var(--accent-light);border:1px solid rgba(29,111,173,.2);border-radius:8px;color:var(--accent)">
+    🔍 Reference <strong>${e(ref)}</strong> — your request has been received and is being processed by ${e(_d.coName)}.<br>
+    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">For urgent queries please call your service provider directly.</span>
+  </div>`;
 }
-function prevStep(){_wizardStep--;renderWizard(_d);}
+
+function renderWizard(d){ vRequest(d); } // legacy alias
+
+
 
 let _reqFiles=[];
 function handleFiles(input){
@@ -1662,14 +1731,41 @@ async function submitReq(){
     },prefer:'return=minimal'}).catch(()=>{});
 
     _renewalData=null;
-    document.getElementById('rw').innerHTML=`
-      <div style="text-align:center;padding:40px 20px">
-        <div class="success-check"><i data-lucide="check" style="width:32px;height:32px"></i></div>
-        <div style="font-size:20px;font-weight:800;margin-bottom:8px">Request Submitted!</div>
-        <div style="font-size:14px;color:var(--text-secondary);max-width:340px;margin:0 auto 8px;line-height:1.6">Your reference is <strong>${ref}</strong>.<br>${e(_d.coName)} will be in touch within 1 working day.</div>
-        <button class="dl" style="margin-top:16px" data-action="go" data-target="overview">← Back to Overview</button>
+    document.getElementById('main').innerHTML=`
+      <div class="sec">
+        <div class="rc" style="text-align:center;padding:40px 20px">
+          <div class="success-check" style="margin:0 auto 16px"><i data-lucide="check" style="width:32px;height:32px"></i></div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:8px">Request Submitted!</div>
+          <div style="font-size:14px;color:var(--text-secondary);max-width:360px;margin:0 auto 24px;line-height:1.7">
+            ${e(_d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.
+          </div>
+
+          <!-- Reference number — prominent -->
+          <div style="background:var(--accent-light);border:2px solid var(--accent);border-radius:14px;padding:20px 28px;display:inline-block;margin-bottom:24px">
+            <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Your Reference Number</div>
+            <div style="font-size:28px;font-weight:900;color:var(--accent);font-family:monospace;letter-spacing:2px">${ref}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px">Save this number to track your request</div>
+            <button onclick="navigator.clipboard.writeText('${ref}').then(()=>toast('Reference copied!','success'))" style="margin-top:10px;padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">📋 Copy Reference</button>
+          </div>
+
+          <!-- What happens next -->
+          <div style="background:var(--border-subtle);border-radius:12px;padding:16px 20px;text-align:left;margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px">What happens next?</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text-secondary)">
+              <div>📞 We'll call or email you within 1 working day</div>
+              <div>📅 We'll confirm a date and time that works for you</div>
+              <div>🔧 Our engineer will attend and complete the job</div>
+              <div>📜 Certificates and invoices will appear in your portal</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="dl" data-action="go" data-target="overview">← Back to Overview</button>
+            <button class="dl" data-action="go" data-target="request">+ New Request</button>
+          </div>
+        </div>
       </div>`;
-    refreshIcons();
+    refreshIcons();attachDelegates();
   }catch(err){
     console.error(err);
     if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="send" style="width:16px;height:16px"></i> Submit Request';}
