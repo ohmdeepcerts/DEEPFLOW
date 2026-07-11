@@ -518,6 +518,7 @@ input:checked + .mcb-slider:before{transform:translateX(23px);background:#f5a623
 .fx-green-flash{animation:greenFlash .6s ease-out forwards}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<base target="_blank">
 </head>
 <body>
 
@@ -1040,17 +1041,19 @@ function spawnBolt(){
   if(!candidates.length)return;
   const b=candidates[Math.floor(Math.random()*candidates.length)];
   const segs=5+Math.floor(Math.random()*5);
+  const mainPts=zigzag(a.x,a.y,b.x,b.y,segs);
   bolts.push({
-    pts:zigzag(a.x,a.y,b.x,b.y,segs),
+    pts:mainPts,
     life:1.0,
     decay:0.05+Math.random()*0.04,
     width:1+Math.random()*1.5,
     branches:Math.random()<0.4?[]:Array.from({length:Math.floor(Math.random()*3)+1},()=>{
       const mid=Math.floor(segs/2)+Math.floor(Math.random()*2);
-      return {start:mid,pts:zigzag(0,0,0,0,3).map((_,i,arr)=>{
-        const sx=b.pts?b.pts[0]:a.x,sy=b.pts?b.pts[1]:a.y;
-        return[sx+(Math.random()-0.5)*60,sy+(Math.random()-0.5)*60];
-      })};
+      const bp=mainPts[Math.min(mid,mainPts.length-1)]||[a.x,a.y];
+      return {start:mid,pts:zigzag(bp[0],bp[1],bp[0],bp[1],3).map(()=>[
+        bp[0]+(Math.random()-0.5)*60,
+        bp[1]+(Math.random()-0.5)*60
+      ])};
     })
   });
 }
@@ -1131,7 +1134,11 @@ function draw(){
   requestAnimationFrame(draw);
 }
 
-window.addEventListener("resize",resize);
+let _resizeTimer;
+window.addEventListener("resize",()=>{
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(resize,300);
+});
 resize();
 draw();
 })();
@@ -1144,6 +1151,10 @@ draw();
 const SB_URL = 'https://dzqyqpuhxdrrpipbehpk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cXlxcHVoeGRycnBpcGJlaHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzYzMjksImV4cCI6MjA4ODQ1MjMyOX0.7ObsuqKv5gNX5r7Pz1x1gyGgugcX2W0zw3d9hC6osvI';
 const _supaAuth = window.supabase?.createClient(SB_URL, SB_KEY);
+if(!_supaAuth){
+  document.body.innerHTML='<div style="padding:40px;text-align:center"><h2>Connection Error</h2><p>Please check your internet and refresh.</p></div>';
+  throw new Error('Supabase client failed to initialize');
+}
 
 const STATUS = Object.freeze({
   PENDING:'Pending', IN_PROGRESS:'In Progress', COMPLETED:'Completed',
@@ -1286,14 +1297,17 @@ async function doLogin(){
     }catch(e){}
 
     // Fallback: match by email (catches cases where auth_id wasn't backfilled yet)
+    // FIX CR2: Serialize with await + lock to prevent race conditions
     if(!profile){
       try{
         const rows = await sb(`users?email=eq.${encodeURIComponent(email)}&active=eq.true&select=*`);
         profile = rows?.[0]||null;
-        if(profile){
-          sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:authUser.id},prefer:'return=minimal'}).catch(()=>{});
+        if(profile && !profile.auth_id){
+          // PATCH auth_id atomically — await so we know it succeeded before continuing
+          await sb(`users?id=eq.${profile.id}`,{method:'PATCH',body:{auth_id:authUser.id},prefer:'return=minimal'});
+          profile.auth_id = authUser.id; // keep local copy in sync
         }
-      }catch(e){}
+      }catch(e){ console.warn('Profile email fallback failed:', e?.message); }
     }
 
     if(!profile){
@@ -1394,8 +1408,8 @@ function showTool(id, btn){
   });
   document.querySelectorAll('.tool-tab').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
-  if(id==='max-zs')calcZs();
-  if(id==='on-my-way'){updateOmwPreview();_prefillOmw();}
+  if(id==='max-zs'&&typeof calcZs==='function')calcZs();
+  if(id==='on-my-way'){if(typeof updateOmwPreview==='function')updateOmwPreview();if(typeof _prefillOmw==='function')_prefillOmw();}
   if(navigator.vibrate)navigator.vibrate(30);
 }
 
@@ -1403,13 +1417,14 @@ function showTool(id, btn){
 // VOLTAGE DROP CALCULATOR
 // ═══════════════════════════════════════════════
 function calcVD(){
+  const display=document.getElementById('vd-display');
+  const res=document.getElementById('vd-result');
+  const st=document.getElementById('vd-status');
+  if(!display||!res||!st)return; // GUARD: DOM not ready
   const amps=parseFloat(document.getElementById('vd-amps')?.value)||0;
   const len=parseFloat(document.getElementById('vd-len')?.value)||0;
   const mv=parseFloat(document.getElementById('vd-type')?.value)||0;
   const limit=parseFloat(document.getElementById('vd-circuit')?.value)||11.5;
-  const display=document.getElementById('vd-display');
-  const res=document.getElementById('vd-result');
-  const st=document.getElementById('vd-status');
   if(!amps||!len||!mv){
     if(res)res.textContent='0.00 V';
     if(st){st.textContent='Enter values above';st.style.color='var(--txt3)';}
@@ -1450,30 +1465,30 @@ const ZS_DATA={
 };
 
 function calcZs(){
+  const maxEl=document.getElementById('zs-max-val');
+  const iaEl=document.getElementById('zs-ia-val');
+  const ufEl=document.getElementById('zs-uf-val');
+  const measuredEl=document.getElementById('zs-measured');
+  const res=document.getElementById('zs-result');
+  if(!maxEl||!iaEl||!ufEl||!res)return; // GUARD: DOM not ready
   const system=document.getElementById('zs-system')?.value||'tn';
   const breaker=document.getElementById('zs-breaker')?.value||'B32';
   const d=ZS_DATA[system]?.[breaker];
   if(!d)return;
   const uf=(230/d.Ia).toFixed(3);
-  const maxEl=document.getElementById('zs-max-val');
-  const iaEl=document.getElementById('zs-ia-val');
-  const ufEl=document.getElementById('zs-uf-val');
-  if(maxEl)maxEl.textContent=d.maxZs+' Ω';
-  if(iaEl)iaEl.textContent=d.Ia+' A';
-  if(ufEl)ufEl.textContent=uf+' Ω';
-  const measured=parseFloat(document.getElementById('zs-measured')?.value);
-  const res=document.getElementById('zs-result');
-  if(isNaN(measured)||!document.getElementById('zs-measured')?.value){
+  maxEl.textContent=d.maxZs+' Ω';
+  iaEl.textContent=d.Ia+' A';
+  ufEl.textContent=uf+' Ω';
+  const measured=parseFloat(measuredEl?.value);
+  if(isNaN(measured)||!measuredEl?.value){
     if(res){res.className='zs-result zs-none';res.textContent='Enter measured Zs to check';}
     return;
   }
   const passes=measured<=d.maxZs;
-  if(res){
-    res.className='zs-result '+(passes?'zs-pass':'zs-fail');
-    res.textContent=passes
-      ?`✅ PASSED — ${measured}Ω ≤ ${d.maxZs}Ω max`
-      :`❌ FAILED — ${measured}Ω exceeds max ${d.maxZs}Ω by ${(measured-d.maxZs).toFixed(3)}Ω`;
-  }
+  res.className='zs-result '+(passes?'zs-pass':'zs-fail');
+  res.textContent=passes
+    ?`✅ PASSED — ${measured}Ω ≤ ${d.maxZs}Ω max`
+    :`❌ FAILED — ${measured}Ω exceeds max ${d.maxZs}Ω by ${(measured-d.maxZs).toFixed(3)}Ω`;
   if(navigator.vibrate)navigator.vibrate(passes?[30]:[80,40,80]);
 }
 
@@ -1608,7 +1623,10 @@ async function checkOfficeConnection(){
   const lbl=document.getElementById('office-label');
   try{
     // Lightweight ping — just fetch 1 row, we only care if it succeeds
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),5000);
     await sb('users?limit=1&select=id');
+    clearTimeout(t);
     if(dot){dot.style.background='#22c55e';dot.style.boxShadow='0 0 8px rgba(34,197,94,.6)';}
     if(lbl){lbl.style.color='#22c55e';lbl.textContent='Connected';}
   }catch(e){
@@ -1725,12 +1743,24 @@ function _attachPullToRefresh(el){
   let pulling=false, locked=false;
   const threshold=72;
 
+  // Create or reuse pull indicator element
+  let indicator=el.querySelector('.ptr-indicator');
+  if(!indicator){
+    indicator=document.createElement('div');
+    indicator.className='ptr-indicator';
+    indicator.style.cssText='position:absolute;top:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--txt3);opacity:0;transition:opacity .2s;pointer-events:none;z-index:10;transform:translateY(-100%)';
+    indicator.innerHTML='⬇ Pull to refresh';
+    el.style.position='relative';
+    el.insertBefore(indicator,el.firstChild);
+  }
+
   el.addEventListener('touchstart',e=>{
     startScrollY=window.scrollY||document.documentElement.scrollTop;
     if(startScrollY>2){startY=0;return;}
     startY=e.touches[0].clientY;
     startX=e.touches[0].clientX;
     pulling=false;locked=false;
+    if(indicator)indicator.style.opacity='0';
   },{passive:true});
 
   el.addEventListener('touchmove',e=>{
@@ -1741,7 +1771,15 @@ function _attachPullToRefresh(el){
     if(curScroll>4&&!locked){startY=0;return;}
     if(!locked&&dy>12&&dx<dy*0.6){locked=true;}
     if(!locked)return;
-    if(dy>8){pulling=true;}
+    if(dy>8){
+      pulling=true;
+      if(indicator){
+        const progress=Math.min(dy/threshold,1);
+        indicator.style.opacity=String(progress*0.8);
+        indicator.style.transform='translateY('+(-100+progress*100)+'%)';
+        indicator.innerHTML=dy>threshold?'⬆ Release to refresh':'⬇ Pull to refresh';
+      }
+    }
   },{passive:true});
 
   el.addEventListener('touchend',e=>{
@@ -1749,6 +1787,7 @@ function _attachPullToRefresh(el){
       const dy=e.changedTouches[0].clientY-startY;
       if(dy>threshold){refreshAll();}
     }
+    if(indicator)indicator.style.opacity='0';
     startY=0;pulling=false;locked=false;
   },{passive:true});
 }
@@ -1907,18 +1946,18 @@ function _buildCard(j){
 
 function _sc(s,p){
   if(p==='Emergency')return 's-emergency';
-  if(s==='Completed')return 's-completed';
-  if(s==='In Progress')return 's-progress';
-  if(s==='Cannot Access')return 's-noaccess';
-  if(s==='Cancelled')return 's-cancelled';
+  if(s===STATUS.COMPLETED)return 's-completed';
+  if(s===STATUS.IN_PROGRESS)return 's-progress';
+  if(s===STATUS.CANNOT_ACCESS)return 's-noaccess';
+  if(s===STATUS.CANCELLED)return 's-cancelled';
   return 's-pending';
 }
 function _spill(s,p){
   if(p==='Emergency')return'<span class="status-pill sp-emergency">🚨 Emergency</span>';
-  if(s==='Completed')return'<span class="status-pill sp-completed">✅ Done</span>';
-  if(s==='In Progress')return'<span class="status-pill sp-progress">🔄 In Progress</span>';
-  if(s==='Cannot Access')return'<span class="status-pill sp-noaccess">🚫 No Access</span>';
-  if(s==='Cancelled')return'<span class="status-pill sp-cancelled">⚪ Cancelled</span>';
+  if(s===STATUS.COMPLETED)return'<span class="status-pill sp-completed">✅ Done</span>';
+  if(s===STATUS.IN_PROGRESS)return'<span class="status-pill sp-progress">🔄 In Progress</span>';
+  if(s===STATUS.CANNOT_ACCESS)return'<span class="status-pill sp-noaccess">🚫 No Access</span>';
+  if(s===STATUS.CANCELLED)return'<span class="status-pill sp-cancelled">⚪ Cancelled</span>';
   return'<span class="status-pill sp-pending">⏳ Pending</span>';
 }
 
@@ -2289,7 +2328,8 @@ async function saveNotes(){
     currentJob.notes=notes;
     _clearDraft('job-notes');
     toast('✅ Notes saved','success');
-  }catch(e){toast('⚠️ Failed to save notes','error');}
+    if(navigator.vibrate)navigator.vibrate([40,20,60]);
+  }catch(e){toast('⚠️ Failed to save notes','error');if(navigator.vibrate)navigator.vibrate([80]);}
   finally{if(btn){btn.innerHTML='💾 Save Notes';btn.disabled=false;}}
 }
 
@@ -2301,8 +2341,9 @@ async function saveHours(){
     await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{hours,modified:Date.now()}});
     currentJob.hours=hours;
     toast(`✅ Logged ${hours}h`,'success');
+    if(navigator.vibrate)navigator.vibrate([40,20,60]);
     loadJobs();
-  }catch(e){toast('⚠️ Failed to save hours','error');}
+  }catch(e){toast('⚠️ Failed to save hours','error');if(navigator.vibrate)navigator.vibrate([80]);}
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2342,8 +2383,9 @@ async function submitAddJob(){
     );
     window.open(`https://wa.me/${OFFICE_WA_NUMBER}?text=${waMsg}`,'_blank');
     toast('✅ Job submitted! Office notified via WhatsApp','success');
+    if(navigator.vibrate)navigator.vibrate([50,30,80]);
     loadJobs();
-  }catch(e){toast('❌ Failed to submit: '+(e.message||'').slice(0,60),'error');}
+  }catch(e){toast('❌ Failed to submit: '+(e.message||'').slice(0,60),'error');if(navigator.vibrate)navigator.vibrate([80]);}
   finally{btn.textContent='📤 Submit to Office';btn.disabled=false;}
 }
 
@@ -2654,8 +2696,8 @@ async function _handleBAUpload(input, role){
       }catch(e){}
     }
     const stampTime = captureTime || new Date();
-    // Compress
-    if(!_uploadHD) file = await _compressImage(file,1920,0.82);
+    // Compress (max 1200px width, quality 0.8)
+    if(!_uploadHD) file = await _compressImage(file,1200,0.8);
     // Stamp — pass the sequence label so it appears in the footer
     file = await _stampPhoto(file, currentJob.address||'', currentUser.name, stampTime, seqLabel);
     // Upload
@@ -2723,8 +2765,8 @@ async function handleUpload(input,type){
             if(isNaN(captureTime))captureTime=null;
           }catch(e){}
         }
-        // Compress unless HD mode
-        if(!_uploadHD){file=await _compressImage(file,1920,0.82);}
+        // Compress unless HD mode (max 1200px width, quality 0.8)
+        if(!_uploadHD){file=await _compressImage(file,1200,0.8);}
         // Always stamp: use EXIF time if available, otherwise use current time
         const stampTime = captureTime || new Date();
         file=await _stampPhoto(file, currentJob.address||'', currentUser.name, stampTime);
@@ -2759,7 +2801,7 @@ function _compressImage(file,maxW,q){
     img.onload=()=>{
       URL.revokeObjectURL(u);
       let{naturalWidth:w,naturalHeight:h}=img;
-      const maxH=maxW; // square cap — both dimensions capped at maxW (e.g. 1920)
+      const maxH=maxW; // square cap — both dimensions capped at maxW (e.g. 1200)
       if(w<=maxW&&h<=maxH){resolve(file);return;} // truly small image — no compression needed
       const scale=Math.min(maxW/w,maxH/h);
       const W=Math.round(w*scale),H=Math.round(h*scale);
@@ -3260,8 +3302,8 @@ async function submitOvertimeRequest(){
   if(!date||isNaN(hours)||hours<=0){toast('Please fill in date and hours','error');return;}
   try{
     await sb('engineer_requests',{method:'POST',body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:'overtime',date,hours,rate,job,notes,status:'pending',created:Date.now()}});
-    _clearDraft('ot-notes');closeModal('ot-modal');toast('✅ Overtime request sent!','success');loadRequests();
-  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');}
+    _clearDraft('ot-notes');closeModal('ot-modal');toast('✅ Overtime request sent!','success');if(navigator.vibrate)navigator.vibrate([50,30,80]);loadRequests();
+  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');if(navigator.vibrate)navigator.vibrate([80]);}
 }
 async function submitLeaveRequest(){
   const type=document.getElementById('leave-type').value;
@@ -3271,8 +3313,8 @@ async function submitLeaveRequest(){
   if(!from||!to){toast('Please select dates','error');return;}
   try{
     await sb('engineer_requests',{method:'POST',body:{id:`req-${Date.now()}`,engineer_name:currentUser.name,type:'leave',leave_type:type,leave_from:from,leave_to:to,notes,status:'pending',created:Date.now()}});
-    closeModal('leave-modal');toast('✅ Leave request sent!','success');loadRequests();
-  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');}
+    closeModal('leave-modal');toast('✅ Leave request sent!','success');if(navigator.vibrate)navigator.vibrate([50,30,80]);loadRequests();
+  }catch(e){toast('❌ '+(e.message||'').slice(0,80),'error');if(navigator.vibrate)navigator.vibrate([80]);}
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3520,7 +3562,7 @@ function _fd(ts){
 function initAutoSave(){
   // These IDs exist across different modal contexts — attach lazily
   // so we don't miss dynamically rendered elements
-  const WATCH=['job-notes','aj-desc','ot-notes'];
+  const WATCH=['job-notes','aj-desc','ot-notes','leave-notes'];
 
   function _hookEl(id){
     const el=document.getElementById(id);
@@ -3540,9 +3582,9 @@ function initAutoSave(){
   // Hook immediately for any already-in-DOM elements
   WATCH.forEach(_hookEl);
 
-  // Re-hook after modal opens (aj-desc / ot-notes rendered dynamically)
+  // Re-hook after modal opens (aj-desc / ot-notes / leave-notes rendered dynamically)
   document.addEventListener('click',e=>{
-    if(e.target.closest('[onclick*="openOvertimeForm"],[onclick*="openLeaveForm"],[onclick*="openAddJobForm"]')){
+    if(e.target.closest('[onclick*="openOvertimeForm"],[onclick*="openLeaveForm"],[onclick*="openAddJobForm"],[onclick*="openAddJobModal"]')){
       setTimeout(()=>WATCH.forEach(_hookEl),200);
     }
   });
@@ -3566,9 +3608,14 @@ function _clearDraft(id){
   // ── Session restore — checks localStorage cache then re-validates active status ──
   // FIX BUG6: always re-check active=true in users table on restore so a deactivated
   // engineer can't continue using the app for up to 30 days on a cached session.
+  // FIX H3: Validate localStorage parse with try/catch
   try{
-    const saved = JSON.parse(localStorage.getItem('df_eng_user')||'null');
-    const exp   = parseInt(localStorage.getItem('df_eng_sess_expires')||'0');
+    let saved = null;
+    try{
+      const raw = localStorage.getItem('df_eng_user');
+      if(raw)saved = JSON.parse(raw);
+    }catch(e){localStorage.removeItem('df_eng_user');}
+    const exp = parseInt(localStorage.getItem('df_eng_sess_expires')||'0');
     if(saved?.name && saved?.role==='engineer' && (exp===0||Date.now()<exp)){
       currentUser=saved;
       // Re-validate: confirm the account is still active in Supabase (non-blocking fast check)
