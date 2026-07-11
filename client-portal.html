@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#4f46e5">
-<title>Client Portal</title>
+<meta name="theme-color" content="#1e3a5f">
+<title>DeepFlow — Client Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,8 +16,8 @@
   --bg:#f8fafc;--surface:#ffffff;--surface-elevated:#ffffff;
   --border:#e2e8f0;--border-subtle:#f1f5f9;
   --text:#0f172a;--text-secondary:#64748b;--text-tertiary:#94a3b8;
-  --accent:#4f46e5;--accent-light:#eef2ff;--accent-dark:#3730a3;
-  --accent-glow:rgba(79,70,229,0.12);
+  --accent:#1d6fad;--accent-light:#eff6ff;--accent-dark:#1e3a5f;
+  --accent-glow:rgba(29,111,173,0.12);
   --success:#10b981;--success-light:#ecfdf5;--success-bg:#d1fae5;
   --warning:#f59e0b;--warning-light:#fffbeb;--warning-bg:#fde68a;
   --danger:#ef4444;--danger-light:#fef2f2;--danger-bg:#fecaca;
@@ -37,8 +37,8 @@
     --bg:#0f172a;--surface:#1e293b;--surface-elevated:#334155;
     --border:#334155;--border-subtle:#1e293b;
     --text:#f8fafc;--text-secondary:#94a3b8;--text-tertiary:#64748b;
-    --accent:#818cf8;--accent-light:rgba(129,140,248,0.1);--accent-dark:#c7d2fe;
-    --accent-glow:rgba(129,140,248,0.15);
+    --accent:#38bdf8;--accent-light:rgba(56,189,248,0.1);--accent-dark:#7dd3fc;
+    --accent-glow:rgba(56,189,248,0.15);
     --success:#34d399;--success-light:rgba(52,211,153,0.1);
     --warning:#fbbf24;--warning-light:rgba(251,191,36,0.1);
     --danger:#f87171;--danger-light:rgba(248,113,113,0.1);
@@ -48,7 +48,7 @@
   .nav{background:rgba(15,23,42,0.7)!important;}
   .cc-ic,.ic-ic,.stat-ic{background:rgba(255,255,255,0.05)!important;}
 }
-html.dark{--bg:#0f172a;--surface:#1e293b;--surface-elevated:#334155;--border:#334155;--border-subtle:#1e293b;--text:#f8fafc;--text-secondary:#94a3b8;--text-tertiary:#64748b;--accent:#818cf8;--accent-light:rgba(129,140,248,0.1);--accent-dark:#c7d2fe;--accent-glow:rgba(129,140,248,0.15);--success:#34d399;--success-light:rgba(52,211,153,0.1);--warning:#fbbf24;--warning-light:rgba(251,191,36,0.1);--danger:#f87171;--danger-light:rgba(248,113,113,0.1);}
+html.dark{--bg:#0a1628;--surface:#0f2140;--surface-elevated:#1e3a5f;--border:#1e3a5f;--border-subtle:#0f2140;--text:#e2eeff;--text-secondary:#94b8d8;--text-tertiary:#4a6a8a;--accent:#38bdf8;--accent-light:rgba(56,189,248,0.1);--accent-dark:#7dd3fc;--accent-glow:rgba(56,189,248,0.15);--success:#34d399;--success-light:rgba(52,211,153,0.1);--warning:#fbbf24;--warning-light:rgba(251,191,36,0.1);--danger:#f87171;--danger-light:rgba(248,113,113,0.1);}
 
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -403,8 +403,17 @@ select.fi{cursor:pointer}
 
 <div class="hdr">
   <div class="hdr-l">
-    <div class="logo"><i data-lucide="shield-check"></i></div>
-    <div class="hdr-co" id="hdr-co">DeepFlow</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo" style="background:linear-gradient(135deg,#1e3a5f,#0f2140);box-shadow:0 0 0 3px rgba(125,211,252,.15),0 4px 12px rgba(30,58,95,.3)">
+        <span style="font-size:14px">⚡</span>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:900;letter-spacing:.5px;line-height:1;font-family:Arial Black,sans-serif">
+          <span style="background:linear-gradient(135deg,#38bdf8,#7dd3fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">DEEP</span><span style="background:linear-gradient(135deg,#fde68a,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">FLOW</span>
+        </div>
+        <div id="hdr-co" style="font-size:10px;color:var(--text-secondary);font-weight:500;margin-top:1px;letter-spacing:.3px"></div>
+      </div>
+    </div>
   </div>
   <div class="hdr-r">
     <button class="hbtn-icon" id="theme-btn" onclick="toggleTheme()" title="Toggle theme"><i data-lucide="sun" style="width:18px;height:18px"></i></button>
@@ -583,14 +592,21 @@ async function init(){
     if(jobs.length){
       const idL=jobs.map(j=>`"${j.id}"`).join(',');
       const nL=(entity.name||'').toLowerCase();
-      const [ra,rc,ri]=await Promise.all([
+      const [ra,rc,ri,rr]=await Promise.all([
         sb(`attachments?jobid=in.(${idL})&select=*`).catch(()=>[]),
         sb(`certs?jobid=in.(${idL})&select=*`).catch(()=>[]),
         fetchInvoicesByName(nL),
+        sb(`ratings?jobid=in.(${idL})&select=*`).catch(()=>[]),
       ]);
       attachments=(ra||[]).map(_fix);
       certs=(rc||[]).map(_fix);
       invoices=ri||[];
+      const ratings=(rr||[]).map(_fix);
+      // Attach ratings to jobs
+      jobs.forEach(j=>{
+        const r=ratings.find(x=>x.jobId===j.id||x.jobid===j.id);
+        if(r) j.rating=r.score||r.rating||r.stars;
+      });
       jobs.forEach(j=>{
         const rel=invoices.filter(inv=>{
           const a=(inv.jobAddress||inv.billToAddress||'').toLowerCase().trim();
@@ -618,7 +634,7 @@ async function init(){
       if(nb)nb.style.display='flex';if(nd)nd.style.display='block';
     }
 
-    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,token,coName,entity};
+    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,ratings:ratings||[],token,coName,entity};
     document.getElementById('nav').style.display='flex';
     document.querySelectorAll('.tab').forEach(tab=>{
       tab.addEventListener('click',()=>go(tab.dataset.t));
