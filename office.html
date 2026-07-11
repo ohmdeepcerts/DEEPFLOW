@@ -3403,6 +3403,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 <div class="overlay" id="mo-job">
 <div class="modal" style="max-width:1120px;padding:24px 28px 24px">
   <div class="modal-title" id="mo-job-title">📋 New Job</div>
+  <div id="mo-job-cr-banner" style="display:none;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.25);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;color:#0ea5e9;margin-bottom:12px;align-items:center;gap:6px"></div>
 
   <div class="jm-3col">
 
@@ -6257,8 +6258,7 @@ async function renderJobs(){
 
         <!-- COL 1: Job # + priority pill -->
         <div class="jsr3-cell" style="padding:5px 6px" onclick="event.stopPropagation()">
-          ${j.jobNum?`<span class="jsr3-jobnum">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
-          ${(()=>{const m=(j.notes||'').match(/Portal Request: (CR-\d+)/);return m?`<span style="font-size:8px;font-weight:700;color:#0ea5e9;background:rgba(14,165,233,.12);padding:1px 5px;border-radius:4px;display:block;margin-top:2px;font-family:monospace">${m[1]}</span>`:''})()}
+          ${j.jobNum?`<span class="jsr3-jobnum" style="${(j.jobNum||'').startsWith('CR-')?'color:#0ea5e9;background:rgba(14,165,233,.1);':''}">${j.jobNum}</span>`:`<span style="color:var(--txt3);font-size:10px">—</span>`}
           ${prtyPill?`<span style="font-size:11px">${prtyPill}</span>`:''}
           ${isUnconfirmed?`<span class="jsr-unconfirmed">⏳ Unconfirmed</span>`:''}
         </div>
@@ -7107,6 +7107,16 @@ async function openJobModal(id){
   fillJobDropdowns();
   switchJobTab('details');
   const f=v=>document.getElementById(v);
+  // Show CR banner if pre-filled from portal request
+  const crBanner=document.getElementById('mo-job-cr-banner');
+  if(!id && window._pendingCRNum){
+    document.getElementById('mo-job-title').textContent=`📋 New Job from Portal · ${window._pendingCRNum}`;
+    if(crBanner) crBanner.style.display='flex';
+    if(crBanner) crBanner.textContent=`🏠 Portal Request ${window._pendingCRNum} — this job number will be saved as ${window._pendingCRNum}`;
+  } else {
+    document.getElementById('mo-job-title').textContent=id?'✎ Edit Job':'+ New Job';
+    if(crBanner) crBanner.style.display='none';
+  }
   if(id){
     dGet('jobs',id).then(j=>{
       if(!j)return;
@@ -7303,7 +7313,9 @@ async function saveJob(){
   }
   const isNew=!editJid;
   const existingJob=editJid?await dGet('jobs',editJid):null;
-  const jobNum=existingJob?.jobNum||(isNew?await nextJobNum():'');
+  // Use CR number if pre-set from portal request, otherwise generate next job number
+  const jobNum=existingJob?.jobNum||(window._pendingCRNum||(isNew?await nextJobNum():''));
+  window._pendingCRNum=null; // clear after use
   const j={
     id:editJid||uid(),
     jobNum,
@@ -12738,7 +12750,7 @@ function _showReqDetail(r){
 async function _reqCreateJob(id, parsedEnc, clientName){
   let p; try{p=JSON.parse(decodeURIComponent(parsedEnc));}catch(e){p={};}
 
-  // Get CR number from the request notes
+  // Get CR number from the request notes — this BECOMES the job number
   const reqRows=await _sb(`engineer_requests?id=eq.${id}&select=notes`).catch(()=>[]);
   const crMatch=(reqRows?.[0]?.notes||'').match(/\[(CR-\d+)\]/);
   const crNum=crMatch?crMatch[1]:null;
@@ -12751,15 +12763,16 @@ async function _reqCreateJob(id, parsedEnc, clientName){
   const f=id=>document.getElementById(id);
   if(p.address&&f('jf-addr'))  f('jf-addr').value=p.address;
   if(p.service&&f('jf-desc'))  f('jf-desc').value=p.service;
-  // Put CR number at top of notes so job is clearly linked to portal request
-  const noteLines=[crNum?`Portal Request: ${crNum}`:'',p.access?`Access: ${p.access}`:'',p.notes||''].filter(Boolean);
+  // Store CR number — will be used as job number when saved
+  if(crNum) window._pendingCRNum=crNum;
+  const noteLines=[p.access?`Access: ${p.access}`:'',p.notes||''].filter(Boolean);
   if(noteLines.length&&f('jf-notes')) f('jf-notes').value=noteLines.join('\n');
   if(clientName){
     const persons=await dAll('persons').catch(()=>[]);
     const match=persons.find(x=>x.name.toLowerCase()===clientName.toLowerCase());
     if(f('jf-landlord')) f('jf-landlord').value=match?match.name:clientName;
   }
-  toast(`📋 Job pre-filled from ${crNum||'portal request'} — review and save`,'info',5000);
+  toast(`📋 Job pre-filled as ${crNum||'portal request'} — review and save`,'info',5000);
 }
 
 async function _reqAcknowledge(id){
