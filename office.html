@@ -9655,6 +9655,21 @@ async function _saveLiveItem(el){
       _invalidateCache('invoices');
       if(ind)ind.textContent='✓ Saved';
       setTimeout(()=>{if(ind)ind.textContent='';},2000);
+      // Audit log for price/amount changes
+      if(key==='unit'||key==='qty'){
+        const inv2=await dGet('invoices',invId).catch(()=>null);
+        if(inv2){
+          const oldTotal=calcInvTotal(inv).grand;
+          const newTotal=calcInvTotal({...inv2,items}).grand;
+          if(Math.abs(oldTotal-newTotal)>0.01){
+            await logAudit('inv_amount',{
+              invId, invNum:inv2.number||'',
+              jobId:inv2.linkedJobId||'', jobNum:inv2.jobNum||'',
+              oldVal:oldTotal.toFixed(2), newVal:newTotal.toFixed(2)
+            });
+          }
+        }
+      }
       // Sync description + price to linked job
       _syncInvoiceFieldToJob(invId, 'description', combinedDesc).catch(()=>{});
       _syncInvoiceFieldToJob(invId, 'items', items).catch(()=>{});
@@ -16542,8 +16557,14 @@ async function duplicateJob(id){
 
 async function deleteJobById(id){
   confirm2('Delete Job','Permanently delete this job?',async()=>{
+    const j=await dGet('jobs',id).catch(()=>null);
     await dDel('jobs',id);
     await logActivity('Job deleted','job');
+    // Audit trail
+    if(j) await logAudit('job_delete',{
+      jobId:id, jobNum:j.jobNum||j.jobnum||'',
+      address:j.address||'', note:`Status was: ${j.status||'unknown'}`
+    });
     renderJobs();updateBadges();toast('Job deleted','warn');
   });
 }
