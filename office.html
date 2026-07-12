@@ -1143,7 +1143,7 @@ body.density-relaxed .jtable td{font-size:15px}
 /* ── Job row: fixed-column table-like grid ─────────────────── */
 /* Layout: [drag 18px][stripe 3px][status 80px][job# 54px][address flex][desc 200px][contact 160px][time 80px][eng 110px][certs 90px][price 52px][sel 90px][actions 58px] */
 /* ── Job rows — compact flat design (Outlook-style) ── */
-.jsr3{display:grid;align-items:center;background:var(--s1);border:none;border-bottom:1px solid var(--border);border-radius:0;overflow:hidden;cursor:default;transition:background .4s ease,border-left-color .4s ease,box-shadow .4s ease,opacity .3s ease,transform .3s ease;position:relative;min-height:32px;max-height:36px;box-sizing:border-box;font-size:12px}
+.jsr3{display:grid;align-items:center;background:var(--s1);border:none;border-bottom:1px solid var(--border);border-radius:0;overflow:hidden;cursor:default;transition:background .4s ease,border-left-color .4s ease,box-shadow .4s ease,opacity .2s ease,transform .15s ease;position:relative;min-height:32px;box-sizing:border-box;font-size:12px}
 .jsr3:hover{background:var(--s2)}
 .jsg-rows{padding:0;display:flex;flex-direction:column;gap:0}
 .jsr3.jsr-emg{background:rgba(230,95,0,.22);border-left:4px solid #e65f00}
@@ -1154,6 +1154,15 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr3.jsr-past{opacity:1}/* FIX: removed opacity fade for past jobs */
 .jsr3.jsr-normal{background:rgba(60,120,230,.16);border-left:4px solid #3c78e6}
 .jsr3.jsr-low{background:#f0f0f0;border-left:4px solid var(--border2)}
+
+/* ═══ Instant priority change feedback ═══ */
+.jsg-rows{transition:opacity .15s ease}
+.jsg-rows.filtering{opacity:.5}
+@keyframes priFlash{
+  0%{box-shadow:inset 0 0 30px rgba(245,166,35,.4)}
+  100%{box-shadow:inset 0 0 0 transparent}
+}
+.jsr-pri-flash{animation:priFlash .6s ease}
 
 /* ── Priority dot toolbar ── */
 .pri-dots{display:flex;align-items:center;gap:4px;margin:0 4px;flex-shrink:0}
@@ -1172,9 +1181,9 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr3.jsr-selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc);z-index:2}
 
 /* ── Smooth drag ── */
-.jsr3.dragging{opacity:.6;box-shadow:0 4px 20px rgba(0,0,0,.15);transform:scale(1.01);z-index:10}
+.jsr3.dragging{opacity:.7;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(-2px) scale(1.01);z-index:100;overflow:visible!important;border:1px solid var(--acc)}
 .jsr3.drag-over{position:relative}
-.jsr3.drag-over::after{content:'';position:absolute;left:20px;right:0;bottom:0;height:2px;background:var(--acc);border-radius:1px;box-shadow:0 0 6px rgba(245,166,35,.5)}
+.jsr3.drag-over::after{content:'';position:absolute;left:20px;right:0;bottom:0;height:3px;background:var(--acc);border-radius:1px;box-shadow:0 0 10px rgba(245,166,35,.7)}
 
 /* ── Row selection checkbox ── */
 .jsr3:hover .jsr-sel-check,.jsr3.jsr-selected .jsr-sel-check{opacity:1!important}
@@ -1185,8 +1194,8 @@ body.density-relaxed .jtable td{font-size:15px}
 
 /* ── Auto-scroll indicator zones ── */
 .jsr-scroll-zone{position:fixed;left:0;right:0;height:40px;pointer-events:none;z-index:5;display:none}
-.jsr-scroll-zone.up{top:120px;background:linear-gradient(to bottom,rgba(245,166,35,.06),transparent)}
-.jsr-scroll-zone.down{bottom:0;background:linear-gradient(to top,rgba(245,166,35,.06),transparent)}
+.jsr-scroll-zone.up{top:120px;background:linear-gradient(to bottom,rgba(245,166,35,.1),transparent)}
+.jsr-scroll-zone.down{bottom:0;background:linear-gradient(to top,rgba(245,166,35,.1),transparent)}
 .jsr-scroll-zone.active{display:block}
 
 
@@ -1194,7 +1203,7 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr-unconfirmed{font-size:9px;font-weight:700;background:rgba(251,191,36,.12);color:#92400e;padding:1px 5px;border-radius:6px;border:1px solid rgba(251,191,36,.25);white-space:nowrap}
 /* drag styles replaced by smooth DnD CSS above */
 /* drag handle */
-.jsr-drag-handle{display:flex;align-items:center;justify-content:center;height:100%;color:var(--border2);font-size:10px;cursor:grab;user-select:none;transition:color .15s;width:18px;flex-shrink:0}
+.jsr-drag-handle{display:flex;align-items:center;justify-content:center;height:100%;color:var(--border2);font-size:11px;cursor:grab;user-select:none;transition:color .15s;width:20px;flex-shrink:0}
 .jsr-drag-handle:hover{color:var(--txt3)}
 .jsr-drag-handle:hover{color:var(--acc)}
 .jsr-drag-handle:active{cursor:grabbing}
@@ -1217,8 +1226,8 @@ body.density-relaxed .jtable td{font-size:15px}
 .jsr3-cell-price{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--txt);padding:2px 4px;text-align:right;white-space:nowrap}
 .jsr3-cell-sel{padding:2px 4px}
 /* Fixed-width action slots so buttons stay aligned across all rows */
-.jsr3-cell-actions{padding:2px 4px;display:grid;grid-template-columns:28px 28px 28px 28px 28px;gap:1px;align-items:center;flex-shrink:0;overflow:hidden}
-.jsr-act-slot{display:flex;align-items:center;justify-content:center;width:28px;height:20px;flex-shrink:0}
+.jsr3-cell-actions{padding:2px 4px;display:grid;grid-template-columns:22px 22px 22px 22px 22px;gap:0;align-items:center;flex-shrink:0;overflow:visible}
+.jsr-act-slot{display:flex;align-items:center;justify-content:center;width:22px;height:20px;flex-shrink:0;overflow:hidden}
 /* Consistent job number badge — all prefixes look the same */
 .jsr3-jobnum{font-size:9px;font-weight:700;padding:1px 4px;border-radius:4px;background:var(--s2);color:var(--txt2);border:1px solid var(--border);display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.2}
 .jsg-add:hover{border-color:var(--acc);color:var(--acc)}
@@ -1559,14 +1568,6 @@ body.density-relaxed .jtable td{font-size:15px}
 
   <!-- JOBS -->
   <div class="page" id="pg-jobs">
-    <!-- Saved Views -->
-    <div class="saved-views" id="saved-views-bar">
-      <span style="font-size:10px;color:var(--txt3);align-self:center;font-family:var(--fh);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-right:4px">Views:</span>
-      <button class="sv-btn" onclick="applySavedView('today-pending')">Today Pending</button>
-      <button class="sv-btn" onclick="applySavedView('urgent')">🔥 Urgent</button>
-      <div id="custom-views-btns"></div>
-      <button class="sv-btn" style="color:var(--acc);border-color:rgba(245,166,35,.3)" onclick="saveCurrentView()" title="Save current filters as a view">+ Save View</button>
-    </div>
     <!-- Toolbar -->
     <div class="jobs-ctrl">
       <!-- Day nav -->
@@ -1597,8 +1598,8 @@ body.density-relaxed .jtable td{font-size:15px}
 
       <!-- Settings menu (hidden options) -->
       <div style="position:relative;display:inline-flex" id="jobs-more-menu">
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('jobs-more-dd').style.display=document.getElementById('jobs-more-dd').style.display==='block'?'none':'block';event.stopPropagation()" title="More options">☰</button>
-        <div id="jobs-more-dd" style="display:none;position:absolute;top:100%;right:0;z-index:5000;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r2);box-shadow:var(--sh2);min-width:180px;padding:4px 0;margin-top:2px">
+        <button class="btn btn-ghost btn-sm" onclick="const dd=document.getElementById('jobs-more-dd'),btn=this;if(dd.style.display==='block'){dd.style.display='none';}else{const r=btn.getBoundingClientRect();dd.style.left=(r.left-140)+'px';dd.style.top=(r.bottom+4)+'px';dd.style.display='block';}event.stopPropagation();" title="More options">☰</button>
+        <div id="jobs-more-dd" style="display:none;position:fixed;z-index:5000;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r2);box-shadow:var(--sh2);min-width:180px;padding:4px 0;margin-top:2px">
           <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="toggleUnassignedView();document.getElementById('jobs-more-dd').style.display='none'">📋 Unbooked Jobs</div>
           <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="setJobsView('engineer');document.getElementById('jobs-more-dd').style.display='none'">👷 View by Engineer</div>
           <div style="padding:6px 14px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''" onclick="setJobsView('list');document.getElementById('jobs-more-dd').style.display='none'">☰ List View</div>
@@ -1748,6 +1749,7 @@ body.density-relaxed .jtable td{font-size:15px}
         <button onclick="setInvType('all')"      id="invtype-all"      class="inv-type-tab active">All Invoices</button>
         <button onclick="setInvType('landlord')" id="invtype-landlord" class="inv-type-tab">🏠 Landlord</button>
         <button onclick="setInvType('agency')"   id="invtype-agency"   class="inv-type-tab">🏢 Agency</button>
+        <button onclick="setInvType('proforma')" id="invtype-proforma" class="inv-type-tab">📄 Proforma</button>
       </div>
 
       <!-- KPI summary strip — updates with type -->
@@ -1760,6 +1762,13 @@ body.density-relaxed .jtable td{font-size:15px}
         <button class="btn btn-ghost btn-sm" onclick="sendAllOverdueWA()"        style="font-size:11px">📱 Chase</button>
         <button class="btn btn-ghost btn-sm" onclick="openCreditNoteModal()"     style="font-size:11px">↩ Credit</button>
       </div>
+    </div>
+
+    <!-- SMART BANNER — shows completed jobs needing invoices -->
+    <div id="inv-smart-banner" style="display:none;padding:10px 16px;background:linear-gradient(90deg,#fef3c7,#fde68a);border-bottom:1px solid #f59e0b;font-size:12px;font-weight:600;color:#92400e;display:flex;align-items:center;gap:12px">
+      <span>⚡ <span id="inv-smart-count">0</span> completed job(s) need invoice drafts</span>
+      <button class="btn btn-acc btn-sm" onclick="createDraftsForCompleted()" style="font-size:11px;padding:4px 10px">Create Drafts</button>
+      <button class="btn btn-ghost btn-sm" onclick="dismissInvBanner()" style="font-size:11px;padding:4px 8px;margin-left:auto">✕</button>
     </div>
 
     <!-- ══ BODY (sub-left + main) ══ -->
@@ -2785,6 +2794,41 @@ body.density-relaxed .jtable td{font-size:15px}
             <div class="fg"><label class="fl">IBAN (optional)</label><input type="text" class="fi" id="s-bank-iban" placeholder="GB00..."></div>
           </div>
           <div style="margin-top:10px"><button class="btn btn-acc btn-sm" onclick="saveSettings()">Save Invoice Settings</button></div>
+        </div>
+
+        <!-- Invoice Sync & Automation Settings -->
+        <div class="set-section">
+          <div class="set-title">⚡ Auto-Sync & Automation</div>
+          <div class="set-card">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:12px">Control how invoices sync with jobs and auto-create behaviour.</div>
+            <div style="display:flex;flex-direction:column;gap:8px" id="inv-sync-toggles">
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-auto-draft-complete" ${S.invAutoDraftOnComplete?'checked':''} onchange="S.invAutoDraftOnComplete=this.checked;saveSettings()">
+                Auto-create draft invoice when job is completed
+              </label>
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-sync-amount" ${S.invSyncAmount?'checked':''} onchange="S.invSyncAmount=this.checked;saveSettings()">
+                Sync invoice amount changes back to job
+              </label>
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-sync-desc" ${S.invSyncDesc?'checked':''} onchange="S.invSyncDesc=this.checked;saveSettings()">
+                Sync invoice description changes back to job
+              </label>
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-draft-on-job-change" ${S.invDraftOnJobChange?'checked':''} onchange="S.invDraftOnJobChange=this.checked;saveSettings()">
+                Move invoice to Draft when job amount changes
+              </label>
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-notify-admin-edit" ${S.invNotifyAdminOnEdit?'checked':''} onchange="S.invNotifyAdminOnEdit=this.checked;saveSettings()">
+                Notify admin when finance edits an invoice
+              </label>
+              <label class="fcheck">
+                <input type="checkbox" id="s-inv-show-audit" ${S.invShowAuditTrail?'checked':''} onchange="S.invShowAuditTrail=this.checked;saveSettings()">
+                Show audit trail in invoice view
+              </label>
+            </div>
+            <div style="margin-top:12px"><button class="btn btn-acc btn-sm" onclick="saveSettings()">Save Sync Settings</button></div>
+          </div>
         </div>
       </div>
 
@@ -4473,6 +4517,13 @@ let S = {
   invCustomTexts:[], // [{id,label,content,enabled}]
   themeMode:'manual', // manual | auto | scheduled
   themeLightStart:'07:00', themeLightEnd:'20:00',
+  // Invoice sync & automation settings (v10)
+  invSyncAmount:true,
+  invSyncDesc:true,
+  invDraftOnJobChange:true,
+  invAutoDraftOnComplete:true,
+  invNotifyAdminOnEdit:true,
+  invShowAuditTrail:true,
 };
 
 async function initDB(){ /* no-op — Supabase REST needs no initialisation */ }
@@ -4780,7 +4831,7 @@ function nav(pg){
   setTopbarActions(pg);
   if(pg==='dash') renderDash();
   if(pg==='jobs') {_invalidateJobCache();renderJobs();renderSavedViews();}
-  if(pg==='inv') { renderInvSubnavKPIs(); invNavSelect('dashboard'); }
+  if(pg==='inv') { renderInvSubnavKPIs(); invNavSelect('dashboard'); updateInvSmartBanner(); }
   if(pg==='stmt') renderStmt();
   if(pg==='exp') renderExpenses();
   if(pg==='ts') renderTS();
@@ -4836,6 +4887,45 @@ document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
   const pg=n.dataset.pg;
   nav(pg);
 }));
+
+// ═══════════════════════════════════════════════════════════════
+//  SMART NOTIFICATION BANNER — completed jobs needing invoices
+// ═══════════════════════════════════════════════════════════════
+async function updateInvSmartBanner(){
+  const banner=document.getElementById('inv-smart-banner');
+  const countEl=document.getElementById('inv-smart-count');
+  if(!banner||!countEl)return;
+  try{
+    const jobs=await _sb("jobs?status=eq.Completed&invoiced=neq.true&select=id&limit=100");
+    const missing=(jobs||[]).length;
+    if(missing>0){
+      countEl.textContent=missing;
+      banner.style.display='flex';
+    }else{
+      banner.style.display='none';
+    }
+  }catch(e){banner.style.display='none';}
+}
+function dismissInvBanner(){
+  const b=document.getElementById('inv-smart-banner');
+  if(b)b.style.display='none';
+}
+
+// Create drafts for all completed jobs without invoices
+async function createDraftsForCompleted(){
+  try{
+    const jobs=await _sb("jobs?status=eq.Completed&invoiced=neq.true&limit=50");
+    if(!jobs?.length){toast('No jobs need drafts','warn');return;}
+    let created=0;
+    for(const job of jobs){
+      const r=await autoInvoice(job.id);
+      if(r)created++;
+    }
+    toast('Created '+created+' draft invoice(s)','success');
+    renderInvList();
+    dismissInvBanner();
+  }catch(e){toast('Failed: '+e.message,'error');}
+}
 
 // ── Legacy COL_DEFS/FCOL_DEFS column manager removed (ISSUE 5) ──
 // JOB_COLS system (below) is the sole column manager now.
@@ -6182,17 +6272,32 @@ function priClass(p){
 async function bulkSetPriority(priority){
   const ids=[...selJobs];
   if(!ids.length){toast('Select jobs first','error');return;}
-  // Optimistic UI: change colour immediately
+
+  // INSTANT visual update — no waiting
+  const priMap={'Certificate':'jsr-cert','Repair':'jsr-repair','Urgent':'jsr-urg','Emergency':'jsr-emg','Normal':'jsr-normal'};
+  const newClass=priMap[priority]||'';
   ids.forEach(id=>{
     const row=document.querySelector('.jsr3[data-id="'+id+'"]');
-    if(row){row.classList.remove('jsr-cert','jsr-repair','jsr-urg','jsr-emg','jsr-normal');row.classList.add('jsr-'+priClass(priority));}
+    if(row){
+      row.classList.remove('jsr-cert','jsr-repair','jsr-urg','jsr-emg','jsr-normal','jsr-low');
+      if(newClass) row.classList.add(newClass);
+      // Flash animation to show the change
+      row.classList.add('jsr-pri-flash');
+      setTimeout(()=>row.classList.remove('jsr-pri-flash'),600);
+    }
+    // Also update _jobRowData so the change persists
+    const j=_jobRowData[id];
+    if(j) j.priority=priority;
   });
-  toast('Setting '+ids.length+' job'+(ids.length!==1?'s':'')+' to '+priority+'...','success',1500);
-  let done=0;
-  const saves=ids.map(id=>_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{priority:priority,modified:Date.now()},prefer:'return=minimal'}).then(()=>done++).catch(e=>console.warn(e)));
-  await Promise.all(saves);
-  toast('Done: '+done+' job'+(done!==1?'s':'')+' set to '+priority,'success');
-  clearSel();renderJobs();
+
+  toast(ids.length+' job'+(ids.length!==1?'s':'')+' → '+priority,'success',1500);
+  clearSel();
+
+  // Fire Supabase updates in background — no await, no blocking
+  const now=Date.now();
+  Promise.all(ids.map(id=>_sb('jobs?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:{priority:priority,modified:now},prefer:'return=minimal'}).catch(e=>console.warn(e))))
+    .then(()=>{ /* silently done — already showing optimistic update */ })
+    .catch(err=>{console.warn('[DeepFlow] bulk priority failed',err);_invalidateJobCache();});
 }
 
 async function forceSyncUsers(){
@@ -6755,6 +6860,9 @@ function onJobComplete(j){
 
   // Auto-create invoice (delayed so certs finish first)
   setTimeout(()=>autoInvoice(j),1400);
+
+  // Refresh smart banner to show newly completed job needing invoice
+  setTimeout(updateInvSmartBanner,2000);
 }
 
 function promptNextCertExpiry(){
@@ -6973,6 +7081,82 @@ async function nextInvNum(isAgency=false){
   S.invNextNum=chosen+1;
   saveSetting('invNextNum',S.invNextNum);
   return prefix+chosen;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROFORMA INVOICES — quotation/disposable invoices
+// ══════════════════════════════════════════════════════════════
+
+// Get next proforma number
+async function nextProformaNum(){
+  try{
+    const invs=await _sb('invoices?type=eq.proforma&order=number.desc&limit=1');
+    const last=invs?.[0]?.number||'PF-000';
+    const n=parseInt(last.replace(/[^0-9]/g,''))||0;
+    return 'PF-'+String(n+1).padStart(3,'0');
+  }catch(e){return 'PF-001';}
+}
+
+// Create proforma from job
+async function createProforma(jobId){
+  const job=_jobRowData[jobId];
+  if(!job){toast('Job not found','error');return;}
+  const now=Date.now();
+  const num=await nextProformaNum();
+  const vr=S.vatRate||20;
+  const price=Number(job.price)||0;
+  const vat=price*vr/100;
+  const body={
+    type:'proforma',
+    status:'Draft',
+    number:num,
+    date:TODAY(),
+    dueDate:TODAY(),
+    billToName:job.llName||job.clientName||'',
+    billToAddress:job.llAddr||job.address||'',
+    jobId:job.id,
+    jobNum:job.jobNum||'',
+    jobDate:job.date||'',
+    jobAddress:job.address||'',
+    propertyAddress:job.address||'',
+    engineer:job.engineer||'',
+    certTypes:job.certTypes||'',
+    agentName:job.agentName||'',
+    clientName:job.llName||job.clientName||'',
+    clientEmail:job.llEmail||job.clientEmail||'',
+    items:[{desc:job.description||job.certTypes||'Work',qty:1,unit:price,vat:true}],
+    subtotal:price,
+    vat:vat,
+    total:price+vat,
+    created:now,modified:now
+  };
+  try{
+    const r=await _sb('invoices',{method:'POST',body});
+    if(r?.[0]){toast('Proforma '+num+' created','success');renderInvList();return r[0];}
+  }catch(e){toast('Failed: '+e.message,'error');}
+}
+
+// Convert proforma to real invoice
+async function convertProformaToInvoice(proformaId){
+  const inv=await dGet('invoices',proformaId);
+  if(!inv){toast('Proforma not found','error');return;}
+  if(inv.type!=='proforma'){toast('Not a proforma invoice','error');return;}
+  const isAgency=inv.agentName?true:false;
+  const realNum=await nextInvNum(isAgency);
+  const now=Date.now();
+  try{
+    await _sb('invoices?id=eq.'+proformaId,{method:'PATCH',body:{type:'invoice',number:realNum,status:'Draft',proformaConverted:true,convertedAt:now,modified:now}});
+    toast('Converted to '+realNum,'success');
+    // Log in audit
+    await _sb('invoice_audit',{method:'POST',body:{invoiceId:proformaId,action:'converted',from:'proforma',to:realNum,user:_appUser?.name||'System',timestamp:now}});
+    viewInv(proformaId);
+    renderInvList();
+  }catch(e){toast('Conversion failed: '+e.message,'error');}
+}
+
+// Print proforma
+function printProforma(id){
+  window.print();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -8570,6 +8754,7 @@ async function renderInvList(){
             <button class="btn btn-acc btn-sm" onclick="createInvFromJob('${j.id}');event.stopPropagation()">
               🧾 Create Invoice${issues.length?' (as draft)':''}
             </button>
+            <button class="btn btn-ghost btn-sm" onclick="createProforma('${j.id}');event.stopPropagation()">📄 Create Proforma</button>
             <button class="btn btn-ghost btn-sm" onclick="openJobModal('${j.id}');event.stopPropagation()">✎ Open Job to Fix</button>
             ${client?`<button class="btn btn-ghost btn-sm" onclick="nav('dir');event.stopPropagation()">👤 View Client in Contacts</button>`:''}
           </div>
@@ -8618,18 +8803,19 @@ async function renderInvList(){
         </div>
         <div class="inv-client" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${inv.clientName||'—'}</div>
         <div class="inv-amt" style="white-space:nowrap">£${t.grand.toFixed(2)}</div>
-        <span class="badge ${sMap[inv.status]||''}" style="white-space:nowrap">${inv.status}</span>
+        ${inv.type==='proforma'?`<span class="badge" style="white-space:nowrap;background:#a855f720;color:#a855f7;border:1px solid #a855f740">📄 PROFORMA</span>`:`<span class="badge ${sMap[inv.status]||''}" style="white-space:nowrap">${inv.status}</span>`}
       </div>
       <div class="inv-meta" style="margin-bottom:${pct>0&&pct<100?'6px':'0'}">${inv.description||'—'}${inv.date?' · '+inv.date:''}${inv.jobRef?` · <span style="color:var(--txt3);font-size:10px">Job: ${inv.jobRef}</span>`:''}</div>
-      ${pct>0&&pct<100?`<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 0 6px"><div style="height:100%;width:${pct.toFixed(0)}%;background:var(--acc);border-radius:2px"></div></div>`:''}
+      ${pct>0&&pct<100&&inv.type!=='proforma'?`<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 0 6px"><div style="height:100%;width:${pct.toFixed(0)}%;background:var(--acc);border-radius:2px"></div></div>`:''}
       <div class="inv-quick-actions" onclick="event.stopPropagation()" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
-        ${inv.status==='Draft'?`<button class="btn btn-ghost btn-xs" onclick="markInvSent('${inv.id}')">Mark Sent</button>`:''}
-        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED?`<button class="btn btn-green btn-xs" onclick="event.stopPropagation();markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>`:''}
-        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED?`<button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>`:''}
+        ${inv.type==='proforma'?`<button class="btn btn-acc btn-xs" onclick="convertProformaToInvoice('${inv.id}')">🧾 Convert</button>`:''}
+        ${inv.status==='Draft'&&inv.type!=='proforma'?`<button class="btn btn-ghost btn-xs" onclick="markInvSent('${inv.id}')">Mark Sent</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED&&inv.type!=='proforma'?`<button class="btn btn-green btn-xs" onclick="event.stopPropagation();markInvPaid('${inv.id}');renderInvList()">✓ Paid</button>`:''}
+        ${inv.status!=='Paid'&&inv.status!==STATUS.CANCELLED&&inv.type!=='proforma'?`<button class="btn btn-blue btn-xs" onclick="openPaymentModal('${inv.id}')">💳 Part Pay</button>`:''}
         <button class="btn btn-ghost btn-xs" onclick="duplicateInv('${inv.id}')">⧉ Copy</button>
         <button class="btn btn-ghost btn-xs" onclick="downloadInvPDFById('${inv.id}')">⬇ PDF</button>
         <button class="btn btn-wa btn-xs" onclick="openInvSendModal('${inv.id}')">📱 Send</button>
-        ${outstanding>0&&inv.status==='Awaiting Payment'?`<span style="font-size:11px;color:var(--yellow);font-weight:700;margin-left:auto;align-self:center">£${outstanding.toFixed(2)} owed</span>`:''}
+        ${outstanding>0&&inv.status==='Awaiting Payment'&&inv.type!=='proforma'?`<span style="font-size:11px;color:var(--yellow);font-weight:700;margin-left:auto;align-self:center">£${outstanding.toFixed(2)} owed</span>`:''}
         ${inv.status==='Paid'?`<span style="font-size:11px;color:var(--green);font-weight:700;margin-left:auto;align-self:center">✓ Fully paid</span>`:''}
       </div>
     </div>`;
@@ -8911,37 +9097,46 @@ async function _syncInvoicePriceToJob(linkedJobId, newTotal, newDesc){
 
 // ── Per-invoice audit trail ───────────────────────────────────────────────────
 async function _renderInvAuditTrail(invId, inv){
-  const el = document.getElementById(`inv-audit-trail-${invId}`);
-  if(!el) return;
+  const box=document.getElementById('inv-audit-trail-'+invId);
+  if(!box)return;
   try{
-    const allActs = await dAll('activity');
-    const acts = allActs
-      .filter(a => a.invId===invId || a.invNum===inv.number ||
-        (a.msg && a.msg.includes(inv.number||'~~')))
-      .sort((a,b)=>b.ts-a.ts).slice(0,20);
+    const audits=await _sb('invoice_audit?invoiceId=eq.'+invId+'&order=timestamp.desc');
+    const payments=await _sb('invoice_payments?invoiceId=eq.'+invId+'&order=created.desc');
 
-    const typeIcon={sync:'🔗',warn:'⚠️',invoice:'◎',job:'🔧',payment:'💳',info:'ℹ️',credit:'↩'};
-    const typeColor={sync:'var(--acc)',warn:'var(--red)',payment:'var(--green)',credit:'#7c3aed'};
+    // Build timeline
+    let html='<div style="position:relative;padding-left:20px">';
+    html+='<div style="position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border)"></div>';
 
-    el.innerHTML=`
-      <div style="font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
-        AUDIT TRAIL
-        ${inv.jobNum?`<span style="font-size:9px;color:var(--acc);cursor:pointer" onclick="openJobAudit('${inv.linkedJobId||inv.jobId||''}')">View job trail →</span>`:''}
-      </div>
-      ${acts.length ? acts.map(a=>`
-        <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
-          <div style="width:6px;height:6px;border-radius:50%;background:${typeColor[a.type]||'var(--acc)'};flex-shrink:0;margin-top:4px"></div>
-          <div style="flex:1">
-            <div style="color:var(--txt)">${typeIcon[a.type]||'•'} ${a.msg}</div>
-            ${(a.oldVal||a.newVal)?`<div style="font-size:10px;color:var(--txt3);margin-top:1px">
-              ${a.oldVal?`<span style="color:var(--red)">"${String(a.oldVal).slice(0,40)}"</span>`:''}
-              ${a.newVal?`<span style="color:var(--green)"> → "${String(a.newVal).slice(0,40)}"</span>`:''}
-            </div>`:''}
-          </div>
-          <div style="font-size:10px;color:var(--txt3);white-space:nowrap">${new Date(a.ts).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>`).join('')
-      : `<div style="font-size:11px;color:var(--txt3);padding:8px 0">No changes recorded yet</div>`}`;
-  }catch(e){ el.innerHTML=''; }
+    // Payment entries
+    (payments||[]).forEach(p=>{
+      html+=_auditEntry('💳','green','Payment recorded','£'+Number(p.amount||0).toFixed(2)+' via '+(p.method||'?'),p.created);
+    });
+
+    // Audit entries
+    (audits||[]).forEach(a=>{
+      const icons={edit:'✎',convert:'◎',sync:'↔',created:'+',deleted:'🗑',sent:'✉',paid:'✓',status:'◉'};
+      const colors={edit:'blue',convert:'purple',sync:'orange',created:'green',deleted:'red',sent:'blue',paid:'green',status:'amber'};
+      html+=_auditEntry(icons[a.action]||'●',colors[a.action]||'grey',a.action?.toUpperCase(),a.details||'',a.timestamp);
+    });
+
+    // Creation entry
+    html+=_auditEntry('+','green','CREATED',inv.type==='proforma'?'Proforma created':'Invoice created',inv.created);
+
+    html+='</div>';
+    box.innerHTML=html;
+  }catch(e){box.innerHTML='<div style="font-size:11px;color:var(--txt3)">No audit entries yet</div>';}
+}
+
+function _auditEntry(icon,color,title,detail,ts){
+  const time=ts?new Date(ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+  const dotColors={green:'#22c55e',blue:'#3b82f6',orange:'#f97316',purple:'#a855f7',red:'#e05252',amber:'#f59e0b',grey:'#94a3b8'};
+  const dc=dotColors[color]||'#94a3b8';
+  return `<div style="position:relative;margin-bottom:12px;padding-left:12px">
+    <div style="position:absolute;left:-17px;top:2px;width:12px;height:12px;border-radius:50%;background:${dc};display:flex;align-items:center;justify-content:center;color:#fff;font-size:7px;font-weight:700;z-index:2">${icon}</div>
+    <div style="font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px">${title}</div>
+    ${detail?`<div style="font-size:11px;color:var(--txt3);margin-top:1px">${detail}</div>`:''}
+    ${time?`<div style="font-size:9px;color:var(--txt3);opacity:.6;margin-top:1px">${time}</div>`:''}
+  </div>`;
 }
 
 // ── Credit Notes Admin Panel ──────────────────────────────────────────────────
@@ -9404,6 +9599,7 @@ function _filterByType(invs){
   if(_invType==='all') return invs;
   if(_invType==='agency')   return invs.filter(i=>i.invoiceType==='agency'||(i.agencyName&&!i.invoiceType));
   if(_invType==='landlord') return invs.filter(i=>i.invoiceType==='landlord'||(!i.agencyName&&!i.invoiceType)||i.invoiceType==='');
+  if(_invType==='proforma') return invs.filter(i=>i.type==='proforma');
   return invs;
 }
 
@@ -9584,6 +9780,39 @@ async function renderInvDashboard(){
 
 async function renderInvSubnavKPIs(){
   const allInvs=await dAll('invoices');
+
+  // Proforma-specific KPIs
+  if(_invType==='proforma'){
+    const proformas=allInvs.filter(i=>i.type==='proforma');
+    const draft=proformas.filter(i=>i.status==='Draft').length;
+    const sent=proformas.filter(i=>i.status==='Sent'||i.status==='Awaiting Payment').length;
+    const converted=proformas.filter(i=>i.proformaConverted).length;
+    const totalVal=proformas.reduce((s,i)=>s+calcInvTotal(i).grand,0);
+    const topEl=document.getElementById('inv-topbar-kpis');
+    if(topEl){
+      topEl.innerHTML=`
+      <div class="inv-topbar-kpi" onclick="setInvFilter('Draft');renderInvList()" title="Draft proformas">
+        <span class="k-val" style="color:#94a3b8">${draft}</span>
+        <span class="k-lbl">Draft</span><span class="k-arrow">›</span>
+      </div>
+      <div class="inv-topbar-kpi" onclick="setInvFilter('Awaiting Payment');renderInvList()" title="Sent proformas">
+        <span class="k-val" style="color:#f59e0b">${sent}</span>
+        <span class="k-lbl">Sent</span><span class="k-arrow">›</span>
+      </div>
+      <div class="inv-topbar-kpi" title="Converted to invoices" style="${converted?'':'opacity:.45;pointer-events:none'}">
+        <span class="k-val" style="color:var(--green)">${converted}</span>
+        <span class="k-lbl">Converted</span>${converted?'<span class="k-arrow">›</span>':''}
+      </div>
+      <div class="inv-topbar-kpi" title="Total proforma value">
+        <span class="k-val" style="color:#a855f7">£${totalVal.toLocaleString('en-GB',{maximumFractionDigits:0})}</span>
+        <span class="k-lbl">Total Value</span>
+      </div>`;
+    }
+    const el=document.getElementById('inv-subnav-kpis');
+    if(el) el.innerHTML='';
+    return;
+  }
+
   const invs=_filterByType(allInvs.filter(i=>!i.isCreditNote&&i.status!=='Credit Note'));
   const now=new Date();
   const today=TODAY();
@@ -9737,6 +9966,7 @@ async function searchJobForInvoice(){
         <div style="font-size:12px;color:var(--txt2)">This job has no invoice. Click to create one.</div>
       </div>
       <button class="btn btn-acc btn-sm" onclick="createInvFromJob('${job.id}')">Create Invoice</button>
+      <button class="btn btn-ghost btn-sm" onclick="createProforma('${job.id}')">📄 Proforma</button>
     </div>`}`;
 }
 
@@ -9771,7 +10001,7 @@ async function viewInv(id){
   const logo=S.logoData?`<img src="${S.logoData}" style="height:44px;object-fit:contain;margin-bottom:6px;display:block">`:
     `<div style="font-size:24px;font-weight:900;color:var(--acc);letter-spacing:-1px">${S.coName||'DF'}</div>`;
   const statusColors={'Draft':'#94a3b8','Awaiting Payment':'#f59e0b','Paid':'#25d58e','Cancelled':'#e05252','Credit Note':'#7c3aed'};
-  const sc=statusColors[inv.status]||'#94a3b8';
+  const sc=inv.type==='proforma'?'#a855f7':(statusColors[inv.status]||'#94a3b8');
 
   // Editable field helper — click to edit, blur to save
   const ef=(field,val,opts={})=>{
@@ -9788,12 +10018,18 @@ async function viewInv(id){
   };
 
   box.innerHTML=`
-  <div style="background:#fff;font-family:'Segoe UI',system-ui,sans-serif;padding:0;border-radius:var(--r2);overflow:hidden;box-shadow:0 0 0 1px var(--border)">
+  <div style="background:#fff;font-family:'Segoe UI',system-ui,sans-serif;border-radius:var(--r2);overflow:hidden;box-shadow:0 0 0 1px var(--border);position:relative">
 
     <!-- LIVE EDIT BANNER -->
     <div style="background:linear-gradient(90deg,var(--acc),#3b82f6);color:#fff;padding:6px 16px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">
       <span>✏️ Live Preview — click any field to edit · autosaves</span>
-      <span id="inv-save-indicator" style="margin-left:auto;font-size:10px;opacity:.8"></span>
+      <span style="margin-left:auto;font-size:10px;opacity:.8;display:flex;align-items:center;gap:6px">
+        <span id="inv-save-indicator"></span>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px">
+          <input type="checkbox" id="inv-sync-toggle" checked onchange="toggleInvSync(this.checked)" style="margin:0">
+          ↔ Sync with job
+        </label>
+      </span>
     </div>
 
     <!-- INVOICE HEADER -->
@@ -9806,8 +10042,10 @@ async function viewInv(id){
         ${S.coVatNum?`<div style="font-size:10px;color:#94a3b8;margin-top:2px">VAT: ${S.coVatNum}</div>`:''}
       </div>
       <div style="text-align:right">
+        <div style="font-size:11px;color:#94a3b8;font-weight:600;margin-bottom:2px">${inv.type==='proforma'?'PROFORMA INVOICE':'TAX INVOICE'}</div>
         <div style="font-size:26px;font-weight:900;color:var(--acc);letter-spacing:-1px">${inv.number}</div>
         <div style="display:inline-block;background:${sc}20;color:${sc};border:1px solid ${sc}40;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;margin-top:4px">${inv.status}</div>
+        ${inv.proformaOf?`<div style="font-size:10px;color:#94a3b8;margin-top:4px">Based on job: ${inv.proformaOf}</div>`:''}
         <div style="margin-top:8px;font-size:11px;color:#64748b">
           <div>Issued: ${ef('date',inv.date,{style:'font-size:11px;text-align:right;width:130px',type:'date'})}</div>
           <div>Due: ${ef('dueDate',inv.dueDate,{style:'font-size:11px;text-align:right;width:130px',type:'date'})}</div>
@@ -9815,19 +10053,32 @@ async function viewInv(id){
       </div>
     </div>
 
-    <!-- BILL TO + JOB DETAILS -->
+    <!-- LINKED JOB CARD (compact, prominent) -->
+    ${inv.jobId?`<div style="padding:10px 24px;background:#f0f7ff;border-bottom:1px solid #dbeafe;display:flex;align-items:center;gap:12px">
+      <div style="font-size:18px">🔗</div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:#1e293b">Linked to ${inv.jobNum||'Job'}</div>
+        <div style="font-size:10px;color:#64748b">${inv.jobAddress||''} · ${inv.engineer||''} · ${inv.certTypes||''}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openJobModal('${inv.jobId}')" style="font-size:11px">View Job</button>
+    </div>`:''}
+
+    <!-- BILL TO + PROPERTY + JOB DETAILS (3 columns) -->
     <div style="padding:14px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;border-bottom:1px solid #e5e7eb;background:#f8fafc">
+      <!-- BILL TO -->
       <div>
         <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">BILL TO</div>
         <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:3px">${ef('clientName',inv.clientName||inv.billToName||'',{style:'font-size:13px;font-weight:700'})}</div>
         <div style="font-size:11px;color:#64748b">${ef('billToAddress',inv.billToAddress||inv.clientAddr||'',{style:'font-size:11px;color:#64748b',multi:true})}</div>
         <div style="font-size:11px;color:#94a3b8;margin-top:3px">${ef('clientEmail',inv.clientEmail||'',{style:'font-size:11px;color:#64748b'})}</div>
       </div>
+      <!-- PROPERTY -->
       <div>
         <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">PROPERTY</div>
         <div style="font-size:12px;font-weight:600;color:#1e293b">${ef('jobAddress',inv.jobAddress||inv.propertyAddress||'',{style:'font-size:12px',multi:true})}</div>
         ${inv.agentName?`<div style="font-size:11px;color:#64748b;margin-top:4px">Agent: ${ef('agentName',inv.agentName,{style:'font-size:11px'})}</div>`:''}
       </div>
+      <!-- JOB DETAILS -->
       <div>
         <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">JOB DETAILS</div>
         <div style="font-size:11px;color:#64748b;line-height:1.8">
@@ -9863,16 +10114,20 @@ async function viewInv(id){
       </div>
     </div>
 
-    <!-- NOTES / TERMS (invoice only — does not sync to job) -->
+    <!-- NOTES / TERMS -->
     <div style="padding:10px 24px 12px;border-bottom:1px solid #e5e7eb;background:#fafafa">
       <div style="font-size:9px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Payment Notes &amp; Terms <span style="font-size:8px;color:#94a3b8;font-weight:600">invoice only</span></div>
       ${ef('notes',inv.notes||S.invNotes||S.payTerms||'',{style:'font-size:12px;color:#64748b;line-height:1.6',multi:true})}
     </div>
 
     <!-- PAYMENT REF -->
+    ${inv.type==='proforma'?`
+    <div style="padding:10px 24px;background:linear-gradient(90deg,#f3e8ff,#fff);border-bottom:1px solid #d8b4fe;font-size:11px;color:#7e22ce;font-weight:600">
+      📄 This is a <strong>PROFORMA INVOICE</strong> (quotation) — not a final tax invoice
+    </div>`:`
     <div style="padding:10px 24px;background:linear-gradient(90deg,#fffbeb,#fff);border-bottom:1px solid #fde68a;font-size:11px;color:#92400e;font-weight:600">
       💳 Please use invoice number <strong>${inv.number}</strong> as your payment reference
-    </div>
+    </div>`}
 
     <!-- BANKING -->
     ${S.bankName||S.bankAcc?`<div style="padding:10px 24px;font-size:11px;color:#64748b;border-bottom:1px solid #e5e7eb;display:flex;gap:20px;flex-wrap:wrap">
@@ -9884,22 +10139,25 @@ async function viewInv(id){
 
     <!-- ACTIONS -->
     <div style="padding:10px 14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--s2);border-top:2px solid var(--border)">
-      ${inv.clientName?`<button class="btn btn-ghost btn-sm" onclick="nav('stmt');setTimeout(()=>{const el=document.getElementById('stmt-landlord');if(el){el.value='${(inv.clientName||'').replace(/'/g,"\\'")}';renderStmt();}},300)">📋 Client Stmt</button>`:''}
-      ${!isPaid?`<button class="btn btn-green btn-sm" onclick="markInvPaid('${id}')">✓ Mark Paid</button>`:''}
-      ${!isPaid?`<button class="btn btn-blue btn-sm" onclick="openPaymentModal('${id}')">💳 Record Payment</button>`:''}
+      ${inv.type==='proforma'?`<button class="btn btn-acc btn-sm" onclick="convertProformaToInvoice('${id}')">🧾 Convert to Invoice</button>`:''}
+      ${inv.clientName&&inv.type!=='proforma'?`<button class="btn btn-ghost btn-sm" onclick="nav('stmt');setTimeout(()=>{const el=document.getElementById('stmt-landlord');if(el){el.value='${(inv.clientName||'').replace(/'/g,"\\'")}';renderStmt();}},300)">📋 Client Stmt</button>`:''}
+      ${!isPaid&&inv.type!=='proforma'?`<button class="btn btn-green btn-sm" onclick="markInvPaid('${id}')">✓ Mark Paid</button>`:''}
+      ${!isPaid&&inv.type!=='proforma'?`<button class="btn btn-blue btn-sm" onclick="openPaymentModal('${id}')">💳 Record Payment</button>`:''}
       ${isPaid?`<button class="btn btn-ghost btn-sm" onclick="markInvUnpaid('${id}')">↩ Unpaid</button>`:''}
-      ${inv.status==='Draft'?`<button class="btn btn-ghost btn-sm" onclick="markInvSent('${id}')">Mark Sent</button>`:''}
+      ${inv.status==='Draft'&&inv.type!=='proforma'?`<button class="btn btn-ghost btn-sm" onclick="markInvSent('${id}')">Mark Sent</button>`:''}
       <button class="btn btn-wa btn-sm" onclick="openInvSendModal('${id}')">📱 Send / Share</button>
       <button class="btn btn-ghost btn-sm" onclick="downloadInvPDFById('${id}')">⬇ PDF</button>
-      <button class="btn btn-ghost btn-sm" onclick="createRecurringInv('${id}')">↻ Recurring</button>
+      ${inv.type!=='proforma'?`<button class="btn btn-ghost btn-sm" onclick="createRecurringInv('${id}')">↻ Recurring</button>`:''}
+      ${inv.type==='proforma'?`<button class="btn btn-ghost btn-sm" onclick="printProforma('${id}')">🖨 Print</button>`:''}
       <button class="btn btn-red btn-sm" style="margin-left:auto" onclick="deleteInv('${id}')">Delete</button>
     </div>
 
-    <!-- INVOICE AUDIT TRAIL -->
+    <!-- PAYMENT STATUS -->
     <div style="padding:12px 18px" id="inv-payment-status-${id}">
       <div style="font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:6px">PAYMENT STATUS</div>
     </div>
 
+    <!-- AUDIT TRAIL -->
     <div style="padding:12px 18px;border-top:1px solid var(--border)" id="inv-audit-trail-${id}">
       <div style="font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
         AUDIT TRAIL
@@ -13329,6 +13587,13 @@ function renderSettings(){
   cb('s-drag-sort',S.dragSort!==false);
   cb('s-confirm-delete',S.confirmDelete!==false);
   cb('s-auto-inv',S.autoDraftInv!==false);
+  // v10 Invoice sync & automation toggles
+  cb('s-inv-auto-draft-complete',S.invAutoDraftOnComplete!==false);
+  cb('s-inv-sync-amount',S.invSyncAmount!==false);
+  cb('s-inv-sync-desc',S.invSyncDesc!==false);
+  cb('s-inv-draft-on-job-change',S.invDraftOnJobChange!==false);
+  cb('s-inv-notify-admin-edit',S.invNotifyAdminOnEdit!==false);
+  cb('s-inv-show-audit',S.invShowAuditTrail!==false);
 
   // Appearance — mark active theme buttons
   ['dark','light'].forEach(t=>{
@@ -14409,13 +14674,17 @@ async function saveSettings(){
     's-auto-inv-s','s-show-price-eng','s-drag-sort','s-confirm-delete','s-auto-inv',
     's-inv-show-vat','s-inv-show-bank','s-inv-show-logo','s-inv-show-terms','s-inv-show-notes',
     's-inv-show-jobref','s-inv-show-agent','s-inv-show-payref','s-inv-show-subtotal',
-    's-inv-show-sig','s-inv-email-auto','s-inv-cc-agent','s-inv-watermark-paid'];
+    's-inv-show-sig','s-inv-email-auto','s-inv-cc-agent','s-inv-watermark-paid',
+    's-inv-auto-draft-complete','s-inv-sync-amount','s-inv-sync-desc',
+    's-inv-draft-on-job-change','s-inv-notify-admin-edit','s-inv-show-audit'];
   const cbKeys=['pinLock','showOnlineStatus','showFab','animations','compactBadges',
     'notifyDash','notifyBadge','slaDash','reqChecklist','gasPrompt',
     'autoInvOnComplete','showPriceEng','dragSort','confirmDelete','autoDraftInv',
     'invShowVat','invShowBank','invShowLogo','invShowTerms','invShowNotes',
     'invShowJobref','invShowAgent','invShowPayref','invShowSubtotal',
-    'invShowSig','invEmailAuto','invCCAgent','invWatermarkPaid'];
+    'invShowSig','invEmailAuto','invCCAgent','invWatermarkPaid',
+    'invAutoDraftOnComplete','invSyncAmount','invSyncDesc',
+    'invDraftOnJobChange','invNotifyAdminOnEdit','invShowAuditTrail'];
   cbs.forEach((id,i)=>{if(getCB(id)!==null)S[cbKeys[i]]=getCB(id)});
   // v3 text fields
   if(get('s-inv-pdf-color')) S.invPdfColor=get('s-inv-pdf-color');
@@ -15410,7 +15679,7 @@ function initScrollListDrag(){
 
   function _clearDragState(){
     document.querySelectorAll('.jsr3.dragging,.jsr3.drag-over').forEach(r=>r.classList.remove('dragging','drag-over'));
-    document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
+    document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';h.style.border='';delete h.dataset.dragTarget;});
     if(_dragIndicator)_dragIndicator.style.display='none';
     _dropTargetRow=null;_dropTargetDate=null;_insertAfter=false;_lastHovered=null;_rafPending=false;
     _stopAutoScroll();_scrollSpeed=0;
@@ -15460,12 +15729,12 @@ function initScrollListDrag(){
       const row=target.closest('.jsr3[data-id]');
 
       document.querySelectorAll('.jsr3.drag-over').forEach(r=>r.classList.remove('drag-over'));
-      document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';delete h.dataset.dragTarget;});
+      document.querySelectorAll('.jsg-hd[data-drag-target]').forEach(h=>{h.style.background='';h.style.border='';delete h.dataset.dragTarget;});
       if(_dragIndicator)_dragIndicator.style.display='none';
 
       if(grpHd){
         _dropTargetDate=grpHd.dataset.dateGroup;_dropTargetRow=null;
-        grpHd.style.background='rgba(245,166,35,.09)';grpHd.dataset.dragTarget='1';
+        grpHd.style.background='rgba(245,166,35,.2)';grpHd.style.border='1px dashed var(--acc)';grpHd.dataset.dragTarget='1';
       }else if(row&&row!==_slDragSrc){
         _dropTargetDate=null;_dropTargetRow=row;
         row.classList.add('drag-over');
@@ -19410,17 +19679,4 @@ async function showClientCreditCheck(clientName){
         <div style="color:var(--txt3);font-size:10px;margin-bottom:6px;font-weight:700">RECENT JOBS</div>
         ${clientJobs.map(j=>{
           const jobInv=clientInvs.find(inv=>(inv.jobRef||inv.jobref||'')===(j.jobNum||j.jobnum||''));
-          const status=jobInv?(jobInv.status==='Paid'?'<span style="color:var(--green)">Paid ✓</span>':`<span style="color:var(--yellow)">Invoiced</span>`):'<span style="color:var(--txt3)">Not invoiced</span>';
-          return `<div style="padding:4px 0;border-bottom:1px solid var(--s2)">• ${j.jobNum||j.jobnum||'Job'} - ${(j.description||j.address||'').slice(0,40)} (${status})</div>`;
-        }).join('')}
-      `;
-    }
-    
-    // ═══ WARNING ═══
-    if(stars<=2||unpaidAmount>2000||overdue.length>0){
-      const warnings=[];
-      if(unpaidAmount>2000)warnings.push(`£${unpaidAmount.toFixed(2)} unpaid`);
-      if(overdue.length>0)warnings.push(`${overdue.length} invoice${overdue.length>1?'s':''} overdue`);
-      if(daysSinceLast>90)warnings.push(`No payment for ${daysSinceLast} days`);
-      document.getElementById('credit-warning').style.display='block';
-   
+          const status=jobInv?(jobInv.status==='Paid'?'<span style="color:var(--green)">Paid ✓</span>':`<span style="color:var(--yellow)">Invoiced</span>`):'<span style="color:var(--txt3)">Not invoiced
