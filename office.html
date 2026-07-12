@@ -609,10 +609,13 @@ input[type=color]{border:none;background:none;cursor:pointer;padding:0;height:32
 .inv-nav-item{padding:7px 12px;font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;border-radius:6px;margin:0 6px 1px;transition:.12s;display:flex;align-items:center;gap:7px;user-select:none}
 .inv-nav-item:hover{background:var(--s2);color:var(--txt)}
 .inv-nav-item.active{background:var(--acc-soft);color:var(--acc);font-weight:700}
-.inv-type-tab{height:100%;padding:0 16px;border:none;border-right:1px solid var(--border);background:transparent;color:var(--txt3);font-size:12px;font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap;position:relative}
-.inv-type-tab:hover{background:var(--s2);color:var(--txt)}
-.inv-type-tab.active{background:var(--bg);color:var(--acc);font-weight:800}
-.inv-type-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--acc)}
+.inv-type-tab{padding:6px 12px;border:none;background:transparent;color:var(--txt3);font-size:12px;font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap;border-radius:6px;font-family:var(--fh)}
+.inv-type-tab:hover{background:var(--s2);color:var(--txt2)}
+.inv-type-tab.active{background:var(--acc-soft);color:var(--acc)}
+.inv-kpi-card{transition:transform .15s,box-shadow .15s}
+.inv-kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.inv-pill{transition:all .15s;white-space:nowrap;font-family:var(--fh)}
+.inv-pill:hover:not(.active){background:var(--s2)!important}
 .inv-topbar-kpi{display:flex;align-items:center;gap:5px;padding:0 13px;height:100%;border-right:1px solid var(--border);cursor:pointer;transition:.12s;font-size:11px;white-space:nowrap;user-select:none}
 .inv-topbar-kpi:hover{background:var(--acc-soft);border-radius:4px}
 .inv-topbar-kpi:hover .k-lbl{color:var(--acc)}
@@ -1741,45 +1744,66 @@ body.density-relaxed .jtable td{font-size:15px}
 
   <div class="page" id="pg-inv" style="flex-direction:column!important;overflow:hidden">
 
-    <!-- ══ SUB-TOP BAR — always visible ══ -->
-    <div style="display:flex;align-items:center;gap:0;border-bottom:2px solid var(--border);background:var(--s1);flex-shrink:0;height:42px">
-
-      <!-- Type toggle tabs -->
-      <div style="display:flex;align-items:stretch;height:100%;border-right:1px solid var(--border)">
-        <button onclick="setInvType('all')"      id="invtype-all"      class="inv-type-tab active">All Invoices</button>
-        <button onclick="setInvType('landlord')" id="invtype-landlord" class="inv-type-tab">🏠 Landlord</button>
-        <button onclick="setInvType('agency')"   id="invtype-agency"   class="inv-type-tab">🏢 Agency</button>
-        <button onclick="setInvType('proforma')" id="invtype-proforma" class="inv-type-tab">📄 Proforma</button>
+    <!-- ══ HEADER BAR ══ -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-family:var(--fh);font-size:18px;font-weight:800;color:var(--txt2)">◎ Invoices</div>
+        <!-- Client type filter pills -->
+        <div style="display:flex;gap:4px;margin-left:8px">
+          <button onclick="setInvType('all')"      id="invtype-all"      class="inv-type-tab active">All</button>
+          <button onclick="setInvType('landlord')" id="invtype-landlord" class="inv-type-tab">🏠 Landlord</button>
+          <button onclick="setInvType('agency')"   id="invtype-agency"   class="inv-type-tab">🏢 Agency</button>
+          <button onclick="setInvType('proforma')" id="invtype-proforma" class="inv-type-tab">📄 Proforma</button>
+        </div>
       </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="exportInvsCSV()"       title="Export CSV">⬇ CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendAllOverdueWA()"    title="Chase overdue">📱 Chase</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCreditNoteModal()" title="Credit note">↩ Credit</button>
+        <button class="btn btn-acc btn-sm"   onclick="invNavSelect('jobsearch')" style="font-size:12px;padding:6px 14px">+ New Invoice</button>
+      </div>
+    </div>
 
-      <!-- KPI summary strip — updates with type -->
-      <div id="inv-topbar-kpis" style="display:flex;align-items:center;gap:0;height:100%;flex:1;overflow:hidden"></div>
-
-      <!-- Right actions -->
-      <div style="display:flex;align-items:center;gap:6px;padding:0 12px;border-left:1px solid var(--border);height:100%;flex-shrink:0">
-        <button class="btn btn-acc btn-sm" onclick="invNavSelect('jobsearch')" style="font-size:11px">+ New Invoice</button>
-        <button class="btn btn-ghost btn-sm" onclick="exportInvsCSV()"           style="font-size:11px">⬇ CSV</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendAllOverdueWA()"        style="font-size:11px">📱 Chase</button>
-        <button class="btn btn-ghost btn-sm" onclick="openCreditNoteModal()"     style="font-size:11px">↩ Credit</button>
+    <!-- ══ KPI CARDS ROW ══ -->
+    <div id="inv-kpi-row" style="display:flex;gap:12px;padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none">
+      <div class="inv-kpi-card" style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Total Invoiced</div>
+        <div style="font-size:20px;font-weight:800;color:var(--txt2);margin-top:2px" id="inv-kpi-total">£0</div>
+      </div>
+      <div class="inv-kpi-card" style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Outstanding</div>
+        <div style="font-size:20px;font-weight:800;color:#f59e0b;margin-top:2px" id="inv-kpi-outstanding">£0</div>
+      </div>
+      <div class="inv-kpi-card" style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Overdue</div>
+        <div style="font-size:20px;font-weight:800;color:#e05252;margin-top:2px" id="inv-kpi-overdue">£0</div>
+      </div>
+      <div class="inv-kpi-card" style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Drafts</div>
+        <div style="font-size:20px;font-weight:800;color:#94a3b8;margin-top:2px" id="inv-kpi-drafts">0</div>
+      </div>
+      <div class="inv-kpi-card" style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;flex:1">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Paid This Month</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;margin-top:2px" id="inv-kpi-paid-month">£0</div>
       </div>
     </div>
 
     <!-- SMART BANNER — shows completed jobs needing invoices -->
-    <div id="inv-smart-banner" style="display:none;padding:10px 16px;background:linear-gradient(90deg,#fef3c7,#fde68a);border-bottom:1px solid #f59e0b;font-size:12px;font-weight:600;color:#92400e;display:flex;align-items:center;gap:12px">
+    <div id="inv-smart-banner" style="display:none;padding:10px 16px;background:linear-gradient(90deg,#fef3c7,#fde68a);border-bottom:1px solid #f59e0b;font-size:12px;font-weight:600;color:#92400e;align-items:center;gap:12px">
       <span>⚡ <span id="inv-smart-count">0</span> completed job(s) need invoice drafts</span>
       <button class="btn btn-acc btn-sm" onclick="createDraftsForCompleted()" style="font-size:11px;padding:4px 10px">Create Drafts</button>
-      <button class="btn btn-ghost btn-sm" onclick="dismissInvBanner()" style="font-size:11px;padding:4px 8px;margin-left:auto">✕</button>
+      <button class="btn btn-ghost btn-sm" onclick="dismissInvBanner()" style="font-size:11px;padding:4px 8px;margin-left:auto">✕ Dismiss</button>
     </div>
 
-    <!-- ══ BODY (sub-left + main) ══ -->
+    <!-- ══ BODY: sidebar + main ══ -->
     <div style="flex:1;display:flex;flex-direction:row;overflow:hidden;min-height:0">
 
-      <!-- SUB-LEFT PANEL — minimal 5 items -->
-      <div id="inv-subnav" style="width:160px;min-width:160px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0">
-        <div style="padding:10px 10px 6px;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px">Navigate</div>
+      <!-- SUB-LEFT NAV PANEL -->
+      <div id="inv-subnav" style="width:170px;min-width:170px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0">
+        <div style="padding:12px 12px 6px;font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px">Navigate</div>
 
         <div class="inv-nav-item active" id="invnav-dashboard" onclick="invNavSelect('dashboard')">📊 Dashboard</div>
-        <div class="inv-nav-item"        id="invnav-all"       onclick="invNavSelect('all')">◎  All Invoices</div>
+        <div class="inv-nav-item"        id="invnav-all"       onclick="invNavSelect('all')">◎ All Invoices</div>
         <div class="inv-nav-item"        id="invnav-draft"     onclick="invNavSelect('draft')">📝 Draft</div>
         <div class="inv-nav-item"        id="invnav-missing"   onclick="invNavSelect('missing')">⚠️ Missing</div>
         <div class="inv-nav-item"        id="invnav-overdue"   onclick="invNavSelect('overdue')">🔴 Overdue</div>
@@ -1787,44 +1811,55 @@ body.density-relaxed .jtable td{font-size:15px}
         <div class="inv-nav-item"        id="invnav-creditadmin" onclick="invNavSelect('creditadmin')">↩ Credit Notes</div>
 
         <div style="flex:1"></div>
-        <div style="padding:8px;border-top:1px solid var(--border)">
-          <button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;justify-content:flex-start" onclick="invNavSelect('jobsearch')">🔍 Find by Job No.</button>
-          <button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;justify-content:flex-start;margin-top:4px" onclick="deleteDuplicateInvoices()" title="Remove duplicates">🗑 Clean Dupes</button>
+        <div style="padding:10px;border-top:1px solid var(--border)">
+          <button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;justify-content:flex-start;margin-bottom:4px" onclick="invNavSelect('jobsearch')">🔍 Find by Job No.</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;justify-content:flex-start" onclick="deleteDuplicateInvoices()" title="Remove duplicates">🗑 Clean Dupes</button>
         </div>
       </div>
 
       <!-- MAIN AREA -->
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0">
 
-        <!-- List toolbar (search + sort, only shown for list views) -->
-        <div id="inv-toolbar" style="display:flex;gap:6px;padding:7px 12px;border-bottom:1px solid var(--border);align-items:center;flex-shrink:0;background:var(--s2)">
-          <input type="search" class="fi" id="inv-search" placeholder="🔍 Search…" oninput="renderInvList()" style="max-width:180px;font-size:12px">
-          <select class="fs" id="inv-filter" onchange="renderInvList()" style="width:145px;padding:5px 10px;font-size:12px;display:none"></select>
-          <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:135px;padding:5px 10px;font-size:12px">
-            <option value="date_desc">📅 Newest first</option>
-            <option value="date_asc">📅 Oldest first</option>
-            <option value="num_desc">🔢 Inv # desc</option>
-            <option value="amount_desc">💷 Amount ↓</option>
-            <option value="amount_asc">💷 Amount ↑</option>
-            <option value="client">👤 Client A–Z</option>
-          </select>
-          <div style="display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
-            <button class="btn btn-ghost btn-sm" id="btn-inv-list"   onclick="setInvView('list')"   style="border-radius:0;border:none;padding:5px 9px;font-size:12px">☰ List</button>
-            <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:5px 9px;font-size:12px">⊞ Board</button>
+        <!-- Status filter pills + toolbar -->
+        <div id="inv-toolbar" style="display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border);align-items:center;flex-shrink:0;background:var(--s1)">
+          <!-- Status pills -->
+          <div style="display:flex;gap:3px;align-items:center">
+            <button onclick="setInvFilter('')"       class="inv-pill active" id="invpill-all"      style="padding:4px 10px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;background:var(--acc);color:#fff">All</button>
+            <button onclick="setInvFilter('Draft')"  class="inv-pill"        id="invpill-draft"    style="padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--s1);color:var(--txt3)">Draft</button>
+            <button onclick="setInvFilter('Awaiting Payment')" class="inv-pill" id="invpill-awaiting" style="padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--s1);color:var(--txt3)">Sent</button>
+            <button onclick="setInvFilter('Paid')"   class="inv-pill"        id="invpill-paid"     style="padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--s1);color:var(--txt3)">Paid</button>
+            <button onclick="setInvFilter('Overdue')"class="inv-pill"        id="invpill-overdue"  style="padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--s1);color:var(--txt3)">Overdue</button>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" style="font-size:11px;margin-left:auto;display:none" id="btn-bulk-paid">✓ Bulk Paid</button>
+
+          <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+            <input type="search" class="fi" id="inv-search" placeholder="🔍 Search…" oninput="renderInvList()" style="max-width:160px;font-size:11px;padding:5px 10px;border-radius:20px;border:1px solid var(--border)">
+            <select class="fs" id="inv-sort" onchange="renderInvList()" style="width:120px;padding:5px 8px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:var(--s1)">
+              <option value="date_desc">📅 Newest</option>
+              <option value="date_asc">📅 Oldest</option>
+              <option value="num_desc">🔢 Inv #</option>
+              <option value="amount_desc">💷 High Amount</option>
+              <option value="amount_asc">💷 Low Amount</option>
+              <option value="client">👤 Client A–Z</option>
+            </select>
+            <select class="fs" id="inv-filter" onchange="renderInvList()" style="display:none"></select>
+            <div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+              <button class="btn btn-ghost btn-sm" id="btn-inv-list"   onclick="setInvView('list')"   style="border-radius:0;border:none;padding:5px 9px;font-size:11px">☰ List</button>
+              <button class="btn btn-ghost btn-sm" id="btn-inv-kanban" onclick="setInvView('kanban')" style="border-radius:0;border:none;border-left:1px solid var(--border);padding:5px 9px;font-size:11px">⊞ Board</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="bulkMarkPaid()" style="font-size:11px;display:none" id="btn-bulk-paid">✓ Bulk Paid</button>
         </div>
 
-        <!-- Special / Dashboard view -->
+        <!-- Dashboard / Special views -->
         <div id="inv-special-view" style="display:none;flex:1;overflow-y:auto;padding:20px"></div>
 
-        <!-- List view -->
+        <!-- List + Preview split view -->
         <div id="inv-list-view" style="flex:1;overflow-y:auto;min-height:0;display:none">
           <div class="inv-wrap">
             <div class="inv-list-col"><div id="inv-list"></div></div>
             <div class="inv-detail-col">
               <div id="inv-detail-box">
-                <div class="empty" style="padding:60px 20px"><div class="ei">◎</div><p>Select an invoice to view</p></div>
+                <div class="empty" style="padding:60px 20px"><div class="ei">◎</div><p>Select an invoice to view live preview</p></div>
               </div>
             </div>
           </div>
@@ -9971,16 +10006,42 @@ async function searchJobForInvoice(){
 }
 
 async function renderInvKPIs(){
-  // Redirect to subnav KPIs (the old flat KPI bar is replaced by subnav)
   renderInvSubnavKPIs();
-  // Keep old inv-kpis element empty so nothing breaks
   const el=document.getElementById('inv-kpis');
   if(el) el.innerHTML='';
+  // Populate the new KPI card row
+  try{
+    const invs=await dAll('invoices');
+    const filtered=_filterByType?(_filterByType(invs)||invs):invs;
+    const now=new Date();
+    const monthStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+    let total=0,outstanding=0,overdue=0,drafts=0,paidMonth=0;
+    filtered.forEach(inv=>{
+      const t=calcInvTotal(inv);
+      total+=t.grand;
+      if(inv.status==='Draft') drafts++;
+      else if(inv.status==='Paid'&&inv.paidDate&&new Date(inv.paidDate).getTime()>=monthStart) paidMonth+=t.grand;
+      else if(inv.status==='Overdue') overdue+=t.grand;
+      else if(inv.status==='Awaiting Payment') outstanding+=t.grand;
+    });
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('inv-kpi-total','£'+total.toLocaleString('en-GB',{maximumFractionDigits:0}));
+    set('inv-kpi-outstanding','£'+outstanding.toLocaleString('en-GB',{maximumFractionDigits:0}));
+    set('inv-kpi-overdue','£'+overdue.toLocaleString('en-GB',{maximumFractionDigits:0}));
+    set('inv-kpi-drafts',String(drafts));
+    set('inv-kpi-paid-month','£'+paidMonth.toLocaleString('en-GB',{maximumFractionDigits:0}));
+  }catch(e){console.warn('KPI render error',e);}
 }
 
 function setInvFilter(val){
-  const el = document.getElementById('inv-filter');
-  if(el){ el.value = val; renderInvList(); }
+  const el=document.getElementById('inv-filter');
+  if(el)el.value=val;
+  // Update pill visuals
+  document.querySelectorAll('.inv-pill').forEach(p=>p.classList.remove('active'));
+  const pillMap={'':'invpill-all','Draft':'invpill-draft','Awaiting Payment':'invpill-awaiting','Paid':'invpill-paid','Overdue':'invpill-overdue'};
+  const pid=pillMap[val||''];
+  if(pid){const p=document.getElementById(pid);if(p)p.classList.add('active');}
+  renderInvList();
 }
 
 
