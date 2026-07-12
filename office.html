@@ -1258,6 +1258,7 @@ body.density-relaxed .jtable td{font-size:15px}
 </style>
 <!-- Supabase JS client for Auth -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<base target="_blank">
 </head>
 <body>
 <!-- ═══ PIN LOGIN OVERLAY ═══ -->
@@ -5382,8 +5383,10 @@ function toast(msg,type='info',dur=3500){
 }
 
 // ════════════════════════════════════════════════════════════════
-//  CONFIRM
+//  CONFIRM  —  with Escape-key safety to prevent Promise deadlocks
 // ════════════════════════════════════════════════════════════════
+let _confirm2CancelFn = null; // tracks current cancel callback for Escape handling
+
 function confirm2(title,msg,onOk,onCancel,opts={}){
   document.getElementById('conf-title').textContent=title;
   const msgEl=document.getElementById('conf-msg');
@@ -5393,15 +5396,18 @@ function confirm2(title,msg,onOk,onCancel,opts={}){
   }else{
     msgEl.textContent=msg||'';
   }
+  // Store cancel callback so Escape can resolve it
+  _confirm2CancelFn = onCancel;
+
   // OK button (primary action)
   const okBtn=document.getElementById('conf-ok');
   okBtn.textContent=opts.okText||'Confirm';
   okBtn.className=opts.okClass||'btn btn-acc';
   okBtn.style.cssText=opts.okStyle||'';
-  okBtn.onclick=()=>{closeModal('mo-confirm');_hideConfAlt();if(opts.onBeforeAlt)opts.onBeforeAlt();if(onOk)onOk();};
+  okBtn.onclick=()=>{closeModal('mo-confirm');_hideConfAlt();_confirm2CancelFn=null;if(opts.onBeforeAlt)opts.onBeforeAlt();if(onOk)onOk();};
   // Cancel button
   const cancelBtn=document.getElementById('conf-cancel');
-  cancelBtn.onclick=()=>{closeModal('mo-confirm');_hideConfAlt();if(opts.onBeforeAlt)opts.onBeforeAlt();if(onCancel)onCancel();};
+  cancelBtn.onclick=()=>{closeModal('mo-confirm');_hideConfAlt();_confirm2CancelFn=null;if(opts.onBeforeAlt)opts.onBeforeAlt();if(onCancel)onCancel();};
   // Alt button (3rd option — e.g. "Open Invoice")
   const altBtn=document.getElementById('conf-alt');
   if(opts.altText){
@@ -5411,7 +5417,7 @@ function confirm2(title,msg,onOk,onCancel,opts={}){
     altBtn.className=opts.altFaded?'btn btn-ghost':'btn btn-wa';
     // CRITICAL: alt must resolve the Promise (via onCancel) so code doesn't hang
     altBtn.onclick=()=>{
-      closeModal('mo-confirm');_hideConfAlt();
+      closeModal('mo-confirm');_hideConfAlt();_confirm2CancelFn=null;
       if(opts.onBeforeAlt)opts.onBeforeAlt(); // e.g. clear "Saving…" indicator
       if(onCancel)onCancel(); // resolve the hanging Promise first
       setTimeout(()=>{try{if(opts.altAction)opts.altAction();}catch(e){console.warn('[DeepFlow] altAction failed:',e);}},50);
@@ -5429,6 +5435,8 @@ function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
+    // Resolve any pending confirm2 Promise BEFORE closing modals — prevents deadlocks
+    if(_confirm2CancelFn){ try{_confirm2CancelFn();}catch(ex){} _confirm2CancelFn=null; }
     document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
     closeAddrDrop();
   }
@@ -7349,7 +7357,8 @@ async function createDisposableInv(clientName, amount, desc){
     clientName:clientName||'TBC',billToName:clientName||'TBC',
     description:desc||'Disposable invoice',
     items:[{desc:desc||'Item',qty:1,unit:price,vat:vr>0}],
-    subtotal:price,vat:vatAmt,total:price+vatAmt,
+    // DO NOT send subtotal/vat/total — these are NOT database columns
+    // They are computed from items[] on the fly
     disposable:true,created:now,modified:now
   };
   try{
@@ -9387,26 +9396,32 @@ async function _syncBillToAddress(invId, newAddr){
 }
 
 async function _syncInvoicePriceToJob(linkedJobId, newTotal, newDesc){
-  // Legacy: called from saveInvWithJobSync (modal workflow)
+  // NON-BLOCKING: uses mismatch notice instead of confirm2 Promise (fixes hang)
   if(!linkedJobId) return;
   const origPrice=window._invSyncOrigPrice;
   if(origPrice===undefined||Math.abs(newTotal-origPrice)<0.001) return;
-  const confirmed=await new Promise(res=>{
-    confirm2(
-      '🔗 Update job price?',
-      `Invoice: £${origPrice.toFixed(2)} → £${newTotal.toFixed(2)}\n\nUpdate job price to match?`,
-      ()=>res(true), ()=>res(false)
-    );
-  });
-  if(!confirmed) return;
-  await _sb(`jobs?id=eq.${encodeURIComponent(linkedJobId)}`,{
-    method:'PATCH',
-    body:{price:newTotal},
-    prefer:'return=minimal'
-  });
-  window._invSyncOrigPrice=newTotal;
-  _invalidateJobCache();
-  toast('🔗 Job price synced to £'+newTotal.toFixed(2),'success',2500);
+
+  // Get the linked invoice to pass to the notice
+  const invs = await dAll('invoices');
+  const inv = invs.find(i => i.linkedJobId === linkedJobId || i.jobId === linkedJobId);
+  const itemCount = inv?.items?.length || 1;
+
+  if(itemCount <= 1){
+    // Single item — sync silently, just notify
+    await _sb(`jobs?id=eq.${encodeURIComponent(linkedJobId)}`,{
+      method:'PATCH',
+      body:{price:newTotal},
+      prefer:'return=minimal'
+    });
+    window._invSyncOrigPrice=newTotal;
+    _invalidateJobCache();
+    toast('🔗 Job price synced to £'+newTotal.toFixed(2),'success',2500);
+  } else {
+    // Multi-item — show non-blocking notice, user clicks at their leisure
+    const invId = inv?.id || linkedJobId;
+    const invNum = inv?.number || '';
+    _showInvoiceMismatchNotice(invId, invNum, itemCount, newTotal, origPrice, newDesc || 'Work');
+  }
 }
 
 // ── Per-invoice audit trail ───────────────────────────────────────────────────
@@ -9929,15 +9944,18 @@ async function _syncJobToInvoice(j){
 // Persistent bottom-right notice when job price differs from multi-item invoice
 // Much simpler than confirm2+Promise — user clicks "Open Invoice" at their leisure
 function _showInvoiceMismatchNotice(invId, invNum, itemCount, invTotal, jobPrice, jobDesc){
+  _ensureMismatchStyle(); // lazy-init animation style
   const existing = document.getElementById('inv-mismatch-'+invId);
   if(existing) existing.remove();
   const n = document.createElement('div');
   n.id = 'inv-mismatch-'+invId;
   n.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#fff;border:2px solid #f59e0b;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.18);max-width:340px;font-size:13px;font-family:var(--fh);cursor:default;animation:_slideIn .3s ease';
   const itemLines = (function(){
-    const inv = _invRowData?.[invId];
-    if(!inv || !inv.items) return '';
-    return inv.items.map((it,i) => `<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:11px;color:#64748b"><span>${i+1}. ${it.desc||'Item'}</span><span style="font-weight:600">£${((it.qty||1)*(it.unit||0)).toFixed(2)}</span></div>`).join('');
+    try{
+      const inv = _invRowData?.[invId];
+      if(!inv || !inv.items || !Array.isArray(inv.items)) return '';
+      return inv.items.map((it,i) => `<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:11px;color:#64748b"><span>${i+1}. ${it?.desc||'Item'}</span><span style="font-weight:600">£${(((it?.qty||1)*(it?.unit||0))||0).toFixed(2)}</span></div>`).join('');
+    }catch(e){ return ''; }
   })();
   n.innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -9946,9 +9964,9 @@ function _showInvoiceMismatchNotice(invId, invNum, itemCount, invTotal, jobPrice
       <button onclick="document.getElementById('inv-mismatch-${invId}').remove()" style="margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#94a3b8">✕</button>
     </div>
     <div style="background:#fef3c7;border-radius:8px;padding:10px 12px;margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#64748b;font-size:11px">Job price</span><span style="font-weight:700;color:#1e293b">£${jobPrice.toFixed(2)}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:#64748b;font-size:11px">Invoice ${invNum}</span><span style="font-weight:700;color:#1e293b">£${invTotal.toFixed(2)}</span></div>
-      <div style="font-size:10px;color:#94a3b8;margin-top:4px">${itemCount} item${itemCount!==1?'s':''} in invoice</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#64748b;font-size:11px">Job price</span><span style="font-weight:700;color:#1e293b">£${(Number(jobPrice)||0).toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:#64748b;font-size:11px">Invoice ${invNum}</span><span style="font-weight:700;color:#1e293b">£${(Number(invTotal)||0).toFixed(2)}</span></div>
+      <div style="font-size:10px;color:#94a3b8;margin-top:4px">${itemCount||0} item${(itemCount||0)!==1?'s':''} in invoice</div>
     </div>
     ${itemLines ? `<div style="margin-bottom:10px;border-top:1px solid #e5e7eb;padding-top:8px">${itemLines}</div>` : ''}
     <button onclick="_openInvoiceFromJobSync('${invId}')" style="width:100%;background:var(--acc);color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">◎ Open Invoice</button>
@@ -9979,10 +9997,14 @@ window._openInvoiceFromJobSync = function(invId){
   }, 500);
 };
 
-// CSS animation for the notice
-const _mismatchStyle = document.createElement('style');
-_mismatchStyle.textContent = '@keyframes _slideIn{from{transform:translateX(120px);opacity:0}to{transform:translateX(0);opacity:1}}';
-document.head.appendChild(_mismatchStyle);
+// CSS animation for the notice — lazy singleton, safe for module-level
+let _mismatchStyle = null;
+function _ensureMismatchStyle(){
+  if(_mismatchStyle) return;
+  _mismatchStyle = document.createElement('style');
+  _mismatchStyle.textContent = '@keyframes _slideIn{from{transform:translateX(120px);opacity:0}to{transform:translateX(0);opacity:1}}';
+  if(document.head) document.head.appendChild(_mismatchStyle);
+}
 
 // Right-click context menu on job rows
 function showJobCtxMenu(e,jobId,jobNum){
