@@ -697,6 +697,18 @@ async function init(){
       document.getElementById('portal-badge').textContent='Agency';
       document.title=`${e(entity.name)} — Portal`;
       jobs=await fetchJobs('agencyname',entity.name,entity.id);
+
+      // Load ALL agents under this agency for the filter bar
+      try{
+        const agentRows=await sb(`agents?agencyid=eq.${encodeURIComponent(token)}&select=id,name,email,phone&order=name.asc`).catch(()=>[]);
+        if(agentRows?.length) entity._agents=agentRows.map(_fix);
+      }catch(e){}
+
+      // Also extract unique agent names from jobs as fallback
+      if(!entity._agents?.length){
+        const agentNames=[...new Set(jobs.map(j=>j.agentName||j.agentname).filter(Boolean))].sort();
+        if(agentNames.length) entity._agentNames=agentNames;
+      }
     } else if(ptype==='agent'){
       const agentName=P.get('name');
       if(!agentName){showErr('Invalid Link','Please regenerate this link from the office.');return;}
@@ -763,6 +775,7 @@ async function init(){
     }
 
     _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,ratings:ratings||[],token,coName,entity};
+    _d._activeAgent=null; // null = all agents (agency view)
     document.getElementById('nav').style.display='flex';
     document.querySelectorAll('.tab').forEach(tab=>{
       tab.addEventListener('click',()=>go(tab.dataset.t));
@@ -815,7 +828,32 @@ async function fetchJobs(col,name,id){
   return [];
 }
 
-// ── THEME ─────────────────────────────────────────────────────────────────────
+// ── AGENCY AGENT FILTER ────────────────────────────────────────────────────
+function setAgentFilter(agentName){
+  _d._activeAgent = agentName || null;
+  // Re-render current tab with filtered data
+  const activeTab = document.querySelector('.tab.active')?.dataset?.t || 'overview';
+  go(activeTab);
+}
+
+// Returns data filtered by active agent (for agency view)
+// Agent view always sees their own data — no filter needed
+function filteredD(){
+  if(!_d._activeAgent || _d.type !== 'agency') return _d;
+  const agent = _d._activeAgent;
+  const jobs = _d.jobs.filter(j=>(j.agentName||j.agentname||'').toLowerCase()===agent.toLowerCase());
+  const jobIds = new Set(jobs.map(j=>j.id));
+  return {
+    ..._d,
+    jobs,
+    attachments: _d.attachments.filter(a=>jobIds.has(a.jobId||a.jobid)),
+    certs:       _d.certs.filter(c=>jobIds.has(c.jobId||c.jobid)),
+    invoices:    _d.invoices.filter(i=>(i.agentName||i.agentname||'').toLowerCase()===agent.toLowerCase()||jobIds.has(i.linkedJobId||i.jobId)),
+    ratings:     (_d.ratings||[]).filter(r=>jobIds.has(r.jobId||r.jobid)),
+    _activeAgent: agent,
+    entity: {..._d.entity, _displayName: `${_d.name} › ${agent}`},
+  };
+}
 function initTheme(){
   const saved=localStorage.getItem('portal-theme');
   const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
@@ -897,7 +935,8 @@ function go(t){
   if(fn[t]){
     showSkeleton(t);
     setTimeout(()=>{
-      fn[t](_d);refreshIcons();attachDelegates();
+      // filteredD() applies agent filter for agency view; all other views unchanged
+      fn[t](filteredD());refreshIcons();attachDelegates();
       if(t==='overview') setTimeout(()=>{ if(window._heroCanvasStart) window._heroCanvasStart(); },150);
     },80);
   }
@@ -961,6 +1000,21 @@ function vOverview(d){
   const bh=bankCard(d.entity);
   const label=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
 
+  // Agent filter bar for agency view
+  const isAgency=d.type==='agency';
+  const activeAgent=_d._activeAgent||null;
+  const agentNames=d.entity?._agentNames||(d.entity?._agents||[]).map(a=>a.name).filter(Boolean);
+  const agentFilterBar=isAgency&&agentNames.length?`
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">
+        ${activeAgent?`Viewing: <span style="color:#7dd3fc">${activeAgent}</span> <button onclick="setAgentFilter(null)" style="margin-left:6px;padding:2px 8px;border-radius:10px;border:none;background:rgba(125,211,252,.2);color:#7dd3fc;font-size:9px;cursor:pointer;font-weight:700">✕ Show All</button>`:'Filter by Agent'}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <button onclick="setAgentFilter(null)" style="padding:5px 14px;border-radius:20px;border:1px solid ${!activeAgent?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${!activeAgent?'rgba(125,211,252,.2)':'transparent'};color:${!activeAgent?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${!activeAgent?700:500};cursor:pointer">All</button>
+        ${agentNames.map(n=>`<button onclick="setAgentFilter(${JSON.stringify(n)})" style="padding:5px 14px;border-radius:20px;border:1px solid ${activeAgent===n?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${activeAgent===n?'rgba(125,211,252,.2)':'transparent'};color:${activeAgent===n?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${activeAgent===n?700:500};cursor:pointer">${e(n)}</button>`).join('')}
+      </div>
+    </div>`:'';
+
   // Upcoming items (next 7 days)
   const now=new Date();
   const upcomingJobs=d.jobs.filter(j=>j.date&&Math.ceil((new Date(j.date)-now)/86400000)<=7&&Math.ceil((new Date(j.date)-now)/86400000)>=0).slice(0,2);
@@ -982,6 +1036,7 @@ function vOverview(d){
           <button class="hbtn" data-action="go" data-target="invoices"><i data-lucide="receipt" style="width:14px;height:14px"></i> Invoices</button>
           ${bh?`<button class="hbtn" data-action="go" data-target="payments"><i data-lucide="credit-card" style="width:14px;height:14px"></i> Payments</button>`:''}
         </div>
+        ${agentFilterBar}
       </div>
     </div>
 
