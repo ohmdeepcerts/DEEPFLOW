@@ -2505,8 +2505,8 @@ body.density-relaxed .jtable td{font-size:15px}
               <input type="search" class="fi" id="dir-search-engineers" placeholder="Search engineers…" oninput="renderDirSection('engineers')" style="max-width:220px">
             </div>
             <div class="tb-right">
-              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('team')">⚙ Manage in Settings</button>
-              <button class="btn btn-acc btn-sm" onclick="showPage('set');switchSetTab('team');setTimeout(addEngRow,300)">+ Add Engineer</button>
+              <button class="btn btn-ghost btn-sm" onclick="nav('set');setTimeout(()=>switchSetTab('team'),300)">⚙ Manage in Settings</button>
+              <button class="btn btn-acc btn-sm" onclick="nav('set');setTimeout(()=>switchSetTab('team'),300);setTimeout(addEngRow,300)">+ Add Engineer</button>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px" id="dir-grid-engineers"></div>
@@ -3567,7 +3567,7 @@ body.density-relaxed .jtable td{font-size:15px}
             </div>
             <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
               <button class="btn btn-acc btn-sm" onclick="checkSecurityStatus()">🔍 Check Security Status</button>
-              <button class="btn btn-ghost btn-sm" onclick="showPage('set');switchSetTab('team')">👤 Manage Team</button>
+              <button class="btn btn-ghost btn-sm" onclick="nav('set');setTimeout(()=>switchSetTab('team'),300)">👤 Manage Team</button>
             </div>
             <div id="sec-status-result" style="margin-top:8px;font-size:11px;color:var(--txt2)"></div>
           </div>
@@ -3575,9 +3575,9 @@ body.density-relaxed .jtable td{font-size:15px}
         <div class="set-section">
           <div class="set-title">💾 Data & Reports</div>
           <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="showPage('exp')">🧾 Expenses</button>
-            <button class="btn btn-ghost btn-sm" onclick="showPage('ts')">◷ Timesheets</button>
-            <button class="btn btn-ghost btn-sm" onclick="showPage('rep')">▦ Reports</button>
+            <button class="btn btn-ghost btn-sm" onclick="nav('exp')">🧾 Expenses</button>
+            <button class="btn btn-ghost btn-sm" onclick="nav('ts')">◷ Timesheets</button>
+            <button class="btn btn-ghost btn-sm" onclick="nav('rep')">▦ Reports</button>
           </div>
           <div class="set-card" style="margin-bottom:12px">
             <div style="font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:8px;color:var(--acc)">🔒 One-Click Compliance Backup</div>
@@ -12981,7 +12981,7 @@ async function renderEngineersSection(){
   if(!grid) return;
 
   if(!engs.length){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">👷</div><p>No engineers yet.<br><button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="showPage('set');switchSetTab('team');setTimeout(addEngRow,300)">+ Add First Engineer</button></p></div>`;
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">👷</div><p>No engineers yet.<br><button class="btn btn-acc btn-sm" style="margin-top:8px" onclick="nav('set');setTimeout(()=>switchSetTab('team'),300);setTimeout(addEngRow,300)">+ Add First Engineer</button></p></div>`;
     return;
   }
 
@@ -13022,7 +13022,7 @@ async function renderEngineersSection(){
           ${hasLocation?`<button onclick="event.stopPropagation();window.open('https://maps.google.com/?q=${e.last_lat},${e.last_lng}','_blank')">📍 Map</button>`:''}
           ${e.phone?`<button onclick="event.stopPropagation();window.location.href='tel:${e.phone}'">📞 Call</button>`:''}
           ${e.wa?`<button onclick="event.stopPropagation();window.open('https://wa.me/${e.wa.replace(/\D/g,'').replace(/^0/,'44')}','_blank')">💬 WA</button>`:''}
-          <button onclick="event.stopPropagation();showPage('set');switchSetTab('team')">⚙ Edit</button>
+          <button onclick="event.stopPropagation();nav('set');setTimeout(()=>switchSetTab('team'),300)">⚙ Edit & Pay Rate</button>
         </div>
         <div style="font-size:10px;color:var(--txt3);margin-top:8px;text-align:center">Last seen: ${lastSeen}</div>
       </div>
@@ -13069,7 +13069,7 @@ async function openEngDir(sbIdOrName){
           ${eng.wa?`<a href="https://wa.me/${eng.wa}" target="_blank" style="font-size:12px;color:#25d366;text-decoration:none">📱 WhatsApp</a>`:''}
         </div>
       </div>
-      ${(getUserPerm('canEdit'))?`<button class="btn btn-ghost btn-sm" onclick="closeModal('mo-eng-dir');showPage('set');switchSetTab('team')">⚙ Edit</button>`:''}
+      ${(getUserPerm('canEdit'))?`<button class="btn btn-ghost btn-sm" onclick="closeModal('mo-eng-dir');nav('set');setTimeout(()=>switchSetTab('team'),300)">⚙ Edit</button>`:''}
     </div>
 
     <!-- Stats row -->
@@ -13120,7 +13120,7 @@ async function openEngDir(sbIdOrName){
     <!-- Dispatch button -->
     <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
       ${eng.wa?`<a href="https://wa.me/${eng.wa}" target="_blank" class="btn btn-green btn-sm">📱 WhatsApp ${eng.name.split(' ')[0]}</a>`:''}
-      <button class="btn btn-acc btn-sm" onclick="closeModal('mo-eng-dir');showPage('jobs')">📋 View All Jobs</button>
+      <button class="btn btn-acc btn-sm" onclick="closeModal('mo-eng-dir');nav('jobs')">📋 View All Jobs</button>
     </div>
   `;
 }
@@ -18105,13 +18105,13 @@ async function _pollTick(){
           // New job
           _pollKnownJobs[jc.id] = jc.status;
           if(Date.now() - (jc.created||0) < 90000){
-            _pushNotif('New job added', `${jc.jobNum||''} ${jc.address||''}`.trim(), '➕', ()=>{ openJobModal(jc.id); showPage('jobs'); });
+            _pushNotif('New job added', `${jc.jobNum||''} ${jc.address||''}`.trim(), '➕', ()=>{ openJobModal(jc.id); nav('jobs'); });
           }
         } else if(prev !== jc.status){
           // Status changed
           _pollKnownJobs[jc.id] = jc.status;
           const icon = {[STATUS.COMPLETED]:'✅',[STATUS.IN_PROGRESS]:'🔨',[STATUS.INVOICED]:'◎',[STATUS.PENDING]:'⏳',[STATUS.CANCELLED]:'✕'}[jc.status]||'🔔';
-          _pushNotif(`Job updated — ${jc.status}`, `${jc.jobNum||''} ${jc.address||''}`.trim(), icon, ()=>{ openJobModal(jc.id); showPage('jobs'); });
+          _pushNotif(`Job updated — ${jc.status}`, `${jc.jobNum||''} ${jc.address||''}`.trim(), icon, ()=>{ openJobModal(jc.id); nav('jobs'); });
         }
       });
       // Invalidate job cache so next render gets fresh data
@@ -18194,7 +18194,7 @@ async function handleRealtimeChange(payload){
     _jobRowData[job.id] = job;
     // Add to cache
     if(_jobCache) { _jobCache.push(job); _pollKnownJobs[job.id] = job.status; }
-    _pushNotif('New job added', `${job.jobNum||''} ${job.address||''}`.trim(), '\u2795', ()=>{ openJobModal(job.id); showPage('jobs'); });
+    _pushNotif('New job added', `${job.jobNum||''} ${job.address||''}`.trim(), '\u2795', ()=>{ openJobModal(job.id); nav('jobs'); });
     // Only re-render if we're on the jobs page and the date range includes this job
     const jobsPage = document.getElementById('pg-jobs');
     if(jobsPage && jobsPage.classList.contains('active')) {
@@ -18264,12 +18264,12 @@ async function handleRealtimeChange(payload){
     // Notification for status changes
     if(prev && prev.status !== job.status) {
       const icon = {[STATUS.COMPLETED]:'\u2705',[STATUS.IN_PROGRESS]:'\ud83d\udd28',[STATUS.INVOICED]:'\u25ce',[STATUS.PENDING]:'\u23f3'}[job.status]||'\ud83d\udd14';
-      _pushNotif(`Job updated — ${job.status}`, `${job.jobNum||''} ${job.address||''}`.trim(), icon, ()=>{ openJobModal(job.id); showPage('jobs'); });
+      _pushNotif(`Job updated — ${job.status}`, `${job.jobNum||''} ${job.address||''}`.trim(), icon, ()=>{ openJobModal(job.id); nav('jobs'); });
     }
 
     // Notification for priority changes
     if(prev && prev.priority !== job.priority) {
-      _pushNotif(`Priority changed — ${job.priority||'Normal'}`, `${job.jobNum||''} ${job.address||''}`.trim(), '\ud83d\udd14', ()=>{ openJobModal(job.id); showPage('jobs'); });
+      _pushNotif(`Priority changed — ${job.priority||'Normal'}`, `${job.jobNum||''} ${job.address||''}`.trim(), '\ud83d\udd14', ()=>{ openJobModal(job.id); nav('jobs'); });
     }
   }
 }
