@@ -16899,7 +16899,7 @@ async function importBackup(inp){
 
 async function clearAllData(){
   confirm2('⚠️ Clear ALL Data','This will permanently delete ALL jobs, invoices, people, and certificates. This cannot be undone!',async()=>{
-    for(const tbl of ['jobs','persons','invoices','certs','agencies','agents','job_comments','activity','attachments','payments','expenses','overtime']){
+    for(const tbl of ['jobs','persons','invoices','certs','agencies','agents','job_comments','activity','attachments','payments','expenses','overtime','engineer_requests','audit_log']){
       try{await _sb(tbl+'?id=neq.00000000-0000-0000-0000-000000000000',{method:'DELETE',prefer:'return=minimal'});}catch(e){ console.warn('[DeepFlow]', e); }
     }
     // FIX BUG1: payments/expenses/overtime now in Supabase — localStorage cleanup no longer needed
