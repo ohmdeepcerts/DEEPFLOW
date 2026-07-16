@@ -46,7 +46,7 @@
   .hero{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);}
   .hdr{background:rgba(15,23,42,0.8)!important;border-bottom-color:rgba(51,65,85,0.6)!important;}
   .nav{background:rgba(15,23,42,0.7)!important;}
-  .cc-ic,.ic-ic,.stat-ic{background:rgba(255,255,255,0.05)!important;}
+  .ic-ic,.stat-ic{background:rgba(255,255,255,0.05)!important;}
 }
 html.dark{--bg:#0a1628;--surface:#0f2140;--surface-elevated:#1e3a5f;--border:#1e3a5f;--border-subtle:#0f2140;--text:#e2eeff;--text-secondary:#94b8d8;--text-tertiary:#4a6a8a;--accent:#38bdf8;--accent-light:rgba(56,189,248,0.1);--accent-dark:#7dd3fc;--accent-glow:rgba(56,189,248,0.15);--success:#34d399;--success-light:rgba(52,211,153,0.1);--warning:#fbbf24;--warning-light:rgba(251,191,36,0.1);--danger:#f87171;--danger-light:rgba(248,113,113,0.1);}
 
@@ -187,10 +187,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .cb-o:hover{box-shadow:0 4px 20px var(--success-bg)}
 
 /* ── CERT CARD ── */
-.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;transition:var(--transition);position:relative;overflow:hidden;}
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:44px 1fr 48px auto;align-items:center;gap:14px;transition:var(--transition);position:relative;overflow:hidden;}
 .cc:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .cc-ic{width:44px;height:44px;border-radius:12px;background:var(--surface-elevated);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);flex-shrink:0;border:1px solid var(--border);}
-.cc-body{flex:1;min-width:0}
+.cc-body{min-width:0}
 .cc-t{font-size:14px;font-weight:700;margin-bottom:3px}
 .cc-a{font-size:12px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cc-m{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
@@ -201,7 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .p-n{background:var(--border-subtle);color:var(--text-tertiary);border:1px solid var(--border)}
 
 /* ── EXPIRY RING ── */
-.expiry-ring{flex-shrink:0;position:relative;width:48px;height:48px}
+.expiry-ring{position:relative;width:48px;height:48px}
 .expiry-ring svg{transform:rotate(-90deg)}
 .expiry-ring .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
 
@@ -500,6 +500,21 @@ select.fi{cursor:pointer}
       <button class="dl g" onclick="closeModal()">Close</button>
       <button class="dl" id="pdf-modal-dl" onclick="downloadCurrentInv()"><i data-lucide="download" style="width:14px;height:14px"></i> Download PDF</button>
     </div>
+  </div>
+</div>
+
+<!-- Certificate PDF Preview -->
+<div class="modal-overlay" id="cp-pdf-overlay" onclick="closeCertPdfPreview(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:820px;width:92vw;height:88vh;display:flex;flex-direction:column">
+    <div class="modal-hd">
+      <h3>Certificate Document</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a id="cp-pdf-open" href="#" target="_blank" class="dl g">Open in New Tab</a>
+        <a id="cp-pdf-download" href="#" download class="dl g">Download</a>
+        <button class="hbtn-icon" onclick="closeCertPdfPreview()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+      </div>
+    </div>
+    <iframe id="cp-pdf-frame" src="" style="flex:1;width:100%;border:1px solid var(--border);border-radius:var(--radius);margin-top:8px;background:#fff"></iframe>
   </div>
 </div>
 
@@ -1259,8 +1274,10 @@ function sortCerts(a){
 
 function certCard(c,d){
   const IC={Gas:'flame',EICR:'zap',PAT:'plug',EPC:'home',Fire:'fire-extinguisher',Boiler:'thermometer',Legionella:'droplets',Asbestos:'skull'};
+  const COL={Gas:'#f97316',EICR:'#eab308',PAT:'#3b82f6',EPC:'#22c55e',Fire:'#ef4444',Boiler:'#f43f5e',Legionella:'#06b6d4',Asbestos:'#71717a'};
   const icKey=Object.keys(IC).find(k=>(c.type||'').includes(k));
   const ic=icKey?IC[icKey]:'file-text';
+  const col=icKey?COL[icKey]:'var(--text-secondary)';
   const df=!c.noExpiry&&c.expiryDate?dd(c.expiryDate):null;
   const isE=df!==null&&df<0,isS=df!==null&&df>=0&&df<=60;
   const pc=isE?'p-e':isS?'p-s':df===null?'p-n':'p-ok';
@@ -1280,8 +1297,9 @@ function certCard(c,d){
       <div class="val">${df!==null?Math.abs(df):'∞'}</div>
     </div>`;
   }else{ringHTML=`<div class="expiry-ring"><div class="val" style="font-size:10px;color:var(--text-tertiary)">N/A</div></div>`;}
+  const pdfUrl=c.pdf_url||c.url;
   return`<div class="cc">
-    <div class="cc-ic"><i data-lucide="${ic}" style="width:20px;height:20px"></i></div>
+    <div class="cc-ic" style="background:${col}22;color:${col};border-color:${col}44"><i data-lucide="${ic}" style="width:20px;height:20px"></i></div>
     <div class="cc-body">
       <div class="cc-t">${e(c.type||'Certificate')}</div>
       <div class="cc-a">${e(c.address||(jf?.address)||'—')}</div>
@@ -1292,12 +1310,25 @@ function certCard(c,d){
       </div>
     </div>
     ${ringHTML}
-    <div style="display:flex;gap:6px;flex-shrink:0">
-      ${(c.pdf_url||c.url)?`<a href="${ea(c.pdf_url||c.url)}" target="_blank" class="dl">Download</a>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
-      ${(c.pdf_url||c.url)?`<button class="dl wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>`:''}
-      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>`:''}
+    <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+      ${pdfUrl?`<button class="dl" onclick="previewCertPdf(${ea(JSON.stringify(pdfUrl))})">View Certificate</button>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
+      ${pdfUrl?`<a href="${ea(pdfUrl)}" download class="dl g" title="Download">Download</a>`:''}
+      ${pdfUrl?`<button class="dl wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>`:''}
+      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew Request"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Renew Request</button>`:''}
     </div>
   </div>`;
+}
+
+function previewCertPdf(url){
+  document.getElementById('cp-pdf-frame').src=url;
+  document.getElementById('cp-pdf-open').href=url;
+  document.getElementById('cp-pdf-download').href=url;
+  document.getElementById('cp-pdf-overlay').classList.add('show');
+}
+function closeCertPdfPreview(ev){
+  if(ev&&ev.target!==document.getElementById('cp-pdf-overlay'))return;
+  document.getElementById('cp-pdf-overlay').classList.remove('show');
+  document.getElementById('cp-pdf-frame').src='';
 }
 
 function preFillRenewal(c){
@@ -1964,12 +1995,12 @@ function attachDelegates(){
 init();
 // ── Hero banner animation — BG3 cyan network + gold star twinkle ─────────────
 function initHeroCanvas(){
-  const canvas=document.getElementById('hero-canvas');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  let W,H,nodes,packets,stars,raf=null;
+  let W,H,nodes,packets,stars,raf=null,canvas,ctx;
 
   function build(){
+    canvas=document.getElementById('hero-canvas');
+    if(!canvas)return false;
+    ctx=canvas.getContext('2d');
     const p=canvas.parentElement;
     W=canvas.width=p?p.offsetWidth:600;
     H=canvas.height=p?p.offsetHeight:200;
@@ -2008,6 +2039,7 @@ function initHeroCanvas(){
   }
 
   function draw(){
+    if(!document.body.contains(canvas)){raf=null;return;}
     ctx.fillStyle=canvas._bg;ctx.fillRect(0,0,W,H);
     for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
       const n=nodes[i],m=nodes[j],d=Math.hypot(n.x-m.x,n.y-m.y);
@@ -2038,7 +2070,7 @@ function initHeroCanvas(){
 
   function start(){
     if(raf)return;
-    build();draw();
+    if(build()!==false) draw();
   }
 
   // Start when hero canvas appears in DOM
@@ -2046,10 +2078,12 @@ function initHeroCanvas(){
     if(document.getElementById('hero-canvas'))start();
   });
   observer.observe(document.getElementById('main')||document.body,{childList:true,subtree:true});
+  // Cover the case where the canvas is already present by the time this runs
+  start();
 
   // Also handle window resize
   window.addEventListener('resize',()=>{
-    if(raf){cancelAnimationFrame(raf);raf=null;build();draw();}
+    if(raf){cancelAnimationFrame(raf);raf=null;start();}
   });
 
   // Expose for manual start
