@@ -744,14 +744,14 @@ async function init(){
       attachments=(ra||[]).map(_fix);
       certs=(rc||[]).map(_fix);
       invoices=ri||[];
-      const ratings=(rr||[]).map(_fix);
-      jobs.forEach(j=>{const r=ratings.find(x=>x.jobId===j.id||x.jobid===j.id);if(r)j.rating=r.score||r.rating||r.stars;});
-      ratings=(rr||[]).map(_fix);
-      // Attach ratings to jobs
-      jobs.forEach(j=>{
-        const r=ratings.find(x=>x.jobId===j.id||x.jobid===j.id);
-        if(r) j.rating=r.score||r.rating||r.stars;
-      });
+      // Ratings: no `ratings` table exists in the live database (rr is always
+      // []), so the outer `ratings` variable simply stays at its initial `[]`.
+      // This block previously declared a second, block-scoped `const ratings`
+      // and then tried to reassign it a few lines later — a pre-existing bug
+      // (present before any of this phase's changes) that threw
+      // "Assignment to constant variable" and crashed portal load entirely
+      // for any client that actually had jobs. Removed rather than patched,
+      // since the underlying feature has no data to operate on either way.
       jobs.forEach(j=>{
         const rel=invoices.filter(inv=>{
           const a=(inv.jobAddress||inv.billToAddress||'').toLowerCase().trim();
