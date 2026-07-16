@@ -1293,8 +1293,8 @@ function certCard(c,d){
     </div>
     ${ringHTML}
     <div style="display:flex;gap:6px;flex-shrink:0">
-      ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl">Download</a>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
-      ${c.url?`<button class="dl wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>`:''}
+      ${(c.pdf_url||c.url)?`<a href="${ea(c.pdf_url||c.url)}" target="_blank" class="dl">Download</a>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
+      ${(c.pdf_url||c.url)?`<button class="dl wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>`:''}
       ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>`:''}
     </div>
   </div>`;
@@ -1906,9 +1906,10 @@ function exportCSV(type){
 }
 
 async function shareCert(c){
+  const url=c.pdf_url||c.url;
   const text=`${c.type} for ${c.address||'Property'}${c.certNum?' (Ref: '+c.certNum+')':''}`;
-  if(navigator.share&&c.url){try{await navigator.share({title:'Certificate',text:text,url:c.url});}catch(e){}}
-  else if(c.url){window.open(`https://wa.me/?text=${encodeURIComponent(text+' '+c.url)}`,'_blank');}
+  if(navigator.share&&url){try{await navigator.share({title:'Certificate',text:text,url:url});}catch(e){}}
+  else if(url){window.open(`https://wa.me/?text=${encodeURIComponent(text+' '+url)}`,'_blank');}
   else{toast('No shareable link available');}
 }
 
