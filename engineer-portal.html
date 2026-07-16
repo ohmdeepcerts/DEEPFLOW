@@ -1194,6 +1194,16 @@ const df=(()=>{
   function once(ev,fn){on(ev,fn,{once:true});}
   return{on,off,emit,once};
 })();
+
+// Escapes text before it's placed into innerHTML — prevents a job address/
+// description/note (or any other field typed by any user of any of the three
+// DeepFlow apps) from being interpreted as HTML/script if it contains
+// characters like < > & " '. Every place this file inserts a database value
+// into a template string that ends up in innerHTML should pass it through
+// this first.
+function escHtml(s){
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 // FIX 13: No longer a hardcoded constant. Loaded from the settings table in
 // _loadOfficeSettings() which is called inside showApp(). Falls back to localStorage
 // cache, then to the placeholder below if neither is available.
@@ -1923,14 +1933,14 @@ function _buildCard(j){
     
     <div class="job-card-top">
       <div style="min-width:0;flex:1">
-        <div class="job-num">${j.jobNum||'—'}</div>
-        <div class="job-addr">${j.address||'—'}</div>
+        <div class="job-num">${escHtml(j.jobNum)||'—'}</div>
+        <div class="job-addr">${escHtml(j.address)||'—'}</div>
       </div>
       ${_spill(j.status,j.priority)}
     </div>
     <div class="job-meta">
-      ${j.timeSlot?`<span class="job-chip chip-time">🕐 ${j.timeSlot}</span>`:''}
-      ${j.trade?`<span class="job-chip chip-trade">🔧 ${j.trade}</span>`:''}
+      ${j.timeSlot?`<span class="job-chip chip-time">🕐 ${escHtml(j.timeSlot)}</span>`:''}
+      ${j.trade?`<span class="job-chip chip-trade">🔧 ${escHtml(j.trade)}</span>`:''}
       ${j.hours?`<span class="job-chip chip-hours">⏱ ${j.hours}h</span>`:''}
       ${certs}
     </div>
@@ -2038,13 +2048,13 @@ function renderJobDetail(j,atts){
       <div class="d-section-hd">📋 Job Details</div>
       <div class="d-block">
         ${_dr('Date',j.date?new Date(j.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'')}
-        ${_dr('Time',j.timeSlot?`🕐 ${j.timeSlot}`:'')}
-        ${_dr('Trade',j.trade)}
-        ${_dr('Certs',(j.certTypes||[]).map(_certLabel).join(', '))}
-        ${_dr('Ref',j.jobNum)}
-        ${_dr('Details',j.description)}
+        ${_dr('Time',j.timeSlot?`🕐 ${escHtml(j.timeSlot)}`:'')}
+        ${_dr('Trade',escHtml(j.trade))}
+        ${_dr('Certs',(j.certTypes||[]).map(_certLabel).map(escHtml).join(', '))}
+        ${_dr('Ref',escHtml(j.jobNum))}
+        ${_dr('Details',escHtml(j.description))}
         ${_dr('Hours',j.hours?j.hours+' hrs':'')}
-        ${j.priority&&j.priority!=='Normal'?_dr('Priority',`<span style="color:var(--red);font-weight:800">🚨 ${j.priority}</span>`):''}
+        ${j.priority&&j.priority!=='Normal'?_dr('Priority',`<span style="color:var(--red);font-weight:800">🚨 ${escHtml(j.priority)}</span>`):''}
       </div>
     </div>
 
@@ -2052,8 +2062,8 @@ function renderJobDetail(j,atts){
     <div class="d-section">
       <div class="d-section-hd">🔑 Access &amp; Navigation</div>
       <div class="d-block">
-        ${_dr('Access',j.access)}
-        ${j.contact?`<div class="d-row"><div class="d-lbl">Contact</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${j.contact}</div><div class="cta-row">${_callBtn(j.contact)}${_waBtn(j.contact,'WhatsApp')}</div></div></div>`:''}
+        ${_dr('Access',escHtml(j.access))}
+        ${j.contact?`<div class="d-row"><div class="d-lbl">Contact</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${escHtml(j.contact)}</div><div class="cta-row">${_callBtn(j.contact)}${_waBtn(j.contact,'WhatsApp')}</div></div></div>`:''}
         ${mapsUrl?`<div class="d-row"><div class="d-lbl">Navigate</div><div class="d-val"><div class="cta-row"><a class="cta cta-map" href="${mapsUrl}" target="_blank">📍 Google Maps</a><a class="cta cta-waze" href="${wazeUrl}" target="_blank">🚗 Waze</a></div></div></div>`:''}
       </div>
     </div>
@@ -2062,17 +2072,17 @@ function renderJobDetail(j,atts){
 
     <!-- LANDLORD -->
     ${j.landlordName?`<div class="d-section"><div class="d-section-hd">🏠 Landlord</div><div class="d-block">
-      ${_dr('Name',j.landlordName)}
-      ${j.landlordPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${j.landlordPhone}</div><div class="cta-row">${_callBtn(j.landlordPhone)}${_waBtn(j.landlordPhone,'WhatsApp')}${_waBtn(j.landlordWA||j.landlordPhone,'WA')}</div></div></div>`:''}
+      ${_dr('Name',escHtml(j.landlordName))}
+      ${j.landlordPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${escHtml(j.landlordPhone)}</div><div class="cta-row">${_callBtn(j.landlordPhone)}${_waBtn(j.landlordPhone,'WhatsApp')}${_waBtn(j.landlordWA||j.landlordPhone,'WA')}</div></div></div>`:''}
       ${j.landlordEmail?`<div class="d-row"><div class="d-lbl">Email</div><div class="d-val"><div class="cta-row">${_emailBtn(j.landlordEmail)}<a class="cta cta-wa" href="https://wa.me/?text=${encodeURIComponent('Re: '+j.address)}" target="_blank">💬 WA Message</a></div></div></div>`:''}
-      ${_dr('Notes',j.landlordNotes)}
+      ${_dr('Notes',escHtml(j.landlordNotes))}
     </div></div>`:''}
 
     <!-- AGENCY -->
     ${j.agencyName?`<div class="d-section"><div class="d-section-hd">🏢 Agency</div><div class="d-block">
-      ${_dr('Agency',j.agencyName)}
-      ${_dr('Agent',j.agentName)}
-      ${j.agentPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${j.agentPhone}</div><div class="cta-row">${_callBtn(j.agentPhone)}${_waBtn(j.agentPhone,'WhatsApp')}</div></div></div>`:''}
+      ${_dr('Agency',escHtml(j.agencyName))}
+      ${_dr('Agent',escHtml(j.agentName))}
+      ${j.agentPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${escHtml(j.agentPhone)}</div><div class="cta-row">${_callBtn(j.agentPhone)}${_waBtn(j.agentPhone,'WhatsApp')}</div></div></div>`:''}
       ${j.agentEmail?`<div class="d-row"><div class="d-lbl">Email</div><div class="d-val"><div class="cta-row">${_emailBtn(j.agentEmail)}</div></div></div>`:''}
     </div></div>`:''}
 
