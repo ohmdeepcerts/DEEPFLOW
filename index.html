@@ -2959,6 +2959,7 @@ body.density-relaxed .jtable td{font-size:15px}
         <button class="set-tab" data-tab="invoicing" onclick="switchSetTab('invoicing')">◎ Invoicing</button>
         <button class="set-tab" data-tab="whatsapp" onclick="switchSetTab('whatsapp')">📱 WhatsApp</button>
         <button class="set-tab" data-tab="jobs" onclick="switchSetTab('jobs')">⊞ Job Controls</button>
+        <button class="set-tab" data-tab="portal-contacts" onclick="switchSetTab('portal-contacts')">☎ Portal Contacts</button>
         <button class="set-tab" data-tab="notifications" onclick="switchSetTab('notifications')">🔔 Notifications</button>
         <button class="set-tab" data-tab="data" onclick="switchSetTab('data')">💾 Data</button>
         <button class="set-tab" data-tab="guide" onclick="switchSetTab('guide')">📖 Guide & SQL</button>
@@ -3504,6 +3505,20 @@ body.density-relaxed .jtable td{font-size:15px}
               <div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Loading engineers…</div>
             </div>
             <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="loadEngPerms()">↺ Refresh</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PORTAL CONTACTS TAB -->
+      <div class="set-tab-panel" id="stab-portal-contacts">
+        <div class="set-section">
+          <div class="set-title">☎ Client Portal Contact Numbers</div>
+          <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+            These numbers show as "Call Us" options in the Client Portal, so tenants and landlords can reach the right person directly — e.g. Repairs, Compliance, Finance/Invoices. Add a label, the contact's name, and their number. Changes sync to the portal immediately.
+          </div>
+          <div class="set-card">
+            <div id="portal-contacts-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">Loading…</div></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="addPortalContactRow()">+ Add Contact</button>
           </div>
         </div>
       </div>
@@ -4888,6 +4903,7 @@ const _TO_DB = {
   payments:{invId:'inv_id',recordedBy:'recorded_by'},
   expenses:{jobRef:'jobref',desc:'description'},
   overtime:{},
+  portal_contacts:{contactName:'contact_name',sortOrder:'sort_order'},
 };
 const _FROM_DB = {};
 for(const [tbl,map] of Object.entries(_TO_DB)){
@@ -17273,8 +17289,54 @@ function applyStoredTheme(){
 // ════════════════════════════════════════════════════════════════
 //  SETTINGS TABS
 // ════════════════════════════════════════════════════════════════
+// ── Portal Contacts (Client Portal "Call Us" numbers) ──────────────────────
+async function loadPortalContacts(){
+  const list=document.getElementById('portal-contacts-list');
+  if(!list)return;
+  try{
+    const rows=await dAll('portal_contacts');
+    rows.sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+    window._portalContacts=rows;
+    renderPortalContactsList();
+  }catch(e){
+    list.innerHTML=`<div style="font-size:12px;color:var(--red);text-align:center;padding:16px">Could not load contacts. Have you run the SQL to create the portal_contacts table?</div>`;
+  }
+}
+function renderPortalContactsList(){
+  const list=document.getElementById('portal-contacts-list');
+  if(!list)return;
+  const rows=window._portalContacts||[];
+  if(!rows.length){ list.innerHTML=`<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No contact numbers yet — add one below.</div>`; return; }
+  list.innerHTML=rows.map(c=>`
+    <div class="frow" style="align-items:flex-end;margin-bottom:8px" data-id="${c.id}">
+      <div class="fg"><label class="fl">Label</label><input type="text" class="fi" value="${escHtml(c.label||'')}" placeholder="e.g. Repairs" onchange="updatePortalContact('${c.id}','label',this.value)"></div>
+      <div class="fg"><label class="fl">Contact Name</label><input type="text" class="fi" value="${escHtml(c.contactName||'')}" placeholder="e.g. John Smith" onchange="updatePortalContact('${c.id}','contactName',this.value)"></div>
+      <div class="fg"><label class="fl">Phone</label><input type="text" class="fi" value="${escHtml(c.phone||'')}" placeholder="e.g. 07123 456789" onchange="updatePortalContact('${c.id}','phone',this.value)"></div>
+      <button class="btn btn-ghost btn-xs" style="color:var(--red)" onclick="deletePortalContact('${c.id}')">🗑</button>
+    </div>`).join('');
+}
+function addPortalContactRow(){
+  window._portalContacts=window._portalContacts||[];
+  window._portalContacts.push({id:uid(),label:'',contactName:'',phone:'',sortOrder:window._portalContacts.length});
+  renderPortalContactsList();
+}
+async function updatePortalContact(id,field,value){
+  const c=(window._portalContacts||[]).find(x=>x.id===id);
+  if(!c)return;
+  c[field]=value;
+  if(!c.label&&!c.contactName&&!c.phone)return;
+  try{ await dPut('portal_contacts',c); toast('Contact saved','success'); }
+  catch(e){ toast('Could not save — check the portal_contacts table exists','error'); }
+}
+async function deletePortalContact(id){
+  window._portalContacts=(window._portalContacts||[]).filter(c=>c.id!==id);
+  renderPortalContactsList();
+  try{ await dDel('portal_contacts',id); }catch(e){}
+}
+
 function switchSetTab(tab){
   if(tab==='guide') setTimeout(renderSqlSnippets, 50);
+  if(tab==='portal-contacts') setTimeout(loadPortalContacts, 50);
   document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.set-tab-panel').forEach(p=>p.classList.toggle('active',p.id==='stab-'+tab));
 }
