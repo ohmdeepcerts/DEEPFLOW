@@ -435,9 +435,8 @@ select.fi{cursor:pointer}
   <div class="tab" data-t="jobs" onclick="go('jobs')"><i data-lucide="wrench" style="width:14px;height:14px"></i> <span>Jobs</span></div>
   <div class="tab" data-t="certs" onclick="go('certs')"><i data-lucide="file-check" style="width:14px;height:14px"></i> <span>Certs</span></div>
   <div class="tab" data-t="invoices" onclick="go('invoices')"><i data-lucide="receipt" style="width:14px;height:14px"></i> <span>Invoices</span></div>
-  <div class="tab" data-t="payments" onclick="go('payments')"><i data-lucide="credit-card" style="width:14px;height:14px"></i> <span>Payments</span></div>
-  <div class="tab" data-t="docs" onclick="go('docs')"><i data-lucide="folder-open" style="width:14px;height:14px"></i> <span>Docs</span></div>
-  <div class="tab" data-t="request" onclick="go('request')"><i data-lucide="plus-circle" style="width:14px;height:14px"></i> <span>Request</span></div>
+  <div class="tab" data-t="properties" onclick="go('properties')"><i data-lucide="building-2" style="width:14px;height:14px"></i> <span>Properties</span></div>
+  <div class="tab" data-t="request" onclick="go('request')"><i data-lucide="plus-circle" style="width:14px;height:14px"></i> <span>New Job</span></div>
 </div></div>
 
 <div class="main" id="main">
@@ -476,7 +475,7 @@ select.fi{cursor:pointer}
       <div class="kbd-short"><span>Go to Overview</span><div><kbd>1</kbd></div></div>
       <div class="kbd-short"><span>Go to Jobs</span><div><kbd>2</kbd></div></div>
       <div class="kbd-short"><span>Go to Invoices</span><div><kbd>3</kbd></div></div>
-      <div class="kbd-short"><span>New Request</span><div><kbd>N</kbd></div></div>
+      <div class="kbd-short"><span>New Job</span><div><kbd>N</kbd></div></div>
     </div>
     <div class="modal-ft"><button class="dl g" onclick="closeHelpModal()">Close</button></div>
   </div>
@@ -511,6 +510,7 @@ select.fi{cursor:pointer}
       <div style="display:flex;gap:8px;align-items:center">
         <a id="cp-pdf-open" href="#" target="_blank" class="dl g">Open in New Tab</a>
         <a id="cp-pdf-download" href="#" download class="dl g">Download</a>
+        <button id="cp-pdf-share" class="dl wa" onclick="shareCurrentPreviewCert()" title="Share" style="display:none"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>
         <button class="hbtn-icon" onclick="closeCertPdfPreview()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
       </div>
     </div>
@@ -518,7 +518,15 @@ select.fi{cursor:pointer}
   </div>
 </div>
 
-<button class="fab" onclick="go('request')" title="New Request"><i data-lucide="plus" style="width:24px;height:24px"></i></button>
+<!-- Contact Us -->
+<div class="modal-overlay" id="contact-overlay" onclick="closeContactModal(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:380px">
+    <div class="modal-hd"><h3>Call Us</h3><button class="hbtn-icon" onclick="closeContactModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button></div>
+    <div class="modal-bd" id="contact-list"></div>
+  </div>
+</div>
+
+<button class="fab" onclick="go('request')" title="New Job"><i data-lucide="plus" style="width:24px;height:24px"></i></button>
 
 <script>
 // ── CORE ─────────────────────────────────────────────────────────────────────
@@ -936,7 +944,7 @@ function initKeyboard(){
     if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();openSearch();}
     if(e.key==='Escape'){closeSearch();closeModal();closeLb();document.getElementById('notif-panel').style.display='none';document.getElementById('help-modal').classList.remove('show');}
     if(e.key==='?'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();document.getElementById('help-modal').classList.add('show');}
-    if(!isNaN(e.key)&&document.activeElement.tagName!=='INPUT'){const tabs=['overview','jobs','certs','invoices','payments','docs','request'];const idx=parseInt(e.key)-1;if(tabs[idx])go(tabs[idx]);}
+    if(!isNaN(e.key)&&document.activeElement.tagName!=='INPUT'){const tabs=['overview','jobs','certs','invoices','properties','request'];const idx=parseInt(e.key)-1;if(tabs[idx])go(tabs[idx]);}
     if(e.key==='n'||e.key==='N'){if(document.activeElement.tagName!=='INPUT')go('request');}
   });
 }
@@ -951,7 +959,7 @@ function closeHelpModal(ev){if(ev&&ev.target!==ev.currentTarget)return;document.
 function go(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
   if(t==='overview') setTimeout(()=>{ if(window._heroCanvasStart) window._heroCanvasStart(); },200);
-  const fn={overview:vOverview,jobs:vJobs,certs:vCerts,invoices:vInvoices,payments:vPayments,docs:vDocs,request:vRequest};
+  const fn={overview:vOverview,jobs:vJobs,certs:vCerts,invoices:vInvoices,properties:vProperties,request:vRequest};
   if(fn[t]){
     showSkeleton(t);
     setTimeout(()=>{
@@ -969,8 +977,8 @@ function showSkeleton(t){
   if(t==='overview'){h=`<div class="skeleton sk-hero"></div><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div>`;}
   else if(t==='jobs'){h=`<div class="skeleton sk-card"></div><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div>`;}
   else if(t==='certs'){h=`<div class="skeleton sk-row"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div>`;}
-  else if(t==='invoices'||t==='payments'){h=`<div class="skeleton sk-row"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div>`;}
-  else if(t==='docs'){h=`<div class="skeleton sk-card"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div>`;}
+  else if(t==='invoices'){h=`<div class="skeleton sk-row"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div>`;}
+  else if(t==='properties'){h=`<div class="skeleton sk-card"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div>`;}
   else if(t==='request'){h=`<div class="skeleton sk-card" style="height:400px"></div>`;}
   document.getElementById('main').innerHTML=h;
 }
@@ -1017,7 +1025,6 @@ function vOverview(d){
   const alerts=d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=60)
     .sort((a,b)=>dd(a.expiryDate)-dd(b.expiryDate)).slice(0,4)
     .map(c=>{const df=dd(c.expiryDate);return`<div class="alert ${df<0?'al-r':'al-y'}"><i data-lucide="alert-triangle" style="width:16px;height:16px"></i><div><strong>${e(c.type)}</strong> · ${e(c.address||'Property')} · ${df<0?`Expired ${Math.abs(df)}d ago`:`Expires in ${df} day${df!==1?'s':''}`}</div></div>`;}).join('');
-  const bh=bankCard(d.entity);
   const label=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
 
   // Agent filter bar for agency view
@@ -1051,20 +1058,18 @@ function vOverview(d){
         <div class="hero-n" id="hero-greeting">Welcome, ${e(d.name)}</div>
         <div class="hero-s">Live overview of your properties, jobs &amp; certificates managed by ${e(d.coName)}.</div>
         <div class="hero-row">
-          <button class="hbtn p" data-action="go" data-target="request"><i data-lucide="plus" style="width:14px;height:14px"></i> New Request</button>
+          <button class="hbtn p" data-action="go" data-target="request"><i data-lucide="plus" style="width:14px;height:14px"></i> New Job</button>
           <button class="hbtn" data-action="go" data-target="certs"><i data-lucide="file-check" style="width:14px;height:14px"></i> Certificates</button>
           <button class="hbtn" data-action="go" data-target="invoices"><i data-lucide="receipt" style="width:14px;height:14px"></i> Invoices</button>
-          ${bh?`<button class="hbtn" data-action="go" data-target="payments"><i data-lucide="credit-card" style="width:14px;height:14px"></i> Payments</button>`:''}
         </div>
         ${agentFilterBar}
       </div>
     </div>
 
     <div class="qa-row">
-      <button class="qa-btn" data-action="go" data-target="request"><i data-lucide="plus"></i>Book Service</button>
-      <button class="qa-btn" data-action="go" data-target="payments"><i data-lucide="credit-card"></i>Pay Online</button>
-      <button class="qa-btn" data-action="go" data-target="docs"><i data-lucide="download"></i>Download</button>
-      <button class="qa-btn" onclick="window.open('tel:0','_self')"><i data-lucide="phone"></i>Emergency</button>
+      <button class="qa-btn" data-action="go" data-target="request"><i data-lucide="plus"></i>New Job</button>
+      <button class="qa-btn" data-action="go" data-target="properties"><i data-lucide="building-2"></i>Properties</button>
+      <button class="qa-btn" onclick="openContactModal()"><i data-lucide="phone"></i>Call Us</button>
     </div>
 
     <div class="stats">
@@ -1310,16 +1315,18 @@ function certCard(c,d){
       </div>
     </div>
     ${ringHTML}
-    <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
-      ${pdfUrl?`<button class="dl" onclick="previewCertPdf(${ea(JSON.stringify(pdfUrl))})">View Certificate</button>`:`<span class="dl g" style="cursor:default;opacity:.5">No PDF</span>`}
-      ${pdfUrl?`<a href="${ea(pdfUrl)}" download class="dl g" title="Download">Download</a>`:''}
-      ${pdfUrl?`<button class="dl wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:14px;height:14px"></i></button>`:''}
-      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew Request"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Renew Request</button>`:''}
+    <div style="display:flex;gap:6px;flex-shrink:0;justify-content:flex-end">
+      ${pdfUrl?`<button class="dl" onclick="previewCertPdf(${ea(JSON.stringify(pdfUrl))},${ea(JSON.stringify(c))})">View Certificate</button>`:`<span class="dl g" style="cursor:default;opacity:.5;font-size:11px">No PDF</span>`}
+      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew Request"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>`:''}
     </div>
   </div>`;
 }
 
-function previewCertPdf(url){
+let _previewCert=null;
+function previewCertPdf(url,certJson){
+  _previewCert=certJson||null;
+  const shareBtn=document.getElementById('cp-pdf-share');
+  if(shareBtn) shareBtn.style.display=_previewCert?'inline-flex':'none';
   document.getElementById('cp-pdf-frame').src=url;
   document.getElementById('cp-pdf-open').href=url;
   document.getElementById('cp-pdf-download').href=url;
@@ -1395,7 +1402,8 @@ function vInvoices(d){
       </div>
       ${barChart}
       ${rows.length?rows.join(''):empty('receipt','No invoices yet','Invoices will appear here once raised')}
-    </div>`;
+    </div>
+    ${bankCard(d.entity)?`<div class="sec">${bankCard(d.entity)}</div>`:''}`;
 }
 
 // ── INVOICE PDF ───────────────────────────────────────────────────────────────
@@ -1562,35 +1570,6 @@ function downloadInvPDF(id){
 }
 
 // ── PAYMENTS ──────────────────────────────────────────────────────────────────
-function vPayments(d){
-  const paid=d.invoices.filter(i=>i.status==='Paid');
-  const owed=d.invoices.filter(i=>i.status!=='Paid'&&i.status!=='Cancelled');
-  const owedT=owed.reduce((s,i)=>s+calcTotal(i).grand,0);
-  const paidT=paid.reduce((s,i)=>s+calcTotal(i).grand,0);
-  const bh=bankCard(d.entity);
-  const stmtRows=[...d.invoices].sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0))
-    .map(inv=>{
-      const t=calcTotal(inv);const p=inv.status==='Paid',c=inv.status==='Cancelled';
-      return`<div class="stmt-row">
-        <div class="stmt-icon" style="background:${p?'var(--success-light)':c?'var(--border-subtle)':'var(--danger-light)'};color:${p?'var(--success)':c?'var(--text-tertiary)':'var(--danger)'}">
-          <i data-lucide="${p?'check-circle-2':c?'x-circle':'clock'}" style="width:18px;height:18px"></i>
-        </div>
-        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${e(inv.number||'—')}</div><div style="font-size:12px;color:var(--text-secondary)">${inv.createdAt?fd(inv.createdAt.slice(0,10)):fd(inv.date)}</div></div>
-        <div style="text-align:right;flex-shrink:0"><div style="font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:${p?'var(--success)':c?'var(--text-tertiary)':'var(--danger)'}">${fgbp(t.grand)}</div>
-        <div style="font-size:10px;color:var(--text-tertiary);font-weight:600">${p?'PAID':c?'VOID':'OUTSTANDING'}</div></div>
-      </div>`;}).join('');
-  document.getElementById('main').innerHTML=`
-    <div class="sec"><div class="sec-hd"><div class="sec-t">Payment Summary</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-        <div style="background:var(--success-light);border:1px solid var(--success-bg);border-radius:var(--radius-lg);padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--success);font-variant-numeric:tabular-nums">${fgbp(paidT)}</div><div style="font-size:11px;color:var(--success);margin-top:4px;font-weight:600">Total Paid</div></div>
-        <div style="background:${owedT>0?'var(--danger-light)':'var(--success-light)'};border:1px solid ${owedT>0?'var(--danger-bg)':'var(--success-bg)'};border-radius:var(--radius-lg);padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:${owedT>0?'var(--danger)':'var(--success)'};font-variant-numeric:tabular-nums">${fgbp(owedT)}</div><div style="font-size:11px;color:${owedT>0?'var(--danger)':'var(--success)'};margin-top:4px;font-weight:600">${owedT>0?'Outstanding':'All Clear ✓'}</div></div>
-      </div>
-      ${bh||''}
-    </div>
-    <div class="sec"><div class="sec-hd"><div class="sec-t">Statement of Account</div></div>
-      ${stmtRows||empty('receipt','No transactions yet','')}
-    </div>`;
-}
 
 function bankCard(entity){
   if(!entity)return'';
@@ -1613,33 +1592,64 @@ function copyToClipboard(text){
 }
 
 // ── DOCUMENTS ─────────────────────────────────────────────────────────────────
-function vDocs(d){
-  const allPdfs=d.certs.filter(c=>c.url);
-  const allDocs=d.attachments.filter(a=>a.url&&(a.type!=='photo'&&!/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
-  const photos=d.attachments.filter(a=>a.url&&(a.type==='photo'||/\.(jpg|jpeg|png|webp|gif)/i.test(a.url)));
+let _propSearch='',_propSort='jobs';
+function vProperties(d){
+  const map={};
+  const addKey=(addr)=>{
+    const k=(addr||'').trim(); if(!k) return null;
+    if(!map[k]) map[k]={address:k,jobs:[],certs:[]};
+    return map[k];
+  };
+  d.jobs.forEach(j=>{const p=addKey(j.address); if(p)p.jobs.push(j);});
+  d.certs.forEach(c=>{const p=addKey(c.address); if(p)p.certs.push(c);});
+
+  let list=Object.values(map);
+  if(_propSearch) list=list.filter(p=>p.address.toLowerCase().includes(_propSearch.toLowerCase()));
+  if(_propSort==='jobs') list.sort((a,b)=>b.jobs.length-a.jobs.length);
+  else if(_propSort==='az') list.sort((a,b)=>a.address.localeCompare(b.address));
+  else if(_propSort==='recent') list.sort((a,b)=>{
+    const la=Math.max(0,...a.jobs.map(j=>new Date(j.date||0).getTime()),0);
+    const lb=Math.max(0,...b.jobs.map(j=>new Date(j.date||0).getTime()),0);
+    return lb-la;
+  });
+
+  const rows=list.map(p=>{
+    const expiring=p.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=60).length;
+    const lastJob=p.jobs.length?p.jobs.reduce((a,b)=>new Date(a.date||0)>new Date(b.date||0)?a:b):null;
+    return`<div class="pg">
+      <div class="pg-hd" data-action="toggle-group">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="pg-addr"><i data-lucide="building-2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:6px"></i>${e(p.address)}</div>
+          <div class="pg-m">${p.jobs.length} job${p.jobs.length!==1?'s':''} · ${p.certs.length} cert${p.certs.length!==1?'s':''} ›</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${expiring?`<span class="pill p-s">${expiring} expiring</span>`:''}
+          ${lastJob?`<span style="font-size:11px;color:var(--text-secondary)">Last job: ${fd(lastJob.date)}</span>`:''}
+        </div>
+      </div>
+      <div class="pg-body collapsed">
+        ${p.jobs.length?`<div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 6px">Jobs</div>${p.jobs.map(j=>jobCard(j,d)).join('')}`:''}
+        ${p.certs.length?`<div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px">Certificates</div>${p.certs.map(c=>certCard(c,d)).join('')}`:''}
+      </div>
+    </div>`;
+  }).join('');
+
   document.getElementById('main').innerHTML=`
-    <div class="sec"><div class="sec-hd"><div class="sec-t">All Documents <span class="sec-n">${allPdfs.length+allDocs.length+photos.length}</span></div></div>
-      ${allPdfs.length?`<div style="margin-bottom:20px">
-        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Certificates</div>
-        ${allPdfs.map(c=>`<div class="doc-row">
-          <div class="doc-icon" style="background:var(--accent-light);color:var(--accent)"><i data-lucide="file-check" style="width:18px;height:18px"></i></div>
-          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">${e(c.type||'Certificate')}</div><div style="font-size:12px;color:var(--text-secondary)">${e(c.address||'—')}${c.certNum?' · Ref: '+e(c.certNum):''}</div></div>
-          <a href="${ea(c.url)}" target="_blank" class="dl">Download</a>
-        </div>`).join('')}
-      </div>`:''}
-      ${allDocs.length?`<div style="margin-bottom:20px">
-        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Reports &amp; Documents</div>
-        ${allDocs.map(doc=>`<div class="doc-row">
-          <div class="doc-icon"><i data-lucide="paperclip" style="width:18px;height:18px"></i></div>
-          <div style="flex:1;min-width:0;overflow:hidden"><div style="font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(doc.name||'Document')}</div><div style="font-size:12px;color:var(--text-secondary)">${e(doc.type||'Attachment')}</div></div>
-          <a href="${ea(doc.url)}" target="_blank" class="dl">Download</a>
-        </div>`).join('')}
-      </div>`:''}
-      ${photos.length?`<div>
-        <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Job Photos</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">${photos.map(p=>`<img class="pt" style="width:100%;height:140px" src="${ea(p.url)}" data-photo-url="${ea(p.url)}" loading="lazy" alt="Job photo">`).join('')}</div>
-      </div>`:''}
-      ${!allPdfs.length&&!allDocs.length&&!photos.length?empty('folder-open','No documents yet','Documents and certificates will appear here once uploaded'):''}
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">Properties <span class="sec-n">${list.length}</span></div></div>
+      <div class="fg" style="margin-bottom:12px">
+        <input class="fi" id="prop-search" placeholder=" " value="${e(_propSearch)}" oninput="_propSearch=this.value;vProperties(_d)">
+        <label class="fl">Search by address</label>
+      </div>
+      <div class="sort-bar">
+        <span class="sl">Sort:</span>
+        <select class="ss" onchange="_propSort=this.value;vProperties(_d)">
+          <option value="jobs"${_propSort==='jobs'?' selected':''}>Most Jobs</option>
+          <option value="az"${_propSort==='az'?' selected':''}>Address A–Z</option>
+          <option value="recent"${_propSort==='recent'?' selected':''}>Most Recent Activity</option>
+        </select>
+      </div>
+      ${rows||empty('building-2','No properties yet','Properties will appear here once jobs or certificates are recorded')}
     </div>`;
 }
 
@@ -1649,11 +1659,11 @@ function vRequest(d){
   const today=new Date().toISOString().slice(0,10);
   document.getElementById('main').innerHTML=`
     <div class="sec">
-      <div class="sec-hd"><div class="sec-t">New Service Request</div></div>
+      <div class="sec-hd"><div class="sec-t">New Job</div></div>
       <div class="rc">
 
         <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-          <div style="font-size:17px;font-weight:800;margin-bottom:4px">Submit a Request</div>
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px">Tell Us What You Need</div>
           <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${e(d.coName)} will be in touch within <strong>1 working day</strong> to confirm your booking.</div>
         </div>
 
@@ -1718,9 +1728,9 @@ function vRequest(d){
             <span style="color:var(--danger)">*</span> Property Address and Job Type are required.
           </div>
           <button class="fsub" id="rsb" onclick="submitReq()" style="margin-top:4px">
-            <i data-lucide="send" style="width:16px;height:16px"></i> Submit Request
+            <i data-lucide="send" style="width:16px;height:16px"></i> Submit New Job
           </button>
-          <div class="fnote" style="text-align:center">We'll confirm within 1 working day · Your request number will appear after submission</div>
+          <div class="fnote" style="text-align:center">We'll confirm within 1 working day · Your reference number will appear after submission</div>
         </div>
       </div>
     </div>
@@ -1742,8 +1752,7 @@ async function loadPastRequests(d){
   const el=document.getElementById('past-requests-list');
   if(!el)return;
   try{
-    const nameQ=encodeURIComponent('%'+(d.name||'')+'%');
-    const rows=await sb(`engineer_requests?engineer_name=ilike.${nameQ}&type=eq.portal_request&order=created.desc&limit=50`).catch(()=>[]);
+    const rows=await sb(`rpc/portal_get_requests`,{method:'POST',body:{p_name:d.name||''}}).catch(()=>[]);
     if(!rows||!rows.length){
       el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--text-tertiary);font-size:13px">No previous requests found.</div>`;
       return;
@@ -1903,14 +1912,14 @@ async function submitReq(){
 
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="dl" data-action="go" data-target="overview">← Back to Overview</button>
-            <button class="dl" data-action="go" data-target="request">+ New Request</button>
+            <button class="dl" data-action="go" data-target="request">+ New Job</button>
           </div>
         </div>
       </div>`;
     refreshIcons();attachDelegates();
   }catch(err){
     console.error(err);
-    if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="send" style="width:16px;height:16px"></i> Submit Request';}
+    if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="send" style="width:16px;height:16px"></i> Submit New Job';}
     toast('Could not send. Please call us directly.');
   }
 }
@@ -1942,6 +1951,40 @@ async function shareCert(c){
   if(navigator.share&&url){try{await navigator.share({title:'Certificate',text:text,url:url});}catch(e){}}
   else if(url){window.open(`https://wa.me/?text=${encodeURIComponent(text+' '+url)}`,'_blank');}
   else{toast('No shareable link available');}
+}
+function shareCurrentPreviewCert(){
+  if(_previewCert) shareCert(_previewCert);
+}
+
+let _contactsCache=null;
+async function openContactModal(){
+  const list=document.getElementById('contact-list');
+  document.getElementById('contact-overlay').classList.add('show');
+  list.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-tertiary);font-size:13px">Loading…</div>`;
+  try{
+    if(!_contactsCache){
+      _contactsCache=await sb('portal_contacts?select=*&order=sort_order.asc');
+    }
+    if(!_contactsCache||!_contactsCache.length){
+      list.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-tertiary);font-size:13px">No contact numbers have been added yet.</div>`;
+      return;
+    }
+    list.innerHTML=_contactsCache.map(c=>`
+      <a href="tel:${e(c.phone||'')}" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;text-decoration:none;color:var(--text)">
+        <div class="doc-icon" style="background:var(--accent-light);color:var(--accent)"><i data-lucide="phone" style="width:16px;height:16px"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700">${e(c.label||'Contact')}</div>
+          <div style="font-size:12px;color:var(--text-secondary)">${e(c.contact_name||'')}${c.contact_name&&c.phone?' · ':''}${e(c.phone||'')}</div>
+        </div>
+      </a>`).join('');
+    refreshIcons();
+  }catch(err){
+    list.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-tertiary);font-size:13px">Could not load contact numbers right now.</div>`;
+  }
+}
+function closeContactModal(ev){
+  if(ev&&ev.target!==document.getElementById('contact-overlay'))return;
+  document.getElementById('contact-overlay').classList.remove('show');
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
