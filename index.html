@@ -4383,6 +4383,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
     <div class="fg"><label class="fl">Certificate Number (optional)</label><input type="text" id="cf-num" class="fi"></div>
   </div>
   <div class="fg"><label class="fl">Notes</label><input type="text" id="cf-notes" class="fi" placeholder="Any notes…"></div>
+  <div class="fg"><label class="fl">Certificate Document (PDF)</label><div id="cf-pdf-wrap"><span style="color:var(--txt3);font-size:12px">Save the certificate first, then reopen it to attach a PDF.</span></div></div>
   <!-- FIX 10: Hidden fields store the originating job link when cert is created from a job.
        These are populated by openCertModalFromJob(jobId, jobNum) and cleared on close. -->
   <input type="hidden" id="cf-job-id" value="">
@@ -4855,7 +4856,7 @@ const _TO_DB = {
     agencyName:'agencyname',agencyPhone:'agencyphone',agencyEmail:'agencyemail',
     agencyNotes:'agencynotes',agentName:'agentname',agentPhone:'agentphone',
     agentEmail:'agentemail',_sortOrder:'sortorder',invNumber:'invnumber',linkedInvId:'linkedinvid'},
-  certs:{issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry'},
+  certs:{issueDate:'issuedate',expiryDate:'expirydate',certNum:'certnum',jobId:'jobid',jobNum:'jobnum',noExpiry:'noexpiry',pdfUrl:'pdf_url',pdfPath:'pdf_path'},
   invoices:{clientId:'clientid',clientName:'clientname',clientEmail:'clientemail',clientAddr:'clientaddr',
     clientWA:'clientwa',dueDate:'duedate',jobId:'jobid',linkedJobId:'linkedjobid',jobRef:'jobref',
     agentCC:'agentcc',agentName:'agentname',agentEmail:'agentemail',createdAt:'createdat',
@@ -4909,6 +4910,22 @@ async function _sb(path,opts={}){
     if(!navigator.onLine&&typeof _setOffline==='function') _setOffline();
     throw e;
   }
+}
+
+// ── Storage upload — same pattern as the Employee app's sbStorage(), added
+// here for certificate PDF uploads (the Office app previously only ever read
+// or deleted Storage files, never uploaded any). Works because Storage writes
+// now require a real authenticated session (the Office app always has one),
+// per the Storage RLS lockdown applied earlier.
+async function sbStorage(path,file){
+  const jwt=await _getJWT();
+  const res=await fetch(`${SB_URL}/storage/v1/object/deepflow/${path}`,{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+jwt,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},
+    body:file
+  });
+  if(!res.ok) throw new Error('Upload failed: '+(await res.text()).slice(0,200));
+  return `${SB_URL}/storage/v1/object/public/deepflow/${path}`;
 }
 
 // ── EVENT BUS — replaces setTimeout coordination hacks ───────
@@ -7495,9 +7512,17 @@ function skipCertExpiry(){
 
 async function createCertEntry(ct,expiry,certNum,issueDate){
   if(!_pendCertJob)return;
-  // Guard: don't create duplicate cert for same job + same type
+  // Guard: don't create a duplicate cert for the same job + same type.
+  // Matches by job id when we have a real one (the normal case); falls back
+  // to matching by address + type when we don't (e.g. a caller that only has
+  // a placeholder job-like object) — without this fallback, a caller passing
+  // an object with no .id made this check compare against `undefined`, which
+  // never matches a real certificate and let duplicates through silently.
   const allCerts=await dAll('certs');
-  if(allCerts.some(c=>c.jobId===_pendCertJob.id&&c.type===ct.name)) return;
+  const isDup = _pendCertJob.id
+    ? allCerts.some(c=>c.jobId===_pendCertJob.id&&c.type===ct.name)
+    : allCerts.some(c=>c.address===_pendCertJob.address&&c.type===ct.name);
+  if(isDup) return;
   // Auto-generate cert number if not provided
   const autoNum=certNum||(ct.prefix||'CERT-')+String(_pendCertJob.jobNum||'').replace(/\D/g,'')+'-'+String(Date.now()).slice(-4);
   const cert={
@@ -14849,18 +14874,39 @@ async function addExpiryToExistingCert(id){
   document.getElementById('ce-certnum').value=c.certNum||'';
   document.getElementById('ce-issue').value=c.issueDate||TODAY();
   document.getElementById('ce-color-dot').style.background=ctDef.color||'var(--acc)';
-  document.getElementById('mo-cert-expiry').querySelector('.btn.btn-acc').onclick=async function(){
+  const _moCE=document.getElementById('mo-cert-expiry');
+  const _saveBtn=_moCE.querySelector('.btn.btn-acc');
+  const _skipBtn=_moCE.querySelector('.btn.btn-ghost');
+  const _restoreDefaults=()=>{
+    // Undo both overrides below so this single-cert-edit mode can never leak
+    // into the separate (currently unused) multi-cert queue flow, which
+    // relies on these same two buttons pointing at saveCertExpiry/skipCertExpiry.
+    _saveBtn.onclick=saveCertExpiry;
+    _skipBtn.onclick=skipCertExpiry;
+    window._editCertId=null;
+    _pendCertJob=null;
+  };
+  _saveBtn.onclick=async function(){
     const expiry=document.getElementById('ce-expiry').value;
     const certNum=document.getElementById('ce-certnum').value;
     const issue=document.getElementById('ce-issue').value;
-    c.expiryDate=expiry;c.certNum=certNum||c.certNum;c.issueDate=issue;c.noExpiry=false;
+    c.expiryDate=expiry;c.certNum=certNum||c.certNum;c.issueDate=issue;c.noExpiry=!expiry;
     await dPut('certs',c);
     closeModal('mo-cert-expiry');renderCerts();
     toast('Expiry date saved','success');
-    window._editCertId=null;
-    _pendCertJob=null;
-    // Restore default save behavior
-    document.getElementById('mo-cert-expiry').querySelector('.btn.btn-acc').onclick=saveCertExpiry;
+    _restoreDefaults();
+  };
+  // BUG FIX: this button previously still ran the default skipCertExpiry(),
+  // which calls createCertEntry() using the placeholder {address,referrer}
+  // object above (no real job id). createCertEntry()'s duplicate guard
+  // compares against that missing id, never matches the certificate we're
+  // actually editing, and silently creates a brand-new duplicate certificate
+  // with no expiry date every time "Skip" was clicked here. In this
+  // edit-an-existing-certificate mode there is nothing to skip-and-create —
+  // the certificate already exists — so this just closes the modal.
+  _skipBtn.onclick=function(){
+    closeModal('mo-cert-expiry');
+    _restoreDefaults();
   };
   openModal('mo-cert-expiry');
 }
@@ -14879,7 +14925,71 @@ async function openEditCert(id){
   const ts=document.getElementById('cf-type');
   if(ts) ts.value=c.type||ts.options[0]?.value||'';
   window._editCertModalId=id;
+  renderCertPdfSection(id,c.pdfUrl||null);
   openModal('mo-cert');
+}
+
+// ── Certificate PDF upload/remove/status — lets office staff attach the
+// actual signed compliance document so the client can download it from their
+// portal. Upload requires a real, already-saved certificate id (Storage
+// writes need something stable to attach to), so this is only available when
+// editing an existing certificate — a brand-new one shows a short message
+// instead until it's been saved once.
+function renderCertPdfSection(certId,url){
+  const wrap=document.getElementById('cf-pdf-wrap');
+  if(!wrap) return;
+  if(!certId){
+    wrap.innerHTML=`<span style="color:var(--txt3);font-size:12px">Save the certificate first, then reopen it to attach a PDF.</span>`;
+    return;
+  }
+  if(url){
+    wrap.innerHTML=`<a href="${url}" target="_blank" class="btn btn-ghost btn-sm">📄 View Current PDF</a>
+      <button class="btn btn-red btn-xs" onclick="removeCertPdf()" style="margin-left:6px">Remove</button>
+      <label class="btn btn-ghost btn-xs" style="margin-left:6px;cursor:pointer">Replace<input type="file" accept="application/pdf" style="display:none" onchange="uploadCertPdf(this)"></label>`;
+  }else{
+    wrap.innerHTML=`<span style="color:var(--txt3);font-size:12px;margin-right:8px">No document uploaded yet</span>
+      <label class="btn btn-acc btn-sm" style="cursor:pointer">⬆ Upload PDF<input type="file" accept="application/pdf" style="display:none" onchange="uploadCertPdf(this)"></label>`;
+  }
+}
+
+async function uploadCertPdf(inputEl){
+  const certId=window._editCertModalId;
+  if(!certId){ toast('Save the certificate first, then attach the PDF','warn'); inputEl.value=''; return; }
+  const file=inputEl.files[0];
+  inputEl.value='';
+  if(!file) return;
+  const looksLikePdf=(file.type==='application/pdf')||file.name.toLowerCase().endsWith('.pdf');
+  if(!looksLikePdf){ toast('Please choose a PDF file','error'); return; }
+  const wrap=document.getElementById('cf-pdf-wrap');
+  if(wrap) wrap.innerHTML=`<span style="color:var(--txt3);font-size:12px">Uploading…</span>`;
+  try{
+    const path=`certs/${certId}/${Date.now()}-${Math.random().toString(36).slice(2,6)}.pdf`;
+    const url=await sbStorage(path,file);
+    await _sb(`certs?id=eq.${encodeURIComponent(certId)}`,{method:'PATCH',body:{pdf_url:url,pdf_path:path},prefer:'return=minimal'});
+    renderCertPdfSection(certId,url);
+    toast('✅ Certificate PDF uploaded','success');
+    logActivity(`Certificate PDF uploaded for ${document.getElementById('cf-addr')?.value||'certificate'}`,'cert');
+  }catch(e){
+    toast('❌ Upload failed: '+(e.message||'').slice(0,80),'error');
+    renderCertPdfSection(certId,null);
+  }
+}
+
+async function removeCertPdf(){
+  const certId=window._editCertModalId;
+  if(!certId) return;
+  confirm2('Remove Certificate PDF','Delete the uploaded PDF for this certificate? The client will no longer be able to download it.',async()=>{
+    try{
+      const c=await dGet('certs',certId);
+      if(c?.pdfPath){
+        const jwt=await _getJWT();
+        fetch(`${SB_URL}/storage/v1/object/deepflow/${c.pdfPath}`,{method:'DELETE',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+jwt}}).catch(()=>{});
+      }
+      await _sb(`certs?id=eq.${encodeURIComponent(certId)}`,{method:'PATCH',body:{pdf_url:null,pdf_path:null},prefer:'return=minimal'});
+      renderCertPdfSection(certId,null);
+      toast('PDF removed','warn');
+    }catch(e){ toast('Could not remove PDF','error'); }
+  });
 }
 
 
@@ -14909,6 +15019,7 @@ function openCertModal(){
   // Populate type dropdown from S.certTypes
   const ts=document.getElementById('cf-type');
   if(ts) ts.innerHTML=(S.certTypes||[]).map(ct=>`<option value="${ct.name}">${ct.name}</option>`).join('')||'<option>Other</option>';
+  renderCertPdfSection(null,null);
   openModal('mo-cert');
 }
 
