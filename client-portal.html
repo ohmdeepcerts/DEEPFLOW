@@ -803,7 +803,7 @@ async function init(){
     }
 
     _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,ratings:ratings||[],token,coName,entity};
-    _d._activeAgent=null; // null = all agents (agency view)
+    _d._activeAgents=new Set(); // empty = all agents (agency view)
     document.getElementById('nav').style.display='flex';
     document.querySelectorAll('.tab').forEach(tab=>{
       tab.addEventListener('click',()=>go(tab.dataset.t));
@@ -856,30 +856,40 @@ async function fetchJobs(col,name,id){
   return [];
 }
 
-// ── AGENCY AGENT FILTER ────────────────────────────────────────────────────
-function setAgentFilter(agentName){
-  _d._activeAgent = agentName || null;
-  // Re-render current tab with filtered data
-  const activeTab = document.querySelector('.tab.active')?.dataset?.t || 'overview';
-  go(activeTab);
+// ── AGENCY AGENT FILTER (multi-select) ──────────────────────────────────────
+function toggleAgentFilter(agentName){
+  _d._activeAgents=_d._activeAgents||new Set();
+  if(!agentName){ _d._activeAgents.clear(); }
+  else if(_d._activeAgents.has(agentName)){ _d._activeAgents.delete(agentName); }
+  else{ _d._activeAgents.add(agentName); }
+  rerenderCurrentTab();
 }
 
-// Returns data filtered by active agent (for agency view)
+// Re-render the active tab in place — no skeleton flash, no route change,
+// so the hero canvas and rest of the page don't visibly "reload".
+function rerenderCurrentTab(){
+  const t=document.querySelector('.tab.active')?.dataset?.t||'overview';
+  const fn={overview:vOverview,jobs:vJobs,certs:vCerts,invoices:vInvoices,properties:vProperties,request:vRequest};
+  if(fn[t]){ fn[t](filteredD()); refreshIcons(); attachDelegates(); }
+}
+
+// Returns data filtered by active agents (for agency view)
 // Agent view always sees their own data — no filter needed
 function filteredD(){
-  if(!_d._activeAgent || _d.type !== 'agency') return _d;
-  const agent = _d._activeAgent;
-  const jobs = _d.jobs.filter(j=>(j.agentName||j.agentname||'').toLowerCase()===agent.toLowerCase());
-  const jobIds = new Set(jobs.map(j=>j.id));
+  const agents=_d._activeAgents;
+  if(!agents||!agents.size||_d.type!=='agency') return _d;
+  const wanted=new Set([...agents].map(a=>a.toLowerCase()));
+  const jobs=_d.jobs.filter(j=>wanted.has((j.agentName||j.agentname||'').toLowerCase()));
+  const jobIds=new Set(jobs.map(j=>j.id));
   return {
     ..._d,
     jobs,
     attachments: _d.attachments.filter(a=>jobIds.has(a.jobId||a.jobid)),
     certs:       _d.certs.filter(c=>jobIds.has(c.jobId||c.jobid)),
-    invoices:    _d.invoices.filter(i=>(i.agentName||i.agentname||'').toLowerCase()===agent.toLowerCase()||jobIds.has(i.linkedJobId||i.jobId)),
+    invoices:    _d.invoices.filter(i=>wanted.has((i.agentName||i.agentname||'').toLowerCase())||jobIds.has(i.linkedJobId||i.jobId)),
     ratings:     (_d.ratings||[]).filter(r=>jobIds.has(r.jobId||r.jobid)),
-    _activeAgent: agent,
-    entity: {..._d.entity, _displayName: `${_d.name} › ${agent}`},
+    _activeAgents: agents,
+    entity: {..._d.entity, _displayName: `${_d.name} › ${[...agents].join(', ')}`},
   };
 }
 function initTheme(){
@@ -1027,18 +1037,18 @@ function vOverview(d){
     .map(c=>{const df=dd(c.expiryDate);return`<div class="alert ${df<0?'al-r':'al-y'}"><i data-lucide="alert-triangle" style="width:16px;height:16px"></i><div><strong>${e(c.type)}</strong> · ${e(c.address||'Property')} · ${df<0?`Expired ${Math.abs(df)}d ago`:`Expires in ${df} day${df!==1?'s':''}`}</div></div>`;}).join('');
   const label=d.type==='agency'?'Agency':d.type==='agent'?'Agent':'Landlord';
 
-  // Agent filter bar for agency view
+  // Agent filter bar for agency view (multi-select)
   const isAgency=d.type==='agency';
-  const activeAgent=_d._activeAgent||null;
+  const activeAgents=_d._activeAgents||new Set();
   const agentNames=d.entity?._agentNames||(d.entity?._agents||[]).map(a=>a.name).filter(Boolean);
   const agentFilterBar=isAgency&&agentNames.length?`
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
       <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">
-        ${activeAgent?`Viewing: <span style="color:#7dd3fc">${activeAgent}</span> <button onclick="setAgentFilter(null)" style="margin-left:6px;padding:2px 8px;border-radius:10px;border:none;background:rgba(125,211,252,.2);color:#7dd3fc;font-size:9px;cursor:pointer;font-weight:700">✕ Show All</button>`:'Filter by Agent'}
+        ${activeAgents.size?`Viewing: <span style="color:#7dd3fc">${e([...activeAgents].join(', '))}</span> <button onclick="toggleAgentFilter(null)" style="margin-left:6px;padding:2px 8px;border-radius:10px;border:none;background:rgba(125,211,252,.2);color:#7dd3fc;font-size:9px;cursor:pointer;font-weight:700">✕ Show All</button>`:'Filter by Agent (select multiple)'}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <button onclick="setAgentFilter(null)" style="padding:5px 14px;border-radius:20px;border:1px solid ${!activeAgent?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${!activeAgent?'rgba(125,211,252,.2)':'transparent'};color:${!activeAgent?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${!activeAgent?700:500};cursor:pointer">All</button>
-        ${agentNames.map(n=>`<button onclick="setAgentFilter(${ea(JSON.stringify(n))})" style="padding:5px 14px;border-radius:20px;border:1px solid ${activeAgent===n?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${activeAgent===n?'rgba(125,211,252,.2)':'transparent'};color:${activeAgent===n?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${activeAgent===n?700:500};cursor:pointer">${e(n)}</button>`).join('')}
+        <button onclick="toggleAgentFilter(null)" style="padding:5px 14px;border-radius:20px;border:1px solid ${!activeAgents.size?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${!activeAgents.size?'rgba(125,211,252,.2)':'transparent'};color:${!activeAgents.size?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${!activeAgents.size?700:500};cursor:pointer">All</button>
+        ${agentNames.map(n=>{const sel=activeAgents.has(n);return `<button onclick="toggleAgentFilter(${ea(JSON.stringify(n))})" style="padding:5px 14px;border-radius:20px;border:1px solid ${sel?'rgba(125,211,252,.4)':'rgba(255,255,255,.15)'};background:${sel?'rgba(125,211,252,.2)':'transparent'};color:${sel?'#7dd3fc':'rgba(255,255,255,.55)'};font-size:11px;font-weight:${sel?700:500};cursor:pointer">${sel?'✓ ':''}${e(n)}</button>`;}).join('')}
       </div>
     </div>`:'';
 
@@ -1612,6 +1622,11 @@ function vProperties(d){
     const lb=Math.max(0,...b.jobs.map(j=>new Date(j.date||0).getTime()),0);
     return lb-la;
   });
+  else if(_propSort==='expiry') list.sort((a,b)=>{
+    const nextExp=p=>{const ds=p.certs.filter(c=>!c.noExpiry&&c.expiryDate).map(c=>dd(c.expiryDate));return ds.length?Math.min(...ds):Infinity;};
+    return nextExp(a)-nextExp(b);
+  });
+  else if(_propSort==='certs') list.sort((a,b)=>b.certs.length-a.certs.length);
 
   const rows=list.map(p=>{
     const expiring=p.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=60).length;
@@ -1634,6 +1649,12 @@ function vProperties(d){
     </div>`;
   }).join('');
 
+  // Preserve focus + cursor position across re-render (search re-renders on every keystroke)
+  const activeEl=document.activeElement;
+  const wasSearchFocused=activeEl&&activeEl.id==='prop-search';
+  const selStart=wasSearchFocused?activeEl.selectionStart:null;
+  const selEnd=wasSearchFocused?activeEl.selectionEnd:null;
+
   document.getElementById('main').innerHTML=`
     <div class="sec">
       <div class="sec-hd"><div class="sec-t">Properties <span class="sec-n">${list.length}</span></div></div>
@@ -1647,10 +1668,17 @@ function vProperties(d){
           <option value="jobs"${_propSort==='jobs'?' selected':''}>Most Jobs</option>
           <option value="az"${_propSort==='az'?' selected':''}>Address A–Z</option>
           <option value="recent"${_propSort==='recent'?' selected':''}>Most Recent Activity</option>
+          <option value="expiry"${_propSort==='expiry'?' selected':''}>Certificate Expiry (Soonest)</option>
+          <option value="certs"${_propSort==='certs'?' selected':''}>Most Certificates</option>
         </select>
       </div>
       ${rows||empty('building-2','No properties yet','Properties will appear here once jobs or certificates are recorded')}
     </div>`;
+
+  if(wasSearchFocused){
+    const inp=document.getElementById('prop-search');
+    if(inp){ inp.focus(); inp.setSelectionRange(selStart,selEnd); }
+  }
 }
 
 // ── REQUEST WIZARD ────────────────────────────────────────────────────────────
@@ -1849,16 +1877,15 @@ async function submitReq(){
   const btn=document.getElementById('rsb');
   if(btn){btn.disabled=true;btn.innerHTML='<div class="loading">Sending...</div>';}
   try{
-    // Generate proper CR- number (Client Request) matching office app job numbering style
-    let ref='CR-0001';
+    // Generate the next CR- reference from a real Postgres sequence via RPC.
+    // (The old approach counted existing rows via a direct table read, which
+    // anonymous portal visitors can't SELECT — it silently saw zero rows every
+    // time and always produced CR-0001. A sequence is also immune to the race
+    // condition where two people submit at the same moment.)
+    let ref;
     try{
-      const existing=await sb('engineer_requests?type=eq.portal_request&order=created.desc&limit=500&select=notes');
-      let maxN=0;
-      (existing||[]).forEach(r=>{
-        const m=(r.notes||'').match(/\[CR-(\d+)\]/);
-        if(m){const n=parseInt(m[1],10);if(n>maxN)maxN=n;}
-      });
-      ref='CR-'+String(maxN+1).padStart(4,'0');
+      ref=await sb('rpc/portal_next_request_ref',{method:'POST',body:{}});
+      if(typeof ref!=='string'||!ref) throw new Error('empty ref');
     }catch(e){ ref='CR-'+String(Date.now()).slice(-4); }
     const detail=`Service: ${svc}\nPriority: ${priority}\nAddress: ${addr}`+(date?`\nPreferred date: ${date}`:'')+(access?`\nAccess: ${access}`:'')+(notes?`\nNotes: ${notes}`:'')+(_reqFiles.length?`\nAttachments: ${_reqFiles.length} file(s)`:'');
 
@@ -2082,7 +2109,14 @@ function initHeroCanvas(){
   }
 
   function draw(){
-    if(!document.body.contains(canvas)){raf=null;return;}
+    if(!document.body.contains(canvas)){
+      raf=null;
+      // The DOM was replaced (e.g. a filter re-render) — try to pick up a
+      // fresh canvas immediately instead of sitting frozen until some other
+      // mutation happens to wake the MutationObserver up again.
+      start();
+      return;
+    }
     ctx.fillStyle=canvas._bg;ctx.fillRect(0,0,W,H);
     for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
       const n=nodes[i],m=nodes[j],d=Math.hypot(n.x-m.x,n.y-m.y);
