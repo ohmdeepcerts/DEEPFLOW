@@ -1226,7 +1226,7 @@ function certMini(c){
     </div>
     <span class="pill ${pc}">${pt}</span>
     ${c.url?`<a href="${ea(c.url)}" target="_blank" class="dl sm">Download</a>`:''}
-    ${c.url?`<button class="dl sm wa" onclick="shareCert(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Share"><i data-lucide="share-2" style="width:12px;height:12px"></i></button>`:''}
+    ${c.url?`<button class="dl sm wa" onclick="shareCert(${ea(JSON.stringify(c))})" title="Share"><i data-lucide="share-2" style="width:12px;height:12px"></i></button>`:''}
   </div>`;
 }
 
@@ -1327,7 +1327,7 @@ function certCard(c,d){
     ${ringHTML}
     <div style="display:flex;gap:6px;flex-shrink:0;justify-content:flex-end">
       ${pdfUrl?`<button class="dl" onclick="previewCertPdf(${ea(JSON.stringify(pdfUrl))},${ea(JSON.stringify(c))})">View Certificate</button>`:`<span class="dl g" style="cursor:default;opacity:.5;font-size:11px">No PDF</span>`}
-      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Renew Request"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>`:''}
+      ${isS||isE?`<button class="dl g" onclick="preFillRenewal(${ea(JSON.stringify(c))})" title="Renew Request"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>`:''}
     </div>
   </div>`;
 }
@@ -1644,7 +1644,14 @@ function vProperties(d){
       </div>
       <div class="pg-body collapsed">
         ${p.jobs.length?`<div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 6px">Jobs</div>${p.jobs.map(j=>jobCard(j,d)).join('')}`:''}
-        ${p.certs.length?`<div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px">Certificates</div>${p.certs.map(c=>certCard(c,d)).join('')}`:''}
+        ${(()=>{
+          // Job cards already show their own linked certificates inline — only
+          // list certs here that aren't tied to one of this property's jobs,
+          // so nothing shows up twice.
+          const jobIds=new Set(p.jobs.map(j=>j.id));
+          const standalone=p.certs.filter(c=>!c.jobId||!jobIds.has(c.jobId));
+          return standalone.length?`<div style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px">Certificates</div>${standalone.map(c=>certCard(c,d)).join('')}`:'';
+        })()}
       </div>
     </div>`;
   }).join('');
