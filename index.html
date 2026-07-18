@@ -2052,6 +2052,7 @@ body.density-relaxed .jtable td{font-size:15px}
           <option value="">All Actions</option>
           <option value="job_delete">Job Deleted</option>
           <option value="inv_amount">Invoice Amount Changed</option>
+          <option value="job_status_change">Job Status Changed</option>
         </select>
         <button class="btn btn-ghost btn-sm" onclick="renderAuditLog()">↺ Refresh</button>
         <button class="btn btn-ghost btn-sm" onclick="exportAuditLog()">⬇ Export</button>
@@ -3570,6 +3571,73 @@ body.density-relaxed .jtable td{font-size:15px}
           </div>
         </div>
 
+        <div class="set-section">
+          <div class="set-title">📶 Automated Client Notifications <span style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:none;letter-spacing:0">(off by default)</span></div>
+          <div class="set-card">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+              When enabled, DeepFlow sends a small event (job status changed, certificate ready)
+              to a webhook URL you configure. That webhook is where you connect a free automation
+              tool — <a href="https://n8n.io" target="_blank" style="color:var(--acc)">n8n</a> (self-hosted, free),
+              <a href="https://zapier.com" target="_blank" style="color:var(--acc)">Zapier</a> or
+              <a href="https://www.make.com" target="_blank" style="color:var(--acc)">Make</a> (free tiers) —
+              which actually sends the WhatsApp message, email, or SMS. DeepFlow itself doesn't send
+              messages directly; no WhatsApp Business API or paid SMS account is required to turn this on,
+              only to make it actually deliver something once it's on.
+            </div>
+            <label class="fcheck" style="margin-bottom:10px">
+              <input type="checkbox" id="s-notif-webhook-enabled" onchange="saveSettings()">
+              <strong>Enable automated client notifications</strong>
+            </label>
+            <div class="fg" style="margin-bottom:8px">
+              <label class="fl">Webhook URL</label>
+              <input type="text" class="fi" id="s-notif-webhook-url" placeholder="https://hooks.zapier.com/… or your n8n webhook URL" onchange="saveSettings()">
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+              <label class="fcheck"><input type="checkbox" id="s-notif-on-status" checked onchange="saveSettings()"> Notify on job status change</label>
+              <label class="fcheck"><input type="checkbox" id="s-notif-on-cert" checked onchange="saveSettings()"> Notify on certificate ready</label>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="testNotifWebhook()">🧪 Send Test Event</button>
+            <div id="notif-webhook-test-result" style="font-size:12px;margin-top:8px;color:var(--txt3)"></div>
+          </div>
+        </div>
+
+        <div class="set-section">
+          <div class="set-title">🔔 Real Push Notifications <span style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:none;letter-spacing:0">(off by default, free)</span></div>
+          <div class="set-card">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+              A real phone notification — no third-party service, no account, no cost — using each
+              browser's own free push service. Clients turn this on themselves from a "Get notified
+              on your phone" prompt in their portal; there's nothing for them to install. This needs a
+              small piece deployed on your Supabase project first (a one-time technical setup — see
+              <code>PHASE6_PUSH_NOTIFICATIONS_SQL.md</code> and <code>PHASE6B_PUSH_EDGE_FUNCTION.md</code>).
+              Uses the same "Notify on job status change / certificate ready" toggles above.
+            </div>
+            <label class="fcheck">
+              <input type="checkbox" id="s-notif-push-enabled" onchange="saveSettings()">
+              <strong>Enable push notifications</strong>
+            </label>
+          </div>
+        </div>
+
+        <div class="set-section">
+          <div class="set-title">📲 Next-Tenant ETA <span style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:none;letter-spacing:0">(off by default, free)</span></div>
+          <div class="set-card">
+            <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+              When an engineer marks a job Completed, this looks for their <em>next</em> Pending job
+              that day and, if someone needs to let them in (access is set to "Tenant Home" or
+              "Landlord Present" with a phone number, not a key safe code), fires a webhook event so
+              your connected automation can text them the engineer is on the way. Uses the same
+              webhook URL configured above — no separate setup. This is a heads-up, not a precise
+              timed ETA (no live traffic/distance data yet), so the message should read as "on their
+              way" rather than a specific arrival time.
+            </div>
+            <label class="fcheck">
+              <input type="checkbox" id="s-notif-next-tenant" onchange="saveSettings()">
+              <strong>Notify next tenant when the previous job completes</strong>
+            </label>
+          </div>
+        </div>
+
         <div style="margin-top:4px"><button class="btn btn-acc btn-sm" onclick="saveSettings();saveNotifSettings();toast('Notification settings saved','success')">Save All Notification Settings</button></div>
 
         <!-- Live preview of what's triggering now -->
@@ -4837,7 +4905,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_accuracy integer;</div>
 <!-- Command Palette -->
 <div class="cmd-overlay" id="cmd-overlay">
   <div class="cmd-box">
-    <input type="text" class="cmd-input" id="cmd-input" placeholder="Search jobs, people, invoices… or type a command" oninput="renderCmd(this.value)">
+    <input type="text" class="cmd-input" id="cmd-input" placeholder="Search jobs, people, invoices… or type a command" oninput="debounceRenderCmd(this.value)">
     <div class="cmd-results" id="cmd-results"></div>
     <div class="cmd-hint">↑↓ navigate · Enter to open · Esc to close · Try: "new job", "invoice", "settings"</div>
   </div>
@@ -4996,31 +5064,6 @@ setInterval(()=>{
 // Only 'settings' remains local — it is managed entirely through S/saveSetting/saveAllSettings.
 const _LOCAL = new Set(['settings']);
 
-function _genSessionToken(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,12) + Math.random().toString(36).slice(2,12);
-}
-
-function _issueOfficeSession(user, sbId){
-  const token = _genSessionToken();
-  const expires = Date.now() + (12*60*60*1000); // 12 hour session
-  localStorage.setItem('df_office_sess', JSON.stringify({user, sbId, token, expires}));
-  if(sbId){ _sb("users?id=eq."+sbId,{method:"PATCH",body:{last_seen:Math.floor(Date.now()/1000)},prefer:"return=minimal"}).catch(()=>{}); }
-}
-
-function _checkOfficeSession(){
-  try{
-    const raw = localStorage.getItem('df_office_sess');
-    if(!raw) return null;
-    const sess = JSON.parse(raw);
-    if(!sess?.user || !sess?.expires) return null;
-    if(Date.now() > sess.expires){
-      localStorage.removeItem('df_office_sess');
-      return null;
-    }
-    return sess.user;
-  }catch(e){ return null; }
-}
-
 // uid() and TODAY() are office-only utilities
 const uid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
   const r = Math.random()*16|0;
@@ -5109,6 +5152,7 @@ let S = {
   properties:[],
   jobPrefix:'JOB-', jobNextNum:1001,
   vatRate:20,vatEnabled:false,
+  notifWebhookEnabled:false,notifWebhookUrl:'',notifOnStatusChange:true,notifOnCertReady:true,notifPushEnabled:false,notifNextTenantEta:false,
   coName:'',coEmail:'',coPhone:'',coAddr:'',coVatNum:'',
   owner:'Boss',
   logoData:'',
@@ -5364,6 +5408,27 @@ function _downloadQR(name) {
   a.target = '_blank';
   a.click();
   toast('📥 QR code downloading...', 'success');
+}
+
+// Resets a client's portal PIN — see PHASE5_PORTAL_PIN_AUTH_SQL.md. This
+// deletes the stored (hashed) PIN rather than revealing it; the client will
+// be asked to set a brand new one the next time they open their link. The
+// link itself never changes.
+function _portalPinTableFor(type){ return type==='agency'?'agencies':(type==='agent'?'agents':'persons'); }
+
+function resetPortalPin(id, type, name){
+  confirm2(
+    'Reset Portal PIN',
+    `This will remove ${name}'s current PIN. Their portal link keeps working, but they'll be asked to set a brand new PIN the next time they open it — use this if they forgot it or you want to cut off anyone who only has the old one.`,
+    async()=>{
+      try{
+        await _sb('rpc/portal_pin_reset',{method:'POST',body:{p_table:_portalPinTableFor(type),p_id:id}});
+        toast(`🔑 PIN reset for ${name} — they'll set a new one on next visit`,'success',5000);
+      }catch(e){
+        toast('Failed to reset PIN: '+(e.message||'').slice(0,100),'error',6000);
+      }
+    }
+  );
 }
 
 function _copyPortalLink(url, name, btn) {
@@ -5902,6 +5967,9 @@ let _pendingSaves=0;
 let _lastOpenedJob=null;
 
 let editJid=null,selJobs=new Set(),allProps=[],pendGasJob=null,_jobSortCol='created';
+// Captured when the edit-job modal is opened — lets saveJob() detect if
+// someone else saved a change to this job while the form was open.
+let _editJobBaselineModified=null;
 let _jRange='all',_jcalMonth=null,_jcalJobDates={};
 let _calPaneVisible=true,_jUnbookedOnly=false,_jUnconfirmedOnly=false;
 let _pendCertQueue=[],_pendCertJob=null,_jobNumLock=false,_jobCertTypes=[];
@@ -6380,6 +6448,11 @@ function applyUserPermissions(){
     showNav(['dash','inv','stmt','rep','jobs','dir','props','set'], true);
   } else if(isStaff){
     showNav(['dash','jobs','inv','stmt','req','dir','props','certs','client'], true);
+  } else if(role==='Viewer'){
+    // Read-only role: getUserPerm() already denies every edit/delete/finance/
+    // invoice permission for Viewer — this just makes sure they land on a nav
+    // with something in it, instead of every page hidden and a blank app.
+    showNav(['dash','jobs','inv','stmt','rep','dir','props','certs','client'], true);
   }
 
   // ── Settings tab visibility per role ─────────────────────────────────────
@@ -7031,6 +7104,8 @@ function jCalPickDate(iso){
 // Debounced render for search performance
 let _rjTimer;
 function debounceRenderJobs(){clearTimeout(_rjTimer);_rjTimer=setTimeout(renderJobs,200);}
+let _cmdTimer;
+function debounceRenderCmd(q){clearTimeout(_cmdTimer);_cmdTimer=setTimeout(()=>renderCmd(q),200);}
 
 async function renderJobs(){
   const lbl = document.getElementById('j-date-lbl');
@@ -7441,6 +7516,15 @@ async function quickStatus(id,status){
   _invalidateJobCache();
   if(status===STATUS.COMPLETED&&old!==STATUS.COMPLETED) onJobComplete(j);
   await logActivity(`Job "${j.address}" → ${status}`,'job');
+  logAudit('job_status_change',{jobId:id,jobNum:j.jobNum,address:j.address,oldStatus:old,newStatus:status});
+  {
+    const notifPayload={jobId:id,jobNum:j.jobNum,address:j.address,oldStatus:old,newStatus:status,
+      landlordName:j.landlordName||j.referrer||'',landlordPhone:j.landlordPhone||'',landlordEmail:j.landlordEmail||'',
+      agencyName:j.agencyName||'',agentName:j.agentName||'',agentPhone:j.agentPhone||''};
+    sendNotificationWebhook('job_status_change',notifPayload);
+    sendPushNotification('job_status_change',notifPayload);
+    if(status===STATUS.COMPLETED) notifyNextTenantEta(j);
+  }
   renderJobs();updateBadges();
 }
 
@@ -7576,6 +7660,13 @@ async function createCertEntry(ct,expiry,certNum,issueDate){
   };
   await dPut('certs',cert);
   await logActivity(`Cert created: ${ct.name} at ${_pendCertJob.address}${expiry?` · Exp: ${expiry}`:''}`, 'cert');
+  {
+    const notifPayload={certId:cert.id,certType:ct.name,address:cert.address,expiryDate:cert.expiryDate,
+      jobId:_pendCertJob.id,jobNum:_pendCertJob.jobNum||'',
+      landlordName:_pendCertJob.landlordName||_pendCertJob.referrer||'',landlordPhone:_pendCertJob.landlordPhone||'',landlordEmail:_pendCertJob.landlordEmail||''};
+    sendNotificationWebhook('cert_ready',notifPayload);
+    sendPushNotification('cert_ready',notifPayload);
+  }
 }
 
 
@@ -7590,8 +7681,13 @@ async function nextJobNum(prefix){
   }
   _jobNumLock = true;
   try{
-    // CR-prefix mode: query all jobs for highest CR number and return next (3-digit pad)
+    // CR-prefix mode (3-digit pad) — atomic DB sequence, falls back to the
+    // old scan-based method if the RPC isn't available yet (SQL not run).
     if(prefix==='CR'){
+      try{
+        const n=await _sb('rpc/next_cr_num',{method:'POST',body:{}});
+        if(typeof n==='number') return 'CR'+String(n).padStart(3,'0');
+      }catch(e){ console.warn('[nextJobNum] next_cr_num RPC failed, using fallback',e); }
       const rows = await _sb('jobs?select=jobnum&limit=500') || [];
       let maxN=0;
       const re=/^CR(\d+)$/i;
@@ -7602,8 +7698,16 @@ async function nextJobNum(prefix){
       });
       return 'CR'+String(maxN+1).padStart(3,'0');
     }
-    // Default: regular job numbering (e.g. JOB-0001, 4-digit pad)
+    // Default: regular job numbering (e.g. JOB-0001, 4-digit pad) — atomic
+    // DB sequence, falls back to the old scan-based method if unavailable.
     const jobPrefix=S.jobPrefix||'JOB-';
+    try{
+      const n=await _sb('rpc/next_job_num',{method:'POST',body:{}});
+      if(typeof n==='number'){
+        S.jobNextNum=n+1;
+        return jobPrefix+String(n).padStart(4,'0');
+      }
+    }catch(e){ console.warn('[nextJobNum] next_job_num RPC failed, using fallback',e); }
     const rows = await _sb('jobs?select=jobnum&order=jobnum.desc&limit=500') || [];
     let maxN=S.jobNextNum||1001;
     rows.forEach(r=>{
@@ -7625,10 +7729,27 @@ async function nextJobNum(prefix){
 // ── VAT helper ──
 function getVatRate(){return (S.vatEnabled!==false)?(S.vatRate||20):0;}
 
+// In-progress guard for autoInvoice() — prevents the same job from being
+// auto-invoiced twice if it's called twice in quick succession within this
+// tab (e.g. a duplicate completion event). This does NOT cover two separate
+// Office tabs/devices racing each other — there's no DB constraint backing
+// this (see AUDIT.md 3.2); the re-check immediately before the write below
+// narrows that window but doesn't eliminate it.
+const _autoInvoiceInProgress=new Set();
+
 async function autoInvoice(j){
   // Respect the "auto-create invoice on completion" setting
   if(S.autoInvOnComplete===false) return;
+  if(_autoInvoiceInProgress.has(j.id)) return;
+  _autoInvoiceInProgress.add(j.id);
+  try{
+    await _autoInvoiceInner(j);
+  } finally {
+    _autoInvoiceInProgress.delete(j.id);
+  }
+}
 
+async function _autoInvoiceInner(j){
   // Guard: skip if an invoice already exists for this job
   const allInvs=await dAll('invoices');
   if(allInvs.some(i=>i.jobId===j.id||i.linkedJobId===j.id)) return;
@@ -7705,6 +7826,12 @@ async function autoInvoice(j){
     status:'Draft',
     created:Date.now(),
   };
+  // Re-check immediately before writing — narrows (does not eliminate, no
+  // DB constraint backs this) the window where a second Office tab could
+  // have passed the earlier check and created its own invoice for this job
+  // in the time it took to build the line items above.
+  const recheck=await _sb(`invoices?select=id&or=(jobid.eq.${encodeURIComponent(j.id)},linkedjobid.eq.${encodeURIComponent(j.id)})&limit=1`).catch(()=>null);
+  if(recheck && recheck.length) return;
   await dPut('invoices',inv);
   // Update job status to Invoiced
   await _sb(`jobs?id=eq.${encodeURIComponent(j.id)}`,{method:'PATCH',body:{status:STATUS.INVOICED,linkedInvId:inv.id,modified:Date.now()},prefer:'return=minimal'}).catch(()=>{});
@@ -7715,10 +7842,20 @@ async function autoInvoice(j){
 
 
 async function nextInvNum(isAgency=false){
-  // Scan ALL existing invoices to guarantee uniqueness — prevents duplicate numbers
   const prefix=isAgency?(S.agencyInvPrefix||'AGN-'):(S.invPrefix||'INV-');
+  // Atomic DB sequence — agency and regular invoices now have genuinely
+  // separate series. Falls back to the old scan-based method if the RPC
+  // isn't available yet (SQL not run).
+  try{
+    const n=await _sb(isAgency?'rpc/next_agn_num':'rpc/next_inv_num',{method:'POST',body:{}});
+    if(typeof n==='number'){
+      if(!isAgency) S.invNextNum=n+1;
+      return prefix+n;
+    }
+  }catch(e){ console.warn('[nextInvNum] RPC failed, using fallback',e); }
+  // Scan ALL existing invoices to guarantee uniqueness — prevents duplicate numbers
   const allInvs=await dAll('invoices');
-  let maxN=S.invNextNum||S.invStart||1001;
+  let maxN=isAgency?(S.agencyInvStart||2001):(S.invNextNum||S.invStart||1001);
   allInvs.forEach(inv=>{
     if(inv.number&&inv.number.startsWith(prefix)){
       const parsed=parseInt(inv.number.replace(prefix,''),10);
@@ -7726,8 +7863,10 @@ async function nextInvNum(isAgency=false){
     }
   });
   const chosen=maxN;
-  S.invNextNum=chosen+1;
-  saveSetting('invNextNum',S.invNextNum);
+  if(!isAgency){
+    S.invNextNum=chosen+1;
+    saveSetting('invNextNum',S.invNextNum);
+  }
   return prefix+chosen;
 }
 
@@ -7737,6 +7876,12 @@ async function nextInvNum(isAgency=false){
 
 // Get next proforma number
 async function nextProformaNum(){
+  // Atomic DB sequence — falls back to the old scan-based method if the
+  // RPC isn't available yet (SQL not run).
+  try{
+    const n=await _sb('rpc/next_proforma_num',{method:'POST',body:{}});
+    if(typeof n==='number') return 'PF-'+String(n).padStart(3,'0');
+  }catch(e){ console.warn('[nextProformaNum] RPC failed, using fallback',e); }
   try{
     const invs=await _sb('invoices?type=eq.proforma&order=number.desc&limit=1');
     const last=invs?.[0]?.number||'PF-000';
@@ -7960,8 +8105,12 @@ async function loadEngPerms(){
   const perms=S.engPerms||{};
   const fields=[{key:'seePrice',label:'Price'},{key:'seeLandlord',label:'Landlord'},{key:'seeTenant',label:'Tenant'},{key:'seeAgent',label:'Agent'},{key:'seeNotes',label:'Notes'},{key:'seeInvoice',label:'Invoice'}];
   el.innerHTML=engineers.map(eng=>{
-    const ep=perms[eng.id]||{};
-    return`<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;border-radius:50%;background:var(--acc-soft);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--acc)">${(eng.name||'?')[0].toUpperCase()}</span>${eng.name} <span style="font-size:10px;font-weight:400;color:var(--txt3)">${eng.trade||''}</span></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px 14px">${fields.map(f=>{const dflt=S['engSee'+f.key[3].toUpperCase()+f.key.slice(4)]!==false;const val=ep[f.key]!==undefined?ep[f.key]:dflt;return`<label class="fcheck" style="font-size:11px"><input type="checkbox" ${val?'checked':''} onchange="updateEngPerm('${eng.id}','${f.key}',this.checked)"> ${f.label}</label>`;}).join('')}</div></div>`;
+    // Key by _sbId (the real Supabase users.id) — not eng.id, which is never
+    // actually set anywhere engineers get loaded/added, so every engineer's
+    // overrides used to collide under the same undefined key.
+    const engId=eng._sbId;
+    const ep=perms[engId]||{};
+    return`<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;border-radius:50%;background:var(--acc-soft);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--acc)">${(eng.name||'?')[0].toUpperCase()}</span>${eng.name} <span style="font-size:10px;font-weight:400;color:var(--txt3)">${eng.trade||''}</span></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px 14px">${fields.map(f=>{const dflt=S['engSee'+f.key[3].toUpperCase()+f.key.slice(4)]!==false;const val=ep[f.key]!==undefined?ep[f.key]:dflt;return`<label class="fcheck" style="font-size:11px"><input type="checkbox" ${val?'checked':''} onchange="updateEngPerm('${engId}','${f.key}',this.checked)"> ${f.label}</label>`;}).join('')}</div></div>`;
   }).join('');
 }
 
@@ -8245,11 +8394,11 @@ async function _renderEngRankingTable(containerId){
       const stats=_computeEngStats(eng.name,allJobs,allInvs,[]);
       const exps=allExps.filter(e=>e.engineer===eng.name);
       const totalExp=exps.reduce((s,e)=>s+Number(e.cost||0),0);
-      const hoursPerJob=4;
+      const hoursPerJob=4; // fallback estimate — used only when a job has no logged hours
       const completedJobs=allJobs.filter(j=>j.engineer===eng.name&&(j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED));
       const wages=completedJobs.reduce((s,j)=>{
         if(eng.dayRate) return s+Number(eng.dayRate||0);
-        if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*hoursPerJob);
+        if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*(Number(j.hours)||hoursPerJob));
         return s;
       },0);
       const netProfit=stats.earnedTotal-wages-totalExp;
@@ -8560,11 +8709,11 @@ async function _renderEngDeepEarningsTab(engName){
     },0);
 
     // ── Wages calculation ──
-    const hoursPerJob=4;
+    const hoursPerJob=4; // fallback estimate — used only when a job has no logged hours
     const completedJobs=allJobs.filter(j=>j.engineer===engName&&(j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED));
     const wages=completedJobs.reduce((s,j)=>{
       if(eng.dayRate) return s+Number(eng.dayRate||0);
-      if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*hoursPerJob);
+      if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*(Number(j.hours)||hoursPerJob));
       return s;
     },0);
 
@@ -8689,10 +8838,10 @@ async function _renderEngDeepTrendTab(engName){
         const inv=allInvs.find(i=>i.linkedJobId===j.id||i.jobId===j.id);
         return s+(inv?calcInvTotal(inv).grand:Number(j.price||0));
       },0);
-      const hoursPerJob=4;
+      const hoursPerJob=4; // fallback estimate — used only when a job has no logged hours
       const wages=jobs.reduce((s,j)=>{
         if(eng.dayRate) return s+Number(eng.dayRate||0);
-        if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*hoursPerJob);
+        if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*(Number(j.hours)||hoursPerJob));
         return s;
       },0);
       const net=revenue-wages;
@@ -8806,11 +8955,17 @@ async function downloadEngPayslip(engName){
     const thisMonthStart=now.toISOString().slice(0,7)+'-01';
     const completedJobs=stats.jobs.filter(j=>j.date>=thisMonthStart&&(j.status===STATUS.COMPLETED||j.status===STATUS.INVOICED)).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 
-    // Calculate wages
-    const hoursPerJob=4;
+    // Calculate wages — use each job's actually-logged hours where the
+    // engineer recorded them; only fall back to an estimate for jobs with
+    // no hours logged at all (previously this assumed 4h for every job
+    // regardless of what was actually logged).
+    const FALLBACK_HOURS_PER_JOB=4;
     const wages=completedJobs.reduce((s,j)=>{
       if(eng.dayRate) return s+Number(eng.dayRate||0);
-      if(eng.hourlyRate||eng.rate) return s+(Number(eng.hourlyRate||eng.rate||0)*hoursPerJob);
+      if(eng.hourlyRate||eng.rate){
+        const actualHours=Number(j.hours)||FALLBACK_HOURS_PER_JOB;
+        return s+(Number(eng.hourlyRate||eng.rate||0)*actualHours);
+      }
       return s;
     },0);
 
@@ -8854,12 +9009,13 @@ Period: <strong>${periodStart}</strong> to <strong>${periodEnd}</strong>
 </div>
 <h3 style="font-size:14px;margin-bottom:10px;color:#334155">Jobs Completed (${completedJobs.length})</h3>
 <table>
-<tr><th>Date</th><th>Address</th><th>Description</th><th>Amount</th></tr>
+<tr><th>Date</th><th>Address</th><th>Description</th>${eng.dayRate?'':'<th>Hours</th>'}<th>Amount</th></tr>
 ${completedJobs.length?completedJobs.map(j=>{
 const inv=allInvs.find(i=>i.linkedJobId===j.id||i.jobId===j.id);
 const amt=inv?calcInvTotal(inv).grand:Number(j.price||0);
-return'<tr><td>'+(j.date||'—')+'</td><td>'+(j.address||'—')+'</td><td>'+(j.description||j.type||'—')+'</td><td>&pound;'+amt.toFixed(2)+'</td></tr>';
-}).join(''):'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px">No jobs completed this period</td></tr>'}
+const hoursCell=eng.dayRate?'':'<td>'+(Number(j.hours)?Number(j.hours)+'h':FALLBACK_HOURS_PER_JOB+'h (est.)')+'</td>';
+return'<tr><td>'+(j.date||'—')+'</td><td>'+(j.address||'—')+'</td><td>'+(j.description||j.type||'—')+'</td>'+hoursCell+'<td>&pound;'+amt.toFixed(2)+'</td></tr>';
+}).join(''):'<tr><td colspan="'+(eng.dayRate?4:5)+'" style="text-align:center;color:#94a3b8;padding:16px">No jobs completed this period</td></tr>'}
 </table>
 </div>
 <div class="card">
@@ -9139,6 +9295,120 @@ async function logAudit(type, details){
   }catch(e){ console.warn('[Audit]', e); }
 }
 
+// ── Automated client notifications (Settings → Notifications) ──────────────
+// DeepFlow doesn't send WhatsApp/SMS/email itself — no account or API key
+// lives here. This just fires a small JSON event at a webhook URL you
+// configure, which is where a free automation tool (n8n/Zapier/Make) picks
+// it up and does the actual sending. Off by default; each event type has
+// its own toggle. mode:'no-cors' is used deliberately — many webhook
+// receivers don't set CORS headers for browser fetches, and this is a
+// fire-and-forget notification, not a request whose response we need to
+// read, so we accept not being able to see the HTTP status back.
+async function sendNotificationWebhook(eventType, payload){
+  if(!S.notifWebhookEnabled || !S.notifWebhookUrl) return;
+  if(eventType==='job_status_change' && S.notifOnStatusChange===false) return;
+  if(eventType==='cert_ready' && S.notifOnCertReady===false) return;
+  try{
+    await fetch(S.notifWebhookUrl, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:eventType, source:'deepflow-office', company:S.coName||'', timestamp:new Date().toISOString(), ...payload})
+    });
+  }catch(e){ console.warn('[NotifWebhook]', e); }
+}
+
+// ── Real push notifications — see PHASE6_PUSH_NOTIFICATIONS_SQL.md and
+//    PHASE6B_PUSH_EDGE_FUNCTION.md. Off by default; needs the Edge Function
+//    deployed before this does anything (fails silently/logged if not —
+//    same "off until set up" fallback used everywhere else in this app).
+function _pushFunctionUrl(){ return SB_URL+'/functions/v1/send-push'; }
+
+async function sendPushNotification(eventType, payload){
+  if(!S.notifPushEnabled) return;
+  if(eventType==='job_status_change' && S.notifOnStatusChange===false) return;
+  if(eventType==='cert_ready' && S.notifOnCertReady===false) return;
+
+  let title, message;
+  if(eventType==='job_status_change'){
+    if(payload.newStatus==='In Progress'){
+      title='Engineer has arrived';
+      message=`Your engineer has arrived at ${payload.address||'the property'}`;
+    } else if(payload.newStatus==='Completed'){
+      title='Job completed';
+      message=`Work at ${payload.address||'the property'} is complete`;
+    } else {
+      title='Job update';
+      message=`${payload.address||'Your job'} → ${payload.newStatus}`;
+    }
+  } else if(eventType==='cert_ready'){
+    title='Certificate ready';
+    message=`${payload.certType||'Certificate'} ready for ${payload.address||'your property'}`;
+  } else {
+    title='DeepFlow'; message='You have an update';
+  }
+
+  try{
+    const jwt=await _getJWT();
+    await fetch(_pushFunctionUrl(),{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+jwt},
+      body: JSON.stringify({title,message,url:_portalBaseUrl(),
+        landlordName:payload.landlordName||'',agencyName:payload.agencyName||'',agentName:payload.agentName||''})
+    });
+  }catch(e){ console.warn('[Push]',e); }
+}
+
+// ── Next-tenant ETA — see Settings → Notifications → "Next-Tenant ETA".
+// When a job completes, look for this engineer's next Pending job today
+// and, if a real person is waiting there with a phone number on file
+// (not a key-safe code), fire a webhook event so a connected automation
+// can text/WhatsApp them a heads-up. Routed through the same webhook only
+// — tenants don't have portal accounts, so push notifications don't apply.
+function _looksLikePhone(s){
+  return !!s && /\d{4,}/.test(s) && !/^code:/i.test(s.trim());
+}
+
+async function notifyNextTenantEta(completedJob){
+  if(!S.notifNextTenantEta) return;
+  if(!completedJob?.engineer || !completedJob?.date) return;
+  try{
+    const rows=await _sb(`jobs?engineer=eq.${encodeURIComponent(completedJob.engineer)}&date=eq.${encodeURIComponent(completedJob.date)}&status=eq.Pending&order=created.asc&limit=1`);
+    const next=rows?.[0]?_fix(rows[0]):null;
+    if(!next) return;
+    const access=next.access||'';
+    const contact=(next.contact||'').trim();
+    if(!(access.includes('Tenant')||access.includes('Landlord'))) return;
+    if(!_looksLikePhone(contact)) return;
+
+    sendNotificationWebhook('next_job_eta',{
+      engineerName:completedJob.engineer,
+      prevAddress:completedJob.address,
+      nextJobId:next.id, nextJobNum:next.jobNum||'',
+      nextAddress:next.address||'', nextContactPhone:contact,
+      nextTimeSlot:next.timeSlot||''
+    });
+  }catch(e){ console.warn('[NextTenantEta]',e); }
+}
+
+async function testNotifWebhook(){
+  const el=document.getElementById('notif-webhook-test-result');
+  const url=document.getElementById('s-notif-webhook-url')?.value.trim()||S.notifWebhookUrl;
+  if(!url){ if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ Enter a webhook URL first</span>'; return; }
+  if(el) el.textContent='Sending test event…';
+  try{
+    await fetch(url, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:'test', source:'deepflow-office', company:S.coName||'', timestamp:new Date().toISOString(), message:'Test event from DeepFlow — if your automation received this, it is wired up correctly.'})
+    });
+    if(el) el.innerHTML='<span style="color:var(--green)">✅ Sent — check your automation tool\'s history to confirm it arrived (the browser can\'t confirm delivery for cross-origin webhooks)</span>';
+  }catch(e){
+    if(el) el.innerHTML='<span style="color:var(--red)">❌ Failed to send: '+(e.message||'').slice(0,100)+'</span>';
+  }
+}
+
 async function renderAuditLog(){
   // Admin only
   if(_appUser?.role !== 'Admin'){ toast('❌ Admin only','error'); return; }
@@ -9166,8 +9436,8 @@ async function renderAuditLog(){
       return;
     }
 
-    const typeLabel={job_delete:'🗑 Job Deleted',inv_amount:'💰 Invoice Amount Changed'};
-    const typeColor={job_delete:'#b91c1c',inv_amount:'#d97706'};
+    const typeLabel={job_delete:'🗑 Job Deleted',inv_amount:'💰 Invoice Amount Changed',job_status_change:'🔄 Job Status Changed'};
+    const typeColor={job_delete:'#b91c1c',inv_amount:'#d97706',job_status_change:'#1d6fad'};
 
     body.innerHTML=`
     <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden">
@@ -9182,6 +9452,8 @@ async function renderAuditLog(){
         const lbl=typeLabel[l.type]||l.type;
         const change=l.type==='inv_amount'&&details.oldVal&&details.newVal
           ?`<span style="color:#b91c1c;text-decoration:line-through">£${details.oldVal}</span> → <span style="color:#15803d;font-weight:700">£${details.newVal}</span>`
+          :l.type==='job_status_change'&&details.oldStatus&&details.newStatus
+          ?`<span style="color:#b91c1c;text-decoration:line-through">${escHtml(details.oldStatus)}</span> → <span style="color:#15803d;font-weight:700">${escHtml(details.newStatus)}</span>`
           :'—';
         const desc=details.address||details.invNum||details.jobNum||details.note||'—';
         return`<div style="display:grid;grid-template-columns:140px 120px 120px 1fr 200px;gap:0;padding:9px 14px;border-bottom:1px solid var(--border);font-size:11px;align-items:center">
@@ -9217,6 +9489,7 @@ async function initAuditLog(){ await renderAuditLog(); }
 
 async function openJobModal(id){
   editJid=id||null;
+  _editJobBaselineModified=null;
   _jobCertTypes=[];
   fillJobDropdowns();
   switchJobTab('details');
@@ -9273,6 +9546,7 @@ async function openJobModal(id){
   if(id){
     dGet('jobs',id).then(j=>{
       if(!j)return;
+      _editJobBaselineModified=j.modified||null;
       document.getElementById('mo-job-title').textContent=`✎ Edit Job ${j.jobNum?'· '+j.jobNum:''}`;
       f('jf-addr').value=j.address||'';f('jf-ref').value=j.referrer||'';
       f('jf-trade').value=j.trade||'';f('jf-eng').value=j.engineer||'';
@@ -9507,6 +9781,16 @@ function clearJobForm(){
   toast('Form cleared — ready for new job','info',2000);
 }
 
+// UK postcode, pulled out of whatever's typed in the address field — kept
+// in its own column purely as background data for other features (routing,
+// area grouping, more accurate property matching) to use later. The
+// visible address field itself is completely untouched.
+function extractPostcode(address){
+  if(!address) return '';
+  const m=String(address).match(/([A-Za-z]{1,2}[0-9][0-9A-Za-z]?\s*[0-9][A-Za-z]{2})\s*$/);
+  return m ? m[1].toUpperCase().replace(/\s+/g,' ').trim() : '';
+}
+
 async function saveJob(){
   const addr=document.getElementById('jf-addr').value.trim();
   if(!addr){toast('Address is required','error');return;}
@@ -9519,6 +9803,20 @@ async function saveJob(){
   }
   const isNew=!editJid;
   const existingJob=editJid?await dGet('jobs',editJid):null;
+  // Concurrent-edit guard: if someone else saved a change to this job after
+  // this form was opened, the freshly-fetched `modified` timestamp here will
+  // no longer match what we captured at open time. Ask before overwriting
+  // their change instead of silently clobbering it.
+  if(!isNew && existingJob && _editJobBaselineModified!=null && existingJob.modified && existingJob.modified!==_editJobBaselineModified){
+    const proceed=confirm('⚠️ This job was changed by someone else while you were editing it (status or other details may be different now).\n\nClick OK to save your changes anyway (overwriting theirs), or Cancel to stop and reload the latest version.');
+    if(!proceed){
+      const btn0=document.querySelector('#mo-job .modal-actions .btn-acc');
+      if(btn0){btn0.disabled=false;btn0.textContent='Save Job';}
+      toast('Reloading latest version…','info');
+      openJobModal(editJid);
+      return;
+    }
+  }
   // Use CR number if pre-set from portal request, otherwise generate next job number
   const jobNum=existingJob?.jobNum||(window._pendingCRNum||(isNew?await nextJobNum():''));
   window._pendingCRNum=null; // clear after use
@@ -9527,6 +9825,7 @@ async function saveJob(){
     jobNum,
     date:document.getElementById('jf-date').value||jDate,
     address:addr,
+    postcode:extractPostcode(addr),
     referrer:document.getElementById('jf-ref').value.trim(),
     trade:tradeVal,
     certTypes:[..._jobCertTypes],
@@ -9561,6 +9860,15 @@ async function saveJob(){
   try{
     await dPut('jobs',j);
     _invalidateJobCache();
+    if(existingJob&&existingJob.status!==j.status){
+      logAudit('job_status_change',{jobId:j.id,jobNum:j.jobNum,address:j.address,oldStatus:existingJob.status,newStatus:j.status});
+      const notifPayload={jobId:j.id,jobNum:j.jobNum,address:j.address,oldStatus:existingJob.status,newStatus:j.status,
+        landlordName:j.landlordName||j.referrer||'',landlordPhone:j.landlordPhone||'',landlordEmail:j.landlordEmail||'',
+        agencyName:j.agencyName||'',agentName:j.agentName||'',agentPhone:j.agentPhone||''};
+      sendNotificationWebhook('job_status_change',notifPayload);
+      sendPushNotification('job_status_change',notifPayload);
+      if(j.status===STATUS.COMPLETED) notifyNextTenantEta(j);
+    }
 
     // ── REVERSE SYNC: Job → Invoice ──────────────────────────────
     // Find linked invoice and update description/address/status
@@ -15775,6 +16083,7 @@ function renderSettings(){
   if(el('s-inv-reminder')) el('s-inv-reminder').value=S.invReminderDays||7;
   if(el('s-inv-reminder2')) el('s-inv-reminder2').value=S.invReminderDays2||14;
   if(el('s-job-remind-hrs')) el('s-job-remind-hrs').value=S.jobRemindHrs||24;
+  if(el('s-notif-webhook-url')) el('s-notif-webhook-url').value=S.notifWebhookUrl||'';
   if(el('s-admin-pin')) el('s-admin-pin').value=S.adminPin||'';
   if(el('s-fontsize')) el('s-fontsize').value=S.fontSize||'normal';
   if(el('s-sidebar-w')) el('s-sidebar-w').value=S.sidebarWidth||'230';
@@ -15789,6 +16098,11 @@ function renderSettings(){
   cb('s-compact-badges',S.compactBadges||false);
   cb('s-notify-dash',S.notifyDash!==false);
   cb('s-notify-badge',S.notifyBadge!==false);
+  cb('s-notif-webhook-enabled',S.notifWebhookEnabled===true);
+  cb('s-notif-on-status',S.notifOnStatusChange!==false);
+  cb('s-notif-on-cert',S.notifOnCertReady!==false);
+  cb('s-notif-push-enabled',S.notifPushEnabled===true);
+  cb('s-notif-next-tenant',S.notifNextTenantEta===true);
   cb('s-sla-dash',S.slaDash!==false);
   cb('s-req-checklist',S.reqChecklist||false);
   cb('s-gas-prompt',S.gasPrompt!==false);
@@ -16570,7 +16884,8 @@ async function _mapEngineerRoute(info, status) {
 
   const centLat = allPoints.reduce((s,p)=>s+p.lat,0)/allPoints.length;
   const centLng = allPoints.reduce((s,p)=>s+p.lng,0)/allPoints.length;
-  _buildAndShowMap(allPoints, centLat, centLng, 12);
+  const routeCoords = routeData?.routes?.[0]?.geometry?.coordinates || null;
+  _buildAndShowMap(allPoints, centLat, centLng, 12, routeCoords);
 
   // Build route info
   const now = Date.now();
@@ -16648,7 +16963,7 @@ async function _geocode(address) {
 // ── MAP RENDERING — Blob URL approach (works everywhere) ──────
 let _mapBlobUrl = null;
 
-function _buildAndShowMap(points, centLat, centLng, zoom) {
+function _buildAndShowMap(points, centLat, centLng, zoom, routeCoords) {
   const lat = centLat || 51.509865;
   const lng = centLng || -0.118092;
   const z   = zoom || 12;
@@ -16659,6 +16974,14 @@ function _buildAndShowMap(points, centLat, centLng, zoom) {
     var lbl = (p.label || '').toString().replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').slice(0,40);
     return 'L.circleMarker([' + p.lat + ',' + p.lng + '],{color:"' + col + '",fillColor:"' + col + '",fillOpacity:.85,radius:10,weight:2}).addTo(map).bindPopup("<b>' + lbl + '</b>");';
   }).join('\n');
+
+  // Real road-following route line (OSRM geometry, [lng,lat] pairs) \u2014 drawn
+  // underneath the dots. Previously this app fetched a real driving route
+  // and even showed its distance/duration in the status text, but never
+  // actually drew it on the map \u2014 only the plain dots ever rendered.
+  var routeJs = (routeCoords && routeCoords.length)
+    ? 'L.polyline(' + JSON.stringify(routeCoords.map(function(c){return [c[1],c[0]];})) + ',{color:"#4f8fff",weight:5,opacity:.75,dashArray:"10,5"}).addTo(map);'
+    : '';
 
   var html = '<!DOCTYPE html><html><head>'
     + '<meta charset="UTF-8">'
@@ -16671,6 +16994,7 @@ function _buildAndShowMap(points, centLat, centLng, zoom) {
     + '<script>'
     + 'var map=L.map("m").setView([' + lat + ',' + lng + '],' + z + ');'
     + 'L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"\u00a9 OpenStreetMap \u00a9 CARTO",maxZoom:19,subdomains:"abcd"}).addTo(map);'
+    + routeJs
     + markersJs
     + '</sc' + 'ript></body></html>';
 
@@ -16847,6 +17171,7 @@ async function saveSettings(){
     toast('❌ Only Admins can change settings','error');
     return;
   }
+  const get=id=>{const e=document.getElementById(id);return e?e.value:null};
   const getF=id=>{const e=document.getElementById(id);return e?parseFloat(e.value)||0:null};
   const getI=id=>{const e=document.getElementById(id);return e?parseInt(e.value)||0:null};
   const getCB=id=>{const e=document.getElementById(id);return e?e.checked:null};
@@ -16864,9 +17189,21 @@ async function saveSettings(){
   if(getF('s-vat')!==null) S.vatRate=getF('s-vat')||20;
   if(get('s-pay-terms')!==null) S.payTerms=get('s-pay-terms');
   if(get('s-inv-prefix')!==null) S.invPrefix=get('s-inv-prefix');
-  if(getI('s-inv-start')!==null) S.invNextNum=getI('s-inv-start')||1001;
+  if(getI('s-inv-start')!==null){
+    const newStart=getI('s-inv-start')||1001;
+    if(newStart!==S.invNextNum){
+      S.invNextNum=newStart;
+      _sb('rpc/admin_set_seq',{method:'POST',body:{seq_name:'inv_num_seq',new_start:newStart}}).catch(e=>console.warn('[admin_set_seq inv_num_seq]',e));
+    }
+  }
   if(get('s-agency-inv-prefix')!==null) S.agencyInvPrefix=get('s-agency-inv-prefix')||'AGN-';
-  if(getI('s-agency-inv-start')!==null) S.agencyInvStart=getI('s-agency-inv-start')||2001;
+  if(getI('s-agency-inv-start')!==null){
+    const newStart=getI('s-agency-inv-start')||2001;
+    if(newStart!==S.agencyInvStart){
+      S.agencyInvStart=newStart;
+      _sb('rpc/admin_set_seq',{method:'POST',body:{seq_name:'agn_num_seq',new_start:newStart}}).catch(e=>console.warn('[admin_set_seq agn_num_seq]',e));
+    }
+  }
   if(get('s-inv-notes')!==null) S.invNotes=get('s-inv-notes');
   if(getI('s-due-days')!==null) S.dueDays=getI('s-due-days')||14;
   if(get('s-bank-name')!==null) S.bankName=get('s-bank-name');
@@ -16883,6 +17220,12 @@ async function saveSettings(){
   if(getI('s-inv-reminder')!==null) S.invReminderDays=getI('s-inv-reminder')||7;
   if(getI('s-inv-reminder2')!==null) S.invReminderDays2=getI('s-inv-reminder2')||14;
   if(getI('s-job-remind-hrs')!==null) S.jobRemindHrs=getI('s-job-remind-hrs')||24;
+  if(getCB('s-notif-webhook-enabled')!==null) S.notifWebhookEnabled=getCB('s-notif-webhook-enabled');
+  if(get('s-notif-webhook-url')!==null) S.notifWebhookUrl=get('s-notif-webhook-url').trim();
+  if(getCB('s-notif-on-status')!==null) S.notifOnStatusChange=getCB('s-notif-on-status');
+  if(getCB('s-notif-on-cert')!==null) S.notifOnCertReady=getCB('s-notif-on-cert');
+  if(getCB('s-notif-push-enabled')!==null) S.notifPushEnabled=getCB('s-notif-push-enabled');
+  if(getCB('s-notif-next-tenant')!==null) S.notifNextTenantEta=getCB('s-notif-next-tenant');
   if(get('s-admin-pin')!==null && get('s-admin-pin')) S.adminPin=get('s-admin-pin');
 
   // Checkboxes
@@ -18505,10 +18848,14 @@ async function handleRealtimeChange(payload){
       }
     }
 
-    // Notification for status changes
+    // Notification for status changes — arrival/departure phrased specially
     if(prev && prev.status !== job.status) {
       const icon = {[STATUS.COMPLETED]:'\u2705',[STATUS.IN_PROGRESS]:'\ud83d\udd28',[STATUS.INVOICED]:'\u25ce',[STATUS.PENDING]:'\u23f3'}[job.status]||'\ud83d\udd14';
-      _pushNotif(`Job updated — ${job.status}`, `${job.jobNum||''} ${job.address||''}`.trim(), icon, ()=>{ openJobModal(job.id); nav('jobs'); });
+      let title;
+      if(job.status===STATUS.IN_PROGRESS) title=`Engineer arrived — ${job.engineer||'Engineer'}`;
+      else if(job.status===STATUS.COMPLETED) title=`Engineer completed & left — ${job.engineer||'Engineer'}`;
+      else title=`Job updated — ${job.status}`;
+      _pushNotif(title, `${job.jobNum||''} ${job.address||''}`.trim(), icon, ()=>{ openJobModal(job.id); nav('jobs'); });
     }
 
     // Notification for priority changes
@@ -19362,7 +19709,7 @@ async function loadStorageDashboard(){
     const [jobs,users,certs,invoices,attachments,expenses,requests,alerts]=await Promise.all([
       _sb('jobs?select=id').catch(()=>[]),
       _sb('users?select=id,role').catch(()=>[]),
-      _sb('certificates?select=id').catch(()=>[]),
+      _sb('certs?select=id').catch(()=>[]),
       _sb('invoices?select=id').catch(()=>[]),
       _sb('attachments?select=id,mime').catch(()=>[]),
       _sb('expenses?select=id').catch(()=>[]),
@@ -21575,17 +21922,22 @@ async function checkCronSetup(){
   const el=document.getElementById('cron-check-result');
   if(el) el.textContent='Checking…';
   try{
-    // Try to query the cron.job table — only works if pg_cron is enabled
-    const r=await _sb('rpc/query_cron_jobs',{method:'POST',body:{},prefer:'return=representation'}).catch(()=>null);
-    // Fallback: try a direct SQL ping via a test query
-    const rows=await _sb('cert_reminder_log?limit=1&select=id').catch(()=>null);
-    if(rows!==null){
-      if(el) el.innerHTML='<span style="color:var(--green)">✅ cert_reminder_log table exists — Step 2 complete</span>';
-    } else {
-      if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ cert_reminder_log not found — run the SQL above first</span>';
-    }
+    // Honest 3-part check (table / function / cron schedule) — see
+    // PHASE4_CERT_REMINDER_CHECK_SQL.md. The old version of this only ever
+    // checked the table and called it "complete," which was misleading.
+    const rows=await _sb('rpc/check_cert_reminder_setup',{method:'POST',body:{}});
+    if(!Array.isArray(rows)||!rows.length) throw new Error('no data returned');
+    const byStep={}; rows.forEach(r=>{byStep[r.step]={done:r.done,detail:r.detail};});
+    const line=(ok,label)=>`<div>${ok?'✅':'❌'} ${escHtml(label)}</div>`;
+    const allDone = !!(byStep.table?.done && byStep.function?.done && byStep.cron?.done);
+    const html =
+      line(byStep.table?.done,'Step 2 — cert_reminder_log table')+
+      line(byStep.function?.done,'Step 3 — send_cert_reminders() function')+
+      line(byStep.cron?.done, byStep.cron?.done?'Step 4 — scheduled daily at 9am UTC':'Step 4 — '+(byStep.cron?.detail||'not scheduled'))+
+      `<div style="margin-top:6px;font-weight:700;color:${allDone?'var(--green)':'var(--yellow)'}">${allDone?'✅ Fully set up and running':'⚠️ Setup incomplete — run the missing SQL steps above'}</div>`;
+    if(el) el.innerHTML=html;
   }catch(e){
-    if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ Could not check — run the SQL in Supabase first</span>';
+    if(el) el.innerHTML='<span style="color:var(--yellow)">⚠️ Could not check — run PHASE4_CERT_REMINDER_CHECK_SQL.md first, then the Task 27 SQL above</span>';
   }
 }
 
@@ -22201,59 +22553,116 @@ async function executeMerge(){
   }
 }
 
-// ── Portal Invite Modal (v3 — visiting card lock-screen design) ──
+// ── Portal Invite Modal (v4 — compact "visiting card" matching the app's
+//    own navy lock-screen background, left = DeepFlow advertisement,
+//    right = the client's personal invitation) ──
+let _piCanvasRaf=null;
+
+function closePortalInviteModal(){
+  if(_piCanvasRaf){ cancelAnimationFrame(_piCanvasRaf); _piCanvasRaf=null; }
+  document.getElementById('portal-invite-overlay')?.remove();
+}
+
+function _startPortalInviteCanvas(){
+  const canvas=document.getElementById('pi-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const p=canvas.parentElement;
+  let W=canvas.width=p.offsetWidth, H=canvas.height=p.offsetHeight;
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#0d1f3c');bg.addColorStop(.5,'#1e3a5f');bg.addColorStop(1,'#0a1628');
+  const nodes=Array.from({length:26},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.04,r:Math.random()<.15?2.6:1.3,pulse:Math.random()*Math.PI*2}));
+
+  function draw(){
+    if(!document.body.contains(canvas)){ _piCanvasRaf=null; return; }
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      const n=nodes[i],m=nodes[j],d=Math.hypot(n.x-m.x,n.y-m.y);
+      if(d<W*.18){ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(m.x,m.y);ctx.strokeStyle='rgba(125,211,252,.18)';ctx.lineWidth=.7;ctx.stroke();}
+    }
+    nodes.forEach(n=>{
+      n.pulse+=.011;n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;
+      const a=.5+Math.sin(n.pulse)*.25;
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle=`rgba(125,211,252,${a})`;ctx.fill();
+    });
+    _piCanvasRaf=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
 function showPortalInviteModal(id, name, type, agentName){
   const url=_buildPortalUrl(id, type, agentName);
-  const existing=document.getElementById('portal-invite-overlay');
-  if(existing) existing.remove();
+  closePortalInviteModal();
+
+  const safeName=name.replace(/'/g,"\\'");
+  const safeUrl=url.replace(/'/g,"\\'");
 
   const div=document.createElement('div');
   div.id='portal-invite-overlay';
   div.className='portal-invite-overlay';
   div.innerHTML=`
-    <!-- Close button -->
-    <button onclick="document.getElementById('portal-invite-overlay').remove()" class="portal-vcard-close">✕</button>
+    <button onclick="closePortalInviteModal()" class="portal-vcard-close">✕</button>
 
-    <!-- Visiting Card -->
-    <div class="portal-vcard">
-      <div class="portal-vcard-header">
-        <div class="vc-logo">${S.coName||'DEEPFLOW'}</div>
-        <div class="vc-sub">CLIENT PORTAL</div>
-      </div>
-      <div class="portal-vcard-body">
-        <div class="portal-vcard-label">You are invited to access</div>
-        <div class="portal-vcard-name">${name}</div>
-        <div class="portal-vcard-divider"></div>
-        <!-- QR Code -->
-        <div class="portal-vcard-qr-wrap" id="pi-qr-wrap">
-          <div style="font-size:10px;color:#999;text-align:center">Loading QR...</div>
+    <!-- Visiting card: one shared navy/particle background, split into an
+         advertisement half and a personal-invitation half -->
+    <div style="width:100%;max-width:640px;aspect-ratio:16/9;min-height:340px;border-radius:20px;overflow:hidden;
+      position:relative;box-shadow:0 24px 80px rgba(0,0,0,.5);background:linear-gradient(155deg,#0d1f3c,#1e3a5f,#0a1628)">
+      <canvas id="pi-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
+      <div style="position:relative;z-index:2;display:flex;height:100%;font-family:'Inter',-apple-system,sans-serif">
+
+        <!-- LEFT: DeepFlow advertisement -->
+        <div style="flex:1;padding:24px 22px;border-right:1px solid rgba(125,211,252,.15);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-size:22px;font-weight:900;letter-spacing:2px;font-family:Arial Black,Impact,sans-serif;margin-bottom:2px">
+            <span style="background:linear-gradient(135deg,#7dd3fc 0%,#38bdf8 35%,#fde68a 65%,#f59e0b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">DEEPFLOW</span>
+          </div>
+          <div style="font-size:9px;color:rgba(125,211,252,.4);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px">Smart Property Compliance Suite</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.18);border-radius:100px;padding:4px 10px;margin-bottom:16px;align-self:flex-start">
+            <span style="font-size:10px;color:rgba(255,255,255,.4)">on behalf of</span>
+            <span style="font-size:11px;font-weight:700;color:#fde68a">${escHtml(S.coName||'Your Service Provider')}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px"><span>🔧</span> Job tracking, start to finish</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px"><span>📜</span> Certificates with expiry alerts</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px"><span>💰</span> Invoices, tracked and paid online</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:8px"><span>⚡</span> Faster than a phone call</div>
+          </div>
         </div>
-        <!-- URL -->
-        <div class="portal-vcard-url">${url}</div>
-        <!-- Hint -->
-        <div class="portal-vcard-hint">📱 Scan with your phone camera</div>
-        <div class="portal-vcard-co">${S.coName||'DeepFlow'} — Secure Client Portal</div>
+
+        <!-- RIGHT: personal invitation -->
+        <div style="flex:1;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+          <div style="font-size:9px;color:rgba(125,211,252,.5);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px">You're invited</div>
+          <div style="font-size:18px;font-weight:800;color:#fde68a;margin-bottom:10px;line-height:1.25">${escHtml(name)}</div>
+          <div id="pi-qr-wrap" style="width:96px;height:96px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 0 20px rgba(125,211,252,.2)">
+            <div style="font-size:9px;color:#999;text-align:center">Loading…</div>
+          </div>
+          <div style="font-size:8.5px;color:rgba(125,211,252,.6);font-family:var(--fm,monospace);word-break:break-all;padding:0 6px;line-height:1.5">${url}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:8px">📱 Scan or tap the link below</div>
+        </div>
       </div>
     </div>
 
-    <!-- Action buttons (outside card) -->
+    <!-- Action buttons (outside the card) -->
     <div class="portal-vcard-actions">
-      <button class="vca-copy" onclick="_copyPortalLink('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)">📋 Copy Link</button>
-      <button class="vca-wa" onclick="_waPortalShare('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)">💬 WhatsApp</button>
-      <button class="vca-email" onclick="_emailPortalShare('${url.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}',this)">✉ Email</button>
-      <button class="vca-save" onclick="downloadPortalInviteCard('${name.replace(/'/g,"\\'")}','${url.replace(/'/g,"\\'")}')">⬇ Save Card</button>
+      <button class="vca-copy" onclick="_copyPortalLink('${safeUrl}','${safeName}',this)">📋 Copy Link</button>
+      <button class="vca-wa" onclick="_waPortalShare('${safeUrl}','${safeName}',this)">💬 WhatsApp</button>
+      <button class="vca-email" onclick="_emailPortalShare('${safeUrl}','${safeName}',this)">✉ Email</button>
+      <button class="vca-save" onclick="downloadPortalInviteCard('${safeName}','${safeUrl}')">⬇ Save Card</button>
+      <button class="vca-copy" style="background:#7c2d12;color:#fed7aa" onclick="resetPortalPin('${id}','${type}','${safeName}')">🔑 Reset PIN</button>
     </div>`;
-  div.addEventListener('click',e=>{if(e.target===div)div.remove();});
+  div.addEventListener('click',e=>{if(e.target===div)closePortalInviteModal();});
   document.body.appendChild(div);
-  // Generate QR
+
+  _startPortalInviteCanvas();
+
   setTimeout(()=>{
     const wrap=document.getElementById('pi-qr-wrap');
     if(!wrap)return;
     const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=1e3a5f&qzone=1`;
     const img=document.createElement('img');
-    img.src=qrUrl; img.style.cssText='width:120px;height:120px;border-radius:8px;display:block';
+    img.src=qrUrl; img.style.cssText='width:88px;height:88px;border-radius:8px;display:block';
     img.onload=()=>{wrap.innerHTML='';wrap.appendChild(img);};
-    img.onerror=()=>{wrap.innerHTML='<div style="font-size:10px;color:#999;text-align:center;padding:10px">QR unavailable</div>';};
+    img.onerror=()=>{wrap.innerHTML='<div style="font-size:9px;color:#999;text-align:center;padding:6px">QR unavailable</div>';};
   },100);
 }
 
@@ -22480,7 +22889,7 @@ async function renderPLDashboard(){
   _renderPLCashFlow(jobs, invs, exps, payments, start, end);
   _renderPLTopClients(jobs, invs, start, end);
   _renderPLJobTypes(pJobs);
-  _renderPLVAT(invs, start, end);
+  _renderPLVAT(invs, exps, start, end);
   _renderPLReminders(invs);
 }
 
@@ -22500,13 +22909,17 @@ function _renderPLOverview(pJobs, pInvs, pExps, payments, start, end){
   pExps.forEach(e => { const c=e.category||'Other'; catMap[c]=(catMap[c]||0)+(+(e.cost||0)); });
   const totalExp = pExps.reduce((s,e) => s+(+(e.cost||0)), 0);
 
-  // Engineer wages from jobs
+  // Engineer wages from jobs — use each job's actually-logged hours for
+  // hourly-rate engineers; only fall back to an estimate if none was
+  // logged. (Previously this added the raw hourly rate once per job with
+  // no hours multiplier at all, effectively treating it as a flat rate.)
+  const WAGE_FALLBACK_HOURS=4;
   let totalWages = 0;
   pJobs.forEach(j => {
     if(j.engineer && S.engineers){
       const eng = S.engineers.find(e => e.name === j.engineer);
       if(eng && eng.dayRate) totalWages += +eng.dayRate;
-      else if(eng && eng.rate) totalWages += +eng.rate;
+      else if(eng && eng.rate) totalWages += +eng.rate * (Number(j.hours)||WAGE_FALLBACK_HOURS);
     }
   });
 
@@ -22717,8 +23130,9 @@ function _renderPLJobTypes(pJobs){
 }
 
 /* ── VAT Quarterly Summary ── */
-function _renderPLVAT(invs, start, end){
+function _renderPLVAT(invs, exps, start, end){
   const fmt = n => (n||0).toLocaleString('en-GB',{style:'currency',currency:'GBP'});
+  const vr = getVatRate();
 
   // Group invoices by quarter
   const qMap = {};
@@ -22731,6 +23145,22 @@ function _renderPLVAT(invs, start, end){
     const t = calcInvTotal(i);
     qMap[key].collected += t.vat;
     qMap[key].count++;
+  });
+
+  // Input VAT (estimate): there's no per-expense VAT field recorded, so
+  // this assumes expense costs are VAT-inclusive at the standard rate and
+  // back-calculates the VAT portion — necessarily an estimate (the UI
+  // already labels this line "Input est."), not a figure from real
+  // supplier invoices. Previously this was always exactly £0 because
+  // nothing populated it at all, despite "Net VAT Due" implying it had
+  // been accounted for.
+  (exps||[]).forEach(e => {
+    if(!e.date || vr<=0) return;
+    const d = new Date(e.date);
+    const q = Math.floor(d.getMonth()/3)+1;
+    const key = `Q${q} ${d.getFullYear()}`;
+    if(!qMap[key]) qMap[key] = {label:key,collected:0,paid:0,count:0};
+    qMap[key].paid += Number(e.cost||0)*vr/(100+vr);
   });
 
   // Sort quarters reverse chronologically
