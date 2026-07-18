@@ -54,7 +54,7 @@ html.dark{--bg:#0a1628;--surface:#0f2140;--surface-elevated:#1e3a5f;--border:#1e
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* ── HEADER ── */
-.hdr{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,0.6);padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:var(--transition);}
+.hdr{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,0.6);padding:env(safe-area-inset-top) 20px 0;height:calc(64px + env(safe-area-inset-top));box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;transition:var(--transition);}
 .hdr-l{display:flex;align-items:center;gap:12px}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 0 0 4px var(--accent-glow),0 4px 12px rgba(79,70,229,0.25);position:relative;overflow:hidden;}
 .logo::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.25) 100%);}
@@ -93,7 +93,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .search-item i{color:var(--accent);flex-shrink:0}
 
 /* ── NAV ── */
-.nav-wrap{position:sticky;top:64px;z-index:100;background:rgba(248,250,252,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border-subtle);padding:12px 0;}
+.nav-wrap{position:sticky;top:calc(64px + env(safe-area-inset-top));z-index:100;background:rgba(248,250,252,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border-subtle);padding:12px 0;}
 .nav{max-width:900px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .nav::-webkit-scrollbar{display:none}
 .tab{padding:8px 16px;border-radius:100px;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;white-space:nowrap;border:none;background:transparent;position:relative;transition:var(--transition);display:inline-flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent;}
@@ -324,7 +324,7 @@ select.fi{cursor:pointer}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* ── TOAST ── */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-xl);display:flex;align-items:center;gap:8px;}
+#toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-xl);display:flex;align-items:center;gap:8px;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── LIGHTBOX ── */
@@ -381,12 +381,12 @@ select.fi{cursor:pointer}
 .cal-day:hover{transform:scale(1.1);z-index:2}
 
 /* ── FAB ── */
-.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(79,70,229,0.4);cursor:pointer;z-index:150;border:none;transition:var(--transition-spring)}
+.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:24px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(79,70,229,0.4);cursor:pointer;z-index:150;border:none;transition:var(--transition-spring)}
 .fab:hover{transform:scale(1.1) rotate(90deg)}
 @media(min-width:768px){.fab{display:none}}
 
 /* ── OFFLINE BANNER ── */
-.offline-banner{position:fixed;top:0;left:0;right:0;background:var(--danger);color:#fff;text-align:center;padding:8px;font-size:13px;font-weight:600;z-index:999;transform:translateY(-100%);transition:transform 0.3s}
+.offline-banner{position:fixed;top:0;left:0;right:0;background:var(--danger);color:#fff;text-align:center;padding:calc(8px + env(safe-area-inset-top)) 8px 8px;font-size:13px;font-weight:600;z-index:999;transform:translateY(-100%);transition:transform 0.3s}
 .offline-banner.show{transform:translateY(0)}
 
 /* ── MISC ── */
@@ -422,6 +422,10 @@ select.fi{cursor:pointer}
       <button class="hbtn-icon" id="notif-btn" onclick="toggleNotif()" style="display:none"><i data-lucide="bell" style="width:18px;height:18px"></i><span class="dot" id="notif-dot" style="display:none"></span></button>
       <div class="notif-panel" id="notif-panel">
         <div class="notif-hd">Notifications <span style="font-size:11px;color:var(--text-tertiary);font-weight:500">Recent alerts</span></div>
+        <div id="notif-push-row" style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);display:none">
+          <button id="notif-push-btn" onclick="enablePushNotifications()" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--accent);background:var(--accent-light);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer">🔔 Get notified on your phone</button>
+          <div id="notif-push-status" style="font-size:11px;color:var(--text-tertiary);margin-top:6px;text-align:center"></div>
+        </div>
         <div id="notif-list"></div>
       </div>
     </div>
@@ -563,10 +567,15 @@ function _fix(j){
 function dd(d){return d?Math.ceil((new Date(d)-new Date())/86400000):null}
 function fd(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}
 function fgbp(n){return'£'+(n||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}
+// Mirrors the Office App's getVatRate() — must also respect vatEnabled,
+// not just fall back to a default rate, or a company that isn't
+// VAT-registered (vatEnabled:false) shows VAT here that the office side
+// correctly shows as £0.
+function _portalVatRate(){ return (_S?.vatEnabled!==false)?(_S?.vatRate??20):0; }
 function calcTotal(inv){
   const it=typeof inv.items==='string'?JSON.parse(inv.items||'[]'):(inv.items||[]);
   let sub=0,vat=0;
-  const vr=(_S?.vatRate??20);
+  const vr=_portalVatRate();
   it.forEach(x=>{const l=(x.qty||1)*(x.unit||0);sub+=l;if(x.vat)vat+=l*vr/100;});
   return{sub,vat,grand:sub+vat};
 }
@@ -574,9 +583,235 @@ function calcTotal(inv){
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let _d=null, _S={}, _cs='expiry', _cd='asc', _certView='list', _wizardStep=1;
 const P=new URLSearchParams(location.search);
+
+// ── "Updates since your last visit" ─────────────────────────────────────────
+// No push notifications yet (see Settings for how to add those later) — this
+// is the free, works-with-no-setup version: diff this visit's data against a
+// snapshot of what was last seen on this device, and surface what changed.
+function _portalSnapshotKey(token){ return 'df_portal_seen_'+token; }
+
+function _computeChangesSinceLastVisit(jobs, certs, invoices, token){
+  const key=_portalSnapshotKey(token);
+  let prev=null;
+  try{ prev=JSON.parse(localStorage.getItem(key)||'null'); }catch(err){}
+
+  const snapshot={jobs:{},certs:{},invoices:{}};
+  jobs.forEach(j=>{ snapshot.jobs[j.id]=j.status; });
+  certs.forEach(c=>{ snapshot.certs[c.id]=true; });
+  invoices.forEach(i=>{ snapshot.invoices[i.id]=i.status; });
+
+  const changes=[];
+  if(prev){
+    jobs.forEach(j=>{
+      const old=prev.jobs?.[j.id];
+      if(old!==undefined && old!==j.status){
+        changes.push({icon:'refresh-cw',color:'var(--accent)',text:`Job at <strong>${e(j.address||'')}</strong> is now <strong>${e(j.status)}</strong>`,action:()=>go('jobs'),time:'Status update'});
+      }
+    });
+    certs.forEach(c=>{
+      if(prev.certs && !(c.id in prev.certs)){
+        changes.push({icon:'award',color:'var(--success)',text:`New certificate ready: <strong>${e(c.type||'Certificate')}</strong>`,action:()=>go('certs'),time:'Certificate'});
+      }
+    });
+    invoices.forEach(i=>{
+      const old=prev.invoices?.[i.id];
+      if(old===undefined){
+        changes.push({icon:'file-plus',color:'var(--accent)',text:`New invoice <strong>${e(i.number||'')}</strong>`,action:()=>go('invoices'),time:'Invoice'});
+      } else if(old!==i.status){
+        changes.push({icon:'receipt',color:'var(--warning)',text:`Invoice <strong>${e(i.number||'')}</strong> is now <strong>${e(i.status)}</strong>`,action:()=>go('invoices'),time:'Invoice'});
+      }
+    });
+  }
+
+  try{ localStorage.setItem(key, JSON.stringify(snapshot)); }catch(err){}
+  return changes;
+}
 const token=P.get('id'), ptype=P.get('type')||'landlord';
+
+// ── PUSH NOTIFICATIONS ───────────────────────────────────────────────────────
+// Free Web Push (VAPID) — no third-party service, no account. See
+// PHASE6_PUSH_NOTIFICATIONS_SQL.md / PHASE6B for the sending side. This
+// public key is safe to expose; the matching private key lives only in the
+// Edge Function's environment secrets.
+const VAPID_PUBLIC_KEY = 'BCM7SAk356QodrcNAwoO7gOSwXnfGb7ooqN514kYfR8Fv72h1gbkMD23REa7toVURlZPqTTH8BfpWOJSqLRitTE';
+
+function _urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const rawData=atob(base64);
+  const out=new Uint8Array(rawData.length);
+  for(let i=0;i<rawData.length;++i) out[i]=rawData.charCodeAt(i);
+  return out;
+}
+
+// Shows the "Get notified" prompt only if push is supported, permission
+// hasn't been denied before, and this device isn't already subscribed.
+async function initPush(){
+  const row=document.getElementById('notif-push-row');
+  if(!row) return;
+  if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  if(Notification.permission==='denied') return;
+  try{
+    const reg=await navigator.serviceWorker.register('./sw.js');
+    const existing=await reg.pushManager.getSubscription();
+    if(existing) return; // already subscribed on this device — nothing to prompt
+    row.style.display='block';
+  }catch(e){ console.warn('[Push] init failed',e); }
+}
+
+async function enablePushNotifications(){
+  const statusEl=document.getElementById('notif-push-status');
+  const btn=document.getElementById('notif-push-btn');
+  try{
+    if(btn){btn.disabled=true;btn.textContent='Requesting…';}
+    const permission=await Notification.requestPermission();
+    if(permission!=='granted'){
+      if(statusEl) statusEl.textContent='Notifications blocked — you can enable them in your browser settings any time';
+      if(btn){btn.disabled=false;btn.textContent='🔔 Get notified on your phone';}
+      return;
+    }
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:_urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    const j=sub.toJSON();
+    await sb('rpc/portal_push_subscribe',{method:'POST',body:{
+      p_table:_pinTableFor(), p_id:token,
+      p_endpoint:j.endpoint, p_p256dh:j.keys.p256dh, p_auth:j.keys.auth
+    }});
+    const row=document.getElementById('notif-push-row');
+    if(row) row.style.display='none';
+    toast('🔔 Notifications enabled');
+  }catch(e){
+    console.warn('[Push] subscribe failed',e);
+    if(statusEl) statusEl.textContent='Could not enable notifications — please try again later';
+    if(btn){btn.disabled=false;btn.textContent='🔔 Get notified on your phone';}
+  }
+}
 const _INV_STORE=new Map();
 let _CURRENT_INV_ID=null;
+
+// ── PIN GATE ─────────────────────────────────────────────────────────────────
+// See PHASE5_PORTAL_PIN_AUTH_SQL.md. The link alone used to be the only thing
+// protecting a client's data, with no expiry and no revoke. This adds a
+// 6-digit PIN on top: the office can reset it (never reveal it — it's
+// hashed) which forces the client to set a fresh one on their next visit.
+function _pinTableFor(){ return ptype==='agency'?'agencies':(ptype==='agent'?'agents':'persons'); }
+function _pinSessionKey(){ return 'df_portal_pin_ok_'+token; }
+
+function _pinGateShell(inner){
+  document.title='DeepFlow — Client Portal';
+  document.body.innerHTML=`
+    <div style="position:fixed;inset:0;overflow:auto;font-family:'Inter',-apple-system,sans-serif;
+      background:linear-gradient(155deg,#0d1f3c 0%,#1e3a5f 50%,#0a1628 100%);
+      display:flex;align-items:center;justify-content:center;padding:24px;
+      padding-top:calc(24px + env(safe-area-inset-top));padding-bottom:calc(24px + env(safe-area-inset-bottom))">
+      <div style="width:100%;max-width:360px;background:rgba(255,255,255,.06);border:1px solid rgba(125,211,252,.15);
+        border-radius:16px;padding:32px 28px;backdrop-filter:blur(16px);text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:2px;margin-bottom:20px;font-family:Arial Black,Impact,sans-serif">
+          <span style="background:linear-gradient(135deg,#7dd3fc 0%,#38bdf8 35%,#fde68a 65%,#f59e0b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">DEEPFLOW</span>
+        </div>
+        ${inner}
+      </div>
+    </div>`;
+}
+
+function _pinInputHtml(id){
+  return `<input id="${id}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"
+    style="width:100%;box-sizing:border-box;font-size:28px;letter-spacing:14px;text-align:center;padding:14px 0;
+    border-radius:10px;border:1px solid rgba(125,211,252,.25);background:rgba(255,255,255,.05);color:#fff;margin-bottom:12px"
+    oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,6)">`;
+}
+
+async function _pinRenderEntry(){
+  _pinGateShell(`
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">Enter your PIN</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:18px">Enter the 6-digit PIN for this portal</div>
+    ${_pinInputHtml('pin-entry')}
+    <div id="pin-err" style="font-size:12px;color:#f87171;min-height:16px;margin-bottom:10px"></div>
+    <button onclick="_pinSubmitEntry()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#38bdf8;color:#0a1628;font-weight:700;font-size:14px;cursor:pointer">Unlock</button>
+  `);
+  const el=document.getElementById('pin-entry');
+  el.focus();
+  el.addEventListener('keydown',ev=>{ if(ev.key==='Enter') _pinSubmitEntry(); });
+}
+
+async function _pinSubmitEntry(){
+  const pin=document.getElementById('pin-entry').value;
+  const errEl=document.getElementById('pin-err');
+  if(!/^[0-9]{6}$/.test(pin)){ errEl.textContent='Enter all 6 digits'; return; }
+  try{
+    const ok=await sb('rpc/portal_pin_verify',{method:'POST',body:{p_table:_pinTableFor(),p_id:token,p_pin:pin}});
+    if(ok===true){
+      sessionStorage.setItem(_pinSessionKey(),'1');
+      location.reload();
+    } else {
+      errEl.textContent='Incorrect PIN — please try again';
+      document.getElementById('pin-entry').value='';
+      document.getElementById('pin-entry').focus();
+    }
+  }catch(e){
+    errEl.textContent='Could not verify PIN — please try again or contact your service provider';
+  }
+}
+
+async function _pinRenderSetup(){
+  _pinGateShell(`
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">Set your PIN</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:18px">Choose a 6-digit PIN to protect your portal. You'll need it each time you open this link.</div>
+    ${_pinInputHtml('pin-new')}
+    ${_pinInputHtml('pin-confirm')}
+    <div id="pin-err" style="font-size:12px;color:#f87171;min-height:16px;margin-bottom:10px"></div>
+    <button onclick="_pinSubmitSetup()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#38bdf8;color:#0a1628;font-weight:700;font-size:14px;cursor:pointer">Set PIN</button>
+  `);
+  document.getElementById('pin-new').focus();
+}
+
+async function _pinSubmitSetup(){
+  const pin=document.getElementById('pin-new').value;
+  const confirm=document.getElementById('pin-confirm').value;
+  const errEl=document.getElementById('pin-err');
+  if(!/^[0-9]{6}$/.test(pin)){ errEl.textContent='PIN must be exactly 6 digits'; return; }
+  if(pin!==confirm){ errEl.textContent='PINs don’t match'; return; }
+  try{
+    await sb('rpc/portal_pin_set',{method:'POST',body:{p_table:_pinTableFor(),p_id:token,p_pin:pin}});
+    sessionStorage.setItem(_pinSessionKey(),'1');
+    location.reload();
+  }catch(e){
+    errEl.textContent='Could not set PIN — please try again or contact your service provider';
+  }
+}
+
+function _pinRenderLocked(lockedUntil){
+  const mins=Math.max(1,Math.ceil((new Date(lockedUntil)-new Date())/60000));
+  _pinGateShell(`
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">Too many attempts</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5)">Please try again in about ${mins} minute${mins!==1?'s':''}, or contact your service provider.</div>
+  `);
+}
+
+// Returns true if the caller may proceed to load the real portal. Otherwise
+// it has already rendered the PIN screen in place of the page.
+async function ensurePortalPin(){
+  if(sessionStorage.getItem(_pinSessionKey())==='1') return true;
+
+  let status;
+  try{
+    const rows=await sb('rpc/portal_pin_status',{method:'POST',body:{p_table:_pinTableFor(),p_id:token}});
+    status=Array.isArray(rows)?rows[0]:rows;
+  }catch(e){
+    // RPC not deployed yet (SQL not run) — fail OPEN so existing links keep
+    // working exactly as before, rather than locking everyone out.
+    console.warn('[Portal] PIN status check failed, allowing through',e);
+    return true;
+  }
+
+  if(!status || status.has_pin===false){ await _pinRenderSetup(); return false; }
+  if(status.locked_until && new Date(status.locked_until) > new Date()){ _pinRenderLocked(status.locked_until); return false; }
+  await _pinRenderEntry();
+  return false;
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init(){
@@ -701,11 +936,29 @@ async function init(){
         raf=requestAnimationFrame(draw);
       }
       build();draw();
-      window.addEventListener('resize',()=>{if(raf){cancelAnimationFrame(raf);raf=null;build();draw();}});
+      // iOS Safari fires window 'resize' when its toolbar collapses/expands
+      // during scrolling — only the viewport HEIGHT changes then, not width.
+      // Rebuilding the whole particle system (fresh random positions) on
+      // every one of those made this card look like it was reloading while
+      // being scrolled. Debounce, and skip rebuilding unless the width
+      // actually changed.
+      let _resizeT=null;
+      window.addEventListener('resize',()=>{
+        clearTimeout(_resizeT);
+        _resizeT=setTimeout(()=>{
+          const p=canvas.parentElement;
+          const newW=p?p.offsetWidth||window.innerWidth*.72:window.innerWidth*.72;
+          if(Math.abs(newW-W)<2) return;
+          if(raf){cancelAnimationFrame(raf);raf=null;}
+          build();draw();
+        },150);
+      });
     })();
     return;
   }
   try{
+    if(!(await ensurePortalPin())) return;
+
     let entity,jobs=[];
 
     try{
@@ -796,13 +1049,14 @@ async function init(){
     document.getElementById('hdr-name').textContent=entity.name;
     document.getElementById('footer-co').textContent=coName;
 
-    const hasAlerts=certs.some(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=30) || invoices.some(i=>i.status!=='Paid'&&i.status!=='Cancelled');
+    const changesSinceLastVisit=_computeChangesSinceLastVisit(jobs,certs,invoices,token);
+    const hasAlerts=certs.some(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=30) || invoices.some(i=>i.status!=='Paid'&&i.status!=='Cancelled') || changesSinceLastVisit.length>0;
     if(hasAlerts){
       const nb=document.getElementById('notif-btn');const nd=document.getElementById('notif-dot');
       if(nb)nb.style.display='flex';if(nd)nd.style.display='block';
     }
 
-    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,ratings:ratings||[],token,coName,entity};
+    _d={name:entity.name,type:ptype,jobs,attachments,certs,invoices,ratings:ratings||[],token,coName,entity,changesSinceLastVisit};
     _d._activeAgents=new Set(); // empty = all agents (agency view)
     document.getElementById('nav').style.display='flex';
     document.querySelectorAll('.tab').forEach(tab=>{
@@ -811,6 +1065,7 @@ async function init(){
     initTheme();
     initKeyboard();
     initOffline();
+    initPush();
     updateGreeting();
     go('overview');
   // Start hero banner animation after render
@@ -934,7 +1189,7 @@ function toggleNotif(){
   if(show&&_d)renderNotifPanel();
 }
 function renderNotifPanel(){
-  const items=[];
+  const items=[...(_d.changesSinceLastVisit||[])];
   _d.certs.filter(c=>!c.noExpiry&&c.expiryDate&&dd(c.expiryDate)<=30).forEach(c=>{
     const df=dd(c.expiryDate);
     items.push({icon:'alert-triangle',color:'var(--danger)',text:`<strong>${e(c.type)}</strong> expires in ${Math.abs(df)} days`,action:()=>go('certs'),time:'Certificate'});
@@ -1421,7 +1676,7 @@ function previewInv(id){
   const inv=_INV_STORE.get(id);
   if(!inv){toast('Invoice not found');return;}
   _CURRENT_INV_ID=id;
-  const t=calcTotal(inv);const vr=(_S?.vatRate??20);
+  const t=calcTotal(inv);const vr=_portalVatRate();
   const bd=document.getElementById('pdf-modal-bd');
   const items=(inv.items||[]).map(x=>{
     const l=(x.qty||1)*(x.unit||0);const v=x.vat?l*vr/100:0;
@@ -1482,7 +1737,7 @@ function downloadInvPDF(id){
   const W=210,H=297,M=18,RW=W-M*2;
   const accent=[79,70,229],dark=[15,23,42],mid=[100,116,139],light=[241,245,249];
   const t=calcTotal(inv);
-  const vr=(_S?.vatRate??20);
+  const vr=_portalVatRate();
 
   const safeText=(txt,x,y,maxW)=>{if(!txt)return;const lines=doc.splitTextToSize(String(txt),maxW||80);doc.text(lines,x,y);return lines.length;};
 
@@ -1614,6 +1869,24 @@ function vProperties(d){
   d.certs.forEach(c=>{const p=addKey(c.address); if(p)p.certs.push(c);});
 
   let list=Object.values(map);
+
+  // If the office has since changed this property's Landlord field to
+  // someone else (e.g. "Property Sold — Landlord Details Awaiting" after a
+  // sale), stop showing it here — the old landlord's invoice/job history at
+  // that address stays fully intact under Invoices, this only affects the
+  // Properties grouping view. Landlord portals only — an agency/agent's own
+  // name would never match a property's "landlord" field, so this check
+  // would incorrectly hide everything for them.
+  if(d.type==='landlord' && Array.isArray(_S?.properties) && _S.properties.length){
+    const meNorm=(d.name||'').trim().toLowerCase();
+    const propByAddr={};
+    _S.properties.forEach(p=>{ if(p.address) propByAddr[p.address.trim().toLowerCase()]=p; });
+    list=list.filter(p=>{
+      const rec=propByAddr[p.address.trim().toLowerCase()];
+      if(!rec || !rec.landlord) return true; // no office record, or no landlord set — show as before
+      return rec.landlord.trim().toLowerCase()===meNorm;
+    });
+  }
   if(_propSearch) list=list.filter(p=>p.address.toLowerCase().includes(_propSearch.toLowerCase()));
   if(_propSort==='jobs') list.sort((a,b)=>b.jobs.length-a.jobs.length);
   else if(_propSort==='az') list.sort((a,b)=>a.address.localeCompare(b.address));
@@ -2165,9 +2438,21 @@ function initHeroCanvas(){
   // Cover the case where the canvas is already present by the time this runs
   start();
 
-  // Also handle window resize
+  // Also handle window resize — debounced, and ignores height-only changes
+  // (iOS Safari fires 'resize' when its toolbar collapses/expands during
+  // scrolling; rebuilding the whole particle system on every one of those
+  // made this card look like it was reloading while being scrolled).
+  let _heroResizeT=null;
   window.addEventListener('resize',()=>{
-    if(raf){cancelAnimationFrame(raf);raf=null;start();}
+    clearTimeout(_heroResizeT);
+    _heroResizeT=setTimeout(()=>{
+      if(!canvas||!document.body.contains(canvas)) return;
+      const p=canvas.parentElement;
+      const newW=p?p.offsetWidth:600;
+      if(Math.abs(newW-W)<2) return;
+      if(raf){cancelAnimationFrame(raf);raf=null;}
+      start();
+    },150);
   });
 
   // Expose for manual start
