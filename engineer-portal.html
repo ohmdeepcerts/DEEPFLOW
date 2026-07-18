@@ -128,57 +128,13 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 
 .ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
 
+/* job-card-stripe: base position/size shared; colour varies per status below */
 .job-card-stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
-.job-card.s-pending .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--yellow)}
-.job-card.s-progress .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
-.job-card.s-completed .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--green)}
-.job-card.s-emergency .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
-.job-card.s-noaccess .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--orange)}
+.job-card.s-pending .job-card-stripe{background:var(--yellow)}
+.job-card.s-progress .job-card-stripe{background:var(--acc);box-shadow:0 0 10px rgba(79,143,255,.5)}
+.job-card.s-completed .job-card-stripe{background:var(--green)}
+.job-card.s-emergency .job-card-stripe{background:var(--red);width:5px;box-shadow:0 0 10px rgba(240,68,68,.5)}
+.job-card.s-noaccess .job-card-stripe{background:var(--orange)}
 
 .job-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
 .job-num{font-size:11px;font-weight:700;color:var(--acc);font-family:var(--mono);letter-spacing:.5px}
@@ -205,16 +161,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:10
 /* Cancelled job card */
 .job-card.s-cancelled{background:rgba(100,116,139,.07);border-color:rgba(100,116,139,.2);opacity:.75}
 [data-theme="light"] .job-card.s-cancelled{background:rgba(100,116,139,.05);border-color:rgba(100,116,139,.2)}
-.job-card.s-cancelled .job-quick-row{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.jq-btn{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--fh);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
-.jq-green{background:rgba(34,197,94,.15);color:#16a34a}
-.jq-blue{background:rgba(79,143,255,.15);color:#3b82f6}
-.jq-red{background:rgba(224,82,82,.12);color:#dc2626}
-.jq-map{background:rgba(245,166,35,.12);color:#d97706}
-
-.ptr-spinner{display:none;text-align:center;padding:12px;color:var(--txt3);font-size:12px;font-family:var(--fh)}
-
-.job-card-stripe{background:var(--txt3)}
+.job-card.s-cancelled .job-card-stripe{background:var(--txt3)}
 
 /* EMPTY STATE */
 .empty{text-align:center;padding:60px 24px;color:var(--txt3)}
@@ -1186,6 +1133,153 @@ async function sb(path,opts={}){
   return Array.isArray(d)?d.map(_fix):d;
 }
 
+// Same audit_log table the Office App's Admin-only Audit Log page reads —
+// lets an admin see every status change regardless of who made it or from
+// which app, without blocking any transition.
+async function logAudit(type,details){
+  if(!currentUser) return;
+  try{
+    await queueableSave(null,'audit_log',{method:'POST',body:{
+      type,
+      staff_name: currentUser.name,
+      staff_email: currentUser.email||'',
+      staff_role: 'Engineer',
+      details: JSON.stringify(details),
+      created_at: new Date().toISOString()
+    },prefer:'return=minimal'});
+  }catch(e){ console.warn('[Audit]',e); }
+}
+
+// Mirrors index.html's sendNotificationWebhook() — see Settings → Notifications
+// → Automated Client Notifications in the Office App for what this does and
+// how to wire it to a free automation tool. Not queued offline like other
+// writes here — if this fails while offline, the status change itself still
+// syncs via the offline queue, just without a notification firing for it.
+async function sendNotificationWebhook(eventType, payload){
+  const s=_officeSettingsCache;
+  if(!s?.notifWebhookEnabled || !s?.notifWebhookUrl) return;
+  if(eventType==='job_status_change' && s.notifOnStatusChange===false) return;
+  try{
+    await fetch(s.notifWebhookUrl, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:eventType, source:'deepflow-engineer', company:s.coName||'', timestamp:new Date().toISOString(), ...payload})
+    });
+  }catch(e){ console.warn('[NotifWebhook]',e); }
+}
+
+// Mirrors index.html's sendPushNotification() — see PHASE6_PUSH_NOTIFICATIONS_SQL.md
+// and PHASE6B_PUSH_EDGE_FUNCTION.md.
+async function sendPushNotification(eventType, payload){
+  const s=_officeSettingsCache;
+  if(!s?.notifPushEnabled) return;
+  if(eventType==='job_status_change' && s.notifOnStatusChange===false) return;
+
+  const title='Job update';
+  const message=`${payload.address||'Your job'} → ${payload.newStatus}`;
+
+  try{
+    const jwt=await _getJWT();
+    await fetch(SB_URL+'/functions/v1/send-push',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+jwt},
+      body: JSON.stringify({title,message,landlordName:payload.landlordName||'',agencyName:payload.agencyName||'',agentName:payload.agentName||''})
+    });
+  }catch(e){ console.warn('[Push]',e); }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  OFFLINE SAVE QUEUE — typed data (notes, status, hours) is never lost to
+//  a dropped connection. A failed save that looks like a network problem
+//  (as opposed to the server rejecting the request) is queued to
+//  localStorage and automatically replayed once the connection returns —
+//  no manual "retry" action needed from the engineer.
+// ══════════════════════════════════════════════════════════════
+const OFFLINE_QUEUE_KEY='df_eng_offline_queue';
+
+function _isNetworkError(e){
+  if(!navigator.onLine) return true;
+  if(e instanceof TypeError) return true; // fetch() itself rejected — no HTTP response at all
+  return /failed to fetch|networkerror|load failed/i.test(e?.message||'');
+}
+
+function _offlineQueueGet(){
+  try{ return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)||'[]'); }catch(e){ return []; }
+}
+function _offlineQueueSet(arr){
+  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(arr));
+  _renderOfflineBadge(arr.length);
+}
+
+// Wraps an sb() write: tries it immediately, and if it fails for what looks
+// like a connectivity reason, queues it for later instead of losing it.
+// `label` is shown in the pending-sync badge (pass null for background
+// writes like audit logs that don't need their own line item).
+async function queueableSave(label, path, opts){
+  try{
+    await sb(path, opts);
+    return {ok:true, queued:false};
+  }catch(e){
+    if(_isNetworkError(e)){
+      const q=_offlineQueueGet();
+      q.push({qid: (Date.now()+'_'+Math.random().toString(36).slice(2)), label, path, opts, ts: Date.now()});
+      _offlineQueueSet(q);
+      return {ok:true, queued:true};
+    }
+    throw e; // a real server-side rejection — let the caller's existing catch/toast handle it
+  }
+}
+
+let _offlineFlushing=false;
+async function _flushOfflineQueue(){
+  if(_offlineFlushing || !navigator.onLine) return;
+  const q=_offlineQueueGet();
+  if(!q.length) return;
+  _offlineFlushing=true;
+  try{
+    while(q.length){
+      const item=q[0];
+      try{
+        await sb(item.path, item.opts);
+      }catch(e){
+        if(_isNetworkError(e)) break; // still offline (or flaky) — stop, keep the rest queued, try again later
+        // Server rejected it outright (e.g. the job was deleted meanwhile) — drop it, it'll never succeed.
+        console.warn('[OfflineQueue] dropping unsendable item',item,e);
+      }
+      q.shift();
+      _offlineQueueSet(q);
+    }
+    if(!q.length) toast('✅ Synced — all offline changes saved','success');
+  } finally {
+    _offlineFlushing=false;
+  }
+}
+
+function _renderOfflineBadge(count){
+  let el=document.getElementById('offline-queue-badge');
+  if(!count){
+    if(el) el.remove();
+    return;
+  }
+  if(!el){
+    el=document.createElement('div');
+    el.id='offline-queue-badge';
+    el.style.cssText=`position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9998;
+      background:#78350f;color:#fde68a;border:1px solid #d97706;border-radius:20px;
+      padding:8px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;
+      box-shadow:0 4px 16px rgba(0,0,0,.3);`;
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`⏳ ${count} change${count!==1?'s':''} waiting to sync`;
+}
+
+window.addEventListener('online', _flushOfflineQueue);
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') _flushOfflineQueue(); });
+setInterval(_flushOfflineQueue, 20000);
+// Restore badge on load if a previous offline session left items queued
+_renderOfflineBadge(_offlineQueueGet().length);
+
 const df=(()=>{
   const _L={};
   function on(ev,fn,opts={}){if(!_L[ev])_L[ev]=[];_L[ev].push({fn,once:!!opts.once});}
@@ -1209,21 +1303,49 @@ function escHtml(s){
 // cache, then to the placeholder below if neither is available.
 let OFFICE_WA_NUMBER = localStorage.getItem('df_eng_office_wa') || '447700000000';
 
+// Resolved per-engineer visibility permissions, set once office settings load.
+// Defaults match the Office app's own defaults (see saveEngDefaults()) — only
+// 'price' and 'invoice' default to hidden, everything else defaults to visible.
+let _engVisPerms = {seePrice:false,seeLandlord:true,seeTenant:true,seeAgent:true,seeNotes:true,seeInvoice:false};
+
 async function _loadOfficeSettings(){
   try{
-    const rows = await sb('settings?limit=1&select=*').catch(()=>null);
-    const s = rows?.[0];
-    if(!s) return;
-    const wa = s.office_wa || s.officeWa || s.coWa || s.waOffice || '';
+    // The real settings blob lives in `app_settings` under key '__all__' (same
+    // table/shape the Office app itself reads via saveSetting/S) — this used to
+    // query a table literally named `settings`, which is a different, always-empty
+    // table, so this never found a real number.
+    const rows = await sb('app_settings?key=eq.__all__&select=value').catch(()=>null);
+    const raw = rows?.[0]?.value;
+    const s = typeof raw==='string' ? JSON.parse(raw) : raw;
+    if(s) _officeSettingsCache = s;
+    const wa = s?.coPhone || '';
     if(wa){
       OFFICE_WA_NUMBER = wa.replace(/\s/g,'');
       localStorage.setItem('df_eng_office_wa', OFFICE_WA_NUMBER);
     }
+    // Per-engineer visibility permissions (Office app → Settings → Job Controls
+    // → Engineer Visibility Controls). Was configured there but never actually
+    // read/enforced anywhere in this app — every engineer saw everything
+    // regardless of what an admin had toggled off for them.
+    if(s){
+      const fields=['seePrice','seeLandlord','seeTenant','seeAgent','seeNotes','seeInvoice'];
+      const globalDefaults={};
+      fields.forEach(f=>{
+        const settingKey='engSee'+f[3].toUpperCase()+f.slice(4);
+        globalDefaults[f]=s[settingKey]!==false;
+      });
+      const engId=currentUser?.id;
+      const override=(engId&&s.engPerms&&s.engPerms[engId])||{};
+      fields.forEach(f=>{ _engVisPerms[f]=override[f]!==undefined?override[f]:globalDefaults[f]; });
+      localStorage.setItem('df_eng_vis_perms',JSON.stringify(_engVisPerms));
+    }
   }catch(e){
-    // Non-fatal — runtime var already set from localStorage cache above
+    // Non-fatal — fall back to localStorage cache if we have one, else the safe defaults above
+    try{ const cached=JSON.parse(localStorage.getItem('df_eng_vis_perms')); if(cached) _engVisPerms=cached; }catch(x){}
   }
 }
 
+let _officeSettingsCache = {}; // populated by _loadOfficeSettings() — used by sendNotificationWebhook()
 let currentUser  = null;
 let currentJob   = null;
 let currentTab   = 'today';
@@ -1906,12 +2028,22 @@ function _certLabel(c){
   return _CERT_MAP[c]||_CERT_MAP[c.toLowerCase()]||c;
 }
 async function quickStatusUpdate(id, newStatus){
+  const j0=_allJobs?.find(x=>x.id===id);
+  const oldStatus=j0?.status;
   try{
-    await sb(`jobs?id=eq.${id}`,{method:'PATCH',body:{status:newStatus,modified:Date.now()},prefer:'return=minimal'});
+    const {queued}=await queueableSave(`Status → ${newStatus} — ${j0?.address||id}`, `jobs?id=eq.${id}`, {method:'PATCH',body:{status:newStatus,modified:Date.now()},prefer:'return=minimal'});
+    logAudit('job_status_change',{jobId:id,jobNum:j0?.jobNum,address:j0?.address,oldStatus,newStatus});
+    if(!queued){
+      const notifPayload={jobId:id,jobNum:j0?.jobNum,address:j0?.address,oldStatus,newStatus,landlordName:j0?.landlordName||'',landlordPhone:j0?.landlordPhone||''};
+      sendNotificationWebhook('job_status_change',notifPayload);
+      sendPushNotification('job_status_change',notifPayload);
+    }
     // Update local cache
     if(_allJobs){ const j=_allJobs.find(x=>x.id===id); if(j) j.status=newStatus; }
-    loadJobs();
-    if(newStatus==='Completed'){
+    if(!queued) loadJobs();
+    if(queued){
+      toast(`📶 Offline — status will sync to "${newStatus}" once back online`,'warn');
+    } else if(newStatus==='Completed'){
       toast('✅ Job marked complete!','success');
       if(navigator.vibrate) navigator.vibrate([100,50,200]);
     } else if(newStatus==='In Progress'){
@@ -2052,7 +2184,7 @@ function renderJobDetail(j,atts){
         ${_dr('Trade',escHtml(j.trade))}
         ${_dr('Certs',(j.certTypes||[]).map(_certLabel).map(escHtml).join(', '))}
         ${_dr('Ref',escHtml(j.jobNum))}
-        ${_dr('Details',escHtml(j.description))}
+        ${_engVisPerms.seeNotes?_dr('Details',escHtml(j.description)):''}
         ${_dr('Hours',j.hours?j.hours+' hrs':'')}
         ${j.priority&&j.priority!=='Normal'?_dr('Priority',`<span style="color:var(--red);font-weight:800">🚨 ${escHtml(j.priority)}</span>`):''}
       </div>
@@ -2071,7 +2203,7 @@ function renderJobDetail(j,atts){
     ${pcMatch?`<div class="d-section"><div class="d-section-hd">🏠 Property Info</div><div id="land-reg-info" style="font-size:12px;color:var(--txt3);padding:4px 2px">Loading…</div></div>`:''}
 
     <!-- LANDLORD -->
-    ${j.landlordName?`<div class="d-section"><div class="d-section-hd">🏠 Landlord</div><div class="d-block">
+    ${(j.landlordName&&_engVisPerms.seeLandlord)?`<div class="d-section"><div class="d-section-hd">🏠 Landlord</div><div class="d-block">
       ${_dr('Name',escHtml(j.landlordName))}
       ${j.landlordPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${escHtml(j.landlordPhone)}</div><div class="cta-row">${_callBtn(j.landlordPhone)}${_waBtn(j.landlordPhone,'WhatsApp')}${_waBtn(j.landlordWA||j.landlordPhone,'WA')}</div></div></div>`:''}
       ${j.landlordEmail?`<div class="d-row"><div class="d-lbl">Email</div><div class="d-val"><div class="cta-row">${_emailBtn(j.landlordEmail)}<a class="cta cta-wa" href="https://wa.me/?text=${encodeURIComponent('Re: '+j.address)}" target="_blank">💬 WA Message</a></div></div></div>`:''}
@@ -2079,7 +2211,7 @@ function renderJobDetail(j,atts){
     </div></div>`:''}
 
     <!-- AGENCY -->
-    ${j.agencyName?`<div class="d-section"><div class="d-section-hd">🏢 Agency</div><div class="d-block">
+    ${(j.agencyName&&_engVisPerms.seeAgent)?`<div class="d-section"><div class="d-section-hd">🏢 Agency</div><div class="d-block">
       ${_dr('Agency',escHtml(j.agencyName))}
       ${_dr('Agent',escHtml(j.agentName))}
       ${j.agentPhone?`<div class="d-row"><div class="d-lbl">Phone</div><div class="d-val"><div style="font-weight:600;margin-bottom:8px">${escHtml(j.agentPhone)}</div><div class="cta-row">${_callBtn(j.agentPhone)}${_waBtn(j.agentPhone,'WhatsApp')}</div></div></div>`:''}
@@ -2160,10 +2292,15 @@ function _dr(lbl,val){if(!val)return'';return`<div class="d-row"><div class="d-l
 // Restores any saved draft and wires the input → localStorage auto-save.
 function _hookJobNotesAutoSave(){
   const el=document.getElementById('job-notes');
-  if(!el) return;
+  if(!el||!currentJob) return;
+  // BUGFIX: this draft key used to be a single global 'draft_job-notes' shared
+  // by every job — notes typed for one job (then never saved) could silently
+  // reappear in a completely different job's notes box. Scope it per job id.
+  const draftKey='draft_job-notes_'+currentJob.id;
+  localStorage.removeItem('draft_job-notes'); // one-time cleanup of the old unscoped key
   // Restore draft if textarea is empty (i.e. job had no notes)
   if(!el.value){
-    const saved=localStorage.getItem('draft_job-notes');
+    const saved=localStorage.getItem(draftKey);
     if(saved){
       el.value=saved;
       el.style.borderColor='var(--acc)';
@@ -2171,11 +2308,9 @@ function _hookJobNotesAutoSave(){
       setTimeout(()=>{el.style.borderColor='';},2000);
     }
   }
-  // Wire input → localStorage (idempotent — safe to call multiple times)
-  if(!el._notesHooked){
-    el._notesHooked=true;
-    el.addEventListener('input',()=>localStorage.setItem('draft_job-notes',el.value));
-  }
+  // Rebind every render (not just once) — the job (and therefore the key)
+  // may have changed since this element was last hooked.
+  el.oninput=()=>localStorage.setItem(draftKey,el.value);
 }
 function setQuality(hd,btn){
   _uploadHD=hd;
@@ -2250,30 +2385,48 @@ async function updateStatus(status, btn){
     return;
   }
 
-  // Server-side verification: re-fetch current status before patching
+  // Server-side verification: re-fetch current status before patching — but
+  // only when actually online. If we're offline this fetch would fail too,
+  // and there's no way to know "current" anyway; the queued write below
+  // will just apply on top of whatever the server has once reconnected.
+  const jobId=currentJob.id, oldStatus=currentJob.status;
   try{
-    const live=await sb(`jobs?id=eq.${currentJob.id}&select=id,status`);
-    const liveStatus=live?.[0]?.status;
-    if(liveStatus && liveStatus!==currentJob.status){
-      // Someone else changed it — refresh
-      currentJob.status=liveStatus;
-      document.getElementById('modal-status-pill').innerHTML=_spill(liveStatus,currentJob.priority);
-      const newBtns=document.querySelector('.status-pills-row');
-      if(newBtns) newBtns.innerHTML=_statusButtons(liveStatus);
-      toast(`ℹ️ Status was already updated to "${liveStatus}"`, 'warn');
-      loadJobs();
-      return;
+    if(navigator.onLine){
+      try{
+        const live=await sb(`jobs?id=eq.${jobId}&select=id,status`);
+        const liveStatus=live?.[0]?.status;
+        if(liveStatus && liveStatus!==oldStatus){
+          // Someone else changed it — refresh
+          currentJob.status=liveStatus;
+          document.getElementById('modal-status-pill').innerHTML=_spill(liveStatus,currentJob.priority);
+          const newBtns=document.querySelector('.status-pills-row');
+          if(newBtns) newBtns.innerHTML=_statusButtons(liveStatus);
+          toast(`ℹ️ Status was already updated to "${liveStatus}"`, 'warn');
+          loadJobs();
+          return;
+        }
+      }catch(e){
+        if(!_isNetworkError(e)) throw e; // a real error, not connectivity — bubble to outer catch
+        // else: flaky connection despite navigator.onLine — fall through and let
+        // queueableSave() below decide (it'll queue if still failing).
+      }
     }
 
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{status,modified:Date.now()}});
+    const {queued}=await queueableSave(`Status → ${status} — ${currentJob.address}`, `jobs?id=eq.${jobId}`, {method:'PATCH',body:{status,modified:Date.now()}});
+    logAudit('job_status_change',{jobId,jobNum:currentJob.jobNum,address:currentJob.address,oldStatus,newStatus:status});
+    if(!queued){
+      const notifPayload={jobId,jobNum:currentJob.jobNum,address:currentJob.address,oldStatus,newStatus:status,landlordName:currentJob.landlordName||'',landlordPhone:currentJob.landlordPhone||''};
+      sendNotificationWebhook('job_status_change',notifPayload);
+      sendPushNotification('job_status_change',notifPayload);
+    }
     currentJob.status=status;
     document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
     // Refresh the buttons
     const btnRow=document.querySelector('.status-pills-row');
     if(btnRow) btnRow.innerHTML=_statusButtons(status);
     playStatusAnim(status);
-    toast(`Status → ${status}`, 'success');
-    loadJobs();
+    toast(queued?`📶 Offline — status will sync to "${status}" once back online`:`Status → ${status}`, queued?'warn':'success');
+    if(!queued) loadJobs();
   }catch(e){ toast('⚠️ Status update failed','error'); }
 }
 
@@ -2333,11 +2486,11 @@ async function saveNotes(){
   const btn=document.querySelector('[onclick="saveNotes()"]');
   if(btn){btn.textContent='Saving…';btn.disabled=true;}
   try{
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{notes,modified:Date.now()}});
+    const {queued}=await queueableSave(`Notes — ${currentJob.address}`, `jobs?id=eq.${currentJob.id}`, {method:'PATCH',body:{notes,modified:Date.now()}});
     currentJob.notes=notes;
-    _clearDraft('job-notes');
-    toast('✅ Notes saved','success');
-    if(navigator.vibrate)navigator.vibrate([40,20,60]);
+    _clearDraft('job-notes_'+currentJob.id);
+    toast(queued?'📶 Offline — notes saved on this device, will sync automatically':'✅ Notes saved', queued?'warn':'success');
+    if(navigator.vibrate)navigator.vibrate(queued?[20]:[40,20,60]);
   }catch(e){toast('⚠️ Failed to save notes','error');if(navigator.vibrate)navigator.vibrate([80]);}
   finally{if(btn){btn.innerHTML='💾 Save Notes';btn.disabled=false;}}
 }
@@ -2347,11 +2500,11 @@ async function saveHours(){
   const hours=parseFloat(document.getElementById('job-hours')?.value);
   if(isNaN(hours)||hours<0){toast('Enter valid hours','error');return;}
   try{
-    await sb(`jobs?id=eq.${currentJob.id}`,{method:'PATCH',body:{hours,modified:Date.now()}});
+    const {queued}=await queueableSave(`Hours — ${currentJob.address}`, `jobs?id=eq.${currentJob.id}`, {method:'PATCH',body:{hours,modified:Date.now()}});
     currentJob.hours=hours;
-    toast(`✅ Logged ${hours}h`,'success');
-    if(navigator.vibrate)navigator.vibrate([40,20,60]);
-    loadJobs();
+    toast(queued?`📶 Offline — ${hours}h saved on this device, will sync automatically`:`✅ Logged ${hours}h`, queued?'warn':'success');
+    if(navigator.vibrate)navigator.vibrate(queued?[20]:[40,20,60]);
+    if(!queued) loadJobs();
   }catch(e){toast('⚠️ Failed to save hours','error');if(navigator.vibrate)navigator.vibrate([80]);}
 }
 
@@ -3570,8 +3723,11 @@ function _fd(ts){
 // ══════════════════════════════════════════════════════════════
 function initAutoSave(){
   // These IDs exist across different modal contexts — attach lazily
-  // so we don't miss dynamically rendered elements
-  const WATCH=['job-notes','aj-desc','ot-notes','leave-notes'];
+  // so we don't miss dynamically rendered elements.
+  // NOTE: 'job-notes' is deliberately NOT here — it's handled by the
+  // job-scoped _hookJobNotesAutoSave() instead (see FIX 12), since this
+  // generic per-id key would collide across different jobs' notes.
+  const WATCH=['aj-desc','ot-notes','leave-notes'];
 
   function _hookEl(id){
     const el=document.getElementById(id);
