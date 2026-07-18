@@ -1176,8 +1176,17 @@ async function sendPushNotification(eventType, payload){
   if(!s?.notifPushEnabled) return;
   if(eventType==='job_status_change' && s.notifOnStatusChange===false) return;
 
-  const title='Job update';
-  const message=`${payload.address||'Your job'} → ${payload.newStatus}`;
+  let title, message;
+  if(payload.newStatus==='In Progress'){
+    title='Engineer has arrived';
+    message=`Your engineer has arrived at ${payload.address||'the property'}`;
+  } else if(payload.newStatus==='Completed'){
+    title='Job completed';
+    message=`Work at ${payload.address||'the property'} is complete`;
+  } else {
+    title='Job update';
+    message=`${payload.address||'Your job'} → ${payload.newStatus}`;
+  }
 
   try{
     const jwt=await _getJWT();
@@ -1187,6 +1196,35 @@ async function sendPushNotification(eventType, payload){
       body: JSON.stringify({title,message,landlordName:payload.landlordName||'',agencyName:payload.agencyName||'',agentName:payload.agentName||''})
     });
   }catch(e){ console.warn('[Push]',e); }
+}
+
+// Mirrors index.html's notifyNextTenantEta() — see Settings → Notifications
+// → "Next-Tenant ETA" in the Office App for what this does and why.
+function _looksLikePhone(s){
+  return !!s && /\d{4,}/.test(s) && !/^code:/i.test(s.trim());
+}
+
+async function notifyNextTenantEta(completedJob){
+  const s=_officeSettingsCache;
+  if(!s?.notifNextTenantEta) return;
+  if(!completedJob?.engineer || !completedJob?.date) return;
+  try{
+    const rows=await sb(`jobs?engineer=eq.${encodeURIComponent(completedJob.engineer)}&date=eq.${encodeURIComponent(completedJob.date)}&status=eq.Pending&order=created.asc&limit=1`);
+    const next=rows?.[0];
+    if(!next) return;
+    const access=next.access||'';
+    const contact=(next.contact||'').trim();
+    if(!(access.includes('Tenant')||access.includes('Landlord'))) return;
+    if(!_looksLikePhone(contact)) return;
+
+    sendNotificationWebhook('next_job_eta',{
+      engineerName:completedJob.engineer,
+      prevAddress:completedJob.address,
+      nextJobId:next.id, nextJobNum:next.jobNum||'',
+      nextAddress:next.address||'', nextContactPhone:contact,
+      nextTimeSlot:next.timeSlot||''
+    });
+  }catch(e){ console.warn('[NextTenantEta]',e); }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2037,6 +2075,7 @@ async function quickStatusUpdate(id, newStatus){
       const notifPayload={jobId:id,jobNum:j0?.jobNum,address:j0?.address,oldStatus,newStatus,landlordName:j0?.landlordName||'',landlordPhone:j0?.landlordPhone||''};
       sendNotificationWebhook('job_status_change',notifPayload);
       sendPushNotification('job_status_change',notifPayload);
+      if(newStatus==='Completed' && j0) notifyNextTenantEta(j0);
     }
     // Update local cache
     if(_allJobs){ const j=_allJobs.find(x=>x.id===id); if(j) j.status=newStatus; }
@@ -2418,6 +2457,7 @@ async function updateStatus(status, btn){
       const notifPayload={jobId,jobNum:currentJob.jobNum,address:currentJob.address,oldStatus,newStatus:status,landlordName:currentJob.landlordName||'',landlordPhone:currentJob.landlordPhone||''};
       sendNotificationWebhook('job_status_change',notifPayload);
       sendPushNotification('job_status_change',notifPayload);
+      if(status==='Completed') notifyNextTenantEta(currentJob);
     }
     currentJob.status=status;
     document.getElementById('modal-status-pill').innerHTML=_spill(status,currentJob.priority);
